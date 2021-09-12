@@ -1,0 +1,26 @@
+
+import React, { useReducer, useContext, createContext } from "react";
+import AppReducer from './AppReducer';
+
+const initialState = {
+  resturants : [],
+  foods : [],
+  cartItems : []
+}
+
+const AppContext = createContext(initialState);
+
+export const useAppContext = () => useContext(AppContext);
+
+export const AppProvider = ({ children }) => {
+
+  const [state, dispatch] = useReducer(AppReducer, initialState);
+
+  return (
+    <AppContext.Provider value={{...state, dispatch}}>
+      { children }
+    </AppContext.Provider>
+  );
+}
+
+

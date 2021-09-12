@@ -1,13 +1,28 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  @font-face {
+    font-family: 'lobster';
+    src: local('lobster'), url(./fonts/Lobster-Regular.ttf) format("truetype");
+  }
+
+  @font-face {
+    font-family: 'ubuntu';
+    src: local('ubuntu'), url(./fonts/Ubuntu-Regular.ttf) format("truetype");
+  }
+
+  body {
+    font-family: ubuntu;
+  }
+
+  h1 {
+    font-family: lobster;
+  }
+  
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+
