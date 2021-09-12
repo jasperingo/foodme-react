@@ -6,6 +6,8 @@ import { AppProvider } from "./context/AppContext";
 import Header from './components/Header';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import Cart from './pages/Cart';
+import Categories from './pages/Categories';
 import './styles/App.css';
 
 function App() {
@@ -20,6 +22,12 @@ function App() {
           <Switch>
             <Route path="/login">
               <Login />
+            </Route>
+            <Route path="/cart">
+              <Cart />
+            </Route>
+            <Route path="/categories">
+              <Categories />
             </Route>
             <Route path="/">
               <Home />

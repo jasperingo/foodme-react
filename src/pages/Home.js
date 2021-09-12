@@ -8,7 +8,7 @@ import CategoriesIcon from '../icons/CategoriesIcon';
 function CategoryItem({ name, iconColor }) {
   return (
     <li className="">
-      <Link to="/" className={"block bg-white shadow-lg p-2 rounded text-center "+iconColor}>
+      <Link to="/" className={"block bg-white shadow-lg px-2 py-3 rounded text-center "+iconColor}>
         <CategoriesIcon />
         <div>{ name }</div>
       </Link>
@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <section>
       <div className="bg-gray-200">
-        <ul className="grid grid-cols-3 md:grid-cols-4 gap-4 p-2">
+        <ul className="grid grid-cols-3 md:grid-cols-4 gap-4 px-2 py-3">
 
           <CategoryItem name="African" iconColor="text-red-500" />
 
