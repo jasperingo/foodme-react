@@ -8,7 +8,7 @@ import CategoriesIcon from '../icons/CategoriesIcon';
 function CategoryItem({ name, iconColor }) {
   return (
     <li className="">
-      <Link to="/" className={"block bg-white shadow-lg px-2 py-3 rounded text-center "+iconColor}>
+      <Link to="/" className={"block bg-white shadow-lg px-2 py-3 rounded text-center hover:text-white hover:"+iconColor.replace('text', 'bg')+" "+iconColor}>
         <CategoriesIcon />
         <div>{ name }</div>
       </Link>

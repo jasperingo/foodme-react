@@ -3,7 +3,11 @@ module.exports = {
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {}
+    extend: {
+      outline: {
+        'yellow-input': ['1px solid rgba(245, 158, 11, var(--tw-border-opacity))', '0px'],
+      }
+    }
   },
   variants: {
     extend: {},

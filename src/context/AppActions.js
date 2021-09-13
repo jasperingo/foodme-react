@@ -1,5 +1,7 @@
 
-export const ADD_CART_ITEM = "ADD CART ITEM";
+export const ADD_CART_ITEM = 'ADD_CART_ITEM';
 
+export const NAVIGATED = 'NAVIGATED';
 
+export const NAVIGATED_FROM_SEARCH = 'NAVIGATED_FROM_SEARCH';
 

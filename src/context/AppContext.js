@@ -5,10 +5,12 @@ import AppReducer from './AppReducer';
 const initialState = {
   resturants : [],
   foods : [],
-  cartItems : []
+  cartItems : [],
+  showHeader : true,
+  showSearchForm: false,
 }
 
-const AppContext = createContext(initialState);
+export const AppContext = createContext(initialState);
 
 export const useAppContext = () => useContext(AppContext);
 

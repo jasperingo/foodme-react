@@ -10,14 +10,14 @@ import SubHeader from '../components/SubHeader';
 import FacebookIcon from '../icons/FacebookIcon';
 import GoogleIcon from '../icons/GoogleIcon';
 
-export default function Login() {
+export default function Register() {
 
   const { t } = useTranslation();
   
   return (
     <section>
 
-      <SubHeader title="Login" />
+      <SubHeader title="Register" />
 
       <div className="flex px-2 py-5 justify-around gap-2">
         <SocialLoginButton text="Facebook" Icon={FacebookIcon} href="/login" bgColor="bg-blue-600" />
@@ -30,19 +30,24 @@ export default function Login() {
 
       <form method="POST" action="" className="px-2 py-5">
 
+        <FormField _id="fn-input" label="First_name" />
+
+        <FormField _id="ln-input" label="Last_name" />
+
         <FormField _id="email-input" label="Email" />
 
         <FormField _id="password-input" label="Password" type="password" />
 
         <div className="mb-4 text-sm">
-          <Link to="/login" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
+          <span>{ t('By_registering_you_agree_to_our') }</span>
+          <Link to="/terms-of-service" className="text-blue-500 font-bold"> { t('Terms_of_service') }.</Link>
         </div>
 
-        <FormButton text="Login" />
+        <FormButton text="Register" />
 
         <div className="mb-4 text-center text-sm">
-          <span>{ t('Dont_have_an_account') } </span>
-          <Link to="/register" className="text-blue-500 font-bold">{ t('Register') }</Link>
+          <span>{ t('Already_have_an_account') } </span>
+          <Link to="/login" className="text-blue-500 font-bold">{ t('login') }</Link>
         </div>
 
       </form>
@@ -52,5 +57,4 @@ export default function Login() {
     </section>
   );
 }
-
 
