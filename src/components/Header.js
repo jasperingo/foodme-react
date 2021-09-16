@@ -28,7 +28,7 @@ function NavItem({ title, Icon, href }) {
         activeClassName="text-yellow-500"
       >
         <Icon />
-        <span>{ title }</span>
+        <span className="lg:sr-only">{ title }</span>
       </NavLink>
     </li>
   );
@@ -50,31 +50,31 @@ export default function Header() {
   ));
   
   return (
-    <header className={"bg-white px-2 py-4 border-b"+(showHeader ? '' : ' hidden')}>
-      <div className="flex">
+    <header className={"bg-white px-2 py-4 border-b lg:block "+(showHeader ? '' : ' hidden')}>
+      <div className="flex items-center lg:gap-2">
         <h1 className={"text-2xl font-bold text-yellow-500 flex-grow "+(showSearchForm?'hidden':'')}>{ t('app_name') }</h1>
         
-        <div className={"flex items-center "+(showSearchForm?'w-full':'')}>
-          <Link to="/" className={"hover:bg-gray-200 "+(showSearchForm?'':'hidden')}>
+        <div className={"flex items-center md:flex-grow "+(showSearchForm?'w-full':'')}>
+          <Link to="/" className={"hover:bg-gray-200 md:hidden "+(showSearchForm?'':'hidden')}>
             <BackIcon />
             <span className="sr-only">{ t('Previous_page') }</span>
           </Link>
-          <form method="GET" className={"flex-grow "+(showSearchForm?'':'hidden')}>
+          <form method="GET" className={"flex-grow md:block "+(showSearchForm?'':'hidden')}>
             <input 
               type="search" 
               placeholder="Search Foodme" 
-              className="w-full rounded py-1 px-2 border border-yellow-500" 
+              className="w-full rounded py-1 px-2 border border-yellow-500  focus:outline-none" 
               />
           </form>
           <Link 
             to="/search"  
-            className={"text-gray-500 hover:bg-gray-200 block p-1 "+(showSearchForm?'hidden':'')}>
+            className={"text-gray-500 hover:bg-gray-200 block p-1 md:hidden "+(showSearchForm?'hidden':'')}>
             <SearchIcon />
             <span className="sr-only">Search</span>
           </Link>
         </div>
 
-        <nav className="fixed left-0 bottom-0 w-full border-t">
+        <nav className="fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:flex-grow lg:border-0">
           <ul className="flex">
             { navItems }
           </ul>
@@ -83,4 +83,5 @@ export default function Header() {
     </header>
   );
 }
+
 

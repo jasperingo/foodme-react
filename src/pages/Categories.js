@@ -14,7 +14,7 @@ function CategoryItem({ name, iconColor, numberOfResturants }) {
         <CategoriesIcon />
         <div className="flex-grow">
           <div className="font-bold">{ name }</div>
-          <div className="text-sm text-gray-500">{ t('resturantWithCount', { count : numberOfResturants }) }</div>
+          <div className="text-sm text-gray-500">{ t('resturantWithCount', { count : parseInt(numberOfResturants) }) }</div>
         </div>
       </Link>
     </li>
@@ -25,7 +25,7 @@ export default function Categories() {
   return (
     <section>
       
-      <ul className="p-2">
+      <ul className="p-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
 
         <CategoryItem name="African" iconColor="text-red-500" numberOfResturants="45" />
 

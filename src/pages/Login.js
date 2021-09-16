@@ -13,6 +13,11 @@ import GoogleIcon from '../icons/GoogleIcon';
 export default function Login() {
 
   const { t } = useTranslation();
+
+  function loginIn(e) {
+    e.preventDefault();
+
+  }
   
   return (
     <section>
@@ -28,7 +33,7 @@ export default function Login() {
         <span className="bg-gray-200 rounded-full p-2 text-sm">{ t('OR') }</span>
       </div>
 
-      <form method="POST" action="" className="px-2 py-5">
+      <form method="POST" action="" className="px-2 py-5" onSubmit={loginIn}>
 
         <FormField _id="email-input" label="Email" />
 

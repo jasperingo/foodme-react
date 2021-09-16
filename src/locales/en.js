@@ -3,6 +3,7 @@ export const TRANSLATIONS_EN = {
   app_name: 'Foodme',
   Resturant: 'Resturant',
   Resturants: 'Resturants',
+  Application: 'Application',
 
   resturantWithCount: '{{ count }} resturant',
   resturantWithCount_plural: '{{ count }} resturants',
@@ -13,12 +14,29 @@ export const TRANSLATIONS_EN = {
   Contact_us: 'Contact us',
   About_us: 'About us',
   Terms_of_service: 'Terms of service',
-  
+
+  Make_orders_with_our: 'Make orders with our',
+  Who_we_are: 'Who we are',
+  Why_our_customers_choose_us: 'Why our customers choose us',
+  Discount_System: 'Discount System',
+  Express_Delivery: 'Express Delivery',
+  _num_Resturants: '{{ num }} Resturants',
+  Partner_with_us: 'Partner with us',
+  Become_a_resturant_partner : 'Become a resturant partner',
+  Become_a_courier_partner: 'Become a courier partner',
+
+  Send: 'Send',
+  Message: 'Message',
+  Working_hours: 'Working hours',
+  Send_Us_A_Message: 'Send Us A Message',
+  contact_us_note_: `If you need a consulting regarding colaboration let us know, or maybe you have another question don't be shy, send us a message.`,
+
   home: 'Home',
   categories: 'Categories',
   cart: 'Cart',
   account: 'Account',
 
+  Name: 'Name',
   First_name: 'First name',
   Last_name: 'Last name',
   Email: 'Email',

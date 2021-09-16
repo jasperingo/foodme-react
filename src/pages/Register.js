@@ -13,6 +13,10 @@ import GoogleIcon from '../icons/GoogleIcon';
 export default function Register() {
 
   const { t } = useTranslation();
+
+  function onRegisterSubmit(e) {
+    e.preventDefault();
+  }
   
   return (
     <section>
@@ -28,7 +32,7 @@ export default function Register() {
         <span className="bg-gray-200 rounded-full p-2 text-sm">{ t('OR') }</span>
       </div>
 
-      <form method="POST" action="" className="px-2 py-5">
+      <form method="POST" action="" className="px-2 py-5" onSubmit={onRegisterSubmit}>
 
         <FormField _id="fn-input" label="First_name" />
 

@@ -55,7 +55,7 @@ function App() {
   return (
     <>
       <Header />
-      <main className={ !showHeader ? '' : "pb-16" }>
+      <main className={ `lg:pb-0 ${!showHeader ? '' : "pb-16"}` }>
         <Switch>
           <Route path="/terms-of-service">    
             <TermsOfService />
