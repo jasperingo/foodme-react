@@ -1,6 +1,5 @@
 
 import React from 'react';
-import Footer from '../components/Footer';
 //import { useTranslation } from 'react-i18next';
 import SubHeader from '../components/SubHeader';
 
@@ -48,8 +47,6 @@ export default function TermsOfService() {
           
         </dl>
       </div>
-
-      <Footer />
       
     </section>
   );

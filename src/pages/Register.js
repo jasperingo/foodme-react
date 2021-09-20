@@ -2,7 +2,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import Footer from '../components/Footer';
 import FormButton from '../components/FormButton';
 import FormField from '../components/FormField';
 import SocialLoginButton from '../components/SocialLoginButton';
@@ -55,8 +54,6 @@ export default function Register() {
         </div>
 
       </form>
-
-      <Footer />
       
     </section>
   );

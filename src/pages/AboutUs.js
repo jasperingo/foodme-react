@@ -6,7 +6,6 @@ import SubHeader from '../components/SubHeader';
 import DeliveryIcon from '../icons/DeliveryIcon';
 import ResturantIcon from '../icons/ResturantIcon';
 import DiscountIcon from '../icons/DiscountIcon';
-import Footer from '../components/Footer';
 
 
 const h2Style = "font-bold text-xl mb-2";
@@ -120,8 +119,6 @@ export default function AboutUs() {
         </div>
 
       </div>
-
-      <Footer />
 
     </section>
   );

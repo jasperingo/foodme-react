@@ -6,6 +6,7 @@ import i18n from './locales/i18n';
 import { useAppContext } from "./context/AppContext";
 import { NAVIGATED, NAVIGATED_FROM_SEARCH } from "./context/AppActions";
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Cart from './pages/Cart';
@@ -17,11 +18,12 @@ import './styles/App.css';
 import SearchHistory from './pages/SearchHistory';
 import Register from './pages/Register';
 
+
 function App() {
 
   i18n.changeLanguage('en');
 
-  const { showHeader, dispatch } = useAppContext();
+  const { dispatch } = useAppContext();
 
   let location = useLocation();
 
@@ -55,7 +57,7 @@ function App() {
   return (
     <>
       <Header />
-      <main className={ `lg:pb-0 ${!showHeader ? '' : "pb-16"}` }>
+      <main className="pb-16">
         <Switch>
           <Route path="/terms-of-service">    
             <TermsOfService />
@@ -86,6 +88,7 @@ function App() {
           </Route>
         </Switch>
       </main>
+      <Footer />
     </>
   );
 }

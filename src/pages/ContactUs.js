@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Footer from '../components/Footer';
 import SubHeader from '../components/SubHeader';
 
 
@@ -95,8 +94,6 @@ export default function ContactUs() {
         </div>
 
       </div>
-
-      <Footer />
       
     </section>
   );

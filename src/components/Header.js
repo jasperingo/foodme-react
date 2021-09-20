@@ -52,14 +52,14 @@ export default function Header() {
   return (
     <header className={"bg-white px-2 py-4 border-b lg:block "+(showHeader ? '' : ' hidden')}>
       <div className="flex items-center lg:gap-2">
-        <h1 className={"text-2xl font-bold text-yellow-500 flex-grow "+(showSearchForm?'hidden':'')}>{ t('app_name') }</h1>
+        <h1 className={"text-2xl font-bold text-yellow-500 flex-grow lg:flex-grow-0 lg:pr-10 "+(showSearchForm?'hidden':'')}>{ t('app_name') }</h1>
         
-        <div className={"flex items-center md:flex-grow "+(showSearchForm?'w-full':'')}>
-          <Link to="/" className={"hover:bg-gray-200 md:hidden "+(showSearchForm?'':'hidden')}>
+        <div className={"flex items-center lg:flex-grow "+(showSearchForm?'w-full':'')}>
+          <Link to="/" className={"hover:bg-gray-200 lg:hidden "+(showSearchForm?'':'hidden')}>
             <BackIcon />
             <span className="sr-only">{ t('Previous_page') }</span>
           </Link>
-          <form method="GET" className={"flex-grow md:block "+(showSearchForm?'':'hidden')}>
+          <form method="GET" className={"flex-grow lg:block "+(showSearchForm?'':'hidden')}>
             <input 
               type="search" 
               placeholder="Search Foodme" 
@@ -68,13 +68,13 @@ export default function Header() {
           </form>
           <Link 
             to="/search"  
-            className={"text-gray-500 hover:bg-gray-200 block p-1 md:hidden "+(showSearchForm?'hidden':'')}>
+            className={"text-gray-500 hover:bg-gray-200 block p-1 lg:hidden "+(showSearchForm?'hidden':'')}>
             <SearchIcon />
             <span className="sr-only">Search</span>
           </Link>
         </div>
 
-        <nav className="fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:flex-grow lg:border-0">
+        <nav className="fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:pl-10 lg:border-0 z-10">
           <ul className="flex">
             { navItems }
           </ul>
