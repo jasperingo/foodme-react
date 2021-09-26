@@ -33,6 +33,7 @@ export const TRANSLATIONS_EN = {
 
   home: 'Home',
   categories: 'Categories',
+  Categories: 'Categories',
   cart: 'Cart',
   account: 'Account',
 

@@ -57,7 +57,7 @@ function App() {
   return (
     <>
       <Header />
-      <main className="pb-16">
+      <main className="pb-20">
         <Switch>
           <Route path="/terms-of-service">    
             <TermsOfService />

@@ -8,9 +8,12 @@ import CategoriesIcon from '../icons/CategoriesIcon';
 function CategoryItem({ name, iconColor }) {
   return (
     <li className="lg:mb-2">
-      <Link to="/" className={`block bg-white shadow-lg px-2 py-3 rounded text-center ${iconColor} hover:text-white hover:${iconColor.replace('text', 'bg')}`}>
-        <CategoriesIcon />
-        <div>{ name }</div>
+      <Link 
+        to="/" 
+        className={`block bg-white shadow-lg px-2 py-3 rounded text-center ${iconColor} hover:text-white hover:${iconColor.replace('text', 'bg')} lg:flex lg:text-left lg:gap-1`}
+        >
+        <CategoriesIcon classList="fill-current mx-auto" />
+        <div className="flex-grow">{ name }</div>
       </Link>
     </li>
   );
@@ -22,33 +25,49 @@ export default function Home() {
 
   return (
     <section>
-      <div className="lg:flex">
-        <div className="bg-gray-200">
-          <ul className="grid grid-cols-3 md:grid-cols-4 gap-4 px-2 py-3 lg:block">
+      <div className="lg:container mx-auto">
+        <div className="lg:flex lg:items-start lg:gap-2">
 
-            <CategoryItem name="African" iconColor="text-red-500" />
+          <div className="bg-gray-200 lg:rounded lg:my-2">
+            <div className="container mx-auto">
+              <h2 className="font-bold px-2 pt-4 text-lg">{ t('Categories') }</h2>
+              <ul className="grid grid-cols-3 md:grid-cols-4 gap-4 px-2 py-3 lg:block">
 
-            <CategoryItem name="Snacks" iconColor="text-purple-500" />
+                <CategoryItem name="African" iconColor="text-red-500" />
 
-            <CategoryItem name="Coffee" iconColor="text-red-500" />
+                <CategoryItem name="Snacks" iconColor="text-purple-500" />
 
-            <CategoryItem name="Pizza" iconColor="text-blue-500" />
+                <CategoryItem name="Coffee" iconColor="text-red-500" />
 
-            <CategoryItem name="Chinese" iconColor="text-pink-500" />
+                <CategoryItem name="Pizza" iconColor="text-blue-500" />
 
-            <CategoryItem name="Mexican" iconColor="text-green-500" />
+                <CategoryItem name="Chinese" iconColor="text-pink-500" />
 
-          </ul>
-        </div>
+                <CategoryItem name="Mexican" iconColor="text-green-500" />
 
-        <div>
-          <h2 className="font-bold px-2 pt-4 pb-2 text-lg">{ t('Recommended') }</h2>
-          <ul className="p-2 lg:grid lg:grid-cols-3 lg:gap-4">
-            <ResturantItem photo="r1.webp" name="Grill D' punch" location="Ihiagwa, Owerri" ratings="4.7" />
-            <ResturantItem photo="r2.jpg" name="Mama Best" location="28 Douglas Road, Owerri" ratings="3.0" />
-            <ResturantItem photo="r3.jpg" name="King chef arena" location="Nekede, Owerri" ratings="4.2" />
-            <ResturantItem photo="r4.webp" name="Good food" location="42 Obinze, Owerri" ratings="4.9" />
-          </ul>
+              </ul>
+            </div>
+          </div>
+
+          <div className="flex-grow">
+            <div className="container mx-auto">
+              <h2 className="font-bold px-2 pt-4 pb-2 text-lg">{ t('Recommended') }</h2>
+              <ul className="p-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
+                <ResturantItem photo="r1.webp" name="Grill D' punch" location="Ihiagwa, Owerri" ratings="4.7" />
+                <ResturantItem photo="r2.jpg" name="Mama Best" location="28 Douglas Road, Owerri" ratings="3.0" />
+                <ResturantItem photo="r3.jpg" name="King chef arena" location="Nekede, Owerri" ratings="4.2" />
+                <ResturantItem photo="r4.webp" name="Good food" location="42 Obinze, Owerri" ratings="4.9" />
+                <ResturantItem photo="r1.webp" name="Grill D' punch" location="Ihiagwa, Owerri" ratings="4.7" />
+                <ResturantItem photo="r2.jpg" name="Mama Best" location="28 Douglas Road, Owerri" ratings="3.0" />
+                <ResturantItem photo="r3.jpg" name="King chef arena" location="Nekede, Owerri" ratings="4.2" />
+                <ResturantItem photo="r4.webp" name="Good food" location="42 Obinze, Owerri" ratings="4.9" />
+                <ResturantItem photo="r1.webp" name="Grill D' punch" location="Ihiagwa, Owerri" ratings="4.7" />
+                <ResturantItem photo="r2.jpg" name="Mama Best" location="28 Douglas Road, Owerri" ratings="3.0" />
+                <ResturantItem photo="r3.jpg" name="King chef arena" location="Nekede, Owerri" ratings="4.2" />
+                <ResturantItem photo="r4.webp" name="Good food" location="42 Obinze, Owerri" ratings="4.9" />
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </section>

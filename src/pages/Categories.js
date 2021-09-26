@@ -10,8 +10,8 @@ function CategoryItem({ name, iconColor, numberOfResturants }) {
 
   return (
     <li className="">
-      <Link to="/categories" className={"flex gap-2 bg-white px-2 py-3 hover:bg-gray-100 "+iconColor}>
-        <CategoriesIcon />
+      <Link to="/categories" className={"flex gap-2 bg-white px-2 py-3 md:block md:text-center hover:bg-gray-100 "+iconColor}>
+        <CategoriesIcon classList="fill-current mx-auto" />
         <div className="flex-grow">
           <div className="font-bold">{ name }</div>
           <div className="text-sm text-gray-500">{ t('resturantWithCount', { count : parseInt(numberOfResturants) }) }</div>
@@ -24,23 +24,23 @@ function CategoryItem({ name, iconColor, numberOfResturants }) {
 export default function Categories() {
   return (
     <section>
-      
-      <ul className="p-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+      <div className="container mx-auto">
+        <ul className="p-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
 
-        <CategoryItem name="African" iconColor="text-red-500" numberOfResturants="45" />
+          <CategoryItem name="African" iconColor="text-red-500" numberOfResturants="45" />
 
-        <CategoryItem name="Snacks" iconColor="text-purple-500" numberOfResturants="300" />
+          <CategoryItem name="Snacks" iconColor="text-purple-500" numberOfResturants="300" />
 
-        <CategoryItem name="Coffee" iconColor="text-red-500" numberOfResturants="12" />
+          <CategoryItem name="Coffee" iconColor="text-red-500" numberOfResturants="12" />
 
-        <CategoryItem name="Pizza" iconColor="text-blue-500" numberOfResturants="20" />
+          <CategoryItem name="Pizza" iconColor="text-blue-500" numberOfResturants="20" />
 
-        <CategoryItem name="Chinese" iconColor="text-pink-500" numberOfResturants="1" />
+          <CategoryItem name="Chinese" iconColor="text-pink-500" numberOfResturants="1" />
 
-        <CategoryItem name="Mexican" iconColor="text-green-500" numberOfResturants="7" />
+          <CategoryItem name="Mexican" iconColor="text-green-500" numberOfResturants="7" />
 
-      </ul>
-
+        </ul>
+      </div>
     </section>
   );
 }

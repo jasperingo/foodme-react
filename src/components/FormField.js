@@ -16,8 +16,8 @@ export default function FormField({  _id, label, type }) {
         placeholder={ t(label) }
         className={`inline-block w-full border border-yellow-500 bg-white focus:bg-yellow-100 focus:outline-none rounded p-2 font-bold ${type === "password" && 'pr-12'}`} 
         />
-        {type === "password" && <button type="button" className="-ml-8">
-          <VisibilityIcon />
+        {type === "password" && <button type="button" className="-ml-8 hover:bg-gray-300">
+          <VisibilityIcon classList="inline-block" />
         </button>}
     </div>
   );

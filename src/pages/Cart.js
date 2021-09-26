@@ -9,12 +9,12 @@ export default function Cart() {
 
   return (
     <section>
-
-      <div className="text-center bg-gray-200 mt-10 mx-2 py-5">
-        <CartEmptyIcon />
-        <div className="font-bold mt-2">{ t('Your_cart_is_empty') }</div>
+      <div className="container mx-auto">
+        <div className="text-center bg-gray-200 mt-10 mx-2 py-5">
+          <CartEmptyIcon classList="text-yellow-500 fill-current mx-auto" />
+          <div className="font-bold mt-2">{ t('Your_cart_is_empty') }</div>
+        </div>
       </div>
-      
     </section>
   );
 }

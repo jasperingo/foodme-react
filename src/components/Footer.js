@@ -21,7 +21,7 @@ export default function Footer() {
   const { showHeader } = useAppContext();
 
   return (
-    <footer className={`px-2 py-4 bg-white text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full ${!showHeader ? '' : ' hidden'}`}>
+    <footer className={`px-2 py-4 bg-white text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full ${!showHeader ? '' : ' hidden'} lg:block`}>
       <div>
         <ul className="flex justify-around">
           <FooterLink text="About_us" href="/about-us" />
