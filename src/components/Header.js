@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useHistory } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import HomeIcon from '../icons/HomeIcon';
 import UserIcon from '../icons/UserIcon';
@@ -8,7 +8,7 @@ import CartIcon from '../icons/CartIcon';
 import BackIcon from '../icons/BackIcon';
 import SearchIcon from '../icons/SearchIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
-import { useAppContext, useAppLocation } from '../context/AppContext';
+import { useAppContext } from '../context/AppContext';
 
 
 export const NAV_LINKS = [
@@ -19,14 +19,12 @@ export const NAV_LINKS = [
 ];
 
 function NavItem({ title, Icon, href }) {
-  
-  const location = useLocation();
 
   return (
     <li className="flex-1 text-center">
       <NavLink 
         exact 
-        to={ useAppLocation(href, location) }
+        to={ href }
         className="bg-white hover:bg-gray-100 block width-full p-2 text-sm text-gray-500"
         activeClassName="text-yellow-500"
       >
@@ -41,7 +39,7 @@ export default function Header() {
 
   const { t } = useTranslation();
 
-  const location = useLocation();
+  const history = useHistory();
 
   const { showHeader, showSearchForm } = useAppContext();
   
@@ -63,12 +61,12 @@ export default function Header() {
           </h1>
           
           <div className={"flex items-center lg:flex-grow "+(showSearchForm?'w-full':'')}>
-            <Link 
-              to={ useAppLocation(location.state ? location.state.previousPath : '', location) } 
+            <button
+              onClick={ () => { history.goBack(); } } 
               className={"hover:bg-gray-200 lg:hidden "+(showSearchForm?'':'hidden')}>
               <BackIcon />
               <span className="sr-only">{ t('Previous_page') }</span>
-            </Link>
+            </button>
             <form method="GET" className={"flex-grow lg:block "+(showSearchForm?'':'hidden')}>
               <input 
                 type="search" 
@@ -77,7 +75,7 @@ export default function Header() {
                 />
             </form>
             <Link 
-              to={ useAppLocation('/search', location) }
+              to="/search"
               className={"text-gray-500 hover:bg-gray-200 block p-1 lg:hidden "+(showSearchForm?'hidden':'')}>
               <SearchIcon classList="fill-current mx-auto" />
               <span className="sr-only">Search</span>

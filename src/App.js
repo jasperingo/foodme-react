@@ -14,9 +14,9 @@ import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
 import TermsOfService from './pages/TermsOfService';
 import Categories from './pages/Categories';
-import './styles/App.css';
 import SearchHistory from './pages/SearchHistory';
 import Register from './pages/Register';
+import './styles/App.css';
 
 
 function App() {
