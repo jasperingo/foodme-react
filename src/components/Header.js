@@ -1,11 +1,10 @@
 
 import React from 'react';
-import { Link, NavLink, useHistory } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import HomeIcon from '../icons/HomeIcon';
 import UserIcon from '../icons/UserIcon';
 import CartIcon from '../icons/CartIcon';
-import BackIcon from '../icons/BackIcon';
 import SearchIcon from '../icons/SearchIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
 import { useAppContext } from '../context/AppContext';
@@ -15,7 +14,7 @@ export const NAV_LINKS = [
   { title : 'home', icon: HomeIcon, href: '/' },
   { title : 'categories', icon: CategoriesIcon, href: '/categories' },
   { title : 'cart', icon: CartIcon, href: '/cart' },
-  { title : 'account', icon: UserIcon, href: '/login' }
+  { title : 'account', icon: UserIcon, href: '/account' }
 ];
 
 function NavItem({ title, Icon, href }) {
@@ -39,9 +38,7 @@ export default function Header() {
 
   const { t } = useTranslation();
 
-  const history = useHistory();
-
-  const { showHeader, showSearchForm } = useAppContext();
+  const { showHeader } = useAppContext();
   
   const navItems = NAV_LINKS.map((item, i) => (
     <NavItem 
@@ -56,18 +53,12 @@ export default function Header() {
     <header className={"bg-white px-2 py-4 border-b lg:block "+(showHeader ? '' : ' hidden')}>
       <div className="container mx-auto">
         <div className="flex items-center lg:gap-2">
-          <h1 className={"text-2xl font-bold text-yellow-500 flex-grow lg:flex-grow-0 lg:pr-10 "+(showSearchForm?'hidden':'')}>
+          <h1 className={"text-2xl font-bold text-yellow-500 flex-grow lg:flex-grow-0 lg:pr-10 "}>
             <Link to="/">{ t('app_name') }</Link>
           </h1>
           
-          <div className={"flex items-center lg:flex-grow "+(showSearchForm?'w-full':'')}>
-            <button
-              onClick={ () => { history.goBack(); } } 
-              className={"hover:bg-gray-200 lg:hidden "+(showSearchForm?'':'hidden')}>
-              <BackIcon />
-              <span className="sr-only">{ t('Previous_page') }</span>
-            </button>
-            <form method="GET" className={"flex-grow lg:block "+(showSearchForm?'':'hidden')}>
+          <div className={"flex items-center lg:flex-grow "}>
+            <form method="GET" className={"flex-grow hidden lg:block"}>
               <input 
                 type="search" 
                 placeholder="Search Foodme" 
@@ -76,7 +67,7 @@ export default function Header() {
             </form>
             <Link 
               to="/search"
-              className={"text-gray-500 hover:bg-gray-200 block p-1 lg:hidden "+(showSearchForm?'hidden':'')}>
+              className={"text-gray-500 hover:bg-gray-200 block p-1 lg:hidden"}>
               <SearchIcon classList="fill-current mx-auto" />
               <span className="sr-only">Search</span>
             </Link>

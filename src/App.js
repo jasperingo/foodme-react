@@ -4,12 +4,13 @@ import { useLocation } from "react-router";
 import { Switch, Route } from "react-router-dom";
 import i18n from './locales/i18n';
 import { useAppContext } from "./context/AppContext";
-import { NAVIGATED, NAVIGATED_FROM_SEARCH } from "./context/AppActions";
+import { NAVIGATED } from "./context/AppActions";
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Cart from './pages/Cart';
+import UserAccount from './pages/UserAccount';
 import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
 import TermsOfService from './pages/TermsOfService';
@@ -28,7 +29,7 @@ function App() {
   let location = useLocation();
 
   useEffect(() => {
-    if (['/', '/categories', '/cart', '/search'].indexOf(location.pathname) < 0) {
+    if (['/', '/categories', '/cart', '/account'].indexOf(location.pathname) < 0) {
       dispatch({
         type: NAVIGATED,
         payload: false
@@ -37,18 +38,6 @@ function App() {
       dispatch({
         type: NAVIGATED,
         payload: true
-      });
-    }
-
-    if (location.pathname === '/search') {
-      dispatch({
-        type: NAVIGATED_FROM_SEARCH,
-        payload: true
-      });
-    } else {
-      dispatch({
-        type: NAVIGATED_FROM_SEARCH,
-        payload: false
       });
     }
 
@@ -76,6 +65,9 @@ function App() {
           </Route>
           <Route path="/search">
             <SearchHistory />
+          </Route>
+          <Route path="/account">
+            <UserAccount />
           </Route>
           <Route path="/cart">
             <Cart />

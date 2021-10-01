@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import SubHeader from '../components/SubHeader';
 import HistoryIcon from '../icons/HistoryIcon';
 
 function HistoryItem({ text }) {
@@ -15,8 +16,12 @@ function HistoryItem({ text }) {
 }
 
 export default function SearchHistory() {
+
   return (
     <section>
+
+      <SubHeader search={true} />
+
       <div className="container mx-auto">
         <ul className="p-2">
           <HistoryItem text="Chicken pizza" />
@@ -25,6 +30,7 @@ export default function SearchHistory() {
           <HistoryItem text="Palace Fast food" />
         </ul>
       </div>
+
     </section>
   );
 }

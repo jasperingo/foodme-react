@@ -7,7 +7,6 @@ const initialState = {
   foods : [],
   cartItems : [],
   showHeader : true,
-  showSearchForm: false,
 }
 
 export const AppContext = createContext(initialState);

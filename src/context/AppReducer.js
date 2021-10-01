@@ -1,5 +1,5 @@
 
-import { NAVIGATED, NAVIGATED_FROM_SEARCH } from "./AppActions";
+import { NAVIGATED } from "./AppActions";
 
 export default function AppReducer (state, action) {
   
@@ -9,12 +9,6 @@ export default function AppReducer (state, action) {
       return {
         ...state,
         showHeader: action.payload
-      };
-
-    case NAVIGATED_FROM_SEARCH :
-      return {
-        ...state,
-        showSearchForm: action.payload
       };
 
     default:
