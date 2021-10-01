@@ -12,25 +12,6 @@ import EmailIcon from '../icons/EmailIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
 
 
-const FAKE_CATS = [
-  {
-    id: 0,
-    name: 'All'
-  },
-  {
-    id: 1,
-    name: 'Soup'
-  },
-  {
-    id: 2,
-    name: 'Rice'
-  },
-  {
-    id: 3,
-    name: 'Beans'
-  }
-];
-
 function StoreDataItem({ Icon, data }) {
   return (
     <li className="inline-flex">
@@ -55,21 +36,129 @@ function StoreCategoriesItem({ category, action }) {
   );
 }
 
+function StoreCategoriesList({ categories, onStoreCategoryClick }) {
+
+  const categoryItems = categories.map((cat)=> (
+    <StoreCategoriesItem 
+      key={ `cat_${cat.id}` }
+      category={cat}
+      action={onStoreCategoryClick} 
+      />
+  ));
+
+  return (
+    <div className="border-b">
+
+      <div className="container mx-auto px-2">
+
+        <ul className="flex my-2">
+          { categoryItems }
+        </ul>
+
+      </div>
+
+    </div>
+  );
+}
+
+function StoreProductsList({ products }) {
+
+  return (
+    <div>
+
+      <div className="container mx-auto px-2">
+
+        <ul>
+          <li>A product</li>
+        </ul>
+
+      </div>
+
+    </div>
+  );
+}
+
+function StoreDataContainer({ storeData }) {
+
+  return (
+    <div className="border-b">
+
+      <div className="container mx-auto px-2">
+
+        <div className="flex items-center mb-2">
+          <img 
+            src={ `/photos/${storeData.logo}` } 
+            alt={ storeData.name } 
+            className="w-10 h-10 border rounded-full" 
+            />
+          <h4 className="font-bold ml-2">{ storeData.name }</h4> 
+        </div>
+
+        <ul>
+
+          <StoreDataItem Icon={LocationIcon} data={ storeData.address } />
+
+          <StoreDataItem Icon={PhoneIcon} data={ storeData.phone } />
+
+          <StoreDataItem Icon={EmailIcon} data={ storeData.email } />
+
+          <StoreDataItem Icon={CategoriesIcon} data={ storeData.category } />
+
+          <StoreDataItem Icon={ReviewIcon} data={ storeData.rating } />
+
+        </ul>
+
+      </div>
+
+    </div>
+  );
+}
+
 export default function Store() {
 
   const { t } = useTranslation();
 
-  const [storeData, setStoreData] = useState({});
+  const [storeData, setStoreData] = useState(null);
+
+  const [storeCategories, setStoreCategories] = useState(null);
+
+  const [storeProducts, setStoreProducts] = useState(null);
 
   let { ID } = useParams();
 
-  let headerTitle = storeData.name || t('Store_name');
+  let headerTitle = (storeData && storeData.name) || t('Store_name');
   
+  function fetchStoreProducts() {
+    if (!storeProducts) 
+      fetch(`${API_URL}store-products.json?id=${ID}`)
+        .then(response => response.json())
+        .then(data => setStoreProducts(data.data));
+  }
+
+  function fetchStoreCategories() {
+    if (!storeCategories) 
+      fetch(`${API_URL}store-category.json?id=${ID}`)
+        .then(response => response.json())
+        .then(data => { 
+          data.data.unshift({
+            id: 0,
+            name: 'All'
+          });
+        
+          setStoreCategories(data.data);
+
+          fetchStoreProducts();
+        });
+  }
+
   function fetchStoreData() {
-    if (!storeData.id) 
+    if (!storeData) 
       fetch(`${API_URL}store.json?id=${ID}`)
         .then(response => response.json())
-        .then(data => setStoreData(data.data));
+        .then(data => {
+          setStoreData(data.data);
+          fetchStoreCategories();
+        });
   }
 
   useEffect(fetchStoreData);
@@ -78,70 +167,33 @@ export default function Store() {
 
   }
 
-  const categoryItems = FAKE_CATS.map((cat)=> (
-    <StoreCategoriesItem 
-      key={ `cat_${cat.id}` }
-      category={cat}
-      action={onStoreCategoryClick} 
-      />
-  ));
-
 
   return (
     <section>
 
       <SubHeader title={ headerTitle } />
 
-      <div className="border-b">
+      { storeData ? <StoreDataContainer storeData={storeData} /> : <Loading /> }
 
-        <div className="container mx-auto px-2">
+      { 
+        storeData ? 
+          storeCategories ? 
+            <StoreCategoriesList 
+              categories={storeCategories} 
+              onStoreCategoryClick={onStoreCategoryClick} 
+              /> 
+          : <Loading /> 
+        : ''
+      }
 
-          <div className="flex items-center mb-2">
-            <img 
-              src={ `/photos/${storeData.logo}` } 
-              alt={ storeData.name } 
-              className="w-10 h-10 border rounded-full" 
-              />
-            <h4 className="font-bold ml-2">{ storeData.name }</h4> 
-          </div>
-
-          <ul>
-
-            <StoreDataItem Icon={LocationIcon} data={ storeData.address } />
-
-            <StoreDataItem Icon={PhoneIcon} data={ storeData.phone } />
-
-            <StoreDataItem Icon={EmailIcon} data={ storeData.email } />
-
-            <StoreDataItem Icon={CategoriesIcon} data={ storeData.category } />
-
-            <StoreDataItem Icon={ReviewIcon} data={ storeData.rating } />
-
-          </ul>
-
-          <ul className="flex my-2">
-            { categoryItems }
-          </ul>
-
-        </div>
-
-      </div>
-
-      <div>
-
-        <div className="container mx-auto px-2">
-
-        <Loading />
-
-        <ul>
-
-        </ul>
-
-        </div>
-
-      </div>
-
-
+      {
+        storeData && storeCategories ?
+          storeProducts ? 
+            <StoreProductsList />
+          : <Loading /> 
+        : ''
+      }
+      
     </section>
   );
 }

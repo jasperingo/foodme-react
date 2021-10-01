@@ -1,0 +1,16 @@
+{
+  "data" : [
+    {
+      "id": 1,
+      "name": "Soup"
+    },
+    {
+      "id": 2,
+      "name": "Rice"
+    },
+    {
+      "id": 3,
+      "name": "Beans"
+    }
+  ]
+}
