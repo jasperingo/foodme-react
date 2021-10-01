@@ -24,8 +24,8 @@ function CategoryItem({ name, iconColor, numberOfResturants }) {
 export default function Categories() {
   return (
     <section>
-      <div className="container mx-auto">
-        <ul className="p-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
+      <div className="container mx-auto px-2">
+        <ul className="py-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
 
           <CategoryItem name="African" iconColor="text-red-500" numberOfResturants="45" />
 

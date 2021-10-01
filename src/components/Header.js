@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import HomeIcon from '../icons/HomeIcon';
 import UserIcon from '../icons/UserIcon';
@@ -8,6 +8,7 @@ import CartIcon from '../icons/CartIcon';
 import SearchIcon from '../icons/SearchIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
 import { useAppContext } from '../context/AppContext';
+import { NAVIGATED } from '../context/AppActions';
 
 
 export const NAV_LINKS = [
@@ -38,7 +39,25 @@ export default function Header() {
 
   const { t } = useTranslation();
 
-  const { showHeader } = useAppContext();
+  const { dispatch, showHeader } = useAppContext();
+
+  let location = useLocation();
+
+  useEffect(() => {
+    
+    if (['/', '/categories', '/cart', '/account'].indexOf(location.pathname) < 0) {
+      dispatch({
+        type: NAVIGATED,
+        payload: false
+      });
+    } else {
+      dispatch({
+        type: NAVIGATED,
+        payload: true
+      });
+    }
+
+  }, [location, dispatch]);
   
   const navItems = NAV_LINKS.map((item, i) => (
     <NavItem 

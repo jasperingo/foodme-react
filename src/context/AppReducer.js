@@ -1,5 +1,8 @@
 
-import { NAVIGATED } from "./AppActions";
+import { 
+  NAVIGATED, 
+  RESTAURANT_CATEGORIES_FETCHED
+} from "./AppActions";
 
 export default function AppReducer (state, action) {
   
@@ -10,6 +13,12 @@ export default function AppReducer (state, action) {
         ...state,
         showHeader: action.payload
       };
+    
+      case RESTAURANT_CATEGORIES_FETCHED :
+        return {
+          ...state,
+          restaurantCategories: action.payload
+        };
 
     default:
       return state;

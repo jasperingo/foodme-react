@@ -1,10 +1,7 @@
 
-import React, { useEffect } from 'react';
-import { useLocation } from "react-router";
+import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import i18n from './locales/i18n';
-import { useAppContext } from "./context/AppContext";
-import { NAVIGATED } from "./context/AppActions";
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -23,25 +20,6 @@ import './styles/App.css';
 function App() {
 
   i18n.changeLanguage('en');
-
-  const { dispatch } = useAppContext();
-
-  let location = useLocation();
-
-  useEffect(() => {
-    if (['/', '/categories', '/cart', '/account'].indexOf(location.pathname) < 0) {
-      dispatch({
-        type: NAVIGATED,
-        payload: false
-      });
-    } else {
-      dispatch({
-        type: NAVIGATED,
-        payload: true
-      });
-    }
-
-  }, [location, dispatch]);
 
   return (
     <>

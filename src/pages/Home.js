@@ -1,8 +1,11 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import Loading from '../components/Loading';
 import ResturantItem from '../components/ResturantItem';
+import { useAppContext } from '../context/AppContext';
+import { RESTAURANT_CATEGORIES_FETCHED } from '../context/AppActions';
 import CategoriesIcon from '../icons/CategoriesIcon';
 
 function CategoryItem({ name, iconColor }) {
@@ -21,7 +24,44 @@ function CategoryItem({ name, iconColor }) {
 
 export default function Home() {
 
+  const [restaurants, setRestaurants] = useState([]);
+
   const { t } = useTranslation();
+
+  const { dispatch, restaurantCategories } = useAppContext();
+  
+  const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
+  
+  const categories = restaurantCategories.map((item, i) => (
+    <CategoryItem 
+      key={i} 
+      name={item} 
+      iconColor={catColors[i%catColors.length]}
+      />
+  ));
+
+  const restaurantsList = restaurants.map((item, i)=> (
+    <ResturantItem 
+      key={i}
+      photo={item.logo}
+      name={item.name}
+      location={item.address}
+      ratings={item.ratings}
+      />     
+  ));
+
+  useEffect(() => {
+    fetch('faker/category.json')
+      .then(response => response.json())
+      .then(data => dispatch({
+        type: RESTAURANT_CATEGORIES_FETCHED,
+        payload: data.data
+      }));
+
+    fetch('faker/restaurants.json')
+      .then(response => response.json())
+      .then(data => setRestaurants(data.data));
+  }, [dispatch]);
 
   return (
     <section>
@@ -30,42 +70,24 @@ export default function Home() {
 
           <div className="bg-gray-200 lg:rounded lg:my-2">
             <div className="container mx-auto">
+              
               <h2 className="font-bold px-2 pt-4 text-lg">{ t('Categories') }</h2>
+              { categories.length < 1 ? <Loading /> :
               <ul className="grid grid-cols-3 md:grid-cols-4 gap-4 px-2 py-3 lg:block">
-
-                <CategoryItem name="African" iconColor="text-red-500" />
-
-                <CategoryItem name="Snacks" iconColor="text-purple-500" />
-
-                <CategoryItem name="Coffee" iconColor="text-red-500" />
-
-                <CategoryItem name="Pizza" iconColor="text-blue-500" />
-
-                <CategoryItem name="Chinese" iconColor="text-pink-500" />
-
-                <CategoryItem name="Mexican" iconColor="text-green-500" />
-
+                { categories } 
               </ul>
+              }
             </div>
           </div>
 
           <div className="flex-grow">
             <div className="container mx-auto">
               <h2 className="font-bold px-2 pt-4 pb-2 text-lg">{ t('Recommended') }</h2>
+               { restaurants.length < 1 ? <Loading /> :
               <ul className="p-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
-                <ResturantItem photo="r1.webp" name="Grill D' punch" location="Ihiagwa, Owerri" ratings="4.7" />
-                <ResturantItem photo="r2.jpg" name="Mama Best" location="28 Douglas Road, Owerri" ratings="3.0" />
-                <ResturantItem photo="r3.jpg" name="King chef arena" location="Nekede, Owerri" ratings="4.2" />
-                <ResturantItem photo="r4.webp" name="Good food" location="42 Obinze, Owerri" ratings="4.9" />
-                <ResturantItem photo="r1.webp" name="Grill D' punch" location="Ihiagwa, Owerri" ratings="4.7" />
-                <ResturantItem photo="r2.jpg" name="Mama Best" location="28 Douglas Road, Owerri" ratings="3.0" />
-                <ResturantItem photo="r3.jpg" name="King chef arena" location="Nekede, Owerri" ratings="4.2" />
-                <ResturantItem photo="r4.webp" name="Good food" location="42 Obinze, Owerri" ratings="4.9" />
-                <ResturantItem photo="r1.webp" name="Grill D' punch" location="Ihiagwa, Owerri" ratings="4.7" />
-                <ResturantItem photo="r2.jpg" name="Mama Best" location="28 Douglas Road, Owerri" ratings="3.0" />
-                <ResturantItem photo="r3.jpg" name="King chef arena" location="Nekede, Owerri" ratings="4.2" />
-                <ResturantItem photo="r4.webp" name="Good food" location="42 Obinze, Owerri" ratings="4.9" />
+                { restaurantsList }
               </ul>
+              }
             </div>
           </div>
         </div>

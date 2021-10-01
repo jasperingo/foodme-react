@@ -3,9 +3,10 @@ import React, { useReducer, useContext, createContext } from "react";
 import AppReducer from './AppReducer';
 
 const initialState = {
-  resturants : [],
-  foods : [],
-  cartItems : [],
+  restaurants: [],
+  foods: [],
+  cartItems: [],
+  restaurantCategories: [],
   showHeader : true,
 }
 

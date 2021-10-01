@@ -10,6 +10,7 @@ export const TRANSLATIONS_EN = {
 
   OR: 'OR',
 
+  Retry: 'Retry',
   Previous_page: 'Previous page',
   Contact_us: 'Contact us',
   About_us: 'About us',
