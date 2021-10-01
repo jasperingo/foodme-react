@@ -1,10 +1,10 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Loading from '../components/Loading';
 import ResturantItem from '../components/ResturantItem';
-import { useAppContext } from '../context/AppContext';
+import { useAppContext, API_URL } from '../context/AppContext';
 import { RESTAURANT_CATEGORIES_FETCHED } from '../context/AppActions';
 import CategoriesIcon from '../icons/CategoriesIcon';
 
@@ -22,9 +22,7 @@ function CategoryItem({ name, iconColor }) {
   );
 }
 
-export default function Home() {
-
-  const [restaurants, setRestaurants] = useState([]);
+export default function Home({ restaurants, onRestaurantsFetched }) {
 
   const { t } = useTranslation();
 
@@ -43,6 +41,7 @@ export default function Home() {
   const restaurantsList = restaurants.map((item, i)=> (
     <ResturantItem 
       key={i}
+      ID={item.id}
       photo={item.logo}
       name={item.name}
       location={item.address}
@@ -51,24 +50,24 @@ export default function Home() {
   ));
 
   useEffect(() => {
-    fetch('faker/category.json')
+    fetch(`${API_URL}category.json`)
       .then(response => response.json())
       .then(data => dispatch({
         type: RESTAURANT_CATEGORIES_FETCHED,
         payload: data.data
       }));
 
-    fetch('faker/restaurants.json')
+    fetch(`${API_URL}restaurants.json`)
       .then(response => response.json())
-      .then(data => setRestaurants(data.data));
-  }, [dispatch]);
+      .then(data => onRestaurantsFetched(data.data));
+  }, [dispatch, onRestaurantsFetched]);
 
   return (
     <section>
       <div className="lg:container mx-auto">
         <div className="lg:flex lg:items-start lg:gap-2">
 
-          <div className="bg-gray-200 lg:rounded lg:my-2">
+          <div className="bg-gray-200 lg:rounded lg:my-2 lg:w-56">
             <div className="container mx-auto">
               
               <h2 className="font-bold px-2 pt-4 text-lg">{ t('Categories') }</h2>
@@ -83,7 +82,7 @@ export default function Home() {
           <div className="flex-grow">
             <div className="container mx-auto">
               <h2 className="font-bold px-2 pt-4 pb-2 text-lg">{ t('Recommended') }</h2>
-               { restaurants.length < 1 ? <Loading /> :
+              { restaurants.length < 1 ? <Loading /> :
               <ul className="p-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
                 { restaurantsList }
               </ul>

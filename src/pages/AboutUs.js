@@ -16,7 +16,7 @@ function AboutFeature({ Icon, text }) {
     <li className="md:flex-grow md:border md:rounded md:hover:bg-gray-200">
       <div className="my-4 p-4">
         <div className="text-yellow-500">
-          <Icon />
+          <Icon classList="mx-auto text-yellow-500 fill-current" />
         </div>
         <div className="text-center font-bold">{ text }</div>
       </div>
@@ -30,7 +30,7 @@ function PartnerWithUsItem({ image, url, text }) {
 
   return (
     <li className="mb-5 md:flex-grow">
-      <Link to={ url } className="block relative border mx-auto w-full h-52">
+      <Link to={ url } className="block relative mx-auto w-full h-52">
         <img 
           src={ image } 
           alt="resturant dinner table" 
@@ -38,7 +38,7 @@ function PartnerWithUsItem({ image, url, text }) {
           height="100" 
           className="w-full h-full rounded" 
           />
-        <div className="absolute bottom-0 left-0 text-white w-full bg-black bg-opacity-50 p-2 rounded">
+        <div className="absolute bottom-0 left-0 text-white w-full bg-black bg-opacity-50 p-2 rounded-b">
           { t(text) }
         </div>
       </Link>

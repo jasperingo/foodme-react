@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Switch, Route } from "react-router-dom";
 import i18n from './locales/i18n';
 import Header from './components/Header';
@@ -15,17 +15,23 @@ import Categories from './pages/Categories';
 import SearchHistory from './pages/SearchHistory';
 import Register from './pages/Register';
 import './styles/App.css';
+import Store from './pages/Store';
 
 
 function App() {
 
   i18n.changeLanguage('en');
 
+  const [restaurants, setRestaurants] = useState([]);
+
   return (
     <>
       <Header />
       <main className="pb-20">
         <Switch>
+          <Route path="/store/:ID">
+            <Store />
+          </Route>
           <Route path="/terms-of-service">    
             <TermsOfService />
           </Route>
@@ -54,7 +60,7 @@ function App() {
             <Categories />
           </Route>
           <Route path="/">
-            <Home />
+            <Home restaurants={restaurants} onRestaurantsFetched={setRestaurants} />
           </Route>
         </Switch>
       </main>

@@ -10,6 +10,8 @@ const initialState = {
   showHeader : true,
 }
 
+export const API_URL = '/faker/';
+
 export const AppContext = createContext(initialState);
 
 export const useAppContext = () => useContext(AppContext);

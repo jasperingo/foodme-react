@@ -54,6 +54,8 @@ export const TRANSLATIONS_EN = {
 
   Your_cart_is_empty: 'Your cart is empty',
 
+  Store_name: 'Store name',
+
   Recommended: 'Recommended',
 
 

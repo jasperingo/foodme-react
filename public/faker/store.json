@@ -1,0 +1,12 @@
+{
+  "data" : {
+    "id" : 23,
+    "logo" : "r2.jpg",
+    "name" : "Everest foods",
+    "address" : "Ihiagwa, Owerri",
+    "phone" : "09035382455",
+    "email" : "eataer@gmail.com",
+    "category" : "Restaurant",
+    "rating" : "3.9"
+  }
+}
