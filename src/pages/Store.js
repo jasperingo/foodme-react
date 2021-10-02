@@ -10,6 +10,7 @@ import ReviewIcon from '../icons/ReviewIcon';
 import PhoneIcon from '../icons/PhoneIcon';
 import EmailIcon from '../icons/EmailIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
+import ProductItem from '../components/ProductItem';
 
 
 function StoreDataItem({ Icon, data }) {
@@ -63,17 +64,20 @@ function StoreCategoriesList({ categories, onStoreCategoryClick }) {
 
 function StoreProductsList({ products }) {
 
+  const prodItems = products.map((p)=> (
+    <ProductItem
+      key={`prod_${p.id}`}
+      prod={p}
+      />
+  ));
+
   return (
     <div>
-
       <div className="container mx-auto px-2">
-
-        <ul>
-          <li>A product</li>
+        <ul className="py-2">
+          { prodItems }
         </ul>
-
       </div>
-
     </div>
   );
 }
@@ -189,7 +193,7 @@ export default function Store() {
       {
         storeData && storeCategories ?
           storeProducts ? 
-            <StoreProductsList />
+            <StoreProductsList products={storeProducts} />
           : <Loading /> 
         : ''
       }
