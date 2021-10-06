@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Switch, Route } from "react-router-dom";
 import i18n from './locales/i18n';
+import './styles/App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -14,8 +15,8 @@ import TermsOfService from './pages/TermsOfService';
 import Categories from './pages/Categories';
 import SearchHistory from './pages/SearchHistory';
 import Register from './pages/Register';
-import './styles/App.css';
 import Store from './pages/Store';
+import Product from './pages/Product';
 
 
 function App() {
@@ -29,6 +30,9 @@ function App() {
       <Header />
       <main className="pb-20">
         <Switch>
+          <Route path="/store/:sID/product/:pID">
+            <Product />
+          </Route>
           <Route path="/store/:ID">
             <Store />
           </Route>

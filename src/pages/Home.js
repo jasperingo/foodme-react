@@ -33,7 +33,7 @@ export default function Home({ restaurants, onRestaurantsFetched }) {
   const categories = restaurantCategories.map((item, i) => (
     <CategoryItem 
       key={i} 
-      name={item} 
+      name={item.name} 
       iconColor={catColors[i%catColors.length]}
       />
   ));
@@ -50,17 +50,27 @@ export default function Home({ restaurants, onRestaurantsFetched }) {
   ));
 
   useEffect(() => {
-    fetch(`${API_URL}category.json`)
-      .then(response => response.json())
-      .then(data => dispatch({
-        type: RESTAURANT_CATEGORIES_FETCHED,
-        payload: data.data
-      }));
+    if (restaurantCategories.length < 1) {
+      fetch(`${API_URL}category.json`)
+        .then(response => {
+          console.log(`${response.status} ${response.ok}`)
+          if (!response.ok)
+            throw new Error(response.status);
+          return response.json();
+        })
+        .then(data => dispatch({
+          type: RESTAURANT_CATEGORIES_FETCHED,
+          payload: data.data
+        }))
+        .catch(err => {
+          console.error(err);
+        });
+    }
 
     fetch(`${API_URL}restaurants.json`)
       .then(response => response.json())
       .then(data => onRestaurantsFetched(data.data));
-  }, [dispatch, onRestaurantsFetched]);
+  }, [dispatch, onRestaurantsFetched, restaurantCategories]);
 
   return (
     <section>

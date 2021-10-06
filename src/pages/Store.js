@@ -24,12 +24,15 @@ function StoreDataItem({ Icon, data }) {
   );
 }
 
-function StoreCategoriesItem({ category, action }) {
+function StoreCategoriesItem({ category, action, isActive }) {
+
+  let color = isActive ? 'bg-yellow-500 text-white hover:bg-yellow-300' : 'bg-white text-gray-500 hover:bg-gray-100';
+
   return (
     <li>
       <button 
         onClick={ ()=> action(category) }
-        className={ `block ${category.id === 0 ? 'bg-yellow-500' : 'bg-white'} text-gray-500 px-2 py-1 rounded hover:bg-gray-100` }
+        className={ `block ${color}  px-2 py-1 rounded hover:bg-gray-100` }
         >
         { category.name }
       </button>
@@ -37,12 +40,13 @@ function StoreCategoriesItem({ category, action }) {
   );
 }
 
-function StoreCategoriesList({ categories, onStoreCategoryClick }) {
+function StoreCategoriesList({ categories, onStoreCategoryClick, activeItem }) {
 
   const categoryItems = categories.map((cat)=> (
     <StoreCategoriesItem 
       key={ `cat_${cat.id}` }
       category={cat}
+      isActive={cat.name === activeItem}
       action={onStoreCategoryClick} 
       />
   ));
@@ -74,7 +78,7 @@ function StoreProductsList({ products }) {
   return (
     <div>
       <div className="container mx-auto px-2">
-        <ul className="py-2">
+        <ul className="py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
           { prodItems }
         </ul>
       </div>
@@ -128,12 +132,14 @@ export default function Store() {
 
   const [storeProducts, setStoreProducts] = useState(null);
 
+  const [activeCategory, setActiveCategory] = useState('All');
+
   let { ID } = useParams();
 
   let headerTitle = (storeData && storeData.name) || t('Store_name');
   
   function fetchStoreProducts() {
-    if (!storeProducts) 
+    if (!storeProducts)
       fetch(`${API_URL}store-products.json?id=${ID}`)
         .then(response => response.json())
         .then(data => setStoreProducts(data.data));
@@ -167,8 +173,12 @@ export default function Store() {
 
   useEffect(fetchStoreData);
 
-  function onStoreCategoryClick(category) {
+  useEffect(fetchStoreProducts, [storeProducts, ID]);
 
+  function onStoreCategoryClick(category) {
+    if (category.name === activeCategory) return;
+    setActiveCategory(category.name);
+    setStoreProducts(null);
   }
 
 
@@ -184,6 +194,7 @@ export default function Store() {
           storeCategories ? 
             <StoreCategoriesList 
               categories={storeCategories} 
+              activeItem={activeCategory}
               onStoreCategoryClick={onStoreCategoryClick} 
               /> 
           : <Loading /> 

@@ -1,10 +1,29 @@
 {
   "data" : [
-    "African",
-    "Fast food",
-    "Pastry",
-    "Cafe",
-    "Mexican",
-    "Chinese"
+    {
+      "name": "African",
+      "stores_count": 20
+    },
+    {
+      "name": "Fast food",
+      "stores_count": 34
+    },
+    {
+      "name": "Pastry",
+      "stores_count": 12
+    },
+    {
+      "name": "Cafe",
+      "stores_count": 34
+    },
+    {
+      "name": "Mexican",
+      "stores_count": 4
+    },
+    {
+      "name": "Chinese",
+      "stores_count": 7
+    }
   ]
 }
+
