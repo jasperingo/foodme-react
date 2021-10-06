@@ -1,12 +1,15 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import Reload from '../components/Reload';
 import Loading from '../components/Loading';
 import ResturantItem from '../components/ResturantItem';
 import { useAppContext, API_URL } from '../context/AppContext';
 import { RESTAURANT_CATEGORIES_FETCHED } from '../context/AppActions';
 import CategoriesIcon from '../icons/CategoriesIcon';
+import ResturantIcon from '../icons/ResturantIcon';
+import EmptyList from '../components/EmptyList';
 
 function CategoryItem({ name, iconColor }) {
   return (
@@ -22,55 +25,121 @@ function CategoryItem({ name, iconColor }) {
   );
 }
 
-export default function Home({ restaurants, onRestaurantsFetched }) {
+
+export default function Home({ stores, setStores }) {
 
   const { t } = useTranslation();
 
   const { dispatch, restaurantCategories } = useAppContext();
+
+  const [categoriesFetch, setCategoriesFetch] = useState(restaurantCategories.length < 1 ? 0 : 1);
   
+  const [storesFetched, setStoresFetched] = useState(stores.length < 1 ? 0 : 1);
+
   const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
-  
-  const categories = restaurantCategories.map((item, i) => (
-    <CategoryItem 
-      key={i} 
-      name={item.name} 
-      iconColor={catColors[i%catColors.length]}
-      />
-  ));
 
-  const restaurantsList = restaurants.map((item, i)=> (
-    <ResturantItem 
-      key={i}
-      ID={item.id}
-      photo={item.logo}
-      name={item.name}
-      location={item.address}
-      ratings={item.ratings}
-      />     
-  ));
+  let categoriesRender, storesRender;
 
-  useEffect(() => {
-    if (restaurantCategories.length < 1) {
+  function fetchCategories() {
+    if (categoriesFetch === 0) {
       fetch(`${API_URL}category.json`)
         .then(response => {
-          console.log(`${response.status} ${response.ok}`)
           if (!response.ok)
             throw new Error(response.status);
           return response.json();
         })
-        .then(data => dispatch({
-          type: RESTAURANT_CATEGORIES_FETCHED,
-          payload: data.data
-        }))
+        .then(data => {
+          setCategoriesFetch(1);
+          dispatch({
+            type: RESTAURANT_CATEGORIES_FETCHED,
+            payload: data.data
+          })
+        })
         .catch(err => {
-          console.error(err);
+          setCategoriesFetch(-1);
         });
     }
+  }
 
-    fetch(`${API_URL}restaurants.json`)
-      .then(response => response.json())
-      .then(data => onRestaurantsFetched(data.data));
-  }, [dispatch, onRestaurantsFetched, restaurantCategories]);
+  function refetchCategories() {
+    setCategoriesFetch(0);
+    fetchCategories();
+  }
+
+  async function fetchStores() {
+    if (storesFetched !== 0) return;
+    
+    try {
+      let response = await fetch(`${API_URL}restaurants.json`);
+
+      if (!response.ok)
+        throw new Error(response.status);
+      
+      let data = await response.json();
+
+      setStores(data.data);
+      setStoresFetched(1);
+
+    } catch (err) {
+      setStoresFetched(-1);
+    }
+  }
+
+  function refetchStores() {
+    setStoresFetched(0);
+    fetchStores();
+  }
+
+  useEffect(fetchCategories);
+
+  useEffect(fetchStores);
+
+  if (categoriesFetch === 0) {
+    categoriesRender = <Loading />;
+  } else if (categoriesFetch === -1) {
+    categoriesRender = <Reload action={refetchCategories} />;
+  } else if (categoriesFetch === 1 && restaurantCategories.length === 0) {
+    categoriesRender = <EmptyList text="_empty.No_category" Icon={CategoriesIcon} />;
+  } else {
+    categoriesRender = (
+      <ul className="grid grid-cols-3 md:grid-cols-4 gap-4 px-2 py-3 lg:block">
+        { 
+          restaurantCategories.map((item, i) => (
+            <CategoryItem 
+              key={i} 
+              name={item.name} 
+              iconColor={catColors[i%catColors.length]}
+              />
+          ))
+        } 
+      </ul>
+    );
+  }
+
+  if (storesFetched === 0) {
+    storesRender = <Loading />;
+  } else if (storesFetched === -1) {
+    storesRender = <Reload action={refetchStores} />;
+  } else if (storesFetched === 1 && stores.length === 0) {
+    storesRender = <EmptyList text="_empty.No_store" Icon={ResturantIcon} />;
+  } else {
+    storesRender = (
+      <ul className="py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
+        { 
+          stores.map((item, i)=> (
+            <ResturantItem 
+              key={i}
+              ID={item.id}
+              photo={item.logo}
+              name={item.name}
+              location={item.address}
+              ratings={item.ratings}
+              />     
+          ))
+        } 
+      </ul>
+    );
+  }
 
   return (
     <section>
@@ -78,25 +147,16 @@ export default function Home({ restaurants, onRestaurantsFetched }) {
         <div className="lg:flex lg:items-start lg:gap-2">
 
           <div className="bg-gray-200 lg:rounded lg:my-2 lg:w-56">
-            <div className="container mx-auto">
-              
+            <div className="container mx-auto border">
               <h2 className="font-bold px-2 pt-4 text-lg">{ t('Categories') }</h2>
-              { categories.length < 1 ? <Loading /> :
-              <ul className="grid grid-cols-3 md:grid-cols-4 gap-4 px-2 py-3 lg:block">
-                { categories } 
-              </ul>
-              }
+              { categoriesRender }
             </div>
           </div>
 
           <div className="flex-grow">
             <div className="container mx-auto">
               <h2 className="font-bold px-2 pt-4 pb-2 text-lg">{ t('Recommended') }</h2>
-              { restaurants.length < 1 ? <Loading /> :
-              <ul className="p-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
-                { restaurantsList }
-              </ul>
-              }
+              { storesRender }
             </div>
           </div>
         </div>

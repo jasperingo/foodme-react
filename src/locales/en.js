@@ -52,9 +52,18 @@ export const TRANSLATIONS_EN = {
   Already_have_an_account: 'Already have an account?',
   By_registering_you_agree_to_our: 'By registering, you agree to our',
 
-  Your_cart_is_empty: 'Your cart is empty',
-
   Store_name: 'Store name',
+
+  _empty: {
+    No_store: 'No store',
+    No_category: 'No category',
+    List_is_empty: 'List is empty',
+    Your_cart_is_empty: 'Your cart is empty',
+  },
+
+  _errors: {
+    Something_went_wrong: 'Something went wrong'
+  },
 
   Recommended: 'Recommended',
 

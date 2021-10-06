@@ -64,7 +64,7 @@ function App() {
             <Categories />
           </Route>
           <Route path="/">
-            <Home restaurants={restaurants} onRestaurantsFetched={setRestaurants} />
+            <Home stores={restaurants} setStores={setRestaurants} />
           </Route>
         </Switch>
       </main>
