@@ -4,14 +4,14 @@ import { Link } from 'react-router-dom';
 import LocationIcon from '../icons/LocationIcon';
 import ReviewIcon from '../icons/ReviewIcon';
 
-export default function ResturantItem({ ID, photo, name, location, ratings }) {
+export default function StoreItem({ ID, photo, name, location, ratings }) {
   return (
-    <li className="bg-white">
-      <Link to={`/store/${ID}`} className="flex mb-5 hover:bg-gray-100 md:block">
+    <li className="bg-color ">
+      <Link to={`/store/${ID}`} className="flex mb-5 hover:bg-color-gray-h dark:hover:bg-color-gray-dh md:block">
         <img src={ `/photos/${photo}` } alt={name} className="w-20 h-20 border md:w-full md:h-full" />
         <div className="flex-grow pl-2 lg:pt-2">
           <h4 className="font-bold mb-1">{ name }</h4>
-          <div className="text-gray-500 mb-1 flex">
+          <div className="text-color-gray mb-1 flex">
             <LocationIcon classList="fill-current inline-block" />
             <span className="inline-block">{ location }</span>
           </div>

@@ -25,8 +25,8 @@ function NavItem({ title, Icon, href }) {
       <NavLink 
         exact 
         to={ href }
-        className="bg-white hover:bg-gray-100 block width-full p-2 text-sm text-gray-500"
-        activeClassName="text-yellow-500"
+        className="block width-full p-2 text-sm text-color-gray bg-color hover:bg-color-gray-h"
+        activeClassName="text-color-primary"
       >
         <Icon classList="fill-current mx-auto" />
         <span className="lg:sr-only">{ title }</span>
@@ -69,24 +69,24 @@ export default function Header() {
   ));
   
   return (
-    <header className={"bg-white px-2 py-4 border-b lg:block "+(showHeader ? '' : ' hidden')}>
+    <header className={`bg-color dark:bg-color-d px-2 py-4 border-b lg:block ${(showHeader ? '' : ' hidden')}`}>
       <div className="container mx-auto">
         <div className="flex items-center lg:gap-2">
           <h1 className={"text-2xl font-bold text-yellow-500 flex-grow lg:flex-grow-0 lg:pr-10 "}>
             <Link to="/">{ t('app_name') }</Link>
           </h1>
           
-          <div className={"flex items-center lg:flex-grow "}>
-            <form method="GET" className={"flex-grow hidden lg:block"}>
+          <div className="flex items-center lg:flex-grow ">
+            <form method="GET" className="flex-grow hidden lg:block">
               <input 
                 type="search" 
                 placeholder="Search Foodme" 
-                className="w-full rounded py-1 px-2 border border-yellow-500  focus:outline-none" 
+                className="w-full rounded py-1 px-2 border border-yellow-500 bg-color focus:outline-none" 
                 />
             </form>
             <Link 
               to="/search"
-              className={"text-gray-500 hover:bg-gray-200 block p-1 lg:hidden"}>
+              className="text-color-gray bg-color hover:bg-color-gray-h block p-1 lg:hidden">
               <SearchIcon classList="fill-current mx-auto" />
               <span className="sr-only">Search</span>
             </Link>

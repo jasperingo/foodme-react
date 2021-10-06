@@ -1,19 +1,17 @@
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+//import { useTranslation } from 'react-i18next';
+import EmptyList from '../components/EmptyList';
 import CartEmptyIcon from '../icons/CartEmptyIcon';
 
 export default function Cart() {
 
-  const { t } = useTranslation();
+  //const { t } = useTranslation();
 
   return (
     <section>
-      <div className="container mx-auto">
-        <div className="text-center bg-gray-200 mt-10 mx-2 py-5">
-          <CartEmptyIcon classList="text-yellow-500 fill-current mx-auto" />
-          <div className="font-bold mt-2">{ t('Your_cart_is_empty') }</div>
-        </div>
+      <div className="container mx-auto px-2">
+        <EmptyList text="_empty.Your_cart_is_empty" Icon={CartEmptyIcon} />
       </div>
     </section>
   );

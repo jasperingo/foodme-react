@@ -16,7 +16,7 @@ import ProductItem from '../components/ProductItem';
 function StoreDataItem({ Icon, data }) {
   return (
     <li className="inline-flex">
-      <div className="bg-gray-200 text-black  flex items-center px-2 py-1 rounded mr-2 mb-2">
+      <div className="bg-color-gray text-color flex items-center px-2 py-1 rounded mr-2 mb-2">
         <Icon classList="fill-current inline-block w-5 h-5 " />
         <span className="inline-block ml-1 text-sm">{ data }</span>
       </div>
@@ -26,13 +26,13 @@ function StoreDataItem({ Icon, data }) {
 
 function StoreCategoriesItem({ category, action, isActive }) {
 
-  let color = isActive ? 'bg-yellow-500 text-white hover:bg-yellow-300' : 'bg-white text-gray-500 hover:bg-gray-100';
+  let color = isActive ? 'bg-color-primary text-white hover:bg-yellow-300' : 'bg-color text-color-gray hover:bg-color-gray-h';
 
   return (
     <li>
       <button 
         onClick={ ()=> action(category) }
-        className={ `block ${color}  px-2 py-1 rounded hover:bg-gray-100` }
+        className={ `block ${color} px-2 py-1 rounded` }
         >
         { category.name }
       </button>
@@ -89,7 +89,7 @@ function StoreProductsList({ products }) {
 function StoreDataContainer({ storeData }) {
 
   return (
-    <div className="border-b">
+    <div>
 
       <div className="container mx-auto px-2">
 
@@ -97,12 +97,12 @@ function StoreDataContainer({ storeData }) {
           <img 
             src={ `/photos/${storeData.logo}` } 
             alt={ storeData.name } 
-            className="w-10 h-10 border rounded-full" 
+            className="w-10 h-10 md:w-16 md:h-16 border rounded-full" 
             />
-          <h4 className="font-bold ml-2">{ storeData.name }</h4> 
+          <h4 className="font-bold ml-2 md:text-xl">{ storeData.name }</h4> 
         </div>
 
-        <ul>
+        <ul className="pt-3">
 
           <StoreDataItem Icon={LocationIcon} data={ storeData.address } />
 

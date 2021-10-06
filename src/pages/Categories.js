@@ -13,11 +13,11 @@ function CategoryItem({ category, iconColor }) {
 
   return (
     <li className="">
-      <Link to="/categories" className={ `flex gap-2 bg-white px-2 py-3 md:block md:text-center hover:bg-gray-100 ${iconColor}` }>
+      <Link to="/categories" className={ `flex gap-2 bg-color px-2 py-3 md:block md:text-center hover:bg-color-gray-h ${iconColor}` }>
         <CategoriesIcon classList="fill-current mx-auto" />
         <div className="flex-grow">
           <div className="font-bold">{ category.name }</div>
-          <div className="text-sm text-gray-500">{ t('resturantWithCount', { count : parseInt(category.stores_count) }) }</div>
+          <div className="text-sm text-color-gray">{ t('resturantWithCount', { count : parseInt(category.stores_count) }) }</div>
         </div>
       </Link>
     </li>

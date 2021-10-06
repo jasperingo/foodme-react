@@ -16,8 +16,8 @@ export default function SubHeader({ title, search }) {
         <div className="flex items-center">
           <button
             onClick={ ()=> { history.goBack(); } }
-            className="hover:bg-gray-200">
-            <BackIcon />
+            className="hover:bg-color-gray-h">
+            <BackIcon classList="fill-current text-color" />
             <span className="sr-only">{ t('Previous_page') }</span>
           </button>
           {title && 
@@ -29,7 +29,7 @@ export default function SubHeader({ title, search }) {
                 name="q"
                 type="search" 
                 placeholder="Search Foodme" 
-                className="w-full rounded py-1 px-2 border border-yellow-500 focus:outline-none" 
+                className="w-full rounded py-1 px-2 border border-yellow-500 bg-color focus:outline-none" 
                 />
             </form>
           }

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Reload from '../components/Reload';
 import Loading from '../components/Loading';
-import ResturantItem from '../components/ResturantItem';
+import StoreItem from '../components/StoreItem';
 import { useAppContext, API_URL } from '../context/AppContext';
 import { RESTAURANT_CATEGORIES_FETCHED } from '../context/AppActions';
 import CategoriesIcon from '../icons/CategoriesIcon';
@@ -16,7 +16,7 @@ function CategoryItem({ name, iconColor }) {
     <li className="lg:mb-2">
       <Link 
         to="/" 
-        className={`block bg-white shadow-lg px-2 py-3 rounded text-center ${iconColor} hover:text-white hover:${iconColor.replace('text', 'bg')} lg:flex lg:text-left lg:gap-1`}
+        className={`block bg-color dark:bg-color-d hover:bg-color-gray-h dark:hover:bg-color-gray-dh shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-1`}
         >
         <CategoriesIcon classList="fill-current mx-auto" />
         <div className="flex-grow">{ name }</div>
@@ -65,7 +65,7 @@ export default function Home({ stores, setStores }) {
     setCategoriesFetch(0);
     fetchCategories();
   }
-
+  
   async function fetchStores() {
     if (storesFetched !== 0) return;
     
@@ -102,7 +102,7 @@ export default function Home({ stores, setStores }) {
     categoriesRender = <EmptyList text="_empty.No_category" Icon={CategoriesIcon} />;
   } else {
     categoriesRender = (
-      <ul className="grid grid-cols-3 md:grid-cols-4 gap-4 px-2 py-3 lg:block">
+      <ul className="grid gap-4 px-2 py-3 grid-cols-3 md:grid-cols-4 lg:block">
         { 
           restaurantCategories.map((item, i) => (
             <CategoryItem 
@@ -127,7 +127,7 @@ export default function Home({ stores, setStores }) {
       <ul className="py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
         { 
           stores.map((item, i)=> (
-            <ResturantItem 
+            <StoreItem 
               key={i}
               ID={item.id}
               photo={item.logo}
@@ -146,16 +146,16 @@ export default function Home({ stores, setStores }) {
       <div className="lg:container mx-auto">
         <div className="lg:flex lg:items-start lg:gap-2">
 
-          <div className="bg-gray-200 lg:rounded lg:my-2 lg:w-56">
-            <div className="container mx-auto border">
-              <h2 className="font-bold px-2 pt-4 text-lg">{ t('Categories') }</h2>
+          <div className="bg-color-gray lg:rounded lg:my-2 lg:w-56">
+            <div className="container mx-auto px-2 border border-transparent">
+              <h2 className="font-bold pt-4 text-lg">{ t('Categories') }</h2>
               { categoriesRender }
             </div>
           </div>
 
           <div className="flex-grow">
-            <div className="container mx-auto">
-              <h2 className="font-bold px-2 pt-4 pb-2 text-lg">{ t('Recommended') }</h2>
+            <div className="container mx-auto px-2">
+              <h2 className="font-bold pt-4 pb-2 text-lg text-primary">{ t('Recommended') }</h2>
               { storesRender }
             </div>
           </div>
