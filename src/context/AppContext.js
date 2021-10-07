@@ -7,7 +7,6 @@ const initialState = {
   foods: [],
   cartItems: [],
   restaurantCategories: [],
-  showHeader : true,
 }
 
 export const API_URL = '/faker/';

@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import HomeIcon from '../icons/HomeIcon';
@@ -7,8 +7,7 @@ import UserIcon from '../icons/UserIcon';
 import CartIcon from '../icons/CartIcon';
 import SearchIcon from '../icons/SearchIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
-import { useAppContext } from '../context/AppContext';
-import { NAVIGATED } from '../context/AppActions';
+import SearchForm from './SearchForm';
 
 
 export const NAV_LINKS = [
@@ -37,27 +36,15 @@ function NavItem({ title, Icon, href }) {
 
 export default function Header() {
 
+  const location = useLocation();
+
   const { t } = useTranslation();
 
-  const { dispatch, showHeader } = useAppContext();
+  let showHeader = true;
 
-  let location = useLocation();
-
-  useEffect(() => {
-    
-    if (['/', '/categories', '/cart', '/account'].indexOf(location.pathname) < 0) {
-      dispatch({
-        type: NAVIGATED,
-        payload: false
-      });
-    } else {
-      dispatch({
-        type: NAVIGATED,
-        payload: true
-      });
-    }
-
-  }, [location, dispatch]);
+  if (['/', '/categories', '/cart', '/account'].indexOf(location.pathname) < 0) {
+    showHeader = false;
+  }
   
   const navItems = NAV_LINKS.map((item, i) => (
     <NavItem 
@@ -77,15 +64,11 @@ export default function Header() {
           </h1>
           
           <div className="flex items-center lg:flex-grow ">
-            <form method="GET" className="flex-grow hidden lg:block">
-              <input 
-                type="search" 
-                placeholder="Search Foodme" 
-                className="w-full rounded py-1 px-2 border border-yellow-500 bg-color focus:outline-none" 
-                />
-            </form>
+            <div method="GET" className="flex-grow hidden lg:block">
+              <SearchForm />
+            </div>
             <Link 
-              to="/search"
+              to="/search/history"
               className="text-color-gray bg-color hover:bg-color-gray-h block p-1 lg:hidden">
               <SearchIcon classList="fill-current mx-auto" />
               <span className="sr-only">Search</span>

@@ -127,15 +127,10 @@ export default function Home({ stores, setStores }) {
       <ul className="py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
         { 
           stores.map((item, i)=> (
-            <StoreItem 
-              key={i}
-              ID={item.id}
-              photo={item.logo}
-              name={item.name}
-              location={item.address}
-              ratings={item.ratings}
-              />     
-          ))
+            <li>
+              <StoreItem key={i} store={item} />
+            </li>
+          )) 
         } 
       </ul>
     );

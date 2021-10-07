@@ -56,6 +56,11 @@ export const TRANSLATIONS_EN = {
 
   Store_name: 'Store name',
 
+  _search: {
+    Search__app: 'Search DailyNeeds',
+    Search_history: 'Search history'
+  },
+
   _product: {
     Quantity: 'Quantity',
     Decrease_quantity: 'Decrease quantity',

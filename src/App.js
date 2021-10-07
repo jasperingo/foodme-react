@@ -13,6 +13,7 @@ import AboutUs from './pages/AboutUs';
 import ContactUs from './pages/ContactUs';
 import TermsOfService from './pages/TermsOfService';
 import Categories from './pages/Categories';
+import Search from './pages/Search';
 import SearchHistory from './pages/SearchHistory';
 import Register from './pages/Register';
 import Store from './pages/Store';
@@ -51,8 +52,11 @@ function App() {
           <Route path="/login">
             <Login />
           </Route>
-          <Route path="/search">
+          <Route path="/search/history">
             <SearchHistory />
+          </Route>
+          <Route path="/search">
+            <Search />
           </Route>
           <Route path="/account">
             <UserAccount />

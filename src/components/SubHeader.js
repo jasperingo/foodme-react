@@ -3,12 +3,13 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import BackIcon from '../icons/BackIcon';
+import SearchForm from './SearchForm';
 
 export default function SubHeader({ title, search }) {
 
-  const { t } = useTranslation();
-
   const history = useHistory();
+
+  const { t } = useTranslation();
 
   return (
     <header className="px-2 py-4">
@@ -20,19 +21,8 @@ export default function SubHeader({ title, search }) {
             <BackIcon classList="fill-current text-color" />
             <span className="sr-only">{ t('Previous_page') }</span>
           </button>
-          {title && 
-            <h2 className="font-bold flex-grow text-left text-xl">{ t(title) }</h2>
-          }
-          {search && 
-            <form method="GET" action="" className="flex-grow">
-              <input 
-                name="q"
-                type="search" 
-                placeholder="Search Foodme" 
-                className="w-full rounded py-1 px-2 border border-yellow-500 bg-color focus:outline-none" 
-                />
-            </form>
-          }
+          { title && <h2 className="font-bold flex-grow text-left text-xl">{ t(title) }</h2> }
+          { search && <SearchForm /> }
         </div>
       </div>
     </header>

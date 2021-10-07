@@ -11,7 +11,9 @@ export default function Cart() {
   return (
     <section>
       <div className="container mx-auto px-2">
-        <EmptyList text="_empty.Your_cart_is_empty" Icon={CartEmptyIcon} />
+        <div className="lg:mx-auto lg:w-1/2">
+          <EmptyList text="_empty.Your_cart_is_empty" Icon={CartEmptyIcon} />
+        </div>
       </div>
     </section>
   );
