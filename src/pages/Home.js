@@ -102,7 +102,7 @@ export default function Home({ stores, setStores }) {
     categoriesRender = <EmptyList text="_empty.No_category" Icon={CategoriesIcon} />;
   } else {
     categoriesRender = (
-      <ul className="grid gap-4 px-2 py-3 grid-cols-3 md:grid-cols-4 lg:block">
+      <ul className="grid gap-4 py-3 grid-cols-3 md:grid-cols-4 lg:block">
         { 
           restaurantCategories.map((item, i) => (
             <CategoryItem 
