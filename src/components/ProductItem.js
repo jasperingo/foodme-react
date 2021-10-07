@@ -12,7 +12,7 @@ export default function ProductItem({ prod }) {
         <img 
           src={`/photos/products/${prod.photo}`} 
           alt={prod.title} 
-          className="w-20 h-20 border md:w-full md:h-40" 
+          className="w-20 h-20 border rounded block md:w-full md:h-40" 
           />
         <div className="flex-grow pl-2 lg:pt-2">
           <h4 className="font-bold mb-1">{ prod.title }</h4>

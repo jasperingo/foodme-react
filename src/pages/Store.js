@@ -135,8 +135,6 @@ export default function Store() {
   const [activeCategory, setActiveCategory] = useState('All');
 
   let { ID } = useParams();
-
-  let headerTitle = (storeData && storeData.name) || t('Store_name');
   
   function fetchStoreProducts() {
     if (!storeProducts)
@@ -185,7 +183,7 @@ export default function Store() {
   return (
     <section>
 
-      <SubHeader title={ headerTitle } />
+      <SubHeader title={ t('_store.Store') } />
 
       { storeData ? <StoreDataContainer storeData={storeData} /> : <Loading /> }
 
