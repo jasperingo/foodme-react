@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import HomeIcon from '../icons/HomeIcon';
 import UserIcon from '../icons/UserIcon';
@@ -8,6 +8,7 @@ import CartIcon from '../icons/CartIcon';
 import SearchIcon from '../icons/SearchIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
 import SearchForm from './SearchForm';
+import { useHeaderVisible } from '../context/AppHooks';
 
 
 export const NAV_LINKS = [
@@ -36,15 +37,9 @@ function NavItem({ title, Icon, href }) {
 
 export default function Header() {
 
-  const location = useLocation();
-
   const { t } = useTranslation();
 
-  let showHeader = true;
-
-  if (['/', '/categories', '/cart', '/account'].indexOf(location.pathname) < 0) {
-    showHeader = false;
-  }
+  const showHeader = useHeaderVisible();
   
   const navItems = NAV_LINKS.map((item, i) => (
     <NavItem 
@@ -56,8 +51,8 @@ export default function Header() {
   ));
   
   return (
-    <header className={`bg-color dark:bg-color-d px-2 py-4 border-b lg:block ${(showHeader ? '' : ' hidden')}`}>
-      <div className="container mx-auto">
+    <header className={`bg-color dark:bg-color-d py-4 border-b lg:block ${(showHeader ? '' : ' hidden')}`}>
+      <div className="container-x">
         <div className="flex items-center lg:gap-2">
           <h1 className={"text-2xl font-bold text-yellow-500 flex-grow lg:flex-grow-0 lg:pr-10 "}>
             <Link to="/">{ t('app_name') }</Link>

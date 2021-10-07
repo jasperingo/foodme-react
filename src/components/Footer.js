@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppContext } from '../context/AppContext';
+import { useHeaderVisible } from '../context/AppHooks';
 
 
 function FooterLink({ text, href }) {
@@ -17,12 +17,12 @@ function FooterLink({ text, href }) {
 }
 
 export default function Footer() {
-  
-  const { showHeader } = useAppContext();
+
+  const showHeader = useHeaderVisible();
 
   return (
-    <footer className={`px-2 py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full ${!showHeader ? '' : ' hidden'} lg:block`}>
-      <div>
+    <footer className={`py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full ${!showHeader ? '' : ' hidden'} lg:block`}>
+      <div className="container-x">
         <ul className="flex justify-around">
           <FooterLink text="About_us" href="/about-us" />
           <FooterLink text="Contact_us" href="/contact-us" />

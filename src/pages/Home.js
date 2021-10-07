@@ -26,15 +26,17 @@ function CategoryItem({ name, iconColor }) {
 }
 
 
-export default function Home({ stores, setStores }) {
+export default function Home() {
 
   const { t } = useTranslation();
-
+  
   const { dispatch, restaurantCategories } = useAppContext();
 
-  const [categoriesFetch, setCategoriesFetch] = useState(restaurantCategories.length < 1 ? 0 : 1);
-  
+  const [stores, setStores] = useState([]);
+
   const [storesFetched, setStoresFetched] = useState(stores.length < 1 ? 0 : 1);
+
+  const [categoriesFetch, setCategoriesFetch] = useState(restaurantCategories.length < 1 ? 0 : 1);
 
   const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
 
@@ -127,8 +129,8 @@ export default function Home({ stores, setStores }) {
       <ul className="py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
         { 
           stores.map((item, i)=> (
-            <li>
-              <StoreItem key={i} store={item} />
+            <li key={ `store_${i}`}>
+              <StoreItem store={item} />
             </li>
           )) 
         } 

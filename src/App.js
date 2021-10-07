@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import i18n from './locales/i18n';
 import './styles/App.css';
@@ -23,8 +23,6 @@ import Product from './pages/Product';
 function App() {
 
   i18n.changeLanguage('en');
-
-  const [restaurants, setRestaurants] = useState([]);
 
   return (
     <>
@@ -68,7 +66,7 @@ function App() {
             <Categories />
           </Route>
           <Route path="/">
-            <Home stores={restaurants} setStores={setRestaurants} />
+            <Home />
           </Route>
         </Switch>
       </main>

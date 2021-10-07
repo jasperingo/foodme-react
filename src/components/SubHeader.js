@@ -22,7 +22,7 @@ export default function SubHeader({ title, search }) {
             <span className="sr-only">{ t('Previous_page') }</span>
           </button>
           { title && <h2 className="font-bold flex-grow text-left text-xl">{ t(title) }</h2> }
-          { search && <SearchForm /> }
+          { search && <div className="flex-grow lg:hidden"> <SearchForm /> </div> }
         </div>
       </div>
     </header>
