@@ -1,0 +1,29 @@
+{
+  "data" : [
+    {
+      "name": "African dish",
+      "products_count": 34
+    },
+    {
+      "name": "Condiment",
+      "products_count": 20
+    },
+    {
+      "name": "Beauty",
+      "products_count": 12
+    },
+    {
+      "name": "Liquor",
+      "products_count": 34
+    },
+    {
+      "name": "Snacks",
+      "products_count": 4
+    },
+    {
+      "name": "Stationary",
+      "products_count": 7
+    }
+  ]
+}
+

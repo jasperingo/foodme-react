@@ -44,6 +44,14 @@
     @apply bg-gray-300 dark:bg-gray-600;
   }
 
+  .text-color {
+    @apply text-black dark:text-gray-100;
+  }
+
+  .bg-color {
+    @apply bg-white dark:bg-gray-800;
+  }
+
   .text-color-primary {
     @apply text-yellow-500;
   }
@@ -58,14 +66,6 @@
 
   .bg-color-secondary {
     @apply bg-gray-500;
-  }
-
-  .text-color {
-    @apply text-black dark:text-gray-100;
-  }
-
-  .bg-color {
-    @apply bg-white dark:bg-gray-800;
   }
   
   .container-x {

@@ -51,7 +51,7 @@ export default function Header() {
   ));
   
   return (
-    <header className={`bg-color dark:bg-color-d py-4 border-b lg:block ${(showHeader ? '' : ' hidden')}`}>
+    <header className={`bg-color dark:bg-color-d py-4 border-b lg:block ${(!showHeader && 'hidden')}`}>
       <div className="container-x">
         <div className="flex items-center lg:gap-2">
           <h1 className={"text-2xl font-bold text-yellow-500 flex-grow lg:flex-grow-0 lg:pr-10 "}>

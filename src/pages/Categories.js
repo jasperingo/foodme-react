@@ -1,23 +1,30 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import CategoriesIcon from '../icons/CategoriesIcon';
-import { useAppContext, API_URL } from '../context/AppContext';
-import { RESTAURANT_CATEGORIES_FETCHED } from '../context/AppActions';
+import { API_URL } from '../context/AppContext';
 import Loading from '../components/Loading';
+import { useCategoryColor } from '../context/AppHooks';
+import EmptyList from '../components/EmptyList';
+import Reload from '../components/Reload';
 
-function CategoryItem({ category, iconColor }) {
+function CategoryItem({ category, index }) {
 
   const { t } = useTranslation();
 
+  const iconColor = useCategoryColor(index);
+
   return (
     <li className="">
-      <Link to="/categories" className={ `flex gap-2 bg-color px-2 py-3 md:block md:text-center hover:bg-color-gray-h ${iconColor}` }>
+      <Link to={`/search?category=${category.name}`} className={ `flex gap-2 bg-color py-2 rounded md:shadow md:block md:text-center hover:bg-color-gray-h ${iconColor}` }>
         <CategoriesIcon classList="fill-current mx-auto" />
         <div className="flex-grow">
           <div className="font-bold">{ category.name }</div>
-          <div className="text-sm text-color-gray">{ t('resturantWithCount', { count : parseInt(category.stores_count) }) }</div>
+          <div className="text-sm text-color-gray">
+            { category.stores_count && t('_store.store__Count', { count : parseInt(category.stores_count) }) }
+            { category.products_count && t('_product.product__Count', { count : parseInt(category.products_count) }) }
+          </div>
         </div>
       </Link>
     </li>
@@ -26,39 +33,129 @@ function CategoryItem({ category, iconColor }) {
 
 export default function Categories() {
 
-  const { dispatch, restaurantCategories } = useAppContext();
+  const { t } = useTranslation();
 
-  const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
-  
-  const categories = restaurantCategories.map((item, i) => (
-    <CategoryItem 
-      key={i} 
-      category={item} 
-      iconColor={catColors[i%catColors.length]}
-      />
-  ));
+  const [stores, setStores] = useState([]);
 
-  useEffect(() => {
+  const [products, setProducts] = useState([]);
+
+  const [storesFetched, setStoresFetched] = useState(stores.length < 1 ? 0 : 1);
+
+  const [productsFetched, setProductsFetched] = useState(products.length < 1 ? 0 : 1);
+
+  const listStyle = "md:grid md:grid-cols-3 md:gap-4";
+
+  let productsRender, storesRender;
+
+  //const { dispatch, restaurantCategories } = useAppContext();
+
+  async function fetchStores() {
+    if (storesFetched !== 0) return;
     
-    if (restaurantCategories.length < 1) {
-      fetch(`${API_URL}category.json`)
-        .then(response => response.json())
-        .then(data => dispatch({
-          type: RESTAURANT_CATEGORIES_FETCHED,
-          payload: data.data
-        }));
-    }
+    try {
+      let response = await fetch(`${API_URL}category-store.json`);
 
-  }, [dispatch, restaurantCategories]);
+      if (!response.ok)
+        throw new Error(response.status);
+      
+      let data = await response.json();
+
+      setStores(data.data);
+      setStoresFetched(1);
+
+    } catch (err) {
+      setStoresFetched(-1);
+    }
+  }
+
+  function refetchStores() {
+    setStoresFetched(0);
+    fetchStores();
+  }
+
+  async function fetchProducts() {
+    if (productsFetched !== 0) return;
+    
+    try {
+      let response = await fetch(`${API_URL}category-product.json`);
+
+      if (!response.ok)
+        throw new Error(response.status);
+      
+      let data = await response.json();
+
+      setProducts(data.data);
+      setProductsFetched(1);
+
+    } catch (err) {
+      setProductsFetched(-1);
+    }
+  }
+
+  function refetchProducts() {
+    setProductsFetched(0);
+    fetchProducts();
+  }
+
+  useEffect(fetchStores);
+
+  useEffect(fetchProducts);
+
+  if (storesFetched === 0) {
+    storesRender = <Loading />;
+  } else if (storesFetched === -1) {
+    storesRender = <Reload action={refetchStores} />;
+  } else if (storesFetched === 1 && stores.length === 0) {
+    storesRender = <EmptyList text="_empty.No_store_category" Icon={CategoriesIcon} />;
+  } else {
+    storesRender = (
+      <ul className={listStyle}>
+        { 
+          stores.map((item, i) => (
+            <CategoryItem 
+              key={i} 
+              index={i}
+              category={item} 
+              />
+          ))
+        } 
+      </ul>
+    );
+  }
+
+  if (productsFetched === 0) {
+    productsRender = <Loading />;
+  } else if (productsFetched === -1) {
+    productsRender = <Reload action={refetchProducts} />;
+  } else if (productsFetched === 1 && products.length === 0) {
+    productsRender = <EmptyList text="_empty.No_product_category" Icon={CategoriesIcon} />;
+  } else {
+    productsRender = (
+      <ul className={listStyle}>
+        { 
+          products.map((item, i) => (
+            <CategoryItem 
+              key={i} 
+              index={i}
+              category={item} 
+              />
+          ))
+        } 
+      </ul>
+    );
+  }
 
   return (
     <section>
-      <div className="container mx-auto px-2">
-        { categories.length < 1 ? <Loading /> :
-        <ul className="py-2 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4">
-          { categories }
-        </ul>
-        }
+      <div className="container-x">
+        <div className="py-2">
+          <h2 className="font-bold my-2">{ t('_store.Store_categories') }</h2>
+          { storesRender }
+        </div>
+        <div className="py-2">
+          <h2 className="font-bold my-2">{ t('_product.Product_categories') }</h2>
+          { productsRender }
+        </div>
       </div>
     </section>
   );

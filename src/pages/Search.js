@@ -6,6 +6,8 @@ import { useURLQuery } from '../context/AppHooks';
 export default function Search() {
   
   const queryParam = useURLQuery().get('q');
+  
+  const categoryParam = useURLQuery().get('category');
 
   return (
     <section>
@@ -13,7 +15,7 @@ export default function Search() {
       <SubHeader search={true} />
 
       <div className="container-x">
-        Searching for <strong>{ queryParam }</strong>...
+        Searching for <strong>{ queryParam || categoryParam }</strong>...
       </div>
 
     </section>

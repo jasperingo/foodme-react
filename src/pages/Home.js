@@ -10,21 +10,24 @@ import { RESTAURANT_CATEGORIES_FETCHED } from '../context/AppActions';
 import CategoriesIcon from '../icons/CategoriesIcon';
 import ResturantIcon from '../icons/ResturantIcon';
 import EmptyList from '../components/EmptyList';
+import { useCategoryColor } from '../context/AppHooks';
 
-function CategoryItem({ name, iconColor }) {
+function CategoryItem({ name, index }) {
+
+  const iconColor = useCategoryColor(index);
+
   return (
     <li className="lg:mb-2">
       <Link 
-        to="/" 
-        className={`block bg-color dark:bg-color-d hover:bg-color-gray-h dark:hover:bg-color-gray-dh shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-1`}
+        to={`/search?category=${name}`}
+        className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-1`}
         >
         <CategoriesIcon classList="fill-current mx-auto" />
-        <div className="flex-grow">{ name }</div>
+        <div className="flex-grow text-sm break-all">{ name }</div>
       </Link>
     </li>
   );
 }
-
 
 export default function Home() {
 
@@ -37,8 +40,6 @@ export default function Home() {
   const [storesFetched, setStoresFetched] = useState(stores.length < 1 ? 0 : 1);
 
   const [categoriesFetch, setCategoriesFetch] = useState(restaurantCategories.length < 1 ? 0 : 1);
-
-  const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
 
   let categoriesRender, storesRender;
 
@@ -72,7 +73,7 @@ export default function Home() {
     if (storesFetched !== 0) return;
     
     try {
-      let response = await fetch(`${API_URL}restaurants.json`);
+      let response = await fetch(`${API_URL}stores.json`);
 
       if (!response.ok)
         throw new Error(response.status);
@@ -104,13 +105,13 @@ export default function Home() {
     categoriesRender = <EmptyList text="_empty.No_category" Icon={CategoriesIcon} />;
   } else {
     categoriesRender = (
-      <ul className="grid gap-4 py-3 grid-cols-3 md:grid-cols-4 lg:block">
+      <ul className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:block">
         { 
           restaurantCategories.map((item, i) => (
             <CategoryItem 
               key={i} 
+              index={i}
               name={item.name} 
-              iconColor={catColors[i%catColors.length]}
               />
           ))
         } 
@@ -144,15 +145,15 @@ export default function Home() {
         <div className="lg:flex lg:items-start lg:gap-2">
 
           <div className="bg-color-gray lg:rounded lg:my-2 lg:w-56">
-            <div className="container-x border border-transparent">
-              <h2 className="font-bold pt-4 text-lg">{ t('Categories') }</h2>
+            <div className="container-x border py-2 border-transparent">
+              <h2 className="font-bold my-2">{ t('_extra.Categories') }</h2>
               { categoriesRender }
             </div>
           </div>
 
           <div className="flex-grow">
-            <div className="container-x">
-              <h2 className="font-bold pt-4 pb-2 text-lg text-primary">{ t('Recommended') }</h2>
+            <div className="container-x py-2">
+              <h2 className="font-bold my-2">{ t('Recommended') }</h2>
               { storesRender }
             </div>
           </div>

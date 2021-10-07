@@ -7,9 +7,6 @@ export const TRANSLATIONS_EN = {
 
   _nairaSymbol: '&#8358;',
 
-  resturantWithCount: '{{ count }} resturant',
-  resturantWithCount_plural: '{{ count }} resturants',
-
   OR: 'OR',
 
   Retry: 'Retry',
@@ -54,7 +51,11 @@ export const TRANSLATIONS_EN = {
   Already_have_an_account: 'Already have an account?',
   By_registering_you_agree_to_our: 'By registering, you agree to our',
 
-  Store_name: 'Store name',
+  _extra: {
+    categories: 'categories',
+    Categories: 'Categories',
+    Reviews: 'Reviews',
+  },
 
   _search: {
     Search__app: 'Search DailyNeeds',
@@ -63,9 +64,17 @@ export const TRANSLATIONS_EN = {
 
   _store: {
     Store: 'Store',
+    Store_categories: 'Store categories',
+    store__Count: '{{ count }} store',
+    store__Count_plural: '{{ count }} stores',
+    Promotions: 'Promotions',
   },
 
   _product: {
+    Products: 'Products',
+    Product_categories: 'Product categories',
+    product__Count: '{{ count }} product',
+    product__Count_plural: '{{ count }} products',
     Quantity: 'Quantity',
     Decrease_quantity: 'Decrease quantity',
     Increase_quantity: 'Increase quantity',
@@ -74,6 +83,9 @@ export const TRANSLATIONS_EN = {
   _empty: {
     No_store: 'No store',
     No_category: 'No category',
+    No_product: 'No product',
+    No_store_category: 'No store category',
+    No_product_category: 'No product category',
     List_is_empty: 'List is empty',
     Your_cart_is_empty: 'Your cart is empty',
   },

@@ -21,7 +21,7 @@ export default function Footer() {
   const showHeader = useHeaderVisible();
 
   return (
-    <footer className={`py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full ${!showHeader ? '' : ' hidden'} lg:block`}>
+    <footer className={`py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full ${showHeader && 'hidden'} lg:block`}>
       <div className="container-x">
         <ul className="flex justify-around">
           <FooterLink text="About_us" href="/about-us" />

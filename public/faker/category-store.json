@@ -11,18 +11,6 @@
     {
       "name": "Pharmacy",
       "stores_count": 12
-    },
-    {
-      "name": "African dish",
-      "stores_count": 34
-    },
-    {
-      "name": "Liquor",
-      "stores_count": 34
-    },
-    {
-      "name": "Snacks",
-      "stores_count": 4
     }
   ]
 }
