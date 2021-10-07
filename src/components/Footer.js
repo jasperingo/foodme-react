@@ -25,8 +25,8 @@ export default function Footer() {
       <div>
         <ul className="flex justify-around">
           <FooterLink text="About_us" href="/about-us" />
-          <FooterLink text="Contact_us" href="contact-us" />
-          <FooterLink text="Terms_of_service" href="terms-of-service" />
+          <FooterLink text="Contact_us" href="/contact-us" />
+          <FooterLink text="Terms_of_service" href="/terms-of-service" />
         </ul>
       </div>
     </footer>

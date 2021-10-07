@@ -147,14 +147,14 @@ export default function Home({ stores, setStores }) {
         <div className="lg:flex lg:items-start lg:gap-2">
 
           <div className="bg-color-gray lg:rounded lg:my-2 lg:w-56">
-            <div className="container mx-auto px-2 border border-transparent">
+            <div className="container-x border border-transparent">
               <h2 className="font-bold pt-4 text-lg">{ t('Categories') }</h2>
               { categoriesRender }
             </div>
           </div>
 
           <div className="flex-grow">
-            <div className="container mx-auto px-2">
+            <div className="container-x">
               <h2 className="font-bold pt-4 pb-2 text-lg text-primary">{ t('Recommended') }</h2>
               { storesRender }
             </div>

@@ -5,6 +5,8 @@ export const TRANSLATIONS_EN = {
   Resturants: 'Resturants',
   Application: 'Application',
 
+  _nairaSymbol: '&#8358;',
+
   resturantWithCount: '{{ count }} resturant',
   resturantWithCount_plural: '{{ count }} resturants',
 
@@ -53,6 +55,12 @@ export const TRANSLATIONS_EN = {
   By_registering_you_agree_to_our: 'By registering, you agree to our',
 
   Store_name: 'Store name',
+
+  _product: {
+    Quantity: 'Quantity',
+    Decrease_quantity: 'Decrease quantity',
+    Increase_quantity: 'Increase quantity',
+  },
 
   _empty: {
     No_store: 'No store',

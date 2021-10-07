@@ -7,7 +7,7 @@ export default function Reload({ message, btnText, action }) {
   const { t } = useTranslation();
 
   return (
-    <div className="border py-5 text-center">
+    <div className="bg-color-gray rounded py-5 my-2 text-center">
       <div className="mb-2">{ (message && t(message)) || t('_errors.Something_went_wrong') }</div>
       <button 
         onClick={action} 
