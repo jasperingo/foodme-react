@@ -10,7 +10,7 @@ export default function FormButton({ text }) {
     <div className="mb-4">
       <button 
         type="submit" 
-        className="block w-full p-2 bg-yellow-500 hover:bg-yellow-400 text-white font-bold rounded">
+        className="block w-full p-2 btn-color-primary font-bold rounded">
         { t(text) }
       </button>
     </div>

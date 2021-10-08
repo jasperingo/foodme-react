@@ -23,49 +23,6 @@ const PROFILE_NAV_LINKS = [
   { title : '_store.Promotions', href: 'promotions' }
 ];
 
-
-/*function StoreCategoriesItem({ category, action, isActive }) {
-
-  let color = isActive ? 'bg-color-primary text-white hover:bg-yellow-300' : 'bg-color text-color-gray hover:bg-color-gray-h';
-
-  return (
-    <li>
-      <button 
-        onClick={ ()=> action(category) }
-        className={ `block ${color} px-2 py-1 rounded` }
-        >
-        { category.name }
-      </button>
-    </li>
-  );
-}
-
-function StoreCategoriesList({ categories, onStoreCategoryClick, activeItem }) {
-
-  const categoryItems = categories.map((cat)=> (
-    <StoreCategoriesItem 
-      key={ `cat_${cat.id}` }
-      category={cat}
-      isActive={cat.name === activeItem}
-      action={onStoreCategoryClick} 
-      />
-  ));
-
-  return (
-    <div className="border-b">
-
-      <div className="container mx-auto px-2">
-
-        <ul className="flex my-2">
-          { categoryItems }
-        </ul>
-
-      </div>
-
-    </div>
-  );
-}*/
-
 function StoreProductsList({ categories }) {
 
   const { ID } = useParams();
@@ -110,7 +67,7 @@ function StoreProductsList({ categories }) {
     productsRender = <EmptyList text="_empty.No_product" Icon={ProductIcon} />;
   } else {
     productsRender = (
-      <ul className="py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
+      <ul className="list-x">
         { 
           products.map((p)=> (
             <ProductItem
@@ -125,9 +82,9 @@ function StoreProductsList({ categories }) {
 
   return (
     <div>
-      <div className="container mx-auto px-2">
+      <div className="container-x">
         <div className="flex my-4">
-          <FilterIcon />
+          <FilterIcon classList="fill-current text-color" />
           <select className="bg-color-gray ml-1 p-1 rounded">
             {
               categories.map((item)=> (

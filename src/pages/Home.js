@@ -2,15 +2,17 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { FETCH_LIST } from '../api/Get';
 import Reload from '../components/Reload';
 import Loading from '../components/Loading';
 import StoreItem from '../components/StoreItem';
 import { useAppContext, API_URL } from '../context/AppContext';
 import { RESTAURANT_CATEGORIES_FETCHED } from '../context/AppActions';
 import CategoriesIcon from '../icons/CategoriesIcon';
-import ResturantIcon from '../icons/ResturantIcon';
+import StoreIcon from '../icons/StoreIcon';
 import EmptyList from '../components/EmptyList';
-import { useCategoryColor } from '../context/AppHooks';
+import { useCategoryColor, useListRender } from '../context/AppHooks';
 
 function CategoryItem({ name, index }) {
 
@@ -37,11 +39,15 @@ export default function Home() {
 
   const [stores, setStores] = useState([]);
 
-  const [storesFetched, setStoresFetched] = useState(stores.length < 1 ? 0 : 1);
+  const [storesPage, setStoresPage] = useState(1);
+
+  const [storesNumberOfPages, setStoresNumberOfPages] = useState(0);
+
+  const [storesFetching, setStoresFetching] = useState(true);
 
   const [categoriesFetch, setCategoriesFetch] = useState(restaurantCategories.length < 1 ? 0 : 1);
 
-  let categoriesRender, storesRender;
+  let categoriesRender;
 
   function fetchCategories() {
     if (categoriesFetch === 0) {
@@ -68,34 +74,61 @@ export default function Home() {
     setCategoriesFetch(0);
     fetchCategories();
   }
-  
-  async function fetchStores() {
-    if (storesFetched !== 0) return;
-    
-    try {
-      let response = await fetch(`${API_URL}stores.json`);
-
-      if (!response.ok)
-        throw new Error(response.status);
-      
-      let data = await response.json();
-
-      setStores(data.data);
-      setStoresFetched(1);
-
-    } catch (err) {
-      setStoresFetched(-1);
-    }
-  }
-
-  function refetchStores() {
-    setStoresFetched(0);
-    fetchStores();
-  }
 
   useEffect(fetchCategories);
+  
 
-  useEffect(fetchStores);
+  useEffect(()=> {
+    async function fetchStores() {
+    
+      if (!storesFetching) 
+        return;
+
+      setStores(s=> s.concat(FETCH_LIST.LOADING));
+      
+      try {
+        let response = await fetch(`${API_URL}stores.json`);
+        
+        if (!response.ok)
+          throw new Error(response.status);
+        
+        let data = await response.json();
+
+        //data.data = [];
+        //data.total_pages = 0;
+        
+        setStores(s=> {
+          s.pop();
+          data.data.length < 1 && data.data.push(FETCH_LIST.EMPTY);
+          return s.concat(data.data);
+        });
+        setStoresPage(s=> s+1); 
+        setStoresNumberOfPages(data.total_pages);
+
+      } catch (err) {
+        setStores(s=> {
+          s.pop();
+          return s.concat(FETCH_LIST.ERROR);
+        });
+      } finally {
+        setStoresFetching(false);
+      }
+    }
+
+    fetchStores(); 
+
+  }, [storesFetching]);
+
+  function refetchStores() {
+    
+    if (storesFetching) 
+      return;
+
+    if (stores[stores.length-1] === FETCH_LIST.ERROR)
+      stores.pop();
+    
+    setStoresFetching(true);
+  }
 
   if (categoriesFetch === 0) {
     categoriesRender = <Loading />;
@@ -105,37 +138,13 @@ export default function Home() {
     categoriesRender = <EmptyList text="_empty.No_category" Icon={CategoriesIcon} />;
   } else {
     categoriesRender = (
-      <ul className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:block">
-        { 
-          restaurantCategories.map((item, i) => (
-            <CategoryItem 
-              key={i} 
-              index={i}
-              name={item.name} 
-              />
-          ))
-        } 
-      </ul>
-    );
-  }
-
-  if (storesFetched === 0) {
-    storesRender = <Loading />;
-  } else if (storesFetched === -1) {
-    storesRender = <Reload action={refetchStores} />;
-  } else if (storesFetched === 1 && stores.length === 0) {
-    storesRender = <EmptyList text="_empty.No_store" Icon={ResturantIcon} />;
-  } else {
-    storesRender = (
-      <ul className="py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
-        { 
-          stores.map((item, i)=> (
-            <li key={ `store_${i}`}>
-              <StoreItem store={item} />
-            </li>
-          )) 
-        } 
-      </ul>
+      restaurantCategories.map((item, i) => (
+        <CategoryItem 
+          key={i} 
+          index={i}
+          name={item.name} 
+          />
+      ))
     );
   }
 
@@ -147,14 +156,31 @@ export default function Home() {
           <div className="bg-color-gray lg:rounded lg:my-2 lg:w-56">
             <div className="container-x border py-2 border-transparent">
               <h2 className="font-bold my-2">{ t('_extra.Categories') }</h2>
-              { categoriesRender }
+              <ul className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:block">
+                { categoriesRender }
+              </ul>
             </div>
           </div>
 
           <div className="flex-grow">
             <div className="container-x py-2">
               <h2 className="font-bold my-2">{ t('Recommended') }</h2>
-              { storesRender }
+              <InfiniteScroll 
+                dataLength={stores.length}
+                next={refetchStores}
+                hasMore={storesPage <= storesNumberOfPages && stores[stores.length-1] !== FETCH_LIST.ERROR}
+                >
+                <ul className="list-x">
+                  { 
+                    useListRender(
+                      stores, 
+                      StoreIcon,
+                      refetchStores,
+                      (item)=> <StoreItem store={item} />
+                    )
+                  }
+                </ul>
+              </InfiniteScroll>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import React, { useReducer, useContext, createContext } from "react";
 import AppReducer from './AppReducer';
 
 const initialState = {
+  customer: null,
   restaurants: [],
   foods: [],
   cartItems: [],

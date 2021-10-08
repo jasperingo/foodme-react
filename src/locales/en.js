@@ -51,6 +51,10 @@ export const TRANSLATIONS_EN = {
   Already_have_an_account: 'Already have an account?',
   By_registering_you_agree_to_our: 'By registering, you agree to our',
 
+  _user: {
+    Or_login_with: 'Or login with'
+  },
+
   _extra: {
     categories: 'categories',
     Categories: 'Categories',
@@ -59,7 +63,9 @@ export const TRANSLATIONS_EN = {
 
   _search: {
     Search__app: 'Search DailyNeeds',
-    Search_history: 'Search history'
+    Search_history: 'Search history',
+    Search_results: 'Search results',
+    Category_results: 'Category results',
   },
 
   _store: {
