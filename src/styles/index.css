@@ -85,7 +85,7 @@
   }
 
   .form-1-x {
-    @apply my-2 max-w-md mx-auto sm:px-4 sm:pb-2 sm:pt-6 sm:rounded sm:shadow;
+    @apply my-5 max-w-md mx-auto sm:px-4 sm:pb-2 sm:pt-6 sm:rounded sm:shadow;
   }
 
   @variants hover {

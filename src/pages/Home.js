@@ -131,11 +131,23 @@ export default function Home() {
   }
 
   if (categoriesFetch === 0) {
-    categoriesRender = <Loading />;
+    categoriesRender = (
+      <li className="col-span-3">
+        <Loading />
+      </li>
+    );
   } else if (categoriesFetch === -1) {
-    categoriesRender = <Reload action={refetchCategories} />;
+    categoriesRender = (
+      <li className="col-span-3">
+        <Reload action={refetchCategories} />
+      </li>
+    );
   } else if (categoriesFetch === 1 && restaurantCategories.length === 0) {
-    categoriesRender = <EmptyList text="_empty.No_category" Icon={CategoriesIcon} />;
+    categoriesRender = (
+      <li className="col-span-3">
+        <EmptyList text="_empty.No_category" Icon={CategoriesIcon} />
+      </li>
+    );
   } else {
     categoriesRender = (
       restaurantCategories.map((item, i) => (
@@ -154,9 +166,9 @@ export default function Home() {
         <div className="lg:flex lg:items-start lg:gap-2">
 
           <div className="bg-color-gray lg:rounded lg:my-2 lg:w-56">
-            <div className="container-x border py-2 border-transparent">
+            <div className="container-x border pt-2 pb-4 border-transparent">
               <h2 className="font-bold my-2">{ t('_extra.Categories') }</h2>
-              <ul className="grid gap-4 grid-cols-3 md:grid-cols-4 lg:block">
+              <ul className="grid gap-4 grid-cols-3 lg:block">
                 { categoriesRender }
               </ul>
             </div>
