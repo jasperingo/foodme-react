@@ -72,6 +72,14 @@
     @apply container mx-auto px-2;
   }
 
+  .btn-color-gray {
+    @apply bg-color text-color-gray hover:bg-color-gray-h;
+  }
+
+  .btn-color-primary {
+    @apply bg-color-primary text-white dark:text-black hover:bg-yellow-300;
+  }
+
   @variants hover {
     .bg-color-gray-h {
       @apply bg-gray-200 dark:bg-gray-700;

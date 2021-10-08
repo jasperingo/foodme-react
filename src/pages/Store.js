@@ -10,6 +10,7 @@ import ReviewIcon from '../icons/ReviewIcon';
 import PhoneIcon from '../icons/PhoneIcon';
 import EmailIcon from '../icons/EmailIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
+import ProductIcon from '../icons/ProductIcon';
 import ProductItem from '../components/ProductItem';
 import Reload from '../components/Reload';
 import EmptyList from '../components/EmptyList';
@@ -84,7 +85,7 @@ function StoreProductsList() {
         throw new Error(response.status);
       
       let data = await response.json();
-      console.log(data)
+      
       setProducts(data.data);
       setProductsFetched(1);
 
@@ -105,7 +106,7 @@ function StoreProductsList() {
   } else if (productsFetched === -1) {
     productsRender = <Reload action={refetchProducts} />;
   } else if (productsFetched === 1 && products.length === 0) {
-    productsRender = <EmptyList text="_empty.No_product" Icon={CategoriesIcon} />;
+    productsRender = <EmptyList text="_empty.No_product" Icon={ProductIcon} />;
   } else {
     productsRender = (
       <ul className="py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4">
@@ -140,8 +141,8 @@ function StoreProfileNavItem({ title, href }) {
     <li>
       <NavLink 
         to={`${match.url}/${href}`}
-        className="block px-2 py-1 rounded bg-color text-color-gray hover:bg-color-gray-h"
-        activeClassName="bg-color-primary text-white hover:bg-yellow-300"
+        className="block px-2 py-1 rounded btn-color-gray"
+        activeClassName="btn-color-primary"
         >
         { t(title) }
       </NavLink>
@@ -216,25 +217,6 @@ export default function Store() {
   const [profileFetched, setProfileFetched] = useState(!profile ? 0 : 1);
 
   let profileRender;
-  
-  /*function fetchStoreProducts() {
-    if (!storeProducts)
-      fetch(`${API_URL}store-products.json?id=${ID}`)
-        .then(response => response.json())
-        .then(data => setStoreProducts(data.data));
-  }
-
-  function fetchStoreCategories() {
-    if (!storeCategories) 
-      fetch(`${API_URL}store-category.json?id=${ID}`)
-        .then(response => response.json())
-        .then(data => { 
-        
-          setStoreCategories(data.data);
-
-          fetchStoreProducts();
-        });
-  }*/
 
   async function fetchProfile() {
     if (profileFetched !== 0) return;
@@ -295,26 +277,6 @@ export default function Store() {
           </Route>
         </Switch>
       }
-
-      { /*
-        storeData ? 
-          storeCategories ? 
-            <StoreCategoriesList 
-              categories={storeCategories} 
-              activeItem={activeCategory}
-              onStoreCategoryClick={onStoreCategoryClick} 
-              /> 
-          : <Loading /> 
-        : ''
-      */}
-
-      {/*
-        storeData && storeCategories ?
-          storeProducts ? 
-            <StoreProductsList products={storeProducts} />
-          : <Loading /> 
-        : ''
-      */}
       
     </section>
   );
