@@ -18,6 +18,13 @@ function QuantityChangeButton({ text, Icon }) {
   );
 }
 
+function H4Heading({ text }) {
+
+  const { t } = useTranslation();
+
+  return (<h3 className="font-bold mb-1">{ t(text) }</h3>);
+}
+
 export default function Product() {
 
   const { t } = useTranslation();
@@ -45,7 +52,7 @@ export default function Product() {
 
             <div className="font-bold text-2xl text-color-primary mb-2">&#8358; 58903.98</div>
 
-            <div className="text-xl mb-2">Fried rice salad and chicken</div>
+            <h3 className="text-xl mb-2">Fried rice salad and chicken</h3>
 
             <div className="text-color-gray text-sm mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit</div>
             
@@ -66,11 +73,12 @@ export default function Product() {
             <button className="w-full bg-color-primary text-white my-4 py-3 px-5 font-bold rounded lg:w-auto">Add to cart</button>
 
             <div className="p-2 border rounded">
-              <div className="max-h-40 overflow-auto">
+              <H4Heading text="Description" />
+              <p className="max-h-40 overflow-auto">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam
-              </div>
+              </p>
             </div>
 
           </div>
@@ -80,7 +88,7 @@ export default function Product() {
         <div className="md:flex md:items-start md:gap-2">
 
           <div className="container-x md:w-1/6">
-            <h3 className="font-bold mb-1">Product Store</h3>
+            <H4Heading text="Product Store" />
             <StoreItem 
               store={{
                 id: 34, 
@@ -93,7 +101,7 @@ export default function Product() {
           </div>
 
           <div className="container-x flex-grow md:w-1/2">
-            <h3 className="font-bold mb-1">Reviews</h3>
+            <H4Heading text="Reviews" />
             <div>
               LOADING...
             </div>
@@ -102,9 +110,9 @@ export default function Product() {
         </div>
 
         <div className="container-x py-4">
-          <h3 className="font-bold mb-1">Releted products</h3>
+          <H4Heading text="Releted products" />
           <div>
-              LOADING...
+            LOADING...
           </div> 
         </div>
 

@@ -7,6 +7,25 @@
     "phone" : "09035382455",
     "email" : "eataer@gmail.com",
     "category" : "Restaurant",
-    "rating" : "3.9"
+    "rating" : "3.9",
+    "categories" : [
+      {
+        "name": "All",
+        "products_count": 2
+      },
+      {
+        "name": "African dish",
+        "products_count": 34
+      },
+      {
+        "name": "Condiment",
+        "products_count": 20
+      },
+      {
+        "name": "Snacks",
+        "products_count": 4
+      }
+    ]
   }
 }
+

@@ -9,6 +9,7 @@ import LocationIcon from '../icons/LocationIcon';
 import ReviewIcon from '../icons/ReviewIcon';
 import PhoneIcon from '../icons/PhoneIcon';
 import EmailIcon from '../icons/EmailIcon';
+import FilterIcon from '../icons/FilterIcon';
 import CategoriesIcon from '../icons/CategoriesIcon';
 import ProductIcon from '../icons/ProductIcon';
 import ProductItem from '../components/ProductItem';
@@ -65,7 +66,7 @@ function StoreCategoriesList({ categories, onStoreCategoryClick, activeItem }) {
   );
 }*/
 
-function StoreProductsList() {
+function StoreProductsList({ categories }) {
 
   const { ID } = useParams();
 
@@ -125,6 +126,17 @@ function StoreProductsList() {
   return (
     <div>
       <div className="container mx-auto px-2">
+        <div className="flex my-4">
+          <FilterIcon />
+          <select className="bg-color-gray ml-1 p-1 rounded">
+            {
+              categories.map((item)=> (
+                <option>{ item.name }</option>
+              ))
+            }
+          </select>
+        </div>
+
         { productsRender }
       </div>
     </div>
@@ -228,7 +240,7 @@ export default function Store() {
         throw new Error(response.status);
       
       let data = await response.json();
-
+      
       setProfile(data.data);
       setProfileFetched(1);
 
@@ -267,7 +279,7 @@ export default function Store() {
         profile && 
         <Switch>
           <Route path={`${match.url}/products`}>
-            <StoreProductsList />
+            <StoreProductsList categories={profile.categories} />
           </Route>
           <Route path={`${match.url}/reviews`}>
             <div className="container-x">REVIEWS LOADING...</div>
