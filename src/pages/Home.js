@@ -3,16 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { FETCH_LIST } from '../api/Get';
+import { useAppContext, API_URL } from '../context/AppContext';
+import { RESTAURANT_CATEGORIES_FETCHED, FETCH_STATUSES } from '../context/AppActions';
+import { useCategoryColor, useListRender } from '../context/AppHooks';
 import Reload from '../components/Reload';
 import Loading from '../components/Loading';
 import StoreItem from '../components/StoreItem';
-import { useAppContext, API_URL } from '../context/AppContext';
-import { RESTAURANT_CATEGORIES_FETCHED } from '../context/AppActions';
 import CategoriesIcon from '../icons/CategoriesIcon';
 import StoreIcon from '../icons/StoreIcon';
 import EmptyList from '../components/EmptyList';
-import { useCategoryColor, useListRender } from '../context/AppHooks';
+import FetchMoreButton from '../components/FetchMoreButton';
 
 function CategoryItem({ name, index }) {
 
@@ -37,13 +37,11 @@ export default function Home() {
   
   const { dispatch, restaurantCategories } = useAppContext();
 
-  const [stores, setStores] = useState([]);
+  const [stores, setStores] = useState([FETCH_STATUSES.LOADING]);
 
   const [storesPage, setStoresPage] = useState(1);
 
   const [storesNumberOfPages, setStoresNumberOfPages] = useState(0);
-
-  const [storesFetching, setStoresFetching] = useState(true);
 
   const [categoriesFetch, setCategoriesFetch] = useState(restaurantCategories.length < 1 ? 0 : 1);
 
@@ -80,11 +78,9 @@ export default function Home() {
 
   useEffect(()=> {
     async function fetchStores() {
-    
-      if (!storesFetching) 
+      
+      if (stores[stores.length-1] !== FETCH_STATUSES.LOADING) 
         return;
-
-      setStores(s=> s.concat(FETCH_LIST.LOADING));
       
       try {
         let response = await fetch(`${API_URL}stores.json`);
@@ -96,38 +92,42 @@ export default function Home() {
 
         //data.data = [];
         //data.total_pages = 0;
+
+        setStoresPage(s=> {
+          s%5 === 0 && s < data.total_pages && data.data.push(FETCH_STATUSES.MORE);
+          return ++s;
+        });
         
         setStores(s=> {
+          //if (stores[stores.length-1] !== FETCH_STATUSES.MORE) 
           s.pop();
-          data.data.length < 1 && data.data.push(FETCH_LIST.EMPTY);
+          data.data.length < 1 && data.data.push(FETCH_STATUSES.EMPTY);
           return s.concat(data.data);
         });
-        setStoresPage(s=> s+1); 
+
         setStoresNumberOfPages(data.total_pages);
 
       } catch (err) {
         setStores(s=> {
           s.pop();
-          return s.concat(FETCH_LIST.ERROR);
+          return s.concat(FETCH_STATUSES.ERROR);
         });
-      } finally {
-        setStoresFetching(false);
       }
     }
 
     fetchStores(); 
 
-  }, [storesFetching]);
+  }, [stores]);
 
   function refetchStores() {
     
-    if (storesFetching) 
+    if (stores[stores.length-1] === FETCH_STATUSES.LOADING) 
       return;
 
-    if (stores[stores.length-1] === FETCH_LIST.ERROR)
+    if (stores[stores.length-1] === FETCH_STATUSES.ERROR)
       stores.pop();
-    
-    setStoresFetching(true);
+
+    setStores(stores.concat(FETCH_STATUSES.LOADING));
   }
 
   if (categoriesFetch === 0) {
@@ -180,15 +180,22 @@ export default function Home() {
               <InfiniteScroll 
                 dataLength={stores.length}
                 next={refetchStores}
-                hasMore={storesPage <= storesNumberOfPages && stores[stores.length-1] !== FETCH_LIST.ERROR}
+                hasMore={
+                  storesPage <= storesNumberOfPages && 
+                  stores[stores.length-1] !== FETCH_STATUSES.ERROR && 
+                  stores[stores.length-1] !== FETCH_STATUSES.MORE
+                }
                 >
                 <ul className="list-x">
                   { 
                     useListRender(
                       stores, 
-                      StoreIcon,
-                      refetchStores,
-                      (item)=> <StoreItem store={item} />
+                      (item)=> <StoreItem store={item} />, 
+                      ()=> <Loading />, 
+                      ()=> <EmptyList text="_empty.No_store" Icon={StoreIcon} />, 
+                      ()=> <Reload action={refetchStores} />,
+                      ()=> <FetchMoreButton action={refetchStores} />,
+                      { viewKeyPrefix: 'store' }
                     )
                   }
                 </ul>

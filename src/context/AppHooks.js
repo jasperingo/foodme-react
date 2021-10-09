@@ -1,9 +1,6 @@
 
 import { useLocation } from "react-router-dom";
-import { FETCH_LIST } from '../api/Get';
-import EmptyList from "../components/EmptyList";
-import Loading from "../components/Loading";
-import Reload from "../components/Reload";
+import { FETCH_STATUSES } from './AppActions';
 
 export function useURLQuery() {
   return new URLSearchParams(useLocation().search);
@@ -18,35 +15,43 @@ export function useCategoryColor(index) {
   return catColors[index%catColors.length];
 }
 
-export function useListRender(items, EmptyIcon, refetchAction, viewCallback) {
+export function useListRender(items, viewCallback, loadingCallback, emptyCallback, errorCallback, fetchMoreCallback, options={}) {
   return items.map((item, i)=> {
            
-    if (item === FETCH_LIST.LOADING) {
+    if (item === FETCH_STATUSES.LOADING) {
       return (
-        <li key={FETCH_LIST.LOADING}>
-          <Loading />
+        <li key={FETCH_STATUSES.LOADING}>
+          { loadingCallback() }
         </li>
       );
     }
 
-    if (item === FETCH_LIST.ERROR) {
+    if (item === FETCH_STATUSES.ERROR) {
       return (
-        <li key={FETCH_LIST.ERROR}>
-          <Reload action={refetchAction} />
+        <li key={FETCH_STATUSES.ERROR}>
+          { errorCallback() }
         </li>
       );
     }
 
-    if (item === FETCH_LIST.EMPTY) {
+    if (item === FETCH_STATUSES.EMPTY) {
       return (
-        <li key={FETCH_LIST.EMPTY}>
-          <EmptyList text="_empty.No_store" Icon={EmptyIcon} />
+        <li key={FETCH_STATUSES.EMPTY}>
+          { emptyCallback() }
+        </li>
+      );
+    }
+
+    if (item === FETCH_STATUSES.MORE) {
+      return (
+        <li key={FETCH_STATUSES.MORE}>
+          { fetchMoreCallback() }
         </li>
       );
     }
 
     return (
-      <li key={ `store_${i}`}>
+      <li key={ `${options.viewKeyPrefix}_${i}`}>
         { viewCallback(item) }
       </li>
     );
