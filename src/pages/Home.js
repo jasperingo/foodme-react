@@ -94,8 +94,8 @@ export default function Home() {
         //data.total_pages = 0;
 
         setStoresPage(s=> {
-          s < data.total_pages && data.data.push(FETCH_STATUSES.MORE);
-          return ++s;
+          ++s < data.total_pages && data.data.push(FETCH_STATUSES.MORE);
+          return s;
         });
         
         setStores(s=> {
