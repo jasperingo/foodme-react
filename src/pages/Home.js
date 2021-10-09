@@ -94,12 +94,11 @@ export default function Home() {
         //data.total_pages = 0;
 
         setStoresPage(s=> {
-          s%5 === 0 && s < data.total_pages && data.data.push(FETCH_STATUSES.MORE);
+          s < data.total_pages && data.data.push(FETCH_STATUSES.MORE);
           return ++s;
         });
         
         setStores(s=> {
-          //if (stores[stores.length-1] !== FETCH_STATUSES.MORE) 
           s.pop();
           data.data.length < 1 && data.data.push(FETCH_STATUSES.EMPTY);
           return s.concat(data.data);
@@ -126,6 +125,9 @@ export default function Home() {
 
     if (stores[stores.length-1] === FETCH_STATUSES.ERROR)
       stores.pop();
+
+    if (stores[stores.length-1] === FETCH_STATUSES.MORE)
+      stores.pop(); 
 
     setStores(stores.concat(FETCH_STATUSES.LOADING));
   }
@@ -181,9 +183,9 @@ export default function Home() {
                 dataLength={stores.length}
                 next={refetchStores}
                 hasMore={
+                  storesPage%5 !== 0 && 
                   storesPage <= storesNumberOfPages && 
-                  stores[stores.length-1] !== FETCH_STATUSES.ERROR && 
-                  stores[stores.length-1] !== FETCH_STATUSES.MORE
+                  stores[stores.length-1] !== FETCH_STATUSES.ERROR
                 }
                 >
                 <ul className="list-x">
