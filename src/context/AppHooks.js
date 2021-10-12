@@ -15,46 +15,48 @@ export function useCategoryColor(index) {
   return catColors[index%catColors.length];
 }
 
-export function useListRender(items, viewCallback, loadingCallback, emptyCallback, errorCallback, fetchMoreCallback, options={}) {
+export function useFetchStatusOnSuccess(page, numberOfPages, dataLength, fetchedDataLength) {
+    
+  if ((page+1) < numberOfPages) 
+    return FETCH_STATUSES.MORE;
+  else if (dataLength === 1 && fetchedDataLength < 1) 
+    return FETCH_STATUSES.EMPTY;
+  else 
+    return FETCH_STATUSES.DONE;
+}
+
+export function useHasMoreToFetchViaScroll(page, numberOfPages, status, scrollCount=5) {
+  return page%scrollCount !== 0 && 
+          page < numberOfPages && 
+          status !== FETCH_STATUSES.ERROR;
+}
+
+export function useListRender(items, status, viewCallback, loadingCallback, errorCallback, emptyCallback, fetchMoreCallback, options={}) {
   return items.map((item, i)=> {
-           
-    if (item === FETCH_STATUSES.LOADING) {
-      return (
-        <li key={FETCH_STATUSES.LOADING}>
-          { loadingCallback() }
-        </li>
-      );
+    
+    if (item === null) {
+      if (status === FETCH_STATUSES.LOADING) {
+        return loadingCallback(FETCH_STATUSES.LOADING);
+      }
+
+      if (status === FETCH_STATUSES.ERROR) {
+        return errorCallback(FETCH_STATUSES.ERROR);
+      }
+
+      if (status === FETCH_STATUSES.EMPTY) {
+        return emptyCallback(FETCH_STATUSES.EMPTY);
+      }
+
+      if (status === FETCH_STATUSES.MORE) {
+        return fetchMoreCallback(FETCH_STATUSES.MORE);
+      }
+
+      if (status === FETCH_STATUSES.DONE) {
+        return '';
+      }
     }
 
-    if (item === FETCH_STATUSES.ERROR) {
-      return (
-        <li key={FETCH_STATUSES.ERROR}>
-          { errorCallback() }
-        </li>
-      );
-    }
-
-    if (item === FETCH_STATUSES.EMPTY) {
-      return (
-        <li key={FETCH_STATUSES.EMPTY}>
-          { emptyCallback() }
-        </li>
-      );
-    }
-
-    if (item === FETCH_STATUSES.MORE) {
-      return (
-        <li key={FETCH_STATUSES.MORE}>
-          { fetchMoreCallback() }
-        </li>
-      );
-    }
-
-    return (
-      <li key={ `${options.viewKeyPrefix}_${i}`}>
-        { viewCallback(item) }
-      </li>
-    );
+    return viewCallback(item, i);
   });
 }
 
