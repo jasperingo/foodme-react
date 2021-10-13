@@ -8,24 +8,36 @@ export default function CategoriesReducer (state, action) {
     case CATEGORIES.STORES_FETCH_STATUS_CHANGED :
       return {
         ...state,
-        home: {
-          ...state.home,
-          categories: {
-            categories: state.home.categories.categories,
-            categoriesFetchStatus: action.payload
-          }
+        stores: {
+          stores: state.stores.stores,
+          storesFetchStatus: action.payload
         }
       };
     
     case CATEGORIES.STORES_FETCHED :
       return {
         ...state,
-        home: {
-          ...state.home,
-          categories: {
-            categories: action.payload, 
-            categoriesFetchStatus: FETCH_STATUSES.DONE,
-          }
+        stores: {
+          stores: action.payload, 
+          storesFetchStatus: FETCH_STATUSES.DONE,
+        }
+      };
+
+    case CATEGORIES.PRODUCTS_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        products: {
+          products: state.products.products,
+          productsFetchStatus: action.payload
+        }
+      };
+    
+    case CATEGORIES.PRODUCTS_FETCHED :
+      return {
+        ...state,
+        products: {
+          products: action.payload, 
+          productsFetchStatus: FETCH_STATUSES.DONE,
         }
       };
 

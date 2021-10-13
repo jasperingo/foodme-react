@@ -31,6 +31,25 @@ export function useHasMoreToFetchViaScroll(page, numberOfPages, status, scrollCo
           status !== FETCH_STATUSES.ERROR;
 }
 
+export function useDataRender(item, status, viewCallback, loadingCallback, errorCallback, options={}) {
+  
+  if (item === null) {
+    if (status === FETCH_STATUSES.LOADING) {
+      return loadingCallback(FETCH_STATUSES.LOADING);
+    }
+
+    if (status === FETCH_STATUSES.ERROR) {
+      return errorCallback(FETCH_STATUSES.ERROR);
+    }
+
+    if (status === FETCH_STATUSES.DONE) {
+      return '';
+    }
+  }
+
+  return viewCallback(item);
+}
+
 export function useListRender(items, status, viewCallback, loadingCallback, errorCallback, emptyCallback, fetchMoreCallback, options={}) {
   return items.map((item, i)=> {
     

@@ -78,14 +78,21 @@ export const TRANSLATIONS_EN = {
 
   _product: {
     Products: 'Products',
+    Related_products: 'Related products',
     Product_categories: 'Product categories',
     product__Count: '{{ count }} product',
     product__Count_plural: '{{ count }} products',
     Quantity: 'Quantity',
+    Add_to_cart: 'Add to cart',
     Decrease_quantity: 'Decrease quantity',
     Increase_quantity: 'Increase quantity',
   },
 
+  _review: {
+    Review: 'Review',
+    Reviews: 'Reviews'
+  },
+  
   _empty: {
     No_store: 'No store',
     No_category: 'No category',
