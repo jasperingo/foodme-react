@@ -8,7 +8,7 @@ import HistoryIcon from '../icons/HistoryIcon';
 function HistoryItem({ text }) {
   return (
     <li>
-      <Link to={`/search?q=${text}`} className="flex hover:bg-color-gray-h py-4">
+      <Link to={`/search/stores?q=${text}`} className="flex hover:bg-color-gray-h py-4">
         <HistoryIcon classList="fill-current text-color" />
         <div className="flex-grow ml-1">{ text }</div>
       </Link>

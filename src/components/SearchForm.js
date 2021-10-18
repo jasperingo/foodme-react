@@ -17,7 +17,7 @@ export default function SearchForm() {
   function onSearchSubmitted(e) {
     e.preventDefault();
     if (q === '') return;
-    history.push(`/search?q=${q}`)
+    history.push(`/search/stores?q=${q}`)
   }
 
   function updateInputOnRoute() {

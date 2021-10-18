@@ -1,11 +1,16 @@
 
-import { STORE, FETCH_STATUSES } from "../AppActions";
+import { STORE, PRODUCT, FETCH_STATUSES } from "../AppActions";
+import { initialStoreState } from "../AppInitialStates";
+
 
 export default function StoreReducer (state, action) {
   
   switch (action.type) {  
+
+    case STORE.UNFETCH: 
+      return initialStoreState;
     
-    case STORE.STORE_FETCH_STATUS_CHANGED :
+    case STORE.FETCH_STATUS_CHANGED :
       return {
         ...state,
         store: {
@@ -14,7 +19,7 @@ export default function StoreReducer (state, action) {
         }
       };
     
-    case STORE.STORE_FETCHED :
+    case STORE.FETCHED :
       return {
         ...state,
         store: {
@@ -47,11 +52,20 @@ export default function StoreReducer (state, action) {
         products: {
           productsFetchStatus: status,
           productsPage: state.products.productsPage+1,
+          productsCategory: state.products.productsCategory,
           productsNumberOfPages: action.payload.productsNumberOfPages,
           products: [...state.products.products, ...action.payload.products, null],
         }
       };
     
+    case PRODUCT.FILTER_CHANGED :
+      return {
+        ...state,
+        products: {
+          ...initialStoreState.products,
+          productsCategory: action.payload
+        }
+      };
     
     default:
       return state;

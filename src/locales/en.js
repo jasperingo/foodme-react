@@ -70,6 +70,7 @@ export const TRANSLATIONS_EN = {
 
   _store: {
     Store: 'Store',
+    Stores: 'Stores',
     Store_categories: 'Store categories',
     store__Count: '{{ count }} store',
     store__Count_plural: '{{ count }} stores',
@@ -97,6 +98,8 @@ export const TRANSLATIONS_EN = {
     No_store: 'No store',
     No_category: 'No category',
     No_product: 'No product',
+    No_review: 'No review',
+    No_promotion: 'No promotion',
     No_store_category: 'No store category',
     No_product_category: 'No product category',
     List_is_empty: 'List is empty',

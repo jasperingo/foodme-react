@@ -25,9 +25,14 @@ function CategoryItem({ category, index }) {
 
   const iconColor = useCategoryColor(index);
 
+  const path = category.type === 'product' ? 'products' : 'stores';
+
   return (
     <li className="">
-      <Link to={`/search?category=${category.name}`} className={ `flex gap-2 bg-color py-2 rounded md:shadow md:block md:text-center hover:bg-color-gray-h ${iconColor}` }>
+      <Link 
+        to={`/search/${path}?q=${category.name}&category=${category.name}`} 
+        className={ `flex gap-2 bg-color py-2 rounded md:shadow md:block md:text-center hover:bg-color-gray-h ${iconColor}` }
+        >
         <CategoriesIcon classList="fill-current mx-auto" />
         <div className="flex-grow">
           <div className="font-bold">{ category.name }</div>

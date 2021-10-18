@@ -24,18 +24,20 @@ const getsStoresFetchStatusAction = (payload) => ({
   payload
 });
 
-function CategoryItem({ name, index }) {
+function CategoryItem({ category, index }) {
 
   const iconColor = useCategoryColor(index);
+
+  const path = category.type === 'product' ? 'products' : 'stores';
 
   return (
     <li className="lg:mb-2">
       <Link 
-        to={`/search?category=${name}`}
+        to={`/search/${path}?q=${category.name}&category=${category.name}`}
         className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-1`}
         >
         <CategoriesIcon classList="fill-current mx-auto" />
-        <div className="flex-grow text-sm break-all">{ name }</div>
+        <div className="flex-grow text-sm break-all">{ category.name }</div>
       </Link>
     </li>
   );
@@ -155,7 +157,7 @@ export default function Home() {
                       <CategoryItem 
                         key={`categories-${i}`} 
                         index={i}
-                        name={item.name} 
+                        category={item} 
                         />
                     ),
                     (k)=> <li key={k} className="col-span-3"> <Loading /> </li>, 

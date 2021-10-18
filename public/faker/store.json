@@ -10,18 +10,22 @@
     "rating" : "3.9",
     "categories" : [
       {
+        "id": 0,
         "name": "All",
         "products_count": 2
       },
       {
+        "id": 1,
         "name": "African dish",
         "products_count": 34
       },
       {
+        "id": 2,
         "name": "Condiment",
         "products_count": 20
       },
       {
+        "id": 3,
         "name": "Snacks",
         "products_count": 4
       }

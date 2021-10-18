@@ -22,7 +22,7 @@ function QuantityChangeButton({ text, Icon, negative, onButtonClicked }) {
   const { t } = useTranslation();
 
   return (
-    <button onClick={()=> onButtonClicked(negative?-1:1)}>
+    <button onClick={()=> onButtonClicked(negative ? -1 : 1)}>
       <Icon classList="fill-current text-color-primary" />
       <span className="sr-only">{ t(text) }</span>
     </button>
@@ -54,8 +54,8 @@ export default function Product() {
   const [quantity, setQuantity] = useState(1);
 
   function onQuantityButtonClicked(value) {
-    value = quantity+value;
-    setQuantity(value<1?1:value)
+    value = (parseInt(quantity) || 1) + value;
+    setQuantity(value < 1 ? 1 : value);
   }
 
   function onAddToCart() {
@@ -143,7 +143,7 @@ export default function Product() {
                         <input 
                           type="number"
                           value={quantity}
-                          onChange={(e)=> setQuantity(parseInt(e.target.value) || 1)}
+                          onChange={(e)=> setQuantity(e.target.value)}
                           className="bg-color-gray mx-2 p-1 rounded w-20"
                           />
                         <QuantityChangeButton 

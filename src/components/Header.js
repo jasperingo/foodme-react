@@ -18,7 +18,7 @@ export const NAV_LINKS = [
   { title : 'account', icon: UserIcon, href: '/account' }
 ];
 
-function NavItem({ title, Icon, href }) {
+function NavItem({ title, Icon, href, hasCounter }) {
 
   return (
     <li className="flex-1 text-center">
@@ -28,8 +28,9 @@ function NavItem({ title, Icon, href }) {
         className="block width-full p-2 text-sm text-color-gray bg-color hover:bg-color-gray-h"
         activeClassName="text-color-primary"
       >
-        <Icon classList="fill-current mx-auto" />
-        <span className="lg:sr-only">{ title }</span>
+        <Icon classList="fill-current mx-auto inline-block" />
+        { hasCounter && <sup className="-m-2 bg-red-500 text-white inline-block p-2 rounded-full">2</sup> }
+        <span className="block lg:sr-only">{ title }</span>
       </NavLink>
     </li>
   );
@@ -47,33 +48,40 @@ export default function Header() {
       title={t(item.title)}  
       Icon={item.icon} 
       href={item.href} 
+      hasCounter={item.href==='/cart'}
       />
   ));
   
   return (
-    <header className={`bg-color dark:bg-color-d py-4 border-b lg:block ${(!showHeader && 'hidden')}`}>
+    <header className="bg-color dark:bg-color-d py-4 border-b lg:block">
       <div className="container-x">
         <div className="flex items-center lg:gap-2">
           <h1 className={"text-2xl font-bold text-yellow-500 flex-grow lg:flex-grow-0 lg:pr-10 "}>
             <Link to="/">{ t('app_name') }</Link>
           </h1>
           
-          <div className="flex items-center lg:flex-grow ">
-            <div method="GET" className="flex-grow hidden lg:block">
-              <SearchForm />
-            </div>
-            <Link 
-              to="/search/history"
-              className="text-color-gray bg-color hover:bg-color-gray-h block p-1 lg:hidden">
-              <SearchIcon classList="fill-current mx-auto" />
-              <span className="sr-only">Search</span>
-            </Link>
+          <div className="hidden lg:block lg:flex-grow">
+            <SearchForm />
           </div>
 
-          <nav className="fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:pl-10 lg:border-0 z-10">
-            <ul className="flex">
+          <nav>
+            
+            <ul>
+              <li>
+                <Link 
+                  to="/search/history"
+                  className="text-color-gray bg-color hover:bg-color-gray-h block p-1 lg:hidden"
+                  >
+                  <SearchIcon classList="fill-current mx-auto" />
+                  <span className="sr-only">Search</span>
+                </Link>
+              </li>
+            </ul>
+
+            <ul className={`flex lg:flex fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:pl-10 lg:border-0 z-10 ${(!showHeader && 'hidden')}`}>
               { navItems }
             </ul>
+
           </nav>
         </div>
       </div>

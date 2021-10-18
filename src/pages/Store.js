@@ -1,11 +1,12 @@
 
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NavLink, Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { API_URL, useAppContext } from '../context/AppContext';
-import { FETCH_STATUSES, STORE } from '../context/AppActions';
+import { FETCH_STATUSES, STORE, PRODUCT } from '../context/AppActions';
 import { useListRender, useDataRender, useHasMoreToFetchViaScroll } from '../context/AppHooks';
+import Tab from '../components/Tab';
 import Loading from '../components/Loading';
 import SubHeader from '../components/SubHeader';
 import LocationIcon from '../icons/LocationIcon';
@@ -22,13 +23,13 @@ import FetchMoreButton from '../components/FetchMoreButton';
 
 
 const PROFILE_NAV_LINKS = [
-  { title : '_product.Products', href: 'products' },
-  { title : '_extra.Reviews', href: 'reviews' },
-  { title : '_store.Promotions', href: 'promotions' }
+  { title : '_product.Products', href: '/products' },
+  { title : '_extra.Reviews', href: '/reviews' },
+  { title : '_store.Promotions', href: '/promotions' }
 ];
 
 const getStoreFetchStatusAction = (payload) => ({
-  type: STORE.STORE_FETCH_STATUS_CHANGED,
+  type: STORE.FETCH_STATUS_CHANGED,
   payload
 });
 
@@ -44,6 +45,7 @@ function StoreProductsList({ categories }) {
   const { store: {
     products: {
       products,
+      productsCategory,
       productsFetchStatus,
       productsPage,
       productsNumberOfPages
@@ -56,7 +58,7 @@ function StoreProductsList({ categories }) {
         return;
       
       try {
-        let response = await fetch(`${API_URL}store-products.json?id=${ID}`);
+        let response = await fetch(`${API_URL}store-products.json?id=${ID}&category=${productsCategory}`);
 
         if (!response.ok)
           throw new Error(response.status);
@@ -78,7 +80,7 @@ function StoreProductsList({ categories }) {
 
     fetchProducts();
 
-  }, [ID, productsFetchStatus, storeDispatch]);
+  }, [ID, productsFetchStatus, productsCategory, storeDispatch]);
 
   function refetchProducts() {
     if (productsFetchStatus === FETCH_STATUSES.LOADING) 
@@ -87,15 +89,31 @@ function StoreProductsList({ categories }) {
     storeDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
+  function onFilterChange(value) {
+    storeDispatch({
+      type: PRODUCT.FILTER_CHANGED,
+      payload: parseInt(value)
+    });
+  }
+  
   return (
     <div>
       <div className="container-x">
         <div className="flex my-4">
           <FilterIcon classList="fill-current text-color" />
-          <select className="bg-color-gray ml-1 p-1 rounded">
+          <select 
+            className="bg-color-gray ml-1 p-1 rounded" 
+            onChange={(e)=> onFilterChange(e.target.value)}
+            value={productsCategory}
+            >
             {
               categories.map((item, i)=> (
-                <option key={i}>{ item.name }</option>
+                <option 
+                  key={i} 
+                  value={item.id}
+                  >
+                  { item.name }
+                </option>
               ))
             }
           </select>
@@ -125,24 +143,7 @@ function StoreProductsList({ categories }) {
   );
 }
 
-function StoreProfileNavItem({ title, href }) {
 
-  const match = useRouteMatch();
-
-  const { t } = useTranslation();
-
-  return (
-    <li>
-      <NavLink 
-        to={`${match.url}/${href}`}
-        className="block px-2 py-1 rounded btn-color-gray"
-        activeClassName="btn-color-primary"
-        >
-        { t(title) }
-      </NavLink>
-    </li>
-  );
-}
 
 function StoreProfileItem({ Icon, data }) {
   return (
@@ -182,17 +183,7 @@ function StoreProfile({ storeData }) {
 
       </ul>
 
-      <ul className="flex my-2 gap-1">
-        {
-          PROFILE_NAV_LINKS.map((item, i)=> (
-            <StoreProfileNavItem 
-              key={ `nav_item_${i}` }
-              title={item.title}
-              href={item.href}
-              />
-          ))
-        }
-      </ul>
+      <Tab items={PROFILE_NAV_LINKS} keyPrefix="store-tab" />
 
     </>
   );
@@ -200,7 +191,7 @@ function StoreProfile({ storeData }) {
 
 export default function Store() {
 
-  const { ID } = useParams();
+  const ID = parseInt(useParams().ID);
 
   const match = useRouteMatch();
 
@@ -215,6 +206,7 @@ export default function Store() {
 
   useEffect(()=> {
     async function fetchStore() {
+
       if (storeFetchStatus !== FETCH_STATUSES.LOADING) 
         return;
       
@@ -225,9 +217,11 @@ export default function Store() {
           throw new Error(response.status);
         
         let data = await response.json();
+
+        data.data.id = ID;
         
         storeDispatch({
-          type: STORE.STORE_FETCHED,
+          type: STORE.FETCHED,
           payload: data.data
         });
 
@@ -236,9 +230,15 @@ export default function Store() {
       }
     }
 
+    if (store !== null && ID !== store.id) {
+      storeDispatch({
+        type: STORE.UNFETCH
+      });
+    }
+
     fetchStore();
 
-  }, [ID, storeFetchStatus, storeDispatch]);
+  }, [ID, store, storeFetchStatus, storeDispatch]);
 
   function refetchStore() {
     if (storeFetchStatus === FETCH_STATUSES.LOADING) 
@@ -273,10 +273,22 @@ export default function Store() {
             <StoreProductsList categories={store.categories} />
           </Route>
           <Route path={`${match.url}/reviews`}>
-            <div className="container-x">REVIEWS LOADING...</div>
+            <div className="container-x">
+              <ul className="list-x">
+                <li>
+                  <EmptyList text="_empty.No_review" Icon={ReviewIcon} />
+                </li>
+              </ul>
+            </div>
           </Route>
           <Route path={`${match.url}/promotions`}>    
-          <div className="container-x">PROMOTIONS LOADING...</div>
+            <div className="container-x">
+              <ul className="list-x">
+                <li>
+                  <EmptyList text="_empty.No_promotion" Icon={ReviewIcon} />
+                </li>
+              </ul>
+            </div>
           </Route>
         </Switch>
       }
