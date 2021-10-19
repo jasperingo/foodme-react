@@ -2,7 +2,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import SubHeader from '../components/SubHeader';
 import HistoryIcon from '../icons/HistoryIcon';
 
 function HistoryItem({ text }) {
@@ -22,8 +21,6 @@ export default function SearchHistory() {
 
   return (
     <section>
-
-      <SubHeader search={true} />
 
       <div className="container-x">
         <h3 className="font-bold mb-1">{ t('_search.Search_history') }</h3>

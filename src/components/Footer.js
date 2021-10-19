@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useHeaderVisible } from '../context/AppHooks';
+import { useHeaderOnMainPage } from '../context/AppHooks';
 
 
 function FooterLink({ text, href }) {
@@ -18,7 +18,7 @@ function FooterLink({ text, href }) {
 
 export default function Footer() {
 
-  const showHeader = useHeaderVisible();
+  const showHeader = useHeaderOnMainPage();
 
   return (
     <footer className={`py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full ${showHeader && 'hidden'} lg:block`}>

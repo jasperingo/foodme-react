@@ -6,8 +6,36 @@ export function useURLQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-export function useHeaderVisible() {
+export function useHeaderOnMainPage() {
   return ['/', '/categories', '/cart', '/account'].indexOf(useLocation().pathname) > -1;
+}
+
+export function useHeader2Title() {
+
+  const path = useLocation().pathname;
+
+  if (path === '/login')
+    return 'Login';
+
+  if (path === '/register')
+    return 'Register';
+  
+  if (path === '/about-us')
+    return 'About_us';
+
+  if (path === '/contact-us')
+    return 'Contact_us';
+  
+  if (path === '/terms-of-service')
+    return 'Terms_of_service';
+
+  if (/store\/[0-9]+\/products/.test(path) || /store\/[0-9]+\/reviews/.test(path) || /store\/[0-9]+\/promotions/.test(path))
+    return '_store.Store';
+
+  if (/store\/[0-9]+\/product\/[0-9]+/.test(path))
+    return '_product.Product';
+
+  return 'app_name';
 }
 
 export function useCategoryColor(index) {

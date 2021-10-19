@@ -61,14 +61,6 @@ export default function Categories() {
     }
   }, categoriesDispatch } = useAppContext();
 
-  /*const [stores, setStores] = useState([]);
-
-  const [products, setProducts] = useState([]);
-
-  const [storesFetched, setStoresFetched] = useState(stores.length < 1 ? 0 : 1);
-
-  const [productsFetched, setProductsFetched] = useState(products.length < 1 ? 0 : 1);*/
-
   const listStyle = "md:grid md:grid-cols-3 md:gap-4";
 
   useEffect(()=> {

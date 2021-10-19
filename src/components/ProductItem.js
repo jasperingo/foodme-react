@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 export default function ProductItem({ prod }) {
 
   return (
-    <Link to={`/store/1/product/${prod.id}`} className="flex mb-5 hover:bg-color-gray-h md:block">
+    <Link to={`/store/${prod.store.id}/product/${prod.id}`} className="flex mb-5 hover:bg-color-gray-h md:block">
       <img 
         src={`/photos/products/${prod.photo}`} 
         alt={prod.title} 

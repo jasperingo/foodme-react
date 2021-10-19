@@ -2,10 +2,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import SubHeader from '../components/SubHeader';
 import DeliveryIcon from '../icons/DeliveryIcon';
-import ResturantIcon from '../icons/ResturantIcon';
 import DiscountIcon from '../icons/DiscountIcon';
+import StoreIcon from '../icons/StoreIcon';
 
 
 const h2Style = "font-bold text-xl mb-2";
@@ -38,7 +37,7 @@ function PartnerWithUsItem({ image, url, text }) {
           height="100" 
           className="w-full h-full rounded" 
           />
-        <div className="absolute bottom-0 left-0 text-white w-full bg-black bg-opacity-50 p-2 rounded-b">
+        <div className="absolute bottom-0 left-0 text-white w-full bg-black bg-opacity-25 p-2 rounded-b">
           { t(text) }
         </div>
       </Link>
@@ -53,8 +52,6 @@ export default function AboutUs() {
 
   return (
     <section>
-
-      <SubHeader title="About_us" />
 
       <div>
       
@@ -73,7 +70,7 @@ export default function AboutUs() {
             <h2 className={h2Style}>{ t('Why_our_customers_choose_us') }</h2>
             <ul className="md:flex md:gap-2">
               <AboutFeature Icon={DeliveryIcon} text={ t('Express_Delivery') } />
-              <AboutFeature Icon={ResturantIcon} text={ t('_num_Resturants', { num : '50+' }) } />
+              <AboutFeature Icon={StoreIcon} text={ t('_store.store__Num', { num : '50+' }) } />
               <AboutFeature Icon={DiscountIcon} text={ t('Discount_System') } />
             </ul>
           </div>

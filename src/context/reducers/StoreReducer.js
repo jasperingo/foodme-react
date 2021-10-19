@@ -63,6 +63,7 @@ export default function StoreReducer (state, action) {
         ...state,
         products: {
           ...initialStoreState.products,
+          products: [null],
           productsCategory: action.payload
         }
       };

@@ -1,7 +1,6 @@
 
 import React from 'react';
 //import { useTranslation } from 'react-i18next';
-import SubHeader from '../components/SubHeader';
 
 
 function TermsOfServiceItem({ heading, body }) {
@@ -19,8 +18,6 @@ export default function TermsOfService() {
 
   return (
     <section>
-
-      <SubHeader title="Terms_of_service" />
       
       <div className="container px-2 mx-auto">
         <dl className="my-5 md:max-w-2xl md:mx-auto">

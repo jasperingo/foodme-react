@@ -6,14 +6,13 @@ import { API_URL, useAppContext } from '../context/AppContext';
 import { FETCH_STATUSES, PRODUCT } from '../context/AppActions';
 import { /*useListRender,*/ useDataRender } from '../context/AppHooks';
 import StoreItem from '../components/StoreItem';
-import SubHeader from '../components/SubHeader';
 import Reload from '../components/Reload';
 import Loading from '../components/Loading';
 import AddRoundIcon from '../icons/AddRoundIcon';
 import RemoveRoundIcon from '../icons/RemoveRoundIcon';
 
 const getProductFetchStatusAction = (payload) => ({
-  type: PRODUCT.PRODUCT_FETCH_STATUS_CHANGED,
+  type: PRODUCT.FETCH_STATUS_CHANGED,
   payload
 });
 
@@ -38,7 +37,7 @@ function H4Heading({ text }) {
 
 export default function Product() {
 
-  const { pID } = useParams();
+  const pID = parseInt(useParams().pID);
 
   const { t } = useTranslation();
 
@@ -76,10 +75,10 @@ export default function Product() {
         
         let data = await response.json();
 
-        //data.data = [];
+        data.data.id = pID;
 
         productDispatch({
-          type: PRODUCT.PRODUCT_FETCHED,
+          type: PRODUCT.FETCHED,
           payload: data.data
         });
         
@@ -88,9 +87,15 @@ export default function Product() {
       }
     }
 
+    if (product !== null && pID !== product.id) {
+      productDispatch({
+        type: PRODUCT.UNFETCH
+      });
+    }
+
     fetchProduct(); 
 
-  }, [pID, productFetchStatus, productDispatch]);
+  }, [pID, product, productFetchStatus, productDispatch]);
 
   function refetchProduct() {
     if (productFetchStatus === FETCH_STATUSES.LOADING) 
@@ -101,8 +106,6 @@ export default function Product() {
 
   return (
     <section>
-
-      <SubHeader title="Product" />
 
       <div className="md:container mx-auto">
         

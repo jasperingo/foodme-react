@@ -8,7 +8,10 @@
       "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
       "unit": "plate",
       "price": 620.59,
-      "photo": "p1.jpg"
+      "photo": "p1.jpg",
+      "store": {
+        "id" : 1
+      }
     },
     {
       "id": 2,
@@ -17,7 +20,10 @@
       "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
       "unit": "plate",
       "price": 350.00,
-      "photo": "p2.jpg"
+      "photo": "p2.jpg",
+      "store": {
+        "id" : 1
+      }
     },
     {
       "id": 3,
@@ -26,7 +32,10 @@
       "desc": "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam",
       "unit": "plate",
       "price": 890.90,
-      "photo": "p3.jpg"
+      "photo": "p3.jpg",
+      "store": {
+        "id" : 3
+      }
     }
   ]
 }

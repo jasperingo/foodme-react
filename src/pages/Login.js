@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import FormButton from '../components/FormButton';
 import FormField from '../components/FormField';
 import SocialLoginList from '../components/SocialLoginList';
-import SubHeader from '../components/SubHeader';
 
 export default function Login() {
 
@@ -17,8 +16,6 @@ export default function Login() {
   
   return (
     <section>
-
-      <SubHeader title="Login" />
 
       <div className="container-x">
 

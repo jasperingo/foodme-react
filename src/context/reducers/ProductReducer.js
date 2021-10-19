@@ -1,11 +1,15 @@
 
 import { PRODUCT, FETCH_STATUSES } from "../AppActions";
+import { initialProductState } from "../AppInitialStates";
 
 export default function ProductReducer (state, action) {
-  //console.log(state)
+  
   switch (action.type) {  
+
+    case PRODUCT.UNFETCH:
+      return initialProductState;
     
-    case PRODUCT.PRODUCT_FETCH_STATUS_CHANGED :
+    case PRODUCT.FETCH_STATUS_CHANGED :
       return {
         ...state,
         product: {
@@ -14,7 +18,7 @@ export default function ProductReducer (state, action) {
         }
       };
     
-    case PRODUCT.PRODUCT_FETCHED :
+    case PRODUCT.FETCHED :
       return {
         ...state,
         product: {

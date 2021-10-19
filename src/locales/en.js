@@ -62,6 +62,7 @@ export const TRANSLATIONS_EN = {
   },
 
   _search: {
+    Search: 'Search',
     Search__app: 'Search DailyNeeds',
     Search_history: 'Search history',
     Search_results: 'Search results',
@@ -72,12 +73,14 @@ export const TRANSLATIONS_EN = {
     Store: 'Store',
     Stores: 'Stores',
     Store_categories: 'Store categories',
+    store__Num: '{{ num }} stores',
     store__Count: '{{ count }} store',
     store__Count_plural: '{{ count }} stores',
     Promotions: 'Promotions',
   },
 
   _product: {
+    Product: 'Product',
     Products: 'Products',
     Related_products: 'Related products',
     Product_categories: 'Product categories',
@@ -87,6 +90,11 @@ export const TRANSLATIONS_EN = {
     Add_to_cart: 'Add to cart',
     Decrease_quantity: 'Decrease quantity',
     Increase_quantity: 'Increase quantity',
+  },
+
+  _cart: {
+    Cart: 'Cart',
+    Enter_cart_code: 'Enter cart code'
   },
 
   _review: {

@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+//import { useTranslation } from 'react-i18next';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { API_URL, useAppContext } from '../context/AppContext';
@@ -8,7 +8,6 @@ import { FETCH_STATUSES, STORE, PRODUCT } from '../context/AppActions';
 import { useListRender, useDataRender, useHasMoreToFetchViaScroll } from '../context/AppHooks';
 import Tab from '../components/Tab';
 import Loading from '../components/Loading';
-import SubHeader from '../components/SubHeader';
 import LocationIcon from '../icons/LocationIcon';
 import ReviewIcon from '../icons/ReviewIcon';
 import PhoneIcon from '../icons/PhoneIcon';
@@ -160,7 +159,7 @@ function StoreProfile({ storeData }) {
   return (
     <>
 
-      <div className="flex items-center mb-2">
+      <div className="flex items-center my-2">
         <img 
           src={ `/photos/${storeData.logo}` } 
           alt={ storeData.name } 
@@ -194,8 +193,6 @@ export default function Store() {
   const ID = parseInt(useParams().ID);
 
   const match = useRouteMatch();
-
-  const { t } = useTranslation();
 
   const { store: {
     store: {
@@ -249,8 +246,6 @@ export default function Store() {
 
   return (
     <section>
-
-      <SubHeader title={ t('_store.Store') } />
 
       <div>
         <div className="container-x">

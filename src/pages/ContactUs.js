@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import SubHeader from '../components/SubHeader';
 
 
 function ContactUsData({ param, value }) {
@@ -10,8 +9,8 @@ function ContactUsData({ param, value }) {
 
   return (
     <div className="mb-3">
-      <dt className="text-gray-500 font-bold text-sm">{ t(param) }</dt>
-      <dd>{ value }</dd>
+      <dt className="text-color-gray font-bold text-sm">{ t(param) }</dt>
+      <dd className="text-black">{ value }</dd>
     </div>
   );
 }
@@ -26,8 +25,6 @@ export default function ContactUs() {
 
   return (
     <section>
-
-      <SubHeader title="Contact_us" />
 
       <div className="container px-2 mx-auto">
       
@@ -83,7 +80,7 @@ export default function ContactUs() {
             </form>
           </div>
 
-          <div className="bg-gray-200 rounded p-4 pb-1 my-4">
+          <div className="bg-color-gray rounded p-4 pb-1 my-4">
             <dl>
               <ContactUsData param="Phone_number" value="+ 234 702 045 9383" />
               <ContactUsData param="Email" value="info@foodme.com" />

@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import FormButton from '../components/FormButton';
 import FormField from '../components/FormField';
 import SocialLoginList from '../components/SocialLoginList';
-import SubHeader from '../components/SubHeader';
 
 export default function Register() {
 
@@ -17,8 +16,6 @@ export default function Register() {
   
   return (
     <section>
-
-      <SubHeader title="Register" />
 
       <div className="container-x">
 
