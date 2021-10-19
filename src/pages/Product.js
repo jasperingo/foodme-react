@@ -3,30 +3,20 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { API_URL, useAppContext } from '../context/AppContext';
-import { FETCH_STATUSES, PRODUCT } from '../context/AppActions';
-import { /*useListRender,*/ useDataRender } from '../context/AppHooks';
+import { FETCH_STATUSES, PRODUCT, CART } from '../context/AppActions';
+import { /*useListRender,*/ useDataRender, useMoneyFormat } from '../context/AppHooks';
 import StoreItem from '../components/StoreItem';
 import Reload from '../components/Reload';
 import Loading from '../components/Loading';
-import AddRoundIcon from '../icons/AddRoundIcon';
-import RemoveRoundIcon from '../icons/RemoveRoundIcon';
+import QuantityChooser from '../components/QuantityChooser';
+import AlertDialog from '../components/AlertDialog';
+
 
 const getProductFetchStatusAction = (payload) => ({
   type: PRODUCT.FETCH_STATUS_CHANGED,
   payload
 });
 
-function QuantityChangeButton({ text, Icon, negative, onButtonClicked }) {
-
-  const { t } = useTranslation();
-
-  return (
-    <button onClick={()=> onButtonClicked(negative ? -1 : 1)}>
-      <Icon classList="fill-current text-color-primary" />
-      <span className="sr-only">{ t(text) }</span>
-    </button>
-  );
-}
 
 function H4Heading({ text }) {
 
@@ -35,11 +25,104 @@ function H4Heading({ text }) {
   return (<h3 className="font-bold mb-1">{ t(text) }</h3>);
 }
 
+function ProductProfile({ product }) {
+
+  const { t } = useTranslation();
+
+  const { cartDispatch } = useAppContext();
+
+  const [dialog, setDialog] = useState(null);
+
+  const [quantity, setQuantity] = useState(1);
+  
+  function onQuantityButtonClicked(value) {
+    value = (quantity || 1) + value;
+    setQuantity(value < 1 ? 1 : value);
+  }
+
+  function onAddToCart() {
+    
+    cartDispatch({
+      type: CART.ITEM_ADDED,
+      payload: {
+        amount: (product.price*quantity),
+        delivery_fee: 200.00,
+        unit: product.unit,
+        quantity,
+        product
+      }
+    });
+
+    setDialog({
+      body: '_product.Product_has_been_added_to_cart',
+      positiveButton: {
+        text: '_extra.Done',
+        action() {
+          setDialog(null);
+        }
+      }
+    });
+  }
+
+  return(
+    <>
+      <div className="lg:w-1/3">
+        <div className="container mx-auto">
+          <img 
+            src={`/photos/products/${product.photo}`}
+            alt={product.title}
+            className="h-60 w-full lg:h-96 sm:rounded"
+            />
+        </div>
+      </div>
+
+      <div className="container-x py-4 flex-grow lg:w-1/2 lg:pt-0">
+
+        { dialog && 
+          <AlertDialog 
+            body={dialog.body} 
+            positiveButton={dialog.positiveButton} 
+            negativeButton={dialog.negativeButton} 
+            /> 
+        }
+
+        <div className="font-bold text-2xl text-color-primary mb-2">{ useMoneyFormat(product.price) }</div>
+
+        <h3 className="text-xl mb-2">{ product.title }</h3>
+
+        <div className="text-color-gray text-sm mb-2">{ product.sub_title }</div>
+        
+        <div className="mb-2">
+          <div className="text-sm mb-1">{ t('_product.Quantity') }</div>
+          <QuantityChooser
+            quantity={quantity}
+            unit={product.unit} 
+            onQuantityChanged={onQuantityButtonClicked}
+            />
+        </div>
+
+        <button 
+          onClick={onAddToCart}
+          className="w-full bg-color-primary text-white my-4 py-3 px-5 font-bold rounded lg:w-auto"
+        >
+          { t('_product.Add_to_cart') }
+        </button>
+
+        <div className="p-2 border rounded">
+          <H4Heading text="Description" />
+          <p className="max-h-40 overflow-auto">{ product.description }</p>
+        </div>
+
+      </div>
+    </>
+  );
+}
+
 export default function Product() {
 
   const pID = parseInt(useParams().pID);
 
-  const { t } = useTranslation();
+  //const { t } = useTranslation();
 
   const { product: {
     product: {
@@ -49,17 +132,6 @@ export default function Product() {
     //reviews,
     //related
   }, productDispatch } = useAppContext();
-
-  const [quantity, setQuantity] = useState(1);
-
-  function onQuantityButtonClicked(value) {
-    value = (parseInt(quantity) || 1) + value;
-    setQuantity(value < 1 ? 1 : value);
-  }
-
-  function onAddToCart() {
-    alert('Adding to  cart...');
-  }
   
   useEffect(()=> {
     async function fetchProduct() {
@@ -114,66 +186,7 @@ export default function Product() {
             useDataRender(
               product, 
               productFetchStatus,
-              (item, i)=> (
-                <>
-                  <div className="lg:w-1/3">
-                    <div className="container mx-auto">
-                      <img 
-                        src={`/photos/products/${product.photo}`}
-                        alt={product.title}
-                        className="h-60 w-full lg:h-96 sm:rounded"
-                        />
-                    </div>
-                  </div>
-
-                  <div className="container-x py-4 flex-grow lg:w-1/2 lg:pt-0">
-
-                    <div className="font-bold text-2xl text-color-primary mb-2">&#8358; { product.price }</div>
-
-                    <h3 className="text-xl mb-2">{ product.title }</h3>
-
-                    <div className="text-color-gray text-sm mb-2">{ product.sub_title }</div>
-                    
-                    <div className="mb-2">
-                      <div className="text-sm mb-1">{ t('_product.Quantity') }</div>
-                      <div className="flex items-center">
-                        <QuantityChangeButton 
-                          negative={true}
-                          Icon={RemoveRoundIcon} 
-                          text="_product.Decrease_quantity" 
-                          onButtonClicked={onQuantityButtonClicked}
-                          />
-                        <input 
-                          type="number"
-                          value={quantity}
-                          onChange={(e)=> setQuantity(e.target.value)}
-                          className="bg-color-gray mx-2 p-1 rounded w-20"
-                          />
-                        <QuantityChangeButton 
-                          negative={false}
-                          Icon={AddRoundIcon}
-                          text="_product.Increase_quantity"  
-                          onButtonClicked={onQuantityButtonClicked}
-                          />
-                        <div className="ml-2 font-bold">{ product.unit }</div>
-                      </div>
-                    </div>
-
-                    <button 
-                      onClick={onAddToCart}
-                      className="w-full bg-color-primary text-white my-4 py-3 px-5 font-bold rounded lg:w-auto"
-                    >
-                      { t('_product.Add_to_cart') }
-                    </button>
-
-                    <div className="p-2 border rounded">
-                      <H4Heading text="Description" />
-                      <p className="max-h-40 overflow-auto">{ product.description }</p>
-                    </div>
-
-                  </div>
-                </>
-              ),
+              ()=> <ProductProfile product={product} />,
               (k)=> <div className="container-x"> <Loading /> </div>, 
               (k)=> <div className="container-x"> <Reload action={refetchProduct} /> </div>,
             )

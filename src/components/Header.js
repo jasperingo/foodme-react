@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
+import { useAppContext } from '../context/AppContext';
 import { useHeader2Title, useHeaderOnMainPage } from '../context/AppHooks';
 import HomeIcon from '../icons/HomeIcon';
 import UserIcon from '../icons/UserIcon';
@@ -19,6 +20,11 @@ export const NAV_LINKS = [
   { title : 'account', icon: UserIcon, href: '/account' }
 ];
 
+function CartCounter() {
+  const { cart: {cartItems} } = useAppContext();
+  return <span className="-m-2 text-xs absolute bg-red-500 text-white px-1 rounded-full">{ cartItems.length-1 }</span>;
+}
+
 function NavItem({ title, Icon, href, hasCounter }) {
 
   return (
@@ -26,11 +32,11 @@ function NavItem({ title, Icon, href, hasCounter }) {
       <NavLink 
         exact 
         to={ href }
-        className="block width-full p-2 text-sm text-color-gray bg-color hover:bg-color-gray-h"
+        className="block width-full p-2 text-sm text-color-gray bg-color relative hover:bg-color-gray-h"
         activeClassName="text-color-primary"
       >
         <Icon classList="fill-current mx-auto inline-block" />
-        { /*asCounter && <sup className="-m-2 bg-red-500 text-white inline-block p-2 rounded-full">2</sup>*/ }
+        { hasCounter && <CartCounter /> }
         <span className="block lg:sr-only">{ title }</span>
       </NavLink>
     </li>
@@ -43,9 +49,10 @@ function NavTopListItem({ title, Icon, href, hasCounter }) {
     <li>
       <Link 
         to={href}
-        className="text-color-gray bg-color hover:bg-color-gray-h block p-1 lg:hidden"
+        className="text-color-gray bg-color text-sm relative hover:bg-color-gray-h block p-1 lg:hidden"
         >
-        <Icon classList="fill-current mx-auto" />
+        <Icon classList="fill-current mx-auto inline-block" />
+        { hasCounter && <CartCounter /> }
         <span className="sr-only">{ title }</span>
       </Link>
     </li>
@@ -61,16 +68,10 @@ export default function Header() {
   const { t } = useTranslation();
 
   const showHeader = useHeaderOnMainPage();
-  
-  const navItems = NAV_LINKS.map((item, i) => (
-    <NavItem 
-      key={i}
-      title={t(item.title)}  
-      Icon={item.icon} 
-      href={item.href} 
-      hasCounter={item.href==='/cart'}
-      />
-  ));
+
+  function onSearchPage() {
+    return (pathname==='/search/history' || pathname==='/search/stores' || pathname==='/search/products');
+  }
 
   return (
     <header className="bg-color dark:bg-color-d py-4 border-b lg:block">
@@ -80,31 +81,41 @@ export default function Header() {
             <Link to="/">{ t('app_name') }</Link>
           </h1>
 
-          <div className={`flex ${(pathname!=='/search/history' && pathname!=='/search/stores' && pathname!=='/search/products') && 'flex-grow'} items-center lg:flex-grow-0 ${showHeader && 'hidden'}`}>
+          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center lg:flex-grow-0 ${showHeader && 'hidden'}`}>
             <button
               onClick={ ()=> { history.goBack(); } }
               className="hover:bg-color-gray-h">
               <BackIcon classList="fill-current text-color" />
               <span className="sr-only">{ t('Previous_page') }</span>
             </button>
-            <h2 className={`font-bold flex-grow text-left text-xl ${(pathname==='/search/history' || pathname==='/search/stores' || pathname==='/search/products') && 'hidden'}`}>
+            <h2 className={`font-bold flex-grow text-left text-xl ${onSearchPage() && 'hidden'}`}>
               { t(useHeader2Title()) }
             </h2>
           </div>
           
-          <div className={`${(showHeader || (pathname!=='/search/history' && pathname!=='/search/stores' && pathname!=='/search/products')) && 'hidden'} flex-grow lg:block`}>
+          <div className={`${(showHeader || !onSearchPage()) && 'hidden'} flex-grow lg:block`}>
             <SearchForm />
           </div>
 
           <nav>
             
-            <ul className={`${(pathname==='/search/history' || pathname==='/search/stores' || pathname==='/search/products') && 'hidden'} flex gap-2`}>
-              { !showHeader && <NavTopListItem title={t('_cart.Cart')} href="/cart" Icon={CartIcon} /> }
+            <ul className={`${onSearchPage() && 'hidden'} flex gap-2`}>
+              { !showHeader && <NavTopListItem title={t('_cart.Cart')} href="/cart" Icon={CartIcon} hasCounter={true} /> }
               <NavTopListItem title={t('_search.Search')} href="/search/history" Icon={SearchIcon} />
             </ul>
 
             <ul className={`flex lg:flex fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:pl-10 lg:border-0 z-10 ${(!showHeader && 'hidden')}`}>
-              { navItems }
+              {
+                NAV_LINKS.map((item, i) => (
+                  <NavItem 
+                    key={i}
+                    title={t(item.title)}  
+                    Icon={item.icon} 
+                    href={item.href} 
+                    hasCounter={item.href==='/cart'}
+                    />
+                ))
+              }
             </ul>
 
           </nav>

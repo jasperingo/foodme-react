@@ -5,13 +5,15 @@ import {
   initialCategoriesState, 
   initialProductState, 
   initialStoreState, 
-  initialSearchState 
+  initialSearchState,
+  initialCartState
 } from './AppInitialStates';
 import HomeReducer from './reducers/HomeReducer';
 import CategoriesReducer from './reducers/CategoriesReducer';
 import StoreReducer from './reducers/StoreReducer';
 import ProductReducer from './reducers/ProductReducer';
 import SearchReducer from "./reducers/SearchReducer";
+import CartReducer from "./reducers/CartReducer";
 
 
 export const API_URL = '/faker/';
@@ -32,6 +34,8 @@ export const AppProvider = ({ children }) => {
 
   const [searchState, searchDispatch] = useReducer(SearchReducer, initialSearchState);
 
+  const [cartState, cartDispatch] = useReducer(CartReducer, initialCartState);
+
   return (
     <AppContext.Provider value={{
         home: homeState, 
@@ -43,7 +47,9 @@ export const AppProvider = ({ children }) => {
         store: storeState, 
         storeDispatch,
         search: searchState,
-        searchDispatch
+        searchDispatch,
+        cart: cartState,
+        cartDispatch
       }}
     >
       { children }

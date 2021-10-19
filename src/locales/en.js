@@ -59,14 +59,19 @@ export const TRANSLATIONS_EN = {
     categories: 'categories',
     Categories: 'Categories',
     Reviews: 'Reviews',
+    Delete: 'Delete',
+    Total: 'Total',
+    Done: 'Done',
+    Cancel: 'Cancel',
+    Confirm: 'Confirm',
+    Yes: 'Yes',
+    No: 'No',
   },
 
   _search: {
     Search: 'Search',
     Search__app: 'Search DailyNeeds',
     Search_history: 'Search history',
-    Search_results: 'Search results',
-    Category_results: 'Category results',
   },
 
   _store: {
@@ -88,13 +93,16 @@ export const TRANSLATIONS_EN = {
     product__Count_plural: '{{ count }} products',
     Quantity: 'Quantity',
     Add_to_cart: 'Add to cart',
+    Product_has_been_added_to_cart: 'Product has been added to cart',
     Decrease_quantity: 'Decrease quantity',
     Increase_quantity: 'Increase quantity',
   },
 
   _cart: {
     Cart: 'Cart',
-    Enter_cart_code: 'Enter cart code'
+    Enter_cart_code: 'Enter cart code',
+    Check_out: 'Check out',
+    Remove_cart_item: 'Remove cart item',
   },
 
   _review: {
