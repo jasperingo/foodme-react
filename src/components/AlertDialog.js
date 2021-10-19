@@ -22,7 +22,7 @@ export default function AlertDialog({ body, positiveButton, negativeButton }) {
 
   return (
     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-25">
-      <div className="fixed top-1/3 left-1/4 w-1/2 bg-color rounded">
+      <div className="fixed top-1/3 w-3/4 bg-color rounded border" style={{left: '12.5%'}}>
         <div className="p-4">{ t(body) }</div>
         <div className="flex border-t">
           { negativeButton && <DialogButton text={negativeButton.text} negative={true} action={negativeButton.action} /> }

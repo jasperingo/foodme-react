@@ -25,7 +25,7 @@ function TabItem({ title, href }) {
 export default function Tab({ items, keyPrefix }) {
 
   return (
-    <ul className="flex my-2 gap-1">
+    <ul className="flex my-4 gap-1">
       {
         items.map((item, i)=> (
           <TabItem 

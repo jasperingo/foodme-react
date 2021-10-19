@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useListRender, useMoneyFormat } from '../context/AppHooks';
 import EmptyList from '../components/EmptyList';
@@ -8,6 +8,7 @@ import CartEmptyIcon from '../icons/CartEmptyIcon';
 import DeleteIcon from '../icons/DeleteIcon';
 import { useAppContext } from '../context/AppContext';
 import { CART, FETCH_STATUSES } from '../context/AppActions';
+import AlertDialog from '../components/AlertDialog';
 
 
 function CartItem({ cartItem }) {
@@ -16,20 +17,38 @@ function CartItem({ cartItem }) {
 
   const { cartDispatch } = useAppContext();
 
+  const [dialog, setDialog] = useState(null);
+
   function onQuantityButtonClicked(value) {
-    /*cartDispatch({
+    cartDispatch({
       type: CART.ITEM_QUANTITY_CHANGED,
       payload: {
         item: cartItem,
         value
       }
-    });*/
+    });
   }
   
   function onRemoveClicked() {
-    cartDispatch({
-      type: CART.ITEM_REMOVED,
-      payload: cartItem
+
+    setDialog({
+      body: '_cart._confirm_item_removal',
+      positiveButton: {
+        text: '_extra.Yes',
+        action() {
+          cartDispatch({
+            type: CART.ITEM_REMOVED,
+            payload: cartItem
+          });
+          setDialog(null);
+        }
+      },
+      negativeButton: {
+        text: '_extra.No',
+        action() {
+          setDialog(null);
+        }
+      }
     });
   }
 
@@ -63,6 +82,13 @@ function CartItem({ cartItem }) {
           </button>
         </div>
       </div>
+      { dialog && 
+        <AlertDialog 
+          body={dialog.body} 
+          positiveButton={dialog.positiveButton} 
+          negativeButton={dialog.negativeButton} 
+          /> 
+      }
     </li>
   );
 }
@@ -79,7 +105,7 @@ function CheckOut() {
         <strong className="font-normal text-sm flex-grow">{ t('_extra.Total') }: </strong>
         <span className="font-bold text-lg">{ useMoneyFormat(cartItems.reduce((sum, i)=> i!==null ? sum+i.amount : sum, 0)) }</span>
       </div>
-      <button className="w-full py-3 rounded btn-color-primary">{ t('_cart.Check_out') }</button>
+      <button className="w-full py-3 rounded btn-color-primary" onClick={()=> alert('Checking out...')}>{ t('_cart.Check_out') }</button>
     </div>
   );
 }
@@ -93,7 +119,7 @@ export default function Cart() {
       cartItemsFetchStatus
     } 
   } = useAppContext();
-  
+
   return (
     <section>
 

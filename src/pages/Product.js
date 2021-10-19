@@ -30,7 +30,7 @@ function ProductProfile({ product }) {
   const { t } = useTranslation();
 
   const { cartDispatch } = useAppContext();
-
+  
   const [dialog, setDialog] = useState(null);
 
   const [quantity, setQuantity] = useState(1);
@@ -103,7 +103,7 @@ function ProductProfile({ product }) {
 
         <button 
           onClick={onAddToCart}
-          className="w-full bg-color-primary text-white my-4 py-3 px-5 font-bold rounded lg:w-auto"
+          className="w-full btn-color-primary my-4 py-3 px-5 font-bold rounded lg:w-auto"
         >
           { t('_product.Add_to_cart') }
         </button>

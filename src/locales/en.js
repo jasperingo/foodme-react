@@ -5,8 +5,6 @@ export const TRANSLATIONS_EN = {
   Resturants: 'Resturants',
   Application: 'Application',
 
-  _nairaSymbol: '&#8358;',
-
   OR: 'OR',
 
   Retry: 'Retry',
@@ -103,6 +101,7 @@ export const TRANSLATIONS_EN = {
     Enter_cart_code: 'Enter cart code',
     Check_out: 'Check out',
     Remove_cart_item: 'Remove cart item',
+    _confirm_item_removal: 'Are you sure you want to remove this item?',
   },
 
   _review: {

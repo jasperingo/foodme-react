@@ -23,7 +23,7 @@ export default function SearchHistory() {
     <section>
 
       <div className="container-x">
-        <h3 className="font-bold my-1">{ t('_search.Search_history') }</h3>
+        <h3 className="font-bold my-2">{ t('_search.Search_history') }</h3>
         <ul>
           <HistoryItem text="Chicken pizza" />
           <HistoryItem text="Egusi soup" />

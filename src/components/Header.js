@@ -22,7 +22,9 @@ export const NAV_LINKS = [
 
 function CartCounter() {
   const { cart: {cartItems} } = useAppContext();
-  return <span className="-m-2 text-xs absolute bg-red-500 text-white px-1 rounded-full">{ cartItems.length-1 }</span>;
+  return <span className="-ml-2 -mt-1 text-xs absolute bg-red-500 text-white px-1 rounded-full">
+    { cartItems.length-1 < 100 ? cartItems.length-1 : '99+' }
+  </span>;
 }
 
 function NavItem({ title, Icon, href, hasCounter }) {
@@ -32,7 +34,7 @@ function NavItem({ title, Icon, href, hasCounter }) {
       <NavLink 
         exact 
         to={ href }
-        className="block width-full p-2 text-sm text-color-gray bg-color relative hover:bg-color-gray-h"
+        className="block width-full py-2 px-4 text-sm text-color-gray bg-color relative hover:bg-color-gray-h"
         activeClassName="text-color-primary"
       >
         <Icon classList="fill-current mx-auto inline-block" />

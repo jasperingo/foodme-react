@@ -68,7 +68,6 @@ export const initialSearchState = {
 };
 
 export const initialCartState = {
-  total: 0.00,
   cartItems: [null],
   cartItemsFetchStatus: FETCH_STATUSES.EMPTY
 };
