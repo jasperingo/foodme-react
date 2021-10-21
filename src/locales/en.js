@@ -64,6 +64,7 @@ export const TRANSLATIONS_EN = {
     Confirm: 'Confirm',
     Yes: 'Yes',
     No: 'No',
+    By: 'By',
   },
 
   _search: {

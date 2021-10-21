@@ -3,17 +3,26 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { API_URL, useAppContext } from '../context/AppContext';
-import { FETCH_STATUSES, PRODUCT, CART } from '../context/AppActions';
-import { /*useListRender,*/ useDataRender, useMoneyFormat } from '../context/AppHooks';
+import { FETCH_STATUSES, PRODUCT, CART, REVIEW } from '../context/AppActions';
+import { /*useListRender,*/ useDataRender, useListRender, useMoneyFormat } from '../context/AppHooks';
 import StoreItem from '../components/StoreItem';
 import Reload from '../components/Reload';
 import Loading from '../components/Loading';
 import QuantityChooser from '../components/QuantityChooser';
 import AlertDialog from '../components/AlertDialog';
+import ReviewItem from '../components/ReviewItem';
+import EmptyList from '../components/EmptyList';
+import FetchMoreButton from '../components/FetchMoreButton';
+import StarIcon from '../icons/StarIcon';
 
 
 const getProductFetchStatusAction = (payload) => ({
   type: PRODUCT.FETCH_STATUS_CHANGED,
+  payload
+});
+
+const getReviewsFetchStatusAction = (payload) => ({
+  type: REVIEW.FETCH_STATUS_CHANGED,
   payload
 });
 
@@ -23,6 +32,79 @@ function H4Heading({ text }) {
   const { t } = useTranslation();
 
   return (<h3 className="font-bold mb-1">{ t(text) }</h3>);
+}
+
+
+function ProductReviewsList() {
+
+  const pID = parseInt(useParams().pID);
+
+  const { product: {
+    reviews: {
+      reviews,
+      reviewsFetchStatus
+    }
+  }, productDispatch } = useAppContext();
+
+
+  useEffect(()=> {
+    async function fetchReviews() {
+      if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
+        return;
+      
+      try {
+        let response = await fetch(`${API_URL}reviews.json?id=${pID}`);
+
+        if (!response.ok)
+          throw new Error(response.status);
+        
+        let data = await response.json();
+        
+        productDispatch({
+          type: REVIEW.FETCHED,
+          payload: {
+            reviews: data.data,
+            reviewsNumberOfPages: 1, //data.total_pages
+          }
+        });
+
+      } catch (err) {
+        productDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.ERROR));
+      }
+    }
+
+    fetchReviews();
+
+  }, [pID, reviewsFetchStatus, productDispatch]);
+
+  function refetchReviews() {
+    if (reviewsFetchStatus === FETCH_STATUSES.LOADING) 
+      return;
+    
+    productDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+  
+
+  return (
+    <div className="container-x flex-grow md:w-1/2">
+      <H4Heading text="_review.Reviews" />
+      <div>
+        <ul className="list-x">
+          { 
+            useListRender(
+              reviews, 
+              reviewsFetchStatus,
+              (item, i)=> <li key={`prod-${i}`}> <ReviewItem review={item} /> </li>, 
+              (k)=> <li key={k}> <Loading /> </li>, 
+              (k)=> <li key={k}> <Reload action={refetchReviews} /> </li>,
+              (k)=> <li key={k}> <EmptyList text="_empty.No_review" Icon={StarIcon} /> </li>, 
+              (k)=> <li key={k}> <FetchMoreButton action={refetchReviews} /> </li>,
+            )
+          }
+        </ul>
+      </div>
+    </div>
+  );
 }
 
 function ProductProfile({ product }) {
@@ -128,9 +210,7 @@ export default function Product() {
     product: {
       product,
       productFetchStatus
-    },
-    //reviews,
-    //related
+    }
   }, productDispatch } = useAppContext();
   
   useEffect(()=> {
@@ -203,13 +283,7 @@ export default function Product() {
           }
 
           { 
-            product && 
-            <div className="container-x flex-grow md:w-1/2">
-              <H4Heading text="_review.Reviews" />
-              <div>
-                LOADING...
-              </div>
-            </div>
+            product && <ProductReviewsList />
           }
 
         </div>

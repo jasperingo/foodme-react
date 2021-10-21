@@ -4,12 +4,13 @@ import React, { useEffect } from 'react';
 import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { API_URL, useAppContext } from '../context/AppContext';
-import { FETCH_STATUSES, STORE, PRODUCT } from '../context/AppActions';
+import { FETCH_STATUSES, STORE, PRODUCT, REVIEW } from '../context/AppActions';
 import { useListRender, useDataRender, useHasMoreToFetchViaScroll } from '../context/AppHooks';
 import Tab from '../components/Tab';
 import Loading from '../components/Loading';
 import LocationIcon from '../icons/LocationIcon';
 import ReviewIcon from '../icons/ReviewIcon';
+import StarIcon from '../icons/StarIcon';
 import PhoneIcon from '../icons/PhoneIcon';
 import EmailIcon from '../icons/EmailIcon';
 import FilterIcon from '../icons/FilterIcon';
@@ -19,6 +20,7 @@ import ProductItem from '../components/ProductItem';
 import Reload from '../components/Reload';
 import EmptyList from '../components/EmptyList';
 import FetchMoreButton from '../components/FetchMoreButton';
+import ReviewItem from '../components/ReviewItem';
 
 
 const PROFILE_NAV_LINKS = [
@@ -36,6 +38,90 @@ const getProductFetchStatusAction = (payload) => ({
   type: STORE.PRODUCTS_FETCH_STATUS_CHANGED,
   payload
 });
+
+const getReviewsFetchStatusAction = (payload) => ({
+  type: REVIEW.FETCH_STATUS_CHANGED,
+  payload
+});
+
+
+
+function StoreReviewsList() {
+
+  const { ID } = useParams();
+
+  const { store: {
+    reviews: {
+      reviews,
+      reviewsPage,
+      reviewsNumberOfPages,
+      reviewsFetchStatus
+    }
+  }, storeDispatch } = useAppContext();
+
+  useEffect(()=> {
+    async function fetchReviews() {
+      if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
+        return;
+      
+      try {
+        let response = await fetch(`${API_URL}reviews.json?id=${ID}`);
+
+        if (!response.ok)
+          throw new Error(response.status);
+        
+        let data = await response.json();
+        
+        storeDispatch({
+          type: REVIEW.FETCHED,
+          payload: {
+            reviews: data.data,
+            reviewsNumberOfPages: data.total_pages
+          }
+        });
+
+      } catch (err) {
+        storeDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.ERROR));
+      }
+    }
+
+    fetchReviews();
+
+  }, [ID, reviewsFetchStatus, storeDispatch]);
+
+  function refetchReviews() {
+    if (reviewsFetchStatus === FETCH_STATUSES.LOADING) 
+      return;
+    
+    storeDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+  
+  return (
+    <div>
+      <div className="container-x">
+        <InfiniteScroll 
+            dataLength={reviews.length}
+            next={refetchReviews}
+            hasMore={useHasMoreToFetchViaScroll(reviewsPage, reviewsNumberOfPages, reviewsFetchStatus)}
+            >
+            <ul className="list-x">
+              { 
+                useListRender(
+                  reviews, 
+                  reviewsFetchStatus,
+                  (item, i)=> <li key={`prod-${i}`}> <ReviewItem review={item} /> </li>, 
+                  (k)=> <li key={k}> <Loading /> </li>, 
+                  (k)=> <li key={k}> <Reload action={refetchReviews} /> </li>,
+                  (k)=> <li key={k}> <EmptyList text="_empty.No_review" Icon={StarIcon} /> </li>, 
+                  (k)=> <li key={k}> <FetchMoreButton action={refetchReviews} /> </li>,
+                )
+              }
+            </ul>
+          </InfiniteScroll>
+      </div>
+    </div>
+  );
+}
 
 function StoreProductsList({ categories }) {
 
@@ -268,13 +354,7 @@ export default function Store() {
             <StoreProductsList categories={store.categories} />
           </Route>
           <Route path={`${match.url}/reviews`}>
-            <div className="container-x">
-              <ul className="list-x">
-                <li>
-                  <EmptyList text="_empty.No_review" Icon={ReviewIcon} />
-                </li>
-              </ul>
-            </div>
+            <StoreReviewsList />
           </Route>
           <Route path={`${match.url}/promotions`}>    
             <div className="container-x">

@@ -1,5 +1,5 @@
 
-import { STORE, PRODUCT, FETCH_STATUSES } from "../AppActions";
+import { STORE, PRODUCT, REVIEW, FETCH_STATUSES } from "../AppActions";
 import { initialStoreState } from "../AppInitialStates";
 
 
@@ -40,9 +40,9 @@ export default function StoreReducer (state, action) {
     case STORE.PRODUCTS_FETCHED :
       let status = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
       
-      if ((state.products.productsPage+1) < action.payload.productsNumberOfPages) {
+      if ((state.products.productsPage+1) < action.payload.productsNumberOfPages) 
         status = FETCH_STATUSES.MORE;
-      } else if (state.products.products.length === 1 && action.payload.products.length < 1) 
+      else if (state.products.products.length === 1 && action.payload.products.length < 1) 
         status = FETCH_STATUSES.EMPTY;
       
       state.products.products.pop();
@@ -67,6 +67,35 @@ export default function StoreReducer (state, action) {
           productsCategory: action.payload
         }
       };
+
+    case REVIEW.FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        reviews: {
+          ...state.reviews,
+          reviewsFetchStatus: action.payload
+        }
+      };
+
+    case REVIEW.FETCHED:
+      let status2 = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
+      
+      if ((state.reviews.reviewsPage+1) < action.payload.reviewsNumberOfPages) 
+        status2 = FETCH_STATUSES.MORE;
+      else if (state.reviews.reviews.length === 1 && action.payload.reviews.length < 1) 
+        status2 = FETCH_STATUSES.EMPTY;
+        
+      state.reviews.reviews.pop();
+
+      return {
+        ...state,
+        reviews: {
+          reviewsFetchStatus: status2,
+          reviewsPage: state.reviews.reviewsPage+1,
+          reviewsNumberOfPages: action.payload.reviewsNumberOfPages,
+          reviews: [...state.reviews.reviews, ...action.payload.reviews, null],
+        }
+      }; 
     
     default:
       return state;

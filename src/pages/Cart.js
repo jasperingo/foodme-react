@@ -149,7 +149,7 @@ export default function Cart() {
               null, 
               null,
               (k)=> (
-                <li key={k} className="lg:mx-auto lg:w-1/2">
+                <li key={k}>
                   <EmptyList text="_empty.Your_cart_is_empty" Icon={CartEmptyIcon} />
                 </li>
               )

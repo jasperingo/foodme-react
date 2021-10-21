@@ -37,7 +37,12 @@ export const initialStoreState = {
     productsNumberOfPages: 0,
     productsFetchStatus: FETCH_STATUSES.LOADING
   },
-  reviews: [],
+  reviews: {
+    reviews: [null],
+    reviewsPage: 0,
+    reviewsNumberOfPages: 0,
+    reviewsFetchStatus: FETCH_STATUSES.LOADING
+  },
   promotions: []
 };
 
@@ -46,7 +51,12 @@ export const initialProductState = {
     product: null,
     productFetchStatus: FETCH_STATUSES.LOADING
   },
-  reviews: [],
+  reviews: {
+    reviews: [null],
+    reviewsPage: 0,
+    reviewsNumberOfPages: 0,
+    reviewsFetchStatus: FETCH_STATUSES.LOADING
+  },
   related: []
 };
 
