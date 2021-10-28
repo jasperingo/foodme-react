@@ -10,9 +10,6 @@ export function useMoneyFormat(amount) {
   return <>&#8358; {amount.toFixed(2)}</>;
 }
 
-export function useHeaderOnMainPage() {
-  return ['/', '/categories', '/cart', '/account'].indexOf(useLocation().pathname) > -1;
-}
 
 export function useHeader2Title() {
 

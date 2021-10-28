@@ -3,22 +3,9 @@ import React from 'react';
 import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import { useAppContext } from '../context/AppContext';
-import { useHeader2Title, useHeaderOnMainPage } from '../context/AppHooks';
-import HomeIcon from '../icons/HomeIcon';
-import UserIcon from '../icons/UserIcon';
-import CartIcon from '../icons/CartIcon';
-import SearchIcon from '../icons/SearchIcon';
-import CategoriesIcon from '../icons/CategoriesIcon';
+import { useHeader2Title } from '../context/AppHooks';
 import SearchForm from './SearchForm';
 import BackIcon from '../icons/BackIcon';
-
-
-export const NAV_LINKS = [
-  { title : 'home', icon: HomeIcon, href: '/' },
-  { title : 'categories', icon: CategoriesIcon, href: '/categories' },
-  { title : 'cart', icon: CartIcon, href: '/cart' },
-  { title : 'account', icon: UserIcon, href: '/account' }
-];
 
 function CartCounter() {
   const { cart: {cartItems} } = useAppContext();
@@ -61,7 +48,7 @@ function NavTopListItem({ title, Icon, href, hasCounter }) {
   );
 }
 
-export default function Header() {
+export default function Header({ navLinks, topNavLinks }) {
 
   const history = useHistory();
 
@@ -69,7 +56,7 @@ export default function Header() {
 
   const { t } = useTranslation();
 
-  const showHeader = useHeaderOnMainPage();
+  const showHeader = navLinks.find(item=> item.href === pathname);
 
   function onSearchPage() {
     return (pathname==='/search/history' || pathname==='/search/stores' || pathname==='/search/products');
@@ -83,10 +70,10 @@ export default function Header() {
             <Link to="/">{ t('app_name') }</Link>
           </h1>
 
-          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center lg:flex-grow-0 ${showHeader && 'hidden'}`}>
+          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center lg:flex-grow-0 lg:bg-yellow-200 lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
             <button
               onClick={ ()=> { history.goBack(); } }
-              className="hover:bg-color-gray-h">
+              className="hover:bg-color-gray-h lg:hidden">
               <BackIcon classList="fill-current text-color" />
               <span className="sr-only">{ t('Previous_page') }</span>
             </button>
@@ -102,13 +89,36 @@ export default function Header() {
           <nav>
             
             <ul className={`${onSearchPage() && 'hidden'} flex gap-2`}>
-              { !showHeader && <NavTopListItem title={t('_cart.Cart')} href="/cart" Icon={CartIcon} hasCounter={true} /> }
-              <NavTopListItem title={t('_search.Search')} href="/search/history" Icon={SearchIcon} />
+              {
+                topNavLinks.map((item, i)=> {
+
+                  let show = false;
+
+                  item.pages.forEach(X=> {
+                    if (X.test(pathname))
+                      show = true;
+                  });
+                  
+                  if (item.pages.length > 0 && !show) {
+                    return '';
+                  }
+
+                  return (
+                    <NavTopListItem 
+                      key={i}
+                      href={item.href} 
+                      Icon={item.icon} 
+                      hasCounter={item.hasCounter} 
+                      title={ t(item.title) } 
+                      />
+                  );
+                })
+              }
             </ul>
 
             <ul className={`flex lg:flex fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:pl-10 lg:border-0 z-10 ${(!showHeader && 'hidden')}`}>
               {
-                NAV_LINKS.map((item, i) => (
+                navLinks.map((item, i) => (
                   <NavItem 
                     key={i}
                     title={t(item.title)}  

@@ -20,8 +20,6 @@ export const TRANSLATIONS_EN = {
   Express_Delivery: 'Express Delivery',
   _num_Resturants: '{{ num }} Resturants',
   Partner_with_us: 'Partner with us',
-  Become_a_resturant_partner : 'Become a resturant partner',
-  Become_a_courier_partner: 'Become a courier partner',
 
   Send: 'Send',
   Message: 'Message',
@@ -50,6 +48,11 @@ export const TRANSLATIONS_EN = {
   By_registering_you_agree_to_our: 'By registering, you agree to our',
 
   _user: {
+    Profile: 'Profile',
+    Addresses: 'Addresses',
+    Log_in: 'Log in',
+    Log_out: 'Log out',
+    Register: 'Register',
     Or_login_with: 'Or login with'
   },
 
@@ -66,6 +69,8 @@ export const TRANSLATIONS_EN = {
     Yes: 'Yes',
     No: 'No',
     By: 'By',
+    Favorites: 'Favorites',
+    Account: 'Account',
   },
 
   _search: {
@@ -77,6 +82,8 @@ export const TRANSLATIONS_EN = {
   _store: {
     Store: 'Store',
     Stores: 'Stores',
+    Recommended_stores: 'Recommended stores',
+    Become_a_store_partner : 'Become a store partner',
     Store_categories: 'Store categories',
     store__Num: '{{ num }} stores',
     store__Count: '{{ count }} store',
@@ -84,10 +91,15 @@ export const TRANSLATIONS_EN = {
     Promotions: 'Promotions',
   },
 
+  _discount: {
+    Promotions: 'Promotions',
+  },
+
   _product: {
     Product: 'Product',
     Products: 'Products',
     Related_products: 'Related products',
+    Recommended_products: 'Recommended products',
     Product_categories: 'Product categories',
     product__Count: '{{ count }} product',
     product__Count_plural: '{{ count }} products',
@@ -100,6 +112,7 @@ export const TRANSLATIONS_EN = {
 
   _cart: {
     Cart: 'Cart',
+    Saved_carts: 'Saved carts',
     Enter_cart_code: 'Enter cart code',
     Check_out: 'Check out',
     Remove_cart_item: 'Remove cart item',
@@ -114,6 +127,18 @@ export const TRANSLATIONS_EN = {
     Rate_this_store: 'Rate this store',
     Rate_this_product: 'Rate this product',
     Tell_us_your_experience: 'Tell us your experience'
+  },
+
+  _delivery: {
+    Become_a_courier_partner: 'Become a courier partner',
+  },
+
+  _order: {
+    Orders: 'Orders'
+  },
+
+  _transaction: {
+    Transactions: 'Transactions'
   },
   
   _empty: {
@@ -132,9 +157,6 @@ export const TRANSLATIONS_EN = {
     Something_went_wrong: 'Something went wrong',
     This_Field_is_required: 'This field is required'
   },
-
-  Recommended: 'Recommended',
-
 
 };
 

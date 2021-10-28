@@ -102,7 +102,7 @@ function RelatedProductsList() {
           next={refetchRelated}
           hasMore={useHasMoreToFetchViaScroll(relatedPage, relatedNumberOfPages, relatedFetchStatus)}
           >
-          <ul className="py-2 grid grid-cols-2 gap-4">
+          <ul className="py-2 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
             { 
               useListRender(
                 related, 

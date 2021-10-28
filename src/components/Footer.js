@@ -2,7 +2,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useHeaderOnMainPage } from '../context/AppHooks';
 
 
 function FooterLink({ text, href }) {
@@ -18,12 +17,14 @@ function FooterLink({ text, href }) {
 
 export default function Footer() {
 
-  const showHeader = useHeaderOnMainPage();
-
   return (
-    <footer className={`py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full ${showHeader && 'hidden'} lg:block`}>
+    <footer className={`py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full pb-16 lg:block`}>
       <div className="container-x">
-        <ul className="flex justify-around">
+        <ul className="flex flex-wrap gap-1 justify-around">
+          <FooterLink text="_user.Register" href="/register" />
+          <FooterLink text="_user.Log_in" href="/login" />
+          <FooterLink text="_store.Become_a_store_partner" href="/sapp" />
+          <FooterLink text="_delivery.Become_a_courier_partner" href="/login" />
           <FooterLink text="About_us" href="/about-us" />
           <FooterLink text="Contact_us" href="/contact-us" />
           <FooterLink text="Terms_of_service" href="/terms-of-service" />

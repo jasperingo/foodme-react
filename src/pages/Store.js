@@ -23,6 +23,7 @@ import FetchMoreButton from '../components/FetchMoreButton';
 import ReviewItem from '../components/ReviewItem';
 import Rater from '../components/Rater';
 import ReviewSummary from '../components/ReviewSummary';
+import DiscountIcon from '../icons/DiscountIcon';
 
 
 const PROFILE_NAV_LINKS = [
@@ -367,7 +368,7 @@ export default function Store() {
             <div className="container-x">
               <ul className="list-x">
                 <li>
-                  <EmptyList text="_empty.No_promotion" Icon={ReviewIcon} />
+                  <EmptyList text="_empty.No_promotion" Icon={DiscountIcon} />
                 </li>
               </ul>
             </div>

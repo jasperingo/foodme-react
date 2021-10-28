@@ -170,7 +170,7 @@ export default function Home() {
 
           <div className="flex-grow">
             <div className="container-x py-2">
-              <h2 className="font-bold my-2">{ t('Recommended') }</h2>
+              <h2 className="font-bold my-2">{ t('_store.Recommended_stores') }</h2>
               <InfiniteScroll 
                 dataLength={stores.length}
                 next={refetchStores}
@@ -192,6 +192,16 @@ export default function Home() {
               </InfiniteScroll>
             </div>
           </div>
+
+
+          <div className="flex-grow">
+            <div className="container-x py-2">
+              <h2 className="font-bold my-2">{ t('_product.Recommended_products') }</h2>
+              LOADING...
+            </div>
+          </div>
+
+
         </div>
       </div>
     </section>
