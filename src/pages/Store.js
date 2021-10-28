@@ -21,6 +21,8 @@ import Reload from '../components/Reload';
 import EmptyList from '../components/EmptyList';
 import FetchMoreButton from '../components/FetchMoreButton';
 import ReviewItem from '../components/ReviewItem';
+import Rater from '../components/Rater';
+import ReviewSummary from '../components/ReviewSummary';
 
 
 const PROFILE_NAV_LINKS = [
@@ -99,6 +101,11 @@ function StoreReviewsList() {
   return (
     <div>
       <div className="container-x">
+
+        <ReviewSummary />
+
+        <Rater />
+
         <InfiniteScroll 
             dataLength={reviews.length}
             next={refetchReviews}

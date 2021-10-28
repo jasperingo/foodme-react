@@ -82,13 +82,7 @@ function CartItem({ cartItem }) {
           </button>
         </div>
       </div>
-      { dialog && 
-        <AlertDialog 
-          body={dialog.body} 
-          positiveButton={dialog.positiveButton} 
-          negativeButton={dialog.negativeButton} 
-          /> 
-      }
+      { dialog && <AlertDialog dialog={dialog} /> }
     </li>
   );
 }

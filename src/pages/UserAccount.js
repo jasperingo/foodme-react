@@ -14,7 +14,12 @@ export default function UserAccount() {
   return (
     <section>
       <div className="container-x">
-        User account
+        
+        <div>
+          <img src="/photos/user.jpg" alt="USER" width="100" height="100" />
+          <div>Mr. Paul</div>
+        </div>
+
       </div>
     </section>
   );

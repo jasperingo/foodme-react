@@ -62,6 +62,7 @@ export const TRANSLATIONS_EN = {
     Done: 'Done',
     Cancel: 'Cancel',
     Confirm: 'Confirm',
+    Submit: 'Submit',
     Yes: 'Yes',
     No: 'No',
     By: 'By',
@@ -107,7 +108,12 @@ export const TRANSLATIONS_EN = {
 
   _review: {
     Review: 'Review',
-    Reviews: 'Reviews'
+    Reviews: 'Reviews',
+    ratings: 'ratings',
+    Ratings: 'Ratings',
+    Rate_this_store: 'Rate this store',
+    Rate_this_product: 'Rate this product',
+    Tell_us_your_experience: 'Tell us your experience'
   },
   
   _empty: {
@@ -123,7 +129,8 @@ export const TRANSLATIONS_EN = {
   },
 
   _errors: {
-    Something_went_wrong: 'Something went wrong'
+    Something_went_wrong: 'Something went wrong',
+    This_Field_is_required: 'This field is required'
   },
 
   Recommended: 'Recommended',

@@ -57,6 +57,35 @@ export default function ProductReducer (state, action) {
         }
       }; 
 
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        related: {
+          ...state.related,
+          relatedFetchStatus: action.payload
+        }
+      };
+    
+    case PRODUCT.LIST_FETCHED: 
+      let status3 = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
+        
+      if ((state.related.relatedPage+1) < action.payload.relatedNumberOfPages) 
+        status3 = FETCH_STATUSES.MORE;
+      else if (state.related.related.length === 1 && action.payload.related.length < 1) 
+        status3 = FETCH_STATUSES.EMPTY;
+        
+      state.related.related.pop();
+
+      return {
+        ...state,
+        related: {
+          relatedFetchStatus: status3,
+          relatedPage: state.related.relatedPage+1,
+          relatedNumberOfPages: action.payload.relatedNumberOfPages,
+          related: [...state.related.related, ...action.payload.related, null],
+        }
+      };
+
     default:
       return state;
   }

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { API_URL, useAppContext } from '../context/AppContext';
 import { FETCH_STATUSES, PRODUCT, CART, REVIEW } from '../context/AppActions';
-import { /*useListRender,*/ useDataRender, useListRender, useMoneyFormat } from '../context/AppHooks';
+import { /*useListRender,*/ useDataRender, useHasMoreToFetchViaScroll, useListRender, useMoneyFormat } from '../context/AppHooks';
 import StoreItem from '../components/StoreItem';
 import Reload from '../components/Reload';
 import Loading from '../components/Loading';
@@ -14,6 +14,10 @@ import ReviewItem from '../components/ReviewItem';
 import EmptyList from '../components/EmptyList';
 import FetchMoreButton from '../components/FetchMoreButton';
 import StarIcon from '../icons/StarIcon';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import ProductItem from '../components/ProductItem';
+import ProductIcon from '../icons/ProductIcon';
+import ReviewSummary from '../components/ReviewSummary';
 
 
 const getProductFetchStatusAction = (payload) => ({
@@ -26,12 +30,95 @@ const getReviewsFetchStatusAction = (payload) => ({
   payload
 });
 
+const getRelatedFetchStatusAction = (payload) => ({
+  type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+
 
 function H4Heading({ text }) {
 
   const { t } = useTranslation();
 
   return (<h3 className="font-bold mb-1">{ t(text) }</h3>);
+}
+
+function RelatedProductsList() {
+
+  const pID = parseInt(useParams().pID);
+
+  const { product: {
+    related: {
+      related,
+      relatedFetchStatus,
+      relatedPage, 
+      relatedNumberOfPages
+    }
+  }, productDispatch } = useAppContext();
+
+  useEffect(()=> {
+    async function fetchRelated() {
+      if (relatedFetchStatus !== FETCH_STATUSES.LOADING) 
+        return;
+      
+      try {
+        let response = await fetch(`${API_URL}store-products.json?id=${pID}`);
+
+        if (!response.ok)
+          throw new Error(response.status);
+        
+        let data = await response.json();
+        
+        productDispatch({
+          type: PRODUCT.LIST_FETCHED,
+          payload: {
+            related: data.data,
+            relatedNumberOfPages: data.total_pages
+          }
+        });
+
+      } catch (err) {
+        productDispatch(getRelatedFetchStatusAction(FETCH_STATUSES.ERROR));
+      }
+    }
+
+    fetchRelated();
+
+  }, [pID, relatedFetchStatus, productDispatch]);
+
+  function refetchRelated() {
+    if (relatedFetchStatus === FETCH_STATUSES.LOADING) 
+      return;
+    
+    productDispatch(getRelatedFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+
+  return (
+    <div className="container-x py-4">
+      <H4Heading text="_product.Related_products" />
+      <div>
+        <InfiniteScroll
+          dataLength={related.length}
+          next={refetchRelated}
+          hasMore={useHasMoreToFetchViaScroll(relatedPage, relatedNumberOfPages, relatedFetchStatus)}
+          >
+          <ul className="py-2 grid grid-cols-2 gap-4">
+            { 
+              useListRender(
+                related, 
+                relatedFetchStatus,
+                (item, i)=> <li key={`prod-${i}`} > <ProductItem prod={item} block={true} /> </li>, 
+                (k)=> <li key={k}> <Loading /> </li>, 
+                (k)=> <li key={k}> <Reload action={refetchRelated} /> </li>,
+                (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={ProductIcon} /> </li>, 
+                (k)=> <li key={k}> <FetchMoreButton action={refetchRelated} /> </li>,
+              )
+            }
+          </ul>
+        </InfiniteScroll>
+      </div> 
+    </div>
+  );
 }
 
 
@@ -88,6 +175,9 @@ function ProductReviewsList() {
   return (
     <div className="container-x flex-grow md:w-1/2">
       <H4Heading text="_review.Reviews" />
+
+      <ReviewSummary />
+
       <div>
         <ul className="list-x">
           { 
@@ -160,13 +250,7 @@ function ProductProfile({ product }) {
 
       <div className="container-x py-4 flex-grow lg:w-1/2 lg:pt-0">
 
-        { dialog && 
-          <AlertDialog 
-            body={dialog.body} 
-            positiveButton={dialog.positiveButton} 
-            negativeButton={dialog.negativeButton} 
-            /> 
-        }
+        { dialog && <AlertDialog dialog={dialog} /> }
 
         <div className="font-bold text-2xl text-color-primary mb-2">{ useMoneyFormat(product.price) }</div>
 
@@ -261,7 +345,7 @@ export default function Product() {
 
       <div className="md:container mx-auto">
         
-        <div className="lg:flex lg:items-start lg:gap-2">
+        <div className="lg:flex lg:items-start lg:gap-2 lg:mt-4">
           { 
             useDataRender(
               product, 
@@ -273,7 +357,7 @@ export default function Product() {
           }
         </div>
 
-        <div className="md:flex md:items-start md:gap-2">
+        <div className="md:flex md:items-start md:gap-2 lg:py-4">
           { 
             product && 
             <div className="container-x md:w-1/6">
@@ -288,15 +372,8 @@ export default function Product() {
 
         </div>
 
-        { 
-          product && 
-          <div className="container-x py-4">
-            <H4Heading text="_product.Related_products" />
-            <div>
-              LOADING...
-            </div> 
-          </div>
-        }
+        { product && <RelatedProductsList /> }
+
       </div>
 
     </section>

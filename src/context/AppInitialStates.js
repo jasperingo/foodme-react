@@ -1,6 +1,9 @@
 
 import { FETCH_STATUSES } from './AppActions';
 
+
+export const initialCustomerState = null;
+
 export const initialHomeState = {
   categories: {
     categories: [null],
@@ -57,7 +60,12 @@ export const initialProductState = {
     reviewsNumberOfPages: 0,
     reviewsFetchStatus: FETCH_STATUSES.LOADING
   },
-  related: []
+  related: {
+    related: [null],
+    relatedPage: 0,
+    relatedNumberOfPages: 0,
+    relatedFetchStatus: FETCH_STATUSES.LOADING
+  },
 };
 
 export const initialSearchState = {
