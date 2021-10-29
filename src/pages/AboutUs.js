@@ -108,8 +108,8 @@ export default function AboutUs() {
           <div className="py-10">
             <h2 className={h2Style}>{ t('Partner_with_us') }</h2>
             <ul className="md:flex md:gap-2">
-              <PartnerWithUsItem image="/photos/about-resturant.jpg" url="/about-us" text="Become_a_resturant_partner" />
-              <PartnerWithUsItem image="/photos/about-delivery.jpg" url="/about-us" text="Become_a_courier_partner" />
+              <PartnerWithUsItem image="/photos/about-resturant.jpg" url="/about-us" text="_store.Become_a_store_partner" />
+              <PartnerWithUsItem image="/photos/about-delivery.jpg" url="/about-us" text="_delivery.Become_a_courier_partner" />
             </ul>
           </div>
           

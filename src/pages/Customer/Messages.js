@@ -1,26 +1,49 @@
 
 import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router';
-import Tab from '../../components/Tab';
-
-const NAV_LINKS = [
-  { title : '_message.Chats', href: '/chats' },
-  { title : '_message.Notifications', href: '/notifications' }
-];
+import { Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
+import MessagesItem from '../../components/MessagesItem';
+import Message from './Message';
 
 export default function Messages() {
 
   const match = useRouteMatch();
 
+  const location = useLocation();
+
   return (
     <section>
       <div className="container-x">
-        <Tab items={NAV_LINKS} keyPrefix="messages-tab" />
+        
+        <div className="lg:flex lg:gap-5">
+          <ul className={`py-4 ${location.pathname !== '/messages' && 'hidden'} lg:block lg:w-80`}>
+            <MessagesItem 
+              href="/messages/2"
+              message={{
+                id: 2,
+                date: '26 Oct',
+                sender_name: 'Ben stores',
+                sender_photo: 'r2.jpg',
+                unread_messages_count: 1,
+                last_message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
+                last_message_status: 'read'
+              }} />
+            <MessagesItem 
+              href="/messages/2"
+              message={{
+                id: 1,
+                date: '25 Oct',
+                sender_name: 'DailyNeeds Support',
+                sender_photo: 'user.jpg',
+                unread_messages_count: 3,
+                last_message: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit',
+                last_message_status: 'read'
+              }} />
+          </ul>
 
-        <Switch>
-          <Route path={`${match.url}/chats`} render={()=> <div>Chat</div>} />
-          <Route path={`${match.url}/notifications`} render={()=> <div>NOtify</div>} />
-        </Switch>
+          <Switch>
+            <Route path={`${match.url}/:ID`} render={()=> <Message />} />
+          </Switch>
+        </div>
 
       </div>
     </section>

@@ -137,8 +137,16 @@ export const TRANSLATIONS_EN = {
   },
 
   _order: {
+    Pending: 'Pending',
+    Declined: 'Declined',
+    Cancelled: 'Cancelled',
+    Processing: 'Processing',
+    In_transit: 'In transit',
+    Delivered: 'Delivered',
+    Returned: 'Returned',
     Orders: 'Orders',
     Add_order: 'Add order',
+    Order_details: 'Order details',
   },
 
   _transaction: {

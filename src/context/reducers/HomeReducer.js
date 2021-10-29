@@ -1,12 +1,13 @@
 
-import { HOME, FETCH_STATUSES } from "../AppActions";
-//import { useFetchStatusOnSuccess } from '../AppHooks';
+import { CATEGORIES, FETCH_STATUSES, PRODUCT, STORE } from "../AppActions";
+import { getListFetchStatus } from "../AppHelpers";
+
 
 export default function HomeReducer (state, action) {
   
   switch (action.type) {  
     
-    case HOME.CATEGORIES_FETCH_STATUS_CHANGED :
+    case CATEGORIES.FETCH_STATUS_CHANGED :
       return {
         ...state,
         categories: {
@@ -15,7 +16,7 @@ export default function HomeReducer (state, action) {
         }
       };
     
-    case HOME.CATEGORIES_FETCHED :
+    case CATEGORIES.FETCHED :
       return {
         ...state,
         categories: {
@@ -24,7 +25,7 @@ export default function HomeReducer (state, action) {
         }
       };
     
-    case HOME.STORES_FETCH_STATUS_CHANGED :
+    case STORE.FETCH_STATUS_CHANGED :
       return {
         ...state,
         stores: {
@@ -33,13 +34,13 @@ export default function HomeReducer (state, action) {
         }
       };
     
-    case HOME.STORES_FETCHED :
-      let status = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
-      
-      if ((state.stores.storesPage+1) < action.payload.storesNumberOfPages) {
-        status = FETCH_STATUSES.MORE;
-      } else if (state.stores.stores.length === 1 && action.payload.stores.length < 1) 
-        status = FETCH_STATUSES.EMPTY;
+    case STORE.FETCHED :
+      let status = getListFetchStatus(
+        state.stores.storesPage, 
+        action.payload.storesNumberOfPages,
+        state.stores.stores.length,  
+        action.payload.stores.length
+      );
 
       state.stores.stores.pop();
 
@@ -50,6 +51,35 @@ export default function HomeReducer (state, action) {
           storesFetchStatus: status,
           storesPage: state.stores.storesPage+1,
           storesNumberOfPages: action.payload.storesNumberOfPages
+        }
+      };
+
+    case PRODUCT.FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        products: {
+          ...state.products,
+          productsFetchStatus: action.payload
+        }
+      };
+    
+    case PRODUCT.FETCHED :
+      let status2 = getListFetchStatus(
+        state.products.productsPage, 
+        action.payload.productsNumberOfPages,
+        state.products.products.length,  
+        action.payload.products.length
+      );
+
+      state.products.products.pop();
+
+      return {
+        ...state,
+        products: {
+          productsFetchStatus: status2,
+          productsPage: state.products.productsPage+1,
+          productsNumberOfPages: action.payload.productsNumberOfPages,
+          products: [...state.products.products, ...action.payload.products, null],
         }
       };
 

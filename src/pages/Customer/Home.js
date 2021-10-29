@@ -3,24 +3,31 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { API_URL, useAppContext } from '../context/AppContext';
-import { FETCH_STATUSES, HOME } from '../context/AppActions';
-import { useCategoryColor, useListRender, useHasMoreToFetchViaScroll } from '../context/AppHooks';
-import Reload from '../components/Reload';
-import Loading from '../components/Loading';
-import StoreItem from '../components/StoreItem';
-import CategoriesIcon from '../icons/CategoriesIcon';
-import StoreIcon from '../icons/StoreIcon';
-import EmptyList from '../components/EmptyList';
-import FetchMoreButton from '../components/FetchMoreButton';
+import { API_URL, useAppContext } from '../../context/AppContext';
+import { CATEGORIES, FETCH_STATUSES, PRODUCT, STORE } from '../../context/AppActions';
+import { useCategoryColor, useListRender, useHasMoreToFetchViaScroll } from '../../context/AppHooks';
+import Reload from '../../components/Reload';
+import Loading from '../../components/Loading';
+import StoreItem from '../../components/StoreItem';
+import CategoriesIcon from '../../icons/CategoriesIcon';
+import StoreIcon from '../../icons/StoreIcon';
+import EmptyList from '../../components/EmptyList';
+import FetchMoreButton from '../../components/FetchMoreButton';
+import ProductItem from '../../components/ProductItem';
+import ProductIcon from '../../icons/ProductIcon';
 
 const getCategoriesFetchStatusAction = (payload) => ({
-  type: HOME.CATEGORIES_FETCH_STATUS_CHANGED,
+  type: CATEGORIES.FETCH_STATUS_CHANGED,
   payload
 });
 
 const getsStoresFetchStatusAction = (payload) => ({
-  type: HOME.STORES_FETCH_STATUS_CHANGED,
+  type: STORE.FETCH_STATUS_CHANGED,
+  payload
+});
+
+const getsProductsFetchStatusAction = (payload) => ({
+  type: PRODUCT.FETCH_STATUS_CHANGED,
   payload
 });
 
@@ -57,6 +64,12 @@ export default function Home() {
       storesFetchStatus,
       storesPage,
       storesNumberOfPages
+    },
+    products: {
+      products,
+      productsPage,
+      productsNumberOfPages,
+      productsFetchStatus
     }
   }, homeDispatch } = useAppContext();
   
@@ -77,7 +90,7 @@ export default function Home() {
         //data.data = [];
 
         homeDispatch({
-          type: HOME.CATEGORIES_FETCHED,
+          type: CATEGORIES.FETCHED,
           payload: data.data
         });
         
@@ -116,7 +129,7 @@ export default function Home() {
         data.total_pages = 5;
         
         homeDispatch({
-          type: HOME.STORES_FETCHED,
+          type: STORE.FETCHED,
           payload: {
             stores: data.data,
             storesNumberOfPages: data.total_pages
@@ -138,6 +151,48 @@ export default function Home() {
       return;
 
     homeDispatch(getsStoresFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+
+  useEffect(()=> {
+    async function fetchProducts() {
+      
+      if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
+        return;
+      
+      try {
+        let response = await fetch(`${API_URL}store-products.json`);
+        
+        if (!response.ok)
+          throw new Error(response.status);
+        
+        let data = await response.json();
+
+        //data.data = [];
+        data.total_pages = 5;
+        
+        homeDispatch({
+          type: PRODUCT.FETCHED,
+          payload: {
+            products: data.data,
+            productsNumberOfPages: data.total_pages
+          }
+        });
+        
+      } catch (err) {
+        homeDispatch(getsProductsFetchStatusAction(FETCH_STATUSES.ERROR));
+      }
+    }
+
+    fetchProducts(); 
+
+  }, [productsFetchStatus, homeDispatch]);
+
+  function refetchProducts() {
+    
+    if (productsFetchStatus === FETCH_STATUSES.LOADING) 
+      return;
+
+    homeDispatch(getsProductsFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (
@@ -191,13 +246,28 @@ export default function Home() {
                 </ul>
               </InfiniteScroll>
             </div>
-          </div>
 
-
-          <div className="flex-grow">
             <div className="container-x py-2">
               <h2 className="font-bold my-2">{ t('_product.Recommended_products') }</h2>
-              LOADING...
+              <InfiniteScroll 
+                dataLength={products.length}
+                next={refetchProducts}
+                hasMore={useHasMoreToFetchViaScroll(productsPage, productsNumberOfPages, productsFetchStatus)}
+                >
+                <ul className="list-x">
+                  { 
+                    useListRender(
+                      products, 
+                      productsFetchStatus,
+                      (item, i)=> <li key={`store-${i}`}> <ProductItem prod={item} /> </li>, 
+                      (k)=> <li key={k}> <Loading /> </li>, 
+                      (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
+                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" Icon={ProductIcon} /> </li>, 
+                      (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
+                    )
+                  }
+                </ul>
+              </InfiniteScroll>
             </div>
           </div>
 

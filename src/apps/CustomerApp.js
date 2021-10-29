@@ -3,10 +3,10 @@ import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Home from '../pages/Home';
+import Home from '../pages/Customer/Home';
 import Login from '../pages/Login';
 import Cart from '../pages/Cart';
-import UserAccount from '../pages/UserAccount';
+import AccountMenu from '../pages/Customer/AccountMenu';
 import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
 import TermsOfService from '../pages/TermsOfService';
@@ -24,13 +24,12 @@ import SearchIcon from '../icons/SearchIcon';
 import MessageIcon from '../icons/MessageIcon';
 import { useAppContext } from '../context/AppContext';
 import Messages from '../pages/Customer/Messages';
-import Orders from '../pages/Customer/Orders';
 
 
 export const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: HomeIcon, href: '/' },
   { title : '_extra.Categories', icon: CategoriesIcon, href: '/categories' },
-  { title : '_message.Messages', icon: MessageIcon, href: '/messages/chats', subHrefs: ['/messages/notifications'], useCounter: ()=> 0 },
+  { title : '_message.Messages', icon: MessageIcon, href: '/messages', useCounter: ()=> 0 },
   { title : '_user.Account', icon: UserIcon, href: '/account' }
 ];
 
@@ -68,8 +67,7 @@ export default function CustomerApp() {
           <Route path="/login" render={()=> <Login />} />
           <Route path="/search/history" render={()=> <SearchHistory />} />
           <Route path="/search" render={()=> <Search />} />
-          <Route path="/account/orders" render={()=> <Orders />} />
-          <Route path="/account" render={()=> <UserAccount />} />
+          <Route path="/account" render={()=> <AccountMenu />} />
           <Route path="/messages" render={()=> <Messages />} />
           <Route path="/cart" render={()=> <Cart />} />
           <Route path="/categories" render={()=> <Categories />} />

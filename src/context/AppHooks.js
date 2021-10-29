@@ -42,8 +42,13 @@ export function useHeader2Title() {
   
   if (path === '/account/orders' || path === URL+'/account/orders')
     return '_order.Orders';
-    
 
+  if (/messages\/[0-9]+/.test(path))
+    return '_message.Messages'
+
+  if (/account\/order\/[0-9]+/.test(path))
+    return '_order.Order_details'
+    
   if (/store\/[0-9]+\/products/.test(path) || /store\/[0-9]+\/reviews/.test(path) || /store\/[0-9]+\/promotions/.test(path))
     return '_store.Store';
 
@@ -56,16 +61,6 @@ export function useHeader2Title() {
 export function useCategoryColor(index) {
   const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
   return catColors[index%catColors.length];
-}
-
-export function useFetchStatusOnSuccess(page, numberOfPages, dataLength, fetchedDataLength) {
-    
-  if ((page+1) < numberOfPages) 
-    return FETCH_STATUSES.MORE;
-  else if (dataLength === 1 && fetchedDataLength < 1) 
-    return FETCH_STATUSES.EMPTY;
-  else 
-    return FETCH_STATUSES.DONE;
 }
 
 export function useHasMoreToFetchViaScroll(page, numberOfPages, status, scrollCount=5) {
