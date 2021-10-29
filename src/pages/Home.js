@@ -113,7 +113,7 @@ export default function Home() {
         let data = await response.json();
 
         //data.data = [];
-        //data.total_pages = 0;
+        data.total_pages = 5;
         
         homeDispatch({
           type: HOME.STORES_FETCHED,

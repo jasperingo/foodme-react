@@ -48,6 +48,7 @@ export const TRANSLATIONS_EN = {
   By_registering_you_agree_to_our: 'By registering, you agree to our',
 
   _user: {
+    Account: 'Account',
     Profile: 'Profile',
     Addresses: 'Addresses',
     Log_in: 'Log in',
@@ -57,6 +58,7 @@ export const TRANSLATIONS_EN = {
   },
 
   _extra: {
+    Home: 'Home',
     categories: 'categories',
     Categories: 'Categories',
     Reviews: 'Reviews',
@@ -70,7 +72,6 @@ export const TRANSLATIONS_EN = {
     No: 'No',
     By: 'By',
     Favorites: 'Favorites',
-    Account: 'Account',
   },
 
   _search: {
@@ -93,11 +94,13 @@ export const TRANSLATIONS_EN = {
 
   _discount: {
     Promotions: 'Promotions',
+    Add_promotion: 'Add promotion',
   },
 
   _product: {
     Product: 'Product',
     Products: 'Products',
+    Add_product: 'Add product',
     Related_products: 'Related products',
     Recommended_products: 'Recommended products',
     Product_categories: 'Product categories',
@@ -134,11 +137,20 @@ export const TRANSLATIONS_EN = {
   },
 
   _order: {
-    Orders: 'Orders'
+    Orders: 'Orders',
+    Add_order: 'Add order',
   },
 
   _transaction: {
-    Transactions: 'Transactions'
+    Transactions: 'Transactions',
+    Wallet: 'Wallet',
+    Withdraw: 'Withdraw',
+  },
+
+  _message: {
+    Messages: 'Messages',
+    Chats: 'Chats',
+    Notifications: 'Notifications',
   },
   
   _empty: {

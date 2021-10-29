@@ -358,12 +358,8 @@ export default function Store() {
       {
         store && 
         <Switch>
-          <Route path={`${match.url}/products`}>
-            <StoreProductsList categories={store.categories} />
-          </Route>
-          <Route path={`${match.url}/reviews`}>
-            <StoreReviewsList />
-          </Route>
+          <Route path={`${match.url}/products`} render={()=> <StoreProductsList categories={store.categories} />} />
+          <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList />} />
           <Route path={`${match.url}/promotions`}>    
             <div className="container-x">
               <ul className="list-x">

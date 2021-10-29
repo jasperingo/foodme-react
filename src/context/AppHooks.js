@@ -1,5 +1,6 @@
 
 import { useLocation } from "react-router-dom";
+import { URL } from "../apps/StoreApp";
 import { FETCH_STATUSES } from './AppActions';
 
 export function useURLQuery() {
@@ -26,9 +27,22 @@ export function useHeader2Title() {
 
   if (path === '/contact-us')
     return 'Contact_us';
-  
+
   if (path === '/terms-of-service')
     return 'Terms_of_service';
+
+  if (path === URL+'/messages/chats' || path === URL+'/messages/notifications')
+    return '_message.Messages';
+
+  if (path === '/cart' || path === URL+'/cart')
+    return '_cart.Cart';
+  
+  if (path === '/search/history' || path === URL+'/search/history')
+    return '_search.Search';
+  
+  if (path === '/account/orders' || path === URL+'/account/orders')
+    return '_order.Orders';
+    
 
   if (/store\/[0-9]+\/products/.test(path) || /store\/[0-9]+\/reviews/.test(path) || /store\/[0-9]+\/promotions/.test(path))
     return '_store.Store';

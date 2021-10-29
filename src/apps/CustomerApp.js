@@ -21,21 +21,29 @@ import CategoriesIcon from '../icons/CategoriesIcon';
 import CartIcon from '../icons/CartIcon';
 import UserIcon from '../icons/UserIcon';
 import SearchIcon from '../icons/SearchIcon';
+import MessageIcon from '../icons/MessageIcon';
+import { useAppContext } from '../context/AppContext';
+import Messages from '../pages/Customer/Messages';
+import Orders from '../pages/Customer/Orders';
 
 
 export const HEADER_NAV_LINKS = [
-  { title : 'home', icon: HomeIcon, href: '/' },
-  { title : 'categories', icon: CategoriesIcon, href: '/categories' },
-  { title : 'cart', icon: CartIcon, href: '/cart' },
-  { title : 'account', icon: UserIcon, href: '/account' }
+  { title : '_extra.Home', icon: HomeIcon, href: '/' },
+  { title : '_extra.Categories', icon: CategoriesIcon, href: '/categories' },
+  { title : '_message.Messages', icon: MessageIcon, href: '/messages/chats', subHrefs: ['/messages/notifications'], useCounter: ()=> 0 },
+  { title : '_user.Account', icon: UserIcon, href: '/account' }
 ];
 
 export const HEADER_TOP_NAV_LINKS = [
-  { title : '_cart.Cart', icon: CartIcon, href: '/cart', hasCounter: true, pages: [
-      /store\/[0-9]+\/products/,
+  { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: ()=> {
+      const { cart: {cartItems} } = useAppContext();
+      return cartItems.length-1 < 100 ? cartItems.length-1 : '99+';
+    },
+    pages: [
+      /*/store\/[0-9]+\/products/,
       /store\/[0-9]+\/reviews/,
       /store\/[0-9]+\/promotions/,
-      /store\/[0-9]+\/product\/[0-9]+/
+      /store\/[0-9]+\/product\/[0-9]+/*/
     ] 
   },
   { title : '_search.Search', icon: SearchIcon, href: '/search/history', hasCounter: false, pages: [] }
@@ -51,45 +59,21 @@ export default function CustomerApp() {
         />
       <main className="pb-52">
         <Switch>
-          <Route path="/store/:sID/product/:pID">
-            <Product />
-          </Route>
-          <Route path="/store/:ID">
-            <Store />
-          </Route>
-          <Route path="/terms-of-service">    
-            <TermsOfService />
-          </Route>
-          <Route path="/contact-us">    
-            <ContactUs />
-          </Route>
-          <Route path="/about-us">    
-            <AboutUs />
-          </Route>
-          <Route path="/register">
-            <Register />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/search/history">
-            <SearchHistory />
-          </Route>
-          <Route path="/search">
-            <Search />
-          </Route>
-          <Route path="/account">
-            <UserAccount />
-          </Route>
-          <Route path="/cart">
-            <Cart />
-          </Route>
-          <Route path="/categories">
-            <Categories />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
+          <Route path="/store/:sID/product/:pID" render={()=> <Product />} />
+          <Route path="/store/:ID" render={()=> <Store />} />
+          <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
+          <Route path="/contact-us" render={()=> <ContactUs />} />
+          <Route path="/about-us" render={()=> <AboutUs />} /> 
+          <Route path="/register" render={()=> <Register />} />
+          <Route path="/login" render={()=> <Login />} />
+          <Route path="/search/history" render={()=> <SearchHistory />} />
+          <Route path="/search" render={()=> <Search />} />
+          <Route path="/account/orders" render={()=> <Orders />} />
+          <Route path="/account" render={()=> <UserAccount />} />
+          <Route path="/messages" render={()=> <Messages />} />
+          <Route path="/cart" render={()=> <Cart />} />
+          <Route path="/categories" render={()=> <Categories />} />
+          <Route path="/" render={()=> <Home />} />
         </Switch>
       </main>
       <Footer />

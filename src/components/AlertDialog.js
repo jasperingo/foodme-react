@@ -21,7 +21,7 @@ export default function AlertDialog({ dialog }) {
   const { t } = useTranslation();
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-25 dark:bg-white">
+    <div className="fixed z-50 top-0 left-0 w-full h-full bg-black bg-opacity-25 dark:bg-white">
       <div className="fixed top-1/3 w-3/4 bg-color rounded" style={{left: '12.5%'}}>
         <div className="p-4">{ t(dialog.body) }</div>
         <div className="flex border-t">

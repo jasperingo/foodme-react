@@ -2,19 +2,19 @@
 import React from 'react';
 import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
-import { useAppContext } from '../context/AppContext';
 import { useHeader2Title } from '../context/AppHooks';
 import SearchForm from './SearchForm';
 import BackIcon from '../icons/BackIcon';
 
-function CartCounter() {
-  const { cart: {cartItems} } = useAppContext();
-  return <span className="-ml-2 -mt-1 text-xs absolute bg-red-500 text-white px-1 rounded-full">
-    { cartItems.length-1 < 100 ? cartItems.length-1 : '99+' }
-  </span>;
+function CartCounter({ useCounter }) {
+  return (
+    <span className="-ml-2 -mt-1 text-xs absolute bg-red-500 text-white px-1 rounded-full">
+      { useCounter() }
+    </span>
+  );
 }
 
-function NavItem({ title, Icon, href, hasCounter }) {
+function NavItem({ title, Icon, href, useCounter }) {
 
   return (
     <li className="flex-1 text-center">
@@ -25,23 +25,23 @@ function NavItem({ title, Icon, href, hasCounter }) {
         activeClassName="text-color-primary"
       >
         <Icon classList="fill-current mx-auto inline-block" />
-        { hasCounter && <CartCounter /> }
+        { useCounter && <CartCounter useCounter={useCounter} /> }
         <span className="block lg:sr-only">{ title }</span>
       </NavLink>
     </li>
   );
 }
 
-function NavTopListItem({ title, Icon, href, hasCounter }) {
+function NavTopListItem({ title, Icon, href, useCounter }) {
 
   return (
     <li>
       <Link 
         to={href}
-        className="text-color-gray bg-color text-sm relative hover:bg-color-gray-h block p-1 lg:hidden"
+        className="text-color-gray bg-color text-sm relative hover:bg-color-gray-h block p-1 lg:py-2 lg:px-4"
         >
         <Icon classList="fill-current mx-auto inline-block" />
-        { hasCounter && <CartCounter /> }
+        { useCounter && <CartCounter useCounter={useCounter} /> }
         <span className="sr-only">{ title }</span>
       </Link>
     </li>
@@ -56,7 +56,7 @@ export default function Header({ navLinks, topNavLinks }) {
 
   const { t } = useTranslation();
 
-  const showHeader = navLinks.find(item=> item.href === pathname);
+  const showHeader = navLinks.find(item=> item.href === pathname || (item.subHrefs && item.subHrefs.includes(pathname)));
 
   function onSearchPage() {
     return (pathname==='/search/history' || pathname==='/search/stores' || pathname==='/search/products');
@@ -77,7 +77,7 @@ export default function Header({ navLinks, topNavLinks }) {
               <BackIcon classList="fill-current text-color" />
               <span className="sr-only">{ t('Previous_page') }</span>
             </button>
-            <h2 className={`font-bold flex-grow text-left text-xl ${onSearchPage() && 'hidden'}`}>
+            <h2 className={`font-bold flex-grow text-left text-xl ${onSearchPage() && 'hidden'} lg:block`}>
               { t(useHeader2Title()) }
             </h2>
           </div>
@@ -86,9 +86,23 @@ export default function Header({ navLinks, topNavLinks }) {
             <SearchForm />
           </div>
 
-          <nav>
+          <nav className="flex items-center">
+
+            <ul className={`flex lg:flex fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:border-0 z-10 ${(!showHeader && 'hidden')}`}>
+              {
+                navLinks.map((item, i) => (
+                  <NavItem 
+                    key={i}
+                    title={t(item.title)}  
+                    Icon={item.icon} 
+                    href={item.href} 
+                    useCounter={item.useCounter}
+                    />
+                ))
+              }
+            </ul>
             
-            <ul className={`${onSearchPage() && 'hidden'} flex gap-2`}>
+            <ul className={`${onSearchPage() && 'hidden'} flex gap-2 w-full lg:flex`}>
               {
                 topNavLinks.map((item, i)=> {
 
@@ -108,25 +122,11 @@ export default function Header({ navLinks, topNavLinks }) {
                       key={i}
                       href={item.href} 
                       Icon={item.icon} 
-                      hasCounter={item.hasCounter} 
+                      useCounter={item.useCounter} 
                       title={ t(item.title) } 
                       />
                   );
                 })
-              }
-            </ul>
-
-            <ul className={`flex lg:flex fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:pl-10 lg:border-0 z-10 ${(!showHeader && 'hidden')}`}>
-              {
-                navLinks.map((item, i) => (
-                  <NavItem 
-                    key={i}
-                    title={t(item.title)}  
-                    Icon={item.icon} 
-                    href={item.href} 
-                    hasCounter={item.href==='/cart'}
-                    />
-                ))
               }
             </ul>
 

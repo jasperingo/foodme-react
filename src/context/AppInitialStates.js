@@ -90,4 +90,22 @@ export const initialCartState = {
   cartItemsFetchStatus: FETCH_STATUSES.EMPTY
 };
 
+export const initialOrdersState = {
+  orders: {
+    orders: [null],
+    ordersFetchStatus: FETCH_STATUSES.LOADING,
+    ordersPage: 0,
+    ordersNumberOfPages: 0
+  },
+  order: {
+    order: null,
+    orderFetchStatus: FETCH_STATUSES.LOADING,
+  },
+  orderItems: {
+    orderItems: [null],
+    orderItemsFetchStatus: FETCH_STATUSES.LOADING,
+  }
+};
+
+
 

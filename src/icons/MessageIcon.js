@@ -1,11 +1,12 @@
 
 import React from 'react';
 
-export default function StoreIcon({ classList }) {
+export default function MessageIcon({ classList }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000" className={`fill-current ${classList}`}>
       <path d="M0 0h24v24H0z" fill="none"/>
-      <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
+      <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/>
     </svg>
   );
 }
+
