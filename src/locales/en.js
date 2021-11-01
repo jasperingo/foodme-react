@@ -137,6 +137,7 @@ export const TRANSLATIONS_EN = {
   },
 
   _order: {
+    Reorder: 'Reorder',
     Pending: 'Pending',
     Declined: 'Declined',
     Cancelled: 'Cancelled',
@@ -146,7 +147,14 @@ export const TRANSLATIONS_EN = {
     Returned: 'Returned',
     Orders: 'Orders',
     Add_order: 'Add order',
+    Ordered_from: 'Ordered from',
     Order_details: 'Order details',
+    Order_items: 'Order items',
+    item__Num: '{{ num }} item',
+    item__Num_plural: '{{ num }} items',
+    Placed_on: 'Placed on',
+    Payment_information: 'Payment information',
+    Delivery_information: 'Delivery information',
   },
 
   _transaction: {

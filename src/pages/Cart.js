@@ -58,14 +58,14 @@ function CartItem({ cartItem }) {
         <div className="flex">
           <img 
             src={`/photos/products/${cartItem.product.photo}`} 
-            alt={'ja'} 
+            alt={ cartItem.product.title } 
             className="w-20 h-20 border rounded block md:w-full md:h-40" 
             />
           <div className="flex-grow pl-2">
             <h4 className="mb-1">{ cartItem.product.title }</h4>
             <div className="font-bold mb-1">{ useMoneyFormat(cartItem.amount) }</div>
             <div className="text-sm text-blue-500">
-              <span>Delivery: </span>
+              <span>-Delivery: </span>
               <span className="">{ useMoneyFormat(cartItem.delivery_fee) }</span>
             </div>
           </div>
