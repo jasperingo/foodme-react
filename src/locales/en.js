@@ -164,9 +164,10 @@ export const TRANSLATIONS_EN = {
   },
 
   _message: {
+    Send: 'Send',
     Messages: 'Messages',
-    Chats: 'Chats',
-    Notifications: 'Notifications',
+    Say_something: 'Say something',
+    Start_a_conversation: 'Start a conversation',
   },
   
   _empty: {
