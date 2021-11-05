@@ -70,7 +70,7 @@ export default function Header({ navLinks, topNavLinks }) {
             <Link to="/">{ t('app_name') }</Link>
           </h1>
 
-          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center lg:flex-grow-0 lg:bg-yellow-200 lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
+          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center text-black lg:flex-grow-0 lg:bg-yellow-200 lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
             <button
               onClick={ ()=> { history.goBack(); } }
               className="hover:bg-color-gray-h lg:hidden">
@@ -90,15 +90,21 @@ export default function Header({ navLinks, topNavLinks }) {
 
             <ul className={`flex lg:flex fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:border-0 z-10 ${(!showHeader && 'hidden')}`}>
               {
-                navLinks.map((item, i) => (
-                  <NavItem 
-                    key={i}
-                    title={t(item.title)}  
-                    Icon={item.icon} 
-                    href={item.href} 
-                    useCounter={item.useCounter}
-                    />
-                ))
+                navLinks.map((item, i) => {
+                  
+                  if (item.exclude) 
+                    return '';
+
+                  return (
+                    <NavItem 
+                      key={i}
+                      title={t(item.title)}  
+                      Icon={item.icon} 
+                      href={item.href} 
+                      useCounter={item.useCounter}
+                      />
+                  );
+                })
               }
             </ul>
             

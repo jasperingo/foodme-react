@@ -31,13 +31,16 @@ export function useHeader2Title() {
   if (path === '/terms-of-service')
     return 'Terms_of_service';
 
-  if (path === URL+'/messages/chats' || path === URL+'/messages/notifications')
+  if (path === URL+'/messages/chats')
     return '_message.Messages';
 
-  if (path === '/cart' || path === URL+'/cart')
+  if (path === '/cart')
     return '_cart.Cart';
   
-  if (path === '/search/history' || path === URL+'/search/history')
+  if (path === '/search/products')
+    return '_search.Search';
+
+  if (path === '/search/history' || path === '/search/products' || path === '/search/stores')
     return '_search.Search';
 
   if (path === '/account/address/add')
@@ -48,11 +51,20 @@ export function useHeader2Title() {
 
   if (/account\/address\/[0-9]+/.test(path))
     return '_user.Edit_address';
+  
+  if (path === '/account/transactions')
+    return '_transaction.Transactions';
+  
+  if (path === '/account/favorites')
+    return '_extra.Favorites';
+
+  if (path === '/account/saved-carts')
+    return '_cart.Saved_carts';
 
   if (path === '/account/profile')
     return '_user.Profile';
   
-  if (path === '/account/orders' || path === URL+'/account/orders')
+  if (path === '/account/orders')
     return '_order.Orders';
 
   if (/messages\/[0-9]+/.test(path))

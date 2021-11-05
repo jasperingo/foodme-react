@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 //import { useTranslation } from 'react-i18next';
-import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Link, Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { FETCH_STATUSES, STORE, PRODUCT, REVIEW } from '../../context/AppActions';
@@ -24,6 +24,8 @@ import ReviewItem from '../../components/ReviewItem';
 import Rater from '../../components/Rater';
 import ReviewSummary from '../../components/ReviewSummary';
 import DiscountIcon from '../../icons/DiscountIcon';
+import { useTranslation } from 'react-i18next';
+import MessageIcon from '../../icons/MessageIcon';
 
 
 const PROFILE_NAV_LINKS = [
@@ -98,14 +100,26 @@ function StoreReviewsList() {
     
     storeDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.LOADING));
   }
+
+  function newRate(rate, text) {
+    alert('Rate store: '+rate+' with note: '+text);
+  }
   
   return (
     <div>
       <div className="container-x">
-
-        <ReviewSummary />
-
-        <Rater />
+        
+        <div className="md:flex md:gap-10">
+          <div className="flex-grow">
+            <ReviewSummary />
+          </div>
+          <div className="flex-grow md:text-center">
+            <Rater 
+              title="_review.Rate_this_store" 
+              onRateSubmitted={newRate}
+              />
+          </div>
+        </div>
 
         <InfiniteScroll 
             dataLength={reviews.length}
@@ -250,6 +264,9 @@ function StoreProfileItem({ Icon, data }) {
 }
 
 function StoreProfile({ storeData }) {
+
+  const { t } = useTranslation();
+
   return (
     <>
 
@@ -259,7 +276,17 @@ function StoreProfile({ storeData }) {
           alt={ storeData.name } 
           className="w-10 h-10 md:w-16 md:h-16 border rounded-full" 
           />
-        <h4 className="font-bold ml-2 md:text-xl">{ storeData.name }</h4> 
+        <h4 className="flex-grow font-bold ml-2 md:text-xl">{ storeData.name }</h4> 
+        <div>
+          <Link 
+            to={`/messages/${storeData.id}`} 
+            title={ t('_message.Message_store') }
+            className="btn-color-primary rounded-full p-2 block"
+            >
+            <span className="sr-only">{ t('_message.Message_store') }</span>
+            <MessageIcon classList="w-4 h-4" />
+          </Link>
+        </div>
       </div>
 
       <ul className="pt-3">

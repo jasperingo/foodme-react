@@ -46,7 +46,7 @@ export default function Order() {
         <div className="container-x">
           
           <h3 className="text-3xl font-bold">#092838</h3>
-          <div>{ t('_order.item__Num', { num: 2 }) }</div>
+          <div>{ t('_order.item__Num', { count: 2 }) }</div>
           <div className="text-color-primary font-bold">
             <span>{ t('_extra.Total') }: </span> 
             <span>{ useMoneyFormat(460.45) }</span>
@@ -69,8 +69,8 @@ export default function Order() {
 
       <div className="py-4 border-b">
         <div className="container-x lg:flex lg:gap-4">
-          <div className="lg:flex-grow">
-            <h4 className="font-bold py-2 text-color-gray">{ t('_order.Payment_information') }</h4>
+          <div className="lg:w-1/2">
+            <h4 className="font-bold py-2 text-color-primary">{ t('_order.Payment_information') }</h4>
             <dl>
               <div className="mb-2">
                 <dt className="text-sm font-bold">Payment method</dt>
@@ -102,8 +102,8 @@ export default function Order() {
             </dl>
           </div> 
 
-          <div className="lg:flex-grow">
-            <h4 className="font-bold py-2 text-color-gray">{ t('_order.Delivery_information') }</h4>
+          <div className="lg:w-1/2">
+            <h4 className="font-bold py-2 text-color-primary">{ t('_order.Delivery_information') }</h4>
             <dl>
               <div className="mb-2">
                 <dt className="text-sm font-bold">Delivery method</dt>

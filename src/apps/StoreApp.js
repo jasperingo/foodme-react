@@ -23,16 +23,17 @@ import SearchHistory from '../pages/Store/SearchHistory';
 export const URL = '/sapp';
 
 export const HEADER_NAV_LINKS = [
-  { title : '_product.Products', icon: ProductIcon, href: URL+'/products' },
-  { title : '_order.Orders', icon: OrderIcon, href: URL+'/orders' },
-  { title : '_discount.Promotions', icon: DiscountIcon, href: URL+'/promotions' },
-  { title : '_user.Account', icon: StoreIcon, href: URL+'/account' }
+  { href: '/', exclude: true },
+  { title : '_product.Products', icon: ProductIcon, href: '/products' },
+  { title : '_order.Orders', icon: OrderIcon, href: '/orders' },
+  { title : '_discount.Promotions', icon: DiscountIcon, href: '/promotions' },
+  { title : '_user.Account', icon: StoreIcon, href: '/account' }
 ];
 
 export const HEADER_TOP_NAV_LINKS = [
-  { title : '_cart.Cart', icon: CartIcon, href: URL+'/cart', useCounter: ()=> 0, pages: [] },
-  { title : '_message.Messages', icon: MessageIcon, href: URL+'/messages/chats', useCounter: ()=> 0, pages: [] },
-  { title : '_search.Search', icon: SearchIcon, href: URL+'/search/history', pages: [] }
+  { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: ()=> 0, pages: [] },
+  { title : '_message.Messages', icon: MessageIcon, href: '/messages/chats', useCounter: ()=> 0, pages: [] },
+  { title : '_search.Search', icon: SearchIcon, href: '/search/history', pages: [] }
 ];
 
 export default function StoreApp() {
@@ -46,14 +47,14 @@ export default function StoreApp() {
         />
       <main className="pb-52">
         <Switch>
-          <Route path={URL+'/search/history'} render={()=> <SearchHistory />} />
-          <Route path={URL+'/messages'} render={()=> <Messages />} />
-          <Route path={URL+'/cart'} render={()=> <Cart />} />
-          <Route path={URL+'/account'} render={()=> <AccountMenu />} />
-          <Route path={URL+'/promotions'} render={()=> <Promotions />} />
-          <Route path={URL+'/orders'} render={()=> <Orders />} />
-          <Route path={URL+'/products'} render={()=> <Products />} />
-          <Route path={URL} render={()=> <LogIn />} />
+          <Route path="/search/history" render={()=> <SearchHistory />} />
+          <Route path="/messages" render={()=> <Messages />} />
+          <Route path="/cart" render={()=> <Cart />} />
+          <Route path="/account" render={()=> <AccountMenu />} />
+          <Route path="/promotions" render={()=> <Promotions />} />
+          <Route path="/orders" render={()=> <Orders />} />
+          <Route path="/products" render={()=> <Products />} />
+          <Route path="/" render={()=> <LogIn />} />
         </Switch>
       </main>
       <Footer />

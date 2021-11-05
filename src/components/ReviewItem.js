@@ -8,8 +8,8 @@ export default function ReviewItem({ review: { id, user, title, text, ratings, c
   const { t } = useTranslation();
 
   return (
-    <div className="pb-2 mb-4 border-b" id={id}>
-      <div className="flex">
+    <div className="pb-2 mb-4 border-b md:border md:p-2" id={id}>
+      <div className="flex flex-wrap gap-2">
         <ReviewStars ratings={ratings} />
         <div className="text-color-gray">{ created_at }</div>
       </div>

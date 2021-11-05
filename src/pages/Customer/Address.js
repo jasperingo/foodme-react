@@ -10,7 +10,7 @@ export default function Address() {
   }
 
   return (
-    <section>
+    <section className="flex-grow">
       <div className="container-x">
 
         <form method="POST" action="" className="form-1-x" onSubmit={onFormSubmit}>

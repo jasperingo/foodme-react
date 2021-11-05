@@ -50,9 +50,13 @@ export default function Message() {
 
       <form 
         onSubmit={(e)=> e.preventDefault()} 
-        className="w-full px-4 bg-color flex gap-2 fixed z-10 border-t bottom-0 left-0 py-2 pb-32"
+        className="w-full px-4 bg-color flex gap-2 fixed z-10 border-t bottom-0 left-0 py-3"
         >
-        <textarea className="h-10 rounded-3xl px-4 py-2 bg-color-gray outline-none flex-grow" placeholder={ t('_message.Say_something') }></textarea>
+        <textarea 
+          style={{minHeight: '40px'}}
+          placeholder={ t('_message.Say_something') }
+          className="h-10 rounded-3xl px-4 py-2 bg-color-gray outline-none flex-grow max-h-60" 
+        ></textarea>
         <button className="w-10 h-10 rounded-full btn-color-primary inline-flex justify-center items-center">
           <span className="sr-only">{ t('_message.Send') }</span>
           <SendIcon className="text" />

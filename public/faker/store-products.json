@@ -10,7 +10,8 @@
       "price": 620.59,
       "photo": "p1.jpg",
       "store": {
-        "id" : 1
+        "id" : 1,
+        "name": "Gify shop"
       }
     },
     {
@@ -22,7 +23,8 @@
       "price": 350.00,
       "photo": "p2.jpg",
       "store": {
-        "id" : 1
+        "id" : 2,
+        "name": "Prime pharmacy"
       }
     },
     {
@@ -34,7 +36,8 @@
       "price": 890.90,
       "photo": "p3.jpg",
       "store": {
-        "id" : 3
+        "id" : 3,
+        "name": "Hot foods"
       }
     }
   ]

@@ -22,7 +22,7 @@ function CheckOut() {
       </div>
       <button className="w-full py-3 my-2 rounded btn-color-primary" onClick={()=> alert('Checking out...')}>{ t('_cart.Check_out') }</button>
       <button 
-        className="w-full py-3 my-2 rounded bg-blue-500 text-white dark:text-gray-800 hover:bg-blue-400 dark:hover:bg-blue-300" 
+        className="w-full py-3 my-2 rounded btn-color-blue" 
         onClick={()=> alert('Saving cart...')}
         >
         { t('_extra.Save') }

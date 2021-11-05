@@ -128,6 +128,7 @@ export const TRANSLATIONS_EN = {
     product__Count_plural: '{{ count }} products',
     Quantity: 'Quantity',
     Add_to_cart: 'Add to cart',
+    Add_product_to_favorites: 'Add product to favorites',
     Product_has_been_added_to_cart: 'Product has been added to cart',
     Decrease_quantity: 'Decrease quantity',
     Increase_quantity: 'Increase quantity',
@@ -135,6 +136,8 @@ export const TRANSLATIONS_EN = {
 
   _cart: {
     Cart: 'Cart',
+    Open_cart: 'Open cart',
+    Copy_code: 'Copy code',
     Saved_carts: 'Saved carts',
     Enter_cart_code: 'Enter cart code',
     Check_out: 'Check out',
@@ -171,8 +174,8 @@ export const TRANSLATIONS_EN = {
     Ordered_from: 'Ordered from',
     Order_details: 'Order details',
     Order_items: 'Order items',
-    item__Num: '{{ num }} item',
-    item__Num_plural: '{{ num }} items',
+    item__Num: '{{ count }} item',
+    item__Num_plural: '{{ count }} items',
     Placed_on: 'Placed on',
     Payment_information: 'Payment information',
     Delivery_information: 'Delivery information',
@@ -188,6 +191,7 @@ export const TRANSLATIONS_EN = {
     Send: 'Send',
     Messages: 'Messages',
     Say_something: 'Say something',
+    Message_store: 'Message store',
     Start_a_conversation: 'Start a conversation',
   },
   

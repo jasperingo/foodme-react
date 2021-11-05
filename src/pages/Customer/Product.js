@@ -18,6 +18,8 @@ import StarIcon from '../../icons/StarIcon';
 import ProductItem from '../../components/ProductItem';
 import ProductIcon from '../../icons/ProductIcon';
 import ReviewSummary from '../../components/ReviewSummary';
+import FavoriteIcon from '../../icons/FavoriteIcon';
+import Rater from '../../components/Rater';
 
 
 const getProductFetchStatusAction = (payload) => ({
@@ -107,7 +109,7 @@ function RelatedProductsList() {
               useListRender(
                 related, 
                 relatedFetchStatus,
-                (item, i)=> <li key={`prod-${i}`} > <ProductItem prod={item} block={true} /> </li>, 
+                (item, i)=> <li key={`prod-${i}`} > <ProductItem prod={item} layout={ProductItem.LAYOUT_GRID} /> </li>, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchRelated} /> </li>,
                 (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={ProductIcon} /> </li>, 
@@ -171,12 +173,25 @@ function ProductReviewsList() {
     productDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.LOADING));
   }
   
+  function newRate(rate, text) {
+    alert('Rate product: '+rate+' with note: '+text);
+  }
 
   return (
     <div className="container-x flex-grow md:w-1/2">
       <H4Heading text="_review.Reviews" />
 
-      <ReviewSummary />
+      <div className="md:flex md:gap-10">
+        <div className="flex-grow">
+          <ReviewSummary />
+        </div>
+        <div className="flex-grow md:text-center">
+          <Rater 
+            title="_review.Rate_this_product" 
+            onRateSubmitted={newRate}
+            />
+        </div>
+      </div>
 
       <div>
         <ul className="list-x">
@@ -252,7 +267,15 @@ function ProductProfile({ product }) {
 
         { dialog && <AlertDialog dialog={dialog} /> }
 
-        <div className="font-bold text-2xl text-color-primary mb-2">{ useMoneyFormat(product.price) }</div>
+        <div className="flex">
+          <div className="font-bold text-2xl text-color-primary mb-2 flex-grow">{ useMoneyFormat(product.price) }</div>
+          <div>
+            <button>
+              <span className="sr-only">{ t('_product.Add_product_to_favorites') }</span>
+              <FavoriteIcon classList="text-red-500" />
+            </button>
+          </div>
+        </div>
 
         <h3 className="text-xl mb-2">{ product.title }</h3>
 

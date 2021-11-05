@@ -1,14 +1,12 @@
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
+import DualPaneIntro from '../../components/DualPaneIntro';
 import MessagesItem from '../../components/MessagesItem';
 import MessageIcon from '../../icons/MessageIcon';
 import Message from './Message';
 
 export default function Messages() {
-
-  const { t } = useTranslation();
 
   const match = useRouteMatch();
 
@@ -49,14 +47,7 @@ export default function Messages() {
           <Route path={`${match.url}/:ID`} render={()=> <Message />} />
           <Route 
             path={match.url} 
-            render={()=> {
-              return (
-                <div className="flex-grow py-20 hidden lg:block">
-                  <MessageIcon classList="w-20 h-20 mx-auto" />
-                  <div className="text-center text-4xl">{ t('_message.Start_a_conversation') }</div>
-                </div>
-              );
-            }} 
+            render={()=> <DualPaneIntro Icon={MessageIcon} text="_message.Start_a_conversation" />} 
             />
         </Switch>
       </div>

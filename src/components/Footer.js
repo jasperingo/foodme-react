@@ -23,8 +23,8 @@ export default function Footer() {
         <ul className="flex flex-wrap gap-1 justify-around">
           <FooterLink text="_user.Register" href="/register" />
           <FooterLink text="_user.Log_in" href="/login" />
-          <FooterLink text="_store.Become_a_store_partner" href="/sapp" />
-          <FooterLink text="_delivery.Become_a_courier_partner" href="/login" />
+          <FooterLink text="_store.Become_a_store_partner" href="/" />
+          <FooterLink text="_delivery.Become_a_courier_partner" href="/" />
           <FooterLink text="About_us" href="/about-us" />
           <FooterLink text="Contact_us" href="/contact-us" />
           <FooterLink text="Terms_of_service" href="/terms-of-service" />

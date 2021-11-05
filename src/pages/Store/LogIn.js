@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Redirect } from 'react-router-dom';
-import { URL } from '../../apps/StoreApp';
+import { Link } from 'react-router-dom';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import StoreIcon from '../../icons/StoreIcon';
@@ -43,9 +42,7 @@ export default function LogIn() {
 
   }
 
-  if (true) {
-    return <Redirect to={URL+'/products'} />
-  }
+  
 
   return (
     <section>
