@@ -52,6 +52,8 @@ export const TRANSLATIONS_EN = {
     Profile: 'Profile',
     Addresses: 'Addresses',
     Add_address: 'Add address',
+    Edit_address: 'Edit address',
+    Default_address: 'Default address',
     Log_in: 'Log in',
     Log_out: 'Log out',
     Register: 'Register',
@@ -66,6 +68,9 @@ export const TRANSLATIONS_EN = {
     New_password: 'New password',
     Change_password: 'Change password',
     Current_password: 'Current password',
+    Street: 'Street',
+    State: 'State',
+    City: 'City',
   },
 
   _extra: {
@@ -86,6 +91,7 @@ export const TRANSLATIONS_EN = {
     Favorites: 'Favorites',
     Save: 'Save',
     Make_default: 'Make default',
+    Title: 'Title',
   },
 
   _search: {

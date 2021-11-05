@@ -13,16 +13,18 @@ import TransactionIcon from '../../icons/TransactionIcon';
 import UserIcon from '../../icons/UserIcon';
 import Address from './Address';
 import Addresses from './Addresses';
+import Favourites from './Favourites';
 import Order from './Order';
 import Orders from './Orders';
 import Profile from './Profile';
+import SavedCarts from './SavedCarts';
 
 
 const MENU_ITEMS = [
   { text: '_user.Profile', Icon: UserIcon, href: '/account/profile'},
   { text: '_order.Orders', Icon: OrderIcon, href: '/account/orders'},
-  { text: '_extra.Favorites', Icon: FavoritedIcon, href: '/account'},
-  { text: '_cart.Saved_carts', Icon: CartIcon, href: '/account'},
+  { text: '_extra.Favorites', Icon: FavoritedIcon, href: '/account/favourites'},
+  { text: '_cart.Saved_carts', Icon: CartIcon, href: '/account/saved-carts'},
   { text: '_user.Addresses', Icon: LocationIcon, href: '/account/addresses'},
   { text: '_transaction.Transactions', Icon: TransactionIcon, href: '/account'},
 ];
@@ -54,6 +56,8 @@ export default function UserAccount() {
           <Switch>
             <Route path={`${match.url}/orders`} render={()=> <Orders />} />
             <Route path={`${match.url}/order/:ID`} render={()=> <Order />} />
+            <Route path={`${match.url}/saved-carts`} render={()=> <SavedCarts />} />
+            <Route path={`${match.url}/favourites`} render={()=> <Favourites />} />
             <Route path={`${match.url}/address/:ID`} render={()=> <Address />} />
             <Route path={`${match.url}/addresses`} render={()=> <Addresses />} />
             <Route path={`${match.url}/profile`} render={()=> <Profile />} />
