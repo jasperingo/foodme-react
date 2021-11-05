@@ -2,9 +2,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import FormButton from '../components/FormButton';
-import FormField from '../components/FormField';
-import SocialLoginList from '../components/SocialLoginList';
+import FormButton from '../../components/FormButton';
+import FormField from '../../components/FormField';
+import SocialLoginList from '../../components/SocialLoginList';
 
 export default function Register() {
 
@@ -21,13 +21,13 @@ export default function Register() {
 
         <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x">
 
-          <FormField _id="fn-input" label="First_name" />
+          <FormField ID="fn-input" label="First_name" />
 
-          <FormField _id="ln-input" label="Last_name" />
+          <FormField ID="ln-input" label="Last_name" />
 
-          <FormField _id="email-input" label="Email" />
+          <FormField ID="email-input" label="Email" type="email" />
 
-          <FormField _id="password-input" label="Password" type="password" />
+          <FormField ID="password-input" label="Password" type="password" />
 
           <div className="mb-4 text-sm">
             <span>{ t('By_registering_you_agree_to_our') }</span>

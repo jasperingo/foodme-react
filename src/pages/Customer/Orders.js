@@ -66,14 +66,14 @@ export default function Orders() {
   }
 
   return (
-    <section>
+    <section className="flex-grow">
       <div className="container-x">
         <InfiniteScroll
           dataLength={orders.length}
           next={refetchOrders}
           hasMore={useHasMoreToFetchViaScroll(ordersPage, ordersNumberOfPages, ordersFetchStatus)}
           >
-          <ul className="list-x">
+          <ul className="list-2-x">
             { 
               useListRender(
                 orders, 

@@ -43,7 +43,7 @@ export default function Rater({ onRateChanged }) {
     <div className="py-4">
       <h5 className="font-bold mb-2">{ t('_review.Rate_this_store') }</h5>
       <ul>{ buttons }</ul>
-      <form onSubmit={(e)=> e.preventDefault()}>
+      {/*<form onSubmit={(e)=> e.preventDefault()}>
         <textarea 
           placeholder={t('_review.Tell_us_your_experience')}
           className="w-full bg-color text-color border-b border-yellow-500 outline-none"
@@ -53,7 +53,7 @@ export default function Rater({ onRateChanged }) {
             >
             { t('_extra.Submit') }
           </button>
-      </form>
+      </form>*/}
     </div>
   );
 }

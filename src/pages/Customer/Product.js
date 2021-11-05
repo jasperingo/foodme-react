@@ -2,22 +2,22 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
-import { API_URL, useAppContext } from '../context/AppContext';
-import { FETCH_STATUSES, PRODUCT, CART, REVIEW } from '../context/AppActions';
-import { /*useListRender,*/ useDataRender, useHasMoreToFetchViaScroll, useListRender, useMoneyFormat } from '../context/AppHooks';
-import StoreItem from '../components/StoreItem';
-import Reload from '../components/Reload';
-import Loading from '../components/Loading';
-import QuantityChooser from '../components/QuantityChooser';
-import AlertDialog from '../components/AlertDialog';
-import ReviewItem from '../components/ReviewItem';
-import EmptyList from '../components/EmptyList';
-import FetchMoreButton from '../components/FetchMoreButton';
-import StarIcon from '../icons/StarIcon';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import ProductItem from '../components/ProductItem';
-import ProductIcon from '../icons/ProductIcon';
-import ReviewSummary from '../components/ReviewSummary';
+import { API_URL, useAppContext } from '../../context/AppContext';
+import { FETCH_STATUSES, PRODUCT, CART, REVIEW } from '../../context/AppActions';
+import { /*useListRender,*/ useDataRender, useHasMoreToFetchViaScroll, useListRender, useMoneyFormat } from '../../context/AppHooks';
+import StoreItem from '../../components/StoreItem';
+import Reload from '../../components/Reload';
+import Loading from '../../components/Loading';
+import QuantityChooser from '../../components/QuantityChooser';
+import AlertDialog from '../../components/AlertDialog';
+import ReviewItem from '../../components/ReviewItem';
+import EmptyList from '../../components/EmptyList';
+import FetchMoreButton from '../../components/FetchMoreButton';
+import StarIcon from '../../icons/StarIcon';
+import ProductItem from '../../components/ProductItem';
+import ProductIcon from '../../icons/ProductIcon';
+import ReviewSummary from '../../components/ReviewSummary';
 
 
 const getProductFetchStatusAction = (payload) => ({

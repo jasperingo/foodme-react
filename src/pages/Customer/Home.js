@@ -200,7 +200,7 @@ export default function Home() {
       <div className="lg:container mx-auto">
         <div className="lg:flex lg:items-start lg:gap-2">
 
-          <div className="bg-color-gray lg:rounded lg:my-2 lg:w-56">
+          <div className="bg-color-gray lg:rounded lg:my-2 lg:w-60">
             <div className="container-x border pt-2 pb-4 border-transparent">
               <h2 className="font-bold my-2">{ t('_extra.Categories') }</h2>
               <ul className="grid gap-4 grid-cols-3 lg:block">

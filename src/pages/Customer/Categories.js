@@ -2,12 +2,12 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FETCH_STATUSES, CATEGORIES } from '../context/AppActions';
-import { API_URL, useAppContext } from '../context/AppContext';
-import { useCategoryColor, useListRender } from '../context/AppHooks';
-import CategoriesIcon from '../icons/CategoriesIcon';
-import Loading from '../components/Loading';
-import Reload from '../components/Reload';
+import { FETCH_STATUSES, CATEGORIES } from '../../context/AppActions';
+import { API_URL, useAppContext } from '../../context/AppContext';
+import { useCategoryColor, useListRender } from '../../context/AppHooks';
+import CategoriesIcon from '../../icons/CategoriesIcon';
+import Loading from '../../components/Loading';
+import Reload from '../../components/Reload';
 
 const getStoresFetchStatusAction = (payload) => ({
   type: CATEGORIES.STORES_FETCH_STATUS_CHANGED,

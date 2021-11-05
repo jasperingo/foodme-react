@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useMoneyFormat } from '../../context/AppHooks';
 import DeliveryIcon from '../../icons/DeliveryIcon';
 import StoreIcon from '../../icons/StoreIcon';
@@ -15,7 +16,7 @@ function OrderItem({ item: { quantity, amount, delivery_fee, product: { photo, t
           <img 
             src={`/photos/products/${photo}`} 
             alt={'ja'} 
-            className="w-20 h-20 border rounded block md:w-full md:h-40" 
+            className="w-20 h-20 border rounded block md:w-40 md:h-40" 
             />
           <div className="flex-grow pl-2">
             <h4 className="mb-1">{ title }</h4>
@@ -40,7 +41,7 @@ export default function Order() {
   const { t } = useTranslation();
 
   return (
-    <section>
+    <section className="flex-grow">
       <div className="py-4 border-b">
         <div className="container-x">
           
@@ -56,10 +57,10 @@ export default function Order() {
           </div>
           <div className="my-2">
             <div className="text-sm font-bold">{ t('_order.Ordered_from') }</div>
-            <div className="flex gap-1 items-center">
+            <Link to="/store/1/products" className="flex gap-1 items-center">
               <StoreIcon classList="text-color-primary w-8 h-8" />
               <div>Immaculate kitchen</div>
-            </div>
+            </Link>
           </div>
 
           <button className="btn-color-primary p-2 rounded my-2">{ t('_order.Reorder') }</button>
@@ -67,64 +68,65 @@ export default function Order() {
       </div>
 
       <div className="py-4 border-b">
-        <div className="container-x">
-          <h4 className="font-bold py-2 text-color-gray">{ t('_order.Payment_information') }</h4>
-          <dl>
-            <div className="mb-2">
-              <dt className="text-sm font-bold">Payment method</dt>
-              <dd>Debit card</dd>
-            </div>
-            <div>
-              <dt className="text-sm font-bold">Payment details</dt>
-              <dd>
-                <ul>
-                  <li>
-                    <span>Items total: </span>
-                    <span>{ useMoneyFormat(300) }</span>
-                  </li>
-                  <li>
-                    <span>Delivery fee: </span>
-                    <span>{ useMoneyFormat(50) }</span>
-                  </li>
-                  <li>
-                    <span>Discount amount: </span>
-                    <span>{ useMoneyFormat(6.89) }</span>
-                  </li>
-                  <li>
-                    <span>Total: </span>
-                    <span>{ useMoneyFormat(460.45) }</span>
-                  </li>
-                </ul>
-              </dd>
-            </div>
-          </dl>
+        <div className="container-x lg:flex lg:gap-4">
+          <div className="lg:flex-grow">
+            <h4 className="font-bold py-2 text-color-gray">{ t('_order.Payment_information') }</h4>
+            <dl>
+              <div className="mb-2">
+                <dt className="text-sm font-bold">Payment method</dt>
+                <dd>Debit card</dd>
+              </div>
+              <div>
+                <dt className="text-sm font-bold">Payment details</dt>
+                <dd>
+                  <ul>
+                    <li>
+                      <span>Items total: </span>
+                      <span>{ useMoneyFormat(300) }</span>
+                    </li>
+                    <li>
+                      <span>Delivery fee: </span>
+                      <span>{ useMoneyFormat(50) }</span>
+                    </li>
+                    <li>
+                      <span>Discount amount: </span>
+                      <span>{ useMoneyFormat(6.89) }</span>
+                    </li>
+                    <li>
+                      <span>Total: </span>
+                      <span>{ useMoneyFormat(460.45) }</span>
+                    </li>
+                  </ul>
+                </dd>
+              </div>
+            </dl>
+          </div> 
+
+          <div className="lg:flex-grow">
+            <h4 className="font-bold py-2 text-color-gray">{ t('_order.Delivery_information') }</h4>
+            <dl>
+              <div className="mb-2">
+                <dt className="text-sm font-bold">Delivery method</dt>
+                <dd>Home delivery</dd>
+              </div>
+              <div className="mb-2">
+                <dt className="text-sm font-bold">Delivery company</dt>
+                <dd>
+                  <div className="flex gap-1 items-center">
+                    <DeliveryIcon classList="text-color-primary w-8 h-8" />
+                    <div>Green logistics</div>
+                  </div>
+                </dd>
+              </div>
+              <div>
+                <dt className="text-sm font-bold">Delivery address</dt>
+                <dd>Lorem ipsum dolor sit amet, consectetur adipisicing elit</dd>
+              </div>
+            </dl>
+          </div>
         </div>
       </div>
-      
-      <div className="py-4 border-b">
-        <div className="container-x">
-          <h4 className="font-bold py-2 text-color-gray">{ t('_order.Delivery_information') }</h4>
-          <dl>
-            <div className="mb-2">
-              <dt className="text-sm font-bold">Delivery method</dt>
-              <dd>Home delivery</dd>
-            </div>
-            <div className="mb-2">
-              <dt className="text-sm font-bold">Delivery company</dt>
-              <dd>
-                <div className="flex gap-1 items-center">
-                  <DeliveryIcon classList="text-color-primary w-8 h-8" />
-                  <div>Green logistics</div>
-                </div>
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm font-bold">Delivery address</dt>
-              <dd>Lorem ipsum dolor sit amet, consectetur adipisicing elit</dd>
-            </div>
-          </dl>
-        </div>
-      </div>
+    
 
       <div className="py-4 border-b">
         <div className="container-x">

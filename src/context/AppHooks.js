@@ -39,6 +39,12 @@ export function useHeader2Title() {
   
   if (path === '/search/history' || path === URL+'/search/history')
     return '_search.Search';
+
+  if (path === '/account/addresses')
+    return '_user.Addresses';
+
+  if (path === '/account/profile')
+    return '_user.Profile';
   
   if (path === '/account/orders' || path === URL+'/account/orders')
     return '_order.Orders';

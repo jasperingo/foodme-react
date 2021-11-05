@@ -84,6 +84,10 @@
     @apply py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4;
   }
 
+  .list-2-x {
+    @apply py-2 md:grid md:grid-cols-2 md:gap-4;
+  }
+
   .form-1-x {
     @apply my-10 max-w-md mx-auto sm:px-4 sm:pb-2 sm:pt-6 sm:rounded sm:shadow;
   }

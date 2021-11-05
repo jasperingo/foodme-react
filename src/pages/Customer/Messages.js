@@ -16,9 +16,9 @@ export default function Messages() {
 
   return (
     <section>
-      <div className="container-x">
-        
-        <div className="lg:flex lg:gap-5">
+     
+      <div className="lg:flex lg:gap-5">
+        <div className="container-x lg:w-auto">
           <ul className={`py-4 ${location.pathname !== '/messages' && 'hidden'} lg:block lg:w-80`}>
             <MessagesItem 
               href="/messages/2"
@@ -43,24 +43,24 @@ export default function Messages() {
                 last_message_status: 'read'
               }} />
           </ul>
-
-          <Switch>
-            <Route path={`${match.url}/:ID`} render={()=> <Message />} />
-            <Route 
-              path={match.url} 
-              render={()=> {
-                return (
-                  <div className="flex-grow py-20 hidden lg:block">
-                    <MessageIcon classList="w-20 h-20 mx-auto" />
-                    <div className="text-center text-4xl">{ t('_message.Start_a_conversation') }</div>
-                  </div>
-                );
-              }} 
-              />
-          </Switch>
         </div>
 
+        <Switch>
+          <Route path={`${match.url}/:ID`} render={()=> <Message />} />
+          <Route 
+            path={match.url} 
+            render={()=> {
+              return (
+                <div className="flex-grow py-20 hidden lg:block">
+                  <MessageIcon classList="w-20 h-20 mx-auto" />
+                  <div className="text-center text-4xl">{ t('_message.Start_a_conversation') }</div>
+                </div>
+              );
+            }} 
+            />
+        </Switch>
       </div>
+
     </section>
   );
 }

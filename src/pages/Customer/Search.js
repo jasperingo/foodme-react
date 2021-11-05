@@ -2,19 +2,19 @@
 import React, { useEffect } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 //import { useTranslation } from 'react-i18next';
-import { useHasMoreToFetchViaScroll, useListRender, useURLQuery } from '../context/AppHooks';
-import { API_URL, useAppContext } from '../context/AppContext';
-import { FETCH_STATUSES, PRODUCT, SEARCH, STORE } from '../context/AppActions';
-import Loading from '../components/Loading';
-import ProductIcon from '../icons/ProductIcon';
-import ProductItem from '../components/ProductItem';
-import Reload from '../components/Reload';
-import EmptyList from '../components/EmptyList';
-import Tab from '../components/Tab';
-import StoreIcon from '../icons/StoreIcon';
+import { useHasMoreToFetchViaScroll, useListRender, useURLQuery } from '../../context/AppHooks';
+import { API_URL, useAppContext } from '../../context/AppContext';
+import { FETCH_STATUSES, PRODUCT, SEARCH, STORE } from '../../context/AppActions';
+import Loading from '../../components/Loading';
+import ProductIcon from '../../icons/ProductIcon';
+import ProductItem from '../../components/ProductItem';
+import Reload from '../../components/Reload';
+import EmptyList from '../../components/EmptyList';
+import Tab from '../../components/Tab';
+import StoreIcon from '../../icons/StoreIcon';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import StoreItem from '../components/StoreItem';
-import FetchMoreButton from '../components/FetchMoreButton';
+import StoreItem from '../../components/StoreItem';
+import FetchMoreButton from '../../components/FetchMoreButton';
 
 
 const TAB_LINKS = [

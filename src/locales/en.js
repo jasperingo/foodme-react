@@ -51,10 +51,21 @@ export const TRANSLATIONS_EN = {
     Account: 'Account',
     Profile: 'Profile',
     Addresses: 'Addresses',
+    Add_address: 'Add address',
     Log_in: 'Log in',
     Log_out: 'Log out',
     Register: 'Register',
-    Or_login_with: 'Or login with'
+    Or_login_with: 'Or login with',
+    Manage_your_account: 'Manage your account',
+    Name: 'Name',
+    First_name: 'First name',
+    Last_name: 'Last name',
+    Email: 'Email',
+    Phone_number: 'Phone number',
+    Password: 'Password',
+    New_password: 'New password',
+    Change_password: 'Change password',
+    Current_password: 'Current password',
   },
 
   _extra: {
@@ -62,6 +73,7 @@ export const TRANSLATIONS_EN = {
     categories: 'categories',
     Categories: 'Categories',
     Reviews: 'Reviews',
+    Edit: 'Edit',
     Delete: 'Delete',
     Total: 'Total',
     Done: 'Done',
@@ -72,6 +84,8 @@ export const TRANSLATIONS_EN = {
     No: 'No',
     By: 'By',
     Favorites: 'Favorites',
+    Save: 'Save',
+    Make_default: 'Make default',
   },
 
   _search: {
@@ -133,6 +147,7 @@ export const TRANSLATIONS_EN = {
   },
 
   _delivery: {
+    Delivery_fee: 'Delivery fee',
     Become_a_courier_partner: 'Become a courier partner',
   },
 

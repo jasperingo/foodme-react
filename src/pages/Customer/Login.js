@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, Redirect } from 'react-router-dom';
-import FormButton from '../components/FormButton';
-import FormField from '../components/FormField';
-import SocialLoginList from '../components/SocialLoginList';
-import { USER } from '../context/AppActions';
-import { useAppContext } from '../context/AppContext';
+import FormButton from '../../components/FormButton';
+import FormField from '../../components/FormField';
+import SocialLoginList from '../../components/SocialLoginList';
+import { USER } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
 
 export default function Login() {
 
@@ -61,6 +61,7 @@ export default function Login() {
           <FormField 
             ID="email-input" 
             label="Email" 
+            type="email"
             value={email} 
             onInputChanged={setEmail} 
             error={emailError}
