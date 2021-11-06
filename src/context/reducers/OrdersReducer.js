@@ -1,8 +1,10 @@
 
 import { ORDER } from "../AppActions";
-import { getListFetchStatus } from "../AppHelpers";
+import { useListFetchStatus } from "../AppHooks";
 
 export default function OrdersReducer (state, action) {
+
+  const fetchUpdater = useListFetchStatus();
   
   switch (action.type) {  
     
@@ -16,7 +18,7 @@ export default function OrdersReducer (state, action) {
       };
     
     case ORDER.LIST_FETCHED :
-      let status = getListFetchStatus(
+      let status = fetchUpdater(
         state.orders.ordersPage, 
         action.payload.ordersNumberOfPages, 
         state.orders.orders.length, 

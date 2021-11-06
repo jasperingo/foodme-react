@@ -1,6 +1,5 @@
 
 import { useLocation } from "react-router-dom";
-import { URL } from "../apps/StoreApp";
 import { FETCH_STATUSES } from './AppActions';
 
 export function useURLQuery() {
@@ -31,7 +30,7 @@ export function useHeader2Title() {
   if (path === '/terms-of-service')
     return 'Terms_of_service';
 
-  if (path === URL+'/messages/chats')
+  if (path === '/messages')
     return '_message.Messages';
 
   if (path === '/cart')
@@ -76,10 +75,26 @@ export function useHeader2Title() {
   if (/store\/[0-9]+\/products/.test(path) || /store\/[0-9]+\/reviews/.test(path) || /store\/[0-9]+\/promotions/.test(path))
     return '_store.Store';
 
-  if (/store\/[0-9]+\/product\/[0-9]+/.test(path))
+  if (/store\/[0-9]+\/promotion\/[0-9]+/.test(path) || /promotion\/[0-9]+/.test(path))
+    return '_discount.Promotion';
+
+  if (/store\/[0-9]+\/product\/[0-9]+/.test(path) || /product\/[0-9]+/.test(path))
     return '_product.Product';
 
   return 'app_name';
+}
+
+export function useListFetchStatus() {
+    
+  return (page, numberOfPages, dataLength, fetchedDataLength)=> {
+    
+    if ((page+1) < numberOfPages) 
+      return FETCH_STATUSES.MORE;
+    else if (dataLength === 1 && fetchedDataLength < 1) 
+      return FETCH_STATUSES.EMPTY;
+    else 
+      return FETCH_STATUSES.DONE;
+  }
 }
 
 export function useCategoryColor(index) {

@@ -11,7 +11,7 @@ export default function ProductItem({ prod, href = `/store/${prod.store.id}/prod
   switch(layout) {
     case ProductItem.LAYOUT_LIST:
       layoutStyle = 'flex gap-2 md:p-2 md:shadow';
-      layoutImgStyle = 'w-24';
+      layoutImgStyle = 'w-24 h-32';
       layoutBodyStyle = 'pb-2';
       break;
     case ProductItem.LAYOUT_GRID:
@@ -21,7 +21,7 @@ export default function ProductItem({ prod, href = `/store/${prod.store.id}/prod
       break;
     default:
       layoutStyle = 'flex gap-2 md:block md:shadow';
-      layoutImgStyle = 'w-24 md:w-full md:h-40';
+      layoutImgStyle = 'w-24 h-32 md:w-full md:h-40';
       layoutBodyStyle = 'pb-2 md:p-2';
   }
 
@@ -42,7 +42,7 @@ export default function ProductItem({ prod, href = `/store/${prod.store.id}/prod
         <div className="text-color-gray text-sm mb-1">{ prod.sub_title }</div>
         <div className="font-bold mb-1">{ useMoneyFormat(prod.price) }</div>
         <div className="flex flex-wrap gap-1 items-center bg-color-primary text-sm text-white py-1 px-2 rounded-full w-max">
-          <StoreIcon />
+          <StoreIcon classList="w-5 h-5" />
           <div>{ prod.store.name }</div>
         </div>
       </div>

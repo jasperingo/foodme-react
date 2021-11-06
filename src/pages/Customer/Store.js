@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { Link, Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { API_URL, useAppContext } from '../../context/AppContext';
-import { FETCH_STATUSES, STORE, PRODUCT, REVIEW } from '../../context/AppActions';
+import { FETCH_STATUSES, STORE, PRODUCT, REVIEW, PROMOTION } from '../../context/AppActions';
 import { useListRender, useDataRender, useHasMoreToFetchViaScroll } from '../../context/AppHooks';
 import Tab from '../../components/Tab';
 import Loading from '../../components/Loading';
@@ -26,6 +26,7 @@ import ReviewSummary from '../../components/ReviewSummary';
 import DiscountIcon from '../../icons/DiscountIcon';
 import { useTranslation } from 'react-i18next';
 import MessageIcon from '../../icons/MessageIcon';
+import PromotionItem from '../../components/PromotionItem';
 
 
 const PROFILE_NAV_LINKS = [
@@ -49,7 +50,89 @@ const getReviewsFetchStatusAction = (payload) => ({
   payload
 });
 
+const getPromotionsFetchStatusAction = (payload) => ({
+  type: PROMOTION.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
 
+function StorePromotionsList() {
+
+  const { ID } = useParams();
+
+  const { store: {
+    promotions: {
+      promotions,
+      promotionsPage,
+      promotionsNumberOfPages,
+      promotionsFetchStatus
+    }
+  }, storeDispatch } = useAppContext();
+
+
+  useEffect(()=> {
+
+    async function fetchPromotions() {
+      if (promotionsFetchStatus !== FETCH_STATUSES.LOADING) 
+        return;
+      
+      try {
+        let response = await fetch(`${API_URL}promotions.json?id=${ID}`);
+
+        if (!response.ok)
+          throw new Error(response.status);
+        
+        let data = await response.json();
+        
+        storeDispatch({
+          type: PROMOTION.LIST_FETCHED,
+          payload: {
+            promotions: data.data,
+            promotionsNumberOfPages: data.total_pages
+          }
+        });
+
+      } catch (err) {
+        storeDispatch(getPromotionsFetchStatusAction(FETCH_STATUSES.ERROR));
+      }
+    }
+
+    fetchPromotions();
+
+  }, [ID, promotionsFetchStatus, storeDispatch]);
+
+  function refetchPromotions() {
+    if (promotionsFetchStatus === FETCH_STATUSES.LOADING) 
+      return;
+    
+    storeDispatch(getPromotionsFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+  
+  return (
+    <div>
+      <div className="container-x">
+        <InfiniteScroll 
+          dataLength={promotions.length}
+          next={refetchPromotions}
+          hasMore={useHasMoreToFetchViaScroll(promotionsPage, promotionsNumberOfPages, promotionsFetchStatus)}
+          >
+          <ul className="list-x">
+            { 
+              useListRender(
+                promotions, 
+                promotionsFetchStatus,
+                (item, i)=> <PromotionItem key={`prod-${i}`} promotion={item} />, 
+                (k)=> <li key={k}> <Loading /> </li>, 
+                (k)=> <li key={k}> <Reload action={refetchPromotions} /> </li>,
+                (k)=> <li key={k}> <EmptyList text="_empty.No_review" Icon={DiscountIcon} /> </li>, 
+                (k)=> <li key={k}> <FetchMoreButton action={refetchPromotions} /> </li>,
+              )
+            }
+          </ul>
+        </InfiniteScroll>
+      </div>
+    </div>
+  );
+}
 
 function StoreReviewsList() {
 
@@ -110,14 +193,14 @@ function StoreReviewsList() {
       <div className="container-x">
         
         <div className="md:flex md:gap-10">
-          <div className="flex-grow">
-            <ReviewSummary />
-          </div>
-          <div className="flex-grow md:text-center">
+        <div className="flex-grow md:text-center">
             <Rater 
               title="_review.Rate_this_store" 
               onRateSubmitted={newRate}
               />
+          </div>
+          <div className="flex-grow">
+            <ReviewSummary />
           </div>
         </div>
 
@@ -270,7 +353,7 @@ function StoreProfile({ storeData }) {
   return (
     <>
 
-      <div className="flex items-center my-2">
+      <div className="flex items-center my-4">
         <img 
           src={ `/photos/${storeData.logo}` } 
           alt={ storeData.name } 
@@ -387,15 +470,7 @@ export default function Store() {
         <Switch>
           <Route path={`${match.url}/products`} render={()=> <StoreProductsList categories={store.categories} />} />
           <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList />} />
-          <Route path={`${match.url}/promotions`}>    
-            <div className="container-x">
-              <ul className="list-x">
-                <li>
-                  <EmptyList text="_empty.No_promotion" Icon={DiscountIcon} />
-                </li>
-              </ul>
-            </div>
-          </Route>
+          <Route path={`${match.url}/promotions`} render={()=> <StorePromotionsList />} />
         </Switch>
       }
       

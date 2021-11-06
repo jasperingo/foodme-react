@@ -1,9 +1,11 @@
 
 import { CATEGORIES, FETCH_STATUSES, PRODUCT, STORE } from "../AppActions";
-import { getListFetchStatus } from "../AppHelpers";
+import { useListFetchStatus } from "../AppHooks";
 
 
 export default function HomeReducer (state, action) {
+
+  const fetchUpdater = useListFetchStatus();
   
   switch (action.type) {  
     
@@ -35,7 +37,7 @@ export default function HomeReducer (state, action) {
       };
     
     case STORE.FETCHED :
-      let status = getListFetchStatus(
+      let status = fetchUpdater(
         state.stores.storesPage, 
         action.payload.storesNumberOfPages,
         state.stores.stores.length,  
@@ -64,7 +66,7 @@ export default function HomeReducer (state, action) {
       };
     
     case PRODUCT.FETCHED :
-      let status2 = getListFetchStatus(
+      let status2 = fetchUpdater(
         state.products.productsPage, 
         action.payload.productsNumberOfPages,
         state.products.products.length,  

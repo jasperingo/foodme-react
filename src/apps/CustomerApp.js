@@ -24,6 +24,7 @@ import SearchIcon from '../icons/SearchIcon';
 import MessageIcon from '../icons/MessageIcon';
 import { useAppContext } from '../context/AppContext';
 import Messages from '../pages/Customer/Messages';
+import Promotion from '../pages/Customer/Promotion';
 
 
 export const HEADER_NAV_LINKS = [
@@ -58,6 +59,7 @@ export default function CustomerApp() {
         />
       <main className="pb-52">
         <Switch>
+          <Route path="/store/:sID/promotion/:pID" render={()=> <Promotion />} />
           <Route path="/store/:sID/product/:pID" render={()=> <Product />} />
           <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 

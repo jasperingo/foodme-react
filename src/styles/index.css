@@ -101,6 +101,12 @@
       @apply bg-gray-200 dark:bg-gray-700;
     }
   }
+
+  @variants responsive {
+    .bg-color-primary-lg {
+      @apply bg-color-primary;
+    }
+  }
   
 
 }

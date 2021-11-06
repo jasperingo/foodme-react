@@ -182,14 +182,14 @@ function ProductReviewsList() {
       <H4Heading text="_review.Reviews" />
 
       <div className="md:flex md:gap-10">
-        <div className="flex-grow">
-          <ReviewSummary />
-        </div>
         <div className="flex-grow md:text-center">
           <Rater 
             title="_review.Rate_this_product" 
             onRateSubmitted={newRate}
             />
+        </div>
+        <div className="flex-grow">
+          <ReviewSummary />
         </div>
       </div>
 

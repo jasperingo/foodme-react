@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import StoreIcon from '../../icons/StoreIcon';
@@ -43,7 +44,6 @@ export default function LogIn() {
   }
 
   
-
   return (
     <section>
 
@@ -51,10 +51,7 @@ export default function LogIn() {
 
         <form method="POST" action="" onSubmit={loginIn} className="form-1-x">
 
-          <div className="my-4">
-            <StoreIcon classList="w-20 h-20 mx-auto text-color-primary" />
-            <div className="font-bold text-center">Welcome back</div>
-          </div>
+          <AuthFormHeader Icon={StoreIcon} text="_user.Welcome_back" />
 
           <FormField
             ID="email-input" 
@@ -74,14 +71,14 @@ export default function LogIn() {
             />
 
           <div className="mb-4 text-sm">
-            <Link to={URL+"/login"} className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
+            <Link to="/login" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
           </div>
 
           <FormButton text="Login" />
 
           <div className="mb-4 text-center text-sm">
             <span>{ t('Dont_have_an_account') } </span>
-            <Link to={URL+"/register"} className="text-blue-500 font-bold">{ t('Register') }</Link>
+            <Link to="/register" className="text-blue-500 font-bold">{ t('Register') }</Link>
           </div>
 
         </form>

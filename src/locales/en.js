@@ -48,6 +48,8 @@ export const TRANSLATIONS_EN = {
   By_registering_you_agree_to_our: 'By registering, you agree to our',
 
   _user: {
+    Join_us: 'Join us',
+    Welcome_back: 'Welcome back',
     Account: 'Account',
     Profile: 'Profile',
     Addresses: 'Addresses',
@@ -92,6 +94,9 @@ export const TRANSLATIONS_EN = {
     Save: 'Save',
     Make_default: 'Make default',
     Title: 'Title',
+    for: 'for',
+    Start: 'Start',
+    End: 'End',
   },
 
   _search: {
@@ -105,6 +110,7 @@ export const TRANSLATIONS_EN = {
     Stores: 'Stores',
     Recommended_stores: 'Recommended stores',
     Become_a_store_partner : 'Become a store partner',
+    Store_category: 'Store category',
     Store_categories: 'Store categories',
     store__Num: '{{ num }} stores',
     store__Count: '{{ count }} store',
@@ -113,6 +119,7 @@ export const TRANSLATIONS_EN = {
   },
 
   _discount: {
+    Promotion: 'Promotion',
     Promotions: 'Promotions',
     Add_promotion: 'Add promotion',
   },
@@ -123,6 +130,7 @@ export const TRANSLATIONS_EN = {
     Add_product: 'Add product',
     Related_products: 'Related products',
     Recommended_products: 'Recommended products',
+    Product_category: 'Product category',
     Product_categories: 'Product categories',
     product__Count: '{{ count }} product',
     product__Count_plural: '{{ count }} products',

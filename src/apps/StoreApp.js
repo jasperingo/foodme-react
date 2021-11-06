@@ -10,20 +10,25 @@ import OrderIcon from '../icons/OrderIcon';
 import ProductIcon from '../icons/ProductIcon';
 import SearchIcon from '../icons/SearchIcon';
 import StoreIcon from '../icons/StoreIcon';
+import AboutUs from '../pages/AboutUs';
+import ContactUs from '../pages/ContactUs';
 import AccountMenu from '../pages/Store/AccountMenu';
 import Cart from '../pages/Store/Cart';
 import LogIn from '../pages/Store/LogIn';
 import Messages from '../pages/Store/Messages';
 import Orders from '../pages/Store/Orders';
+import Product from '../pages/Store/Product';
 import Products from '../pages/Store/Products';
+import Promotion from '../pages/Store/Promotion';
 import Promotions from '../pages/Store/Promotions';
+import Register from '../pages/Store/Register';
 import SearchHistory from '../pages/Store/SearchHistory';
+import TermsOfService from '../pages/TermsOfService';
 
-
-export const URL = '/sapp';
 
 export const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
+  { href: '/register', exclude: true },
   { title : '_product.Products', icon: ProductIcon, href: '/products' },
   { title : '_order.Orders', icon: OrderIcon, href: '/orders' },
   { title : '_discount.Promotions', icon: DiscountIcon, href: '/promotions' },
@@ -32,7 +37,7 @@ export const HEADER_NAV_LINKS = [
 
 export const HEADER_TOP_NAV_LINKS = [
   { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: ()=> 0, pages: [] },
-  { title : '_message.Messages', icon: MessageIcon, href: '/messages/chats', useCounter: ()=> 0, pages: [] },
+  { title : '_message.Messages', icon: MessageIcon, href: '/messages', useCounter: ()=> 0, pages: [] },
   { title : '_search.Search', icon: SearchIcon, href: '/search/history', pages: [] }
 ];
 
@@ -51,9 +56,15 @@ export default function StoreApp() {
           <Route path="/messages" render={()=> <Messages />} />
           <Route path="/cart" render={()=> <Cart />} />
           <Route path="/account" render={()=> <AccountMenu />} />
+          <Route path="/promotion/:ID" render={()=> <Promotion />} />
           <Route path="/promotions" render={()=> <Promotions />} />
           <Route path="/orders" render={()=> <Orders />} />
+          <Route path="/product/:ID" render={()=> <Product />} />
           <Route path="/products" render={()=> <Products />} />
+          <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
+          <Route path="/contact-us" render={()=> <ContactUs />} />
+          <Route path="/about-us" render={()=> <AboutUs />} /> 
+          <Route path="/register" render={()=> <Register />} />
           <Route path="/" render={()=> <LogIn />} />
         </Switch>
       </main>

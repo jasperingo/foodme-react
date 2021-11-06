@@ -52,7 +52,12 @@ export const initialStoreState = {
     reviewsNumberOfPages: 0,
     reviewsFetchStatus: FETCH_STATUSES.LOADING
   },
-  promotions: []
+  promotions: {
+    promotions: [null],
+    promotionsPage: 0,
+    promotionsNumberOfPages: 0,
+    promotionsFetchStatus: FETCH_STATUSES.LOADING
+  }
 };
 
 export const initialProductState = {
@@ -112,6 +117,19 @@ export const initialOrdersState = {
     orderItemsFetchStatus: FETCH_STATUSES.LOADING,
   }
 };
+
+
+
+
+export const initialStoreProductsState = {
+  products: {
+    products: [null],
+    productsPage: 0,
+    productsNumberOfPages: 0,
+    productsFetchStatus: FETCH_STATUSES.LOADING
+  }
+};
+
 
 
 

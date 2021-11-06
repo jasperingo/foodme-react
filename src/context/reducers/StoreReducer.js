@@ -1,9 +1,12 @@
 
-import { STORE, PRODUCT, REVIEW, FETCH_STATUSES } from "../AppActions";
+import { STORE, PRODUCT, REVIEW, FETCH_STATUSES, PROMOTION } from "../AppActions";
+import { useListFetchStatus } from "../AppHooks";
 import { initialStoreState } from "../AppInitialStates";
 
 
 export default function StoreReducer (state, action) {
+
+  const fetchUpdater = useListFetchStatus();
   
   switch (action.type) {  
 
@@ -38,12 +41,12 @@ export default function StoreReducer (state, action) {
       };
     
     case STORE.PRODUCTS_FETCHED :
-      let status = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
-      
-      if ((state.products.productsPage+1) < action.payload.productsNumberOfPages) 
-        status = FETCH_STATUSES.MORE;
-      else if (state.products.products.length === 1 && action.payload.products.length < 1) 
-        status = FETCH_STATUSES.EMPTY;
+      let status = fetchUpdater(
+        state.products.productsPage,
+        action.payload.productsNumberOfPages,
+        state.products.products.length,
+        action.payload.products.length
+      );
       
       state.products.products.pop();
 
@@ -78,12 +81,12 @@ export default function StoreReducer (state, action) {
       };
 
     case REVIEW.FETCHED:
-      let status2 = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
-      
-      if ((state.reviews.reviewsPage+1) < action.payload.reviewsNumberOfPages) 
-        status2 = FETCH_STATUSES.MORE;
-      else if (state.reviews.reviews.length === 1 && action.payload.reviews.length < 1) 
-        status2 = FETCH_STATUSES.EMPTY;
+      let status2 = fetchUpdater(
+        state.reviews.reviewsPage,
+        action.payload.reviewsNumberOfPages,
+        state.reviews.reviews.length,
+        action.payload.reviews.length
+      );
         
       state.reviews.reviews.pop();
 
@@ -94,6 +97,35 @@ export default function StoreReducer (state, action) {
           reviewsPage: state.reviews.reviewsPage+1,
           reviewsNumberOfPages: action.payload.reviewsNumberOfPages,
           reviews: [...state.reviews.reviews, ...action.payload.reviews, null],
+        }
+      }; 
+
+    case PROMOTION.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        promotions: {
+          ...state.promotions,
+          promotionsFetchStatus: action.payload
+        }
+      };
+
+    case PROMOTION.LIST_FETCHED:
+      let status3 = fetchUpdater(
+        state.promotions.promotionsPage,
+        action.payload.promotionsNumberOfPages,
+        state.promotions.promotions.length,
+        action.payload.promotions.length
+      );
+        
+      state.promotions.promotions.pop();
+
+      return {
+        ...state,
+        promotions: {
+          promotionsFetchStatus: status3,
+          promotionsPage: state.promotions.promotionsPage+1,
+          promotionsNumberOfPages: action.payload.promotionsNumberOfPages,
+          promotions: [...state.promotions.promotions, ...action.payload.promotions, null],
         }
       }; 
     

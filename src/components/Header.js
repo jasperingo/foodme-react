@@ -70,7 +70,7 @@ export default function Header({ navLinks, topNavLinks }) {
             <Link to="/">{ t('app_name') }</Link>
           </h1>
 
-          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center text-black lg:flex-grow-0 lg:bg-yellow-200 lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
+          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center lg:flex-grow-0 lg:bg-color-primary-lg lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
             <button
               onClick={ ()=> { history.goBack(); } }
               className="hover:bg-color-gray-h lg:hidden">

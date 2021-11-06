@@ -58,7 +58,7 @@ function RaterDialog({ startRate, onSubmitClicked, onCancelClicked }) {
   return (
     <div className="p-4">
       <RateButtons rate={rate} onRateClicked={onRateClicked} />
-      <form onSubmit={(e)=> e.preventDefault()}>
+      <form onSubmit={(e)=> e.preventDefault()} className="mt-5">
         <textarea 
           value={text}
           style={{minHeight: '80px'}}
