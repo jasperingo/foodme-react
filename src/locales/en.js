@@ -122,6 +122,7 @@ export const TRANSLATIONS_EN = {
     Promotion: 'Promotion',
     Promotions: 'Promotions',
     Add_promotion: 'Add promotion',
+    Discount_amount: 'Discount amount',
   },
 
   _product: {
@@ -165,6 +166,9 @@ export const TRANSLATIONS_EN = {
 
   _delivery: {
     Delivery_fee: 'Delivery fee',
+    Delivery_method: 'Delivery method',
+    Delivery_company: 'Delivery company',
+    Delivery_address: 'Delivery address',
     Become_a_courier_partner: 'Become a courier partner',
   },
 
@@ -185,6 +189,7 @@ export const TRANSLATIONS_EN = {
     item__Num: '{{ count }} item',
     item__Num_plural: '{{ count }} items',
     Placed_on: 'Placed on',
+    Items_total: 'Items total',
     Payment_information: 'Payment information',
     Delivery_information: 'Delivery information',
   },
@@ -193,6 +198,8 @@ export const TRANSLATIONS_EN = {
     Transactions: 'Transactions',
     Wallet: 'Wallet',
     Withdraw: 'Withdraw',
+    Payment_method: 'Payment method',
+    Payment_details: 'Payment details',
   },
 
   _message: {
@@ -209,6 +216,7 @@ export const TRANSLATIONS_EN = {
     No_product: 'No product',
     No_review: 'No review',
     No_promotion: 'No promotion',
+    No_saved_cart: 'No saved cart',
     No_store_category: 'No store category',
     No_product_category: 'No product category',
     List_is_empty: 'List is empty',

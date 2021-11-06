@@ -104,21 +104,28 @@ export const initialCartState = {
 export const initialOrdersState = {
   orders: {
     orders: [null],
-    ordersFetchStatus: FETCH_STATUSES.LOADING,
     ordersPage: 0,
-    ordersNumberOfPages: 0
+    ordersNumberOfPages: 0,
+    ordersFetchStatus: FETCH_STATUSES.LOADING,
   },
   order: {
     order: null,
     orderFetchStatus: FETCH_STATUSES.LOADING,
-  },
-  orderItems: {
-    orderItems: [null],
-    orderItemsFetchStatus: FETCH_STATUSES.LOADING,
   }
 };
 
-
+export const initialSavedCartsState = {
+  savedCarts: {
+    savedCarts: [null],
+    savedCartsPage: 0,
+    savedCartsNumberOfPages: 0,
+    savedCartsFetchStatus: FETCH_STATUSES.LOADING,
+  },
+  savedCartItems: {
+    savedCartItems: [null],
+    savedCartItemsFetchStatus: FETCH_STATUSES.LOADING,
+  }
+};
 
 
 export const initialStoreProductsState = {

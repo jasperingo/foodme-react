@@ -10,6 +10,10 @@ export function useMoneyFormat(amount) {
   return <>&#8358; {amount.toFixed(2)}</>;
 }
 
+export function useDateFormat(date) {
+  return date;
+}
+
 
 export function useHeader2Title() {
 
@@ -100,6 +104,42 @@ export function useListFetchStatus() {
 export function useCategoryColor(index) {
   const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
   return catColors[index%catColors.length];
+}
+
+export function useOrderStatus(status) {
+  let theStatus, statusColor;
+
+  switch(status) {
+    case 'declined':
+      theStatus = '_order.Declined';
+      statusColor = 'bg-red-500';
+      break;
+    case 'cancelled':
+      theStatus = '_order.Cancelled';
+      statusColor = 'bg-red-500';
+      break;
+    case 'processing':
+      theStatus = '_order.Processing';
+      statusColor = 'bg-purple-500';
+      break;
+    case 'in-transit':
+      theStatus = '_order.In_transit';
+      statusColor = 'bg-blue-500';
+      break;
+    case 'delivered':
+      theStatus = '_order.Delivered';
+      statusColor = 'bg-green-500';
+      break;
+    case 'returned':
+      theStatus = '_order.Returned';
+      statusColor = 'bg-gray-500';
+      break;
+    default: 
+      theStatus = '_order.Pending';
+      statusColor = 'bg-yellow-500';
+  }
+
+  return [theStatus, statusColor];
 }
 
 export function useHasMoreToFetchViaScroll(page, numberOfPages, status, scrollCount=5) {

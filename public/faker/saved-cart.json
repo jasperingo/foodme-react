@@ -1,0 +1,37 @@
+{
+  "data": [
+    {
+      "product": {
+        "id": 1,
+        "title": "Key soup",
+        "photo": "p2.jpg"
+      },
+      "amount": 3445,
+      "delivery_fee": 200,
+      "quantity": 3,
+      "unit": "Bag"
+    },
+    {
+      "product": {
+        "id": 2,
+        "title": "Powder milk",
+        "photo": "p1.jpg"
+      },
+      "amount": 500,
+      "delivery_fee": 50,
+      "quantity": 1,
+      "unit": "Tin"
+    },
+    {
+      "product": {
+        "id": 3,
+        "title": "French pack",
+        "photo": "p3.jpg"
+      },
+      "amount": 600.45,
+      "delivery_fee": 200,
+      "quantity": 10,
+      "unit": "Pack"
+    }
+  ]
+}

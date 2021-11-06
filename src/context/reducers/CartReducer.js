@@ -52,6 +52,12 @@ export default function CartReducer (state, action) {
         cartItems: itemsss,
         cartItemsFetchStatus: FETCH_STATUSES.DONE
       };
+    
+    case CART.DUMPED:
+      return {
+        cartItems: [...action.payload, null],
+        cartItemsFetchStatus: FETCH_STATUSES.DONE
+      };
 
     default:
       return state;

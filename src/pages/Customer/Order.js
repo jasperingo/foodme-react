@@ -1,11 +1,19 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useMoneyFormat } from '../../context/AppHooks';
+import { Link, useParams } from 'react-router-dom';
+import Loading from '../../components/Loading';
+import Reload from '../../components/Reload';
+import { FETCH_STATUSES, ORDER } from '../../context/AppActions';
+import { API_URL, useAppContext } from '../../context/AppContext';
+import { useDataRender, useDateFormat, useMoneyFormat, useOrderStatus } from '../../context/AppHooks';
 import DeliveryIcon from '../../icons/DeliveryIcon';
 import StoreIcon from '../../icons/StoreIcon';
 
+const getFetchStatusAction = (payload) => ({
+  type: ORDER.FETCH_STATUS_CHANGED,
+  payload
+});
 
 function OrderItem({ item: { quantity, amount, delivery_fee, product: { photo, title } } }) {
 
@@ -36,30 +44,39 @@ function OrderItem({ item: { quantity, amount, delivery_fee, product: { photo, t
   );
 }
 
-export default function Order() {
+
+function OrderView({ order }) {
 
   const { t } = useTranslation();
 
+  const [theStatus, statusColor] = useOrderStatus(order.status);
+  
   return (
-    <section className="flex-grow">
+    <>
       <div className="py-4 border-b">
         <div className="container-x">
           
-          <h3 className="text-3xl font-bold">#092838</h3>
-          <div>{ t('_order.item__Num', { count: 2 }) }</div>
-          <div className="text-color-primary font-bold">
+          <h3 className="text-3xl font-bold mb-1">#{ order.number }</h3>
+
+          <div className={`${statusColor} inline-block py-1 px-2 rounded mb-1`}>{ t(theStatus) }</div>
+
+          <div className="mb-1">{ t('_order.item__Num', { count: order.number_of_items }) }</div>
+
+          <div className="text-color-primary font-bold mb-1">
             <span>{ t('_extra.Total') }: </span> 
-            <span>{ useMoneyFormat(460.45) }</span>
+            <span>{ useMoneyFormat(order.total) }</span>
           </div>
+
           <div>
             <span>{ t('_order.Placed_on') }: </span>
-            <span>20 June 2021</span>
+            <span>{ useDateFormat(order.created_at) }</span>
           </div>
+
           <div className="my-2">
             <div className="text-sm font-bold">{ t('_order.Ordered_from') }</div>
-            <Link to="/store/1/products" className="flex gap-1 items-center">
+            <Link to={`/store/${order.store.id}/products`} className="flex gap-1 items-center">
               <StoreIcon classList="text-color-primary w-8 h-8" />
-              <div>Immaculate kitchen</div>
+              <div>{ order.store.name }</div>
             </Link>
           </div>
 
@@ -73,28 +90,28 @@ export default function Order() {
             <h4 className="font-bold py-2 text-color-primary">{ t('_order.Payment_information') }</h4>
             <dl>
               <div className="mb-2">
-                <dt className="text-sm font-bold">Payment method</dt>
-                <dd>Debit card</dd>
+                <dt className="text-sm font-bold">{ t('_transaction.Payment_method') }</dt>
+                <dd>{ order.payment_method }</dd>
               </div>
               <div>
-                <dt className="text-sm font-bold">Payment details</dt>
+                <dt className="text-sm font-bold">{ t('_transaction.Payment_details') }</dt>
                 <dd>
                   <ul>
                     <li>
-                      <span>Items total: </span>
-                      <span>{ useMoneyFormat(300) }</span>
+                      <span>{ t('_order.Items_total') }: </span>
+                      <span>{ useMoneyFormat(order.items_total) }</span>
                     </li>
                     <li>
-                      <span>Delivery fee: </span>
-                      <span>{ useMoneyFormat(50) }</span>
+                      <span>{ t('_delivery.Delivery_fee') }: </span>
+                      <span>{ useMoneyFormat(order.delivery_fee) }</span>
                     </li>
                     <li>
-                      <span>Discount amount: </span>
-                      <span>{ useMoneyFormat(6.89) }</span>
+                      <span>{ t('_discount.Discount_amount') }: </span>
+                      <span>{ useMoneyFormat(order.discount_amount) }</span>
                     </li>
                     <li>
-                      <span>Total: </span>
-                      <span>{ useMoneyFormat(460.45) }</span>
+                      <span>{ t('_extra.Total') }: </span>
+                      <span>{ useMoneyFormat(order.total) }</span>
                     </li>
                   </ul>
                 </dd>
@@ -106,21 +123,21 @@ export default function Order() {
             <h4 className="font-bold py-2 text-color-primary">{ t('_order.Delivery_information') }</h4>
             <dl>
               <div className="mb-2">
-                <dt className="text-sm font-bold">Delivery method</dt>
-                <dd>Home delivery</dd>
+                <dt className="text-sm font-bold">{ t('_delivery.Delivery_method') }</dt>
+                <dd>{ order.delivery_method }</dd>
               </div>
               <div className="mb-2">
-                <dt className="text-sm font-bold">Delivery company</dt>
+                <dt className="text-sm font-bold">{ t('_delivery.Delivery_company') }</dt>
                 <dd>
                   <div className="flex gap-1 items-center">
                     <DeliveryIcon classList="text-color-primary w-8 h-8" />
-                    <div>Green logistics</div>
+                    <div>{ order.delivery_agent.name }</div>
                   </div>
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-bold">Delivery address</dt>
-                <dd>Lorem ipsum dolor sit amet, consectetur adipisicing elit</dd>
+                <dt className="text-sm font-bold">{ t('_delivery.Delivery_address') }</dt>
+                <dd>{ order.delivery_address }</dd>
               </div>
             </dl>
           </div>
@@ -132,32 +149,83 @@ export default function Order() {
         <div className="container-x">
           <h4 className="font-bold py-2 text-color-gray">{ t('_order.Order_items') }</h4>
           <ul>
-            <OrderItem item={{
-              quantity: 2, 
-              amount: 200.80, 
-              delivery_fee: 40, 
-              product: { 
-                photo: 'p1.jpg', 
-                title: 'Wallnuts prime' 
-              }
-            }} 
-            />
-
-            <OrderItem item={{
-              quantity: 1, 
-              amount: 4500.80, 
-              delivery_fee: 500, 
-              product: { 
-                photo: 'p2.jpg', 
-                title: 'Sushi smash' 
-              }
-            }} 
-            />
+            {
+              order.items.map((item, i)=> <OrderItem key={`order-item-${item.id}`} item={item} />)
+            }
           </ul>
         </div>
       </div>
+    </>
+  )
+}
 
+export default function Order() {
+
+  const ID = parseInt(useParams().ID);
+
+  const { orders: {
+    order: {
+      order,
+      orderFetchStatus
+    }
+  }, ordersDispatch } = useAppContext();
+
+  useEffect(()=>{
+
+    async function fetchOrder() {
+      if (orderFetchStatus !== FETCH_STATUSES.LOADING) 
+        return;
       
+      try {
+        let response = await fetch(`${API_URL}order.json?id=${ID}`);
+
+        if (!response.ok)
+          throw new Error(response.status);
+        
+        let data = await response.json();
+
+        data.data.id = ID;
+        
+        ordersDispatch({
+          type: ORDER.FETCHED,
+          payload: data.data
+        });
+
+      } catch (err) {
+        ordersDispatch(getFetchStatusAction(FETCH_STATUSES.ERROR));
+      }
+    }
+
+    if (order !== null && ID !== order.id) {
+      ordersDispatch({
+        type: ORDER.UNFETCH
+      });
+    }
+
+    fetchOrder();
+
+  }, [ID, order, orderFetchStatus, ordersDispatch]);
+
+  function refetchOrder() {
+    if (orderFetchStatus === FETCH_STATUSES.LOADING) 
+      return;
+    
+    ordersDispatch(getFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+
+
+  return (
+    <section className="flex-grow">
+
+      { 
+        useDataRender(
+          order, 
+          orderFetchStatus,
+          ()=> <OrderView order={order} />,
+          (k)=> <div className="container-x"> <Loading /> </div>, 
+          (k)=> <div className="container-x"> <Reload action={refetchOrder} /> </div>,
+        )
+      }
 
     </section>
   );

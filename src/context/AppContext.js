@@ -9,6 +9,7 @@ import {
   initialSearchState,
   initialCartState,
   initialOrdersState,
+  initialSavedCartsState,
   initialStoreProductsState
 } from './AppInitialStates';
 import CustomerReducer from './reducers/CustomerReducer';
@@ -20,6 +21,7 @@ import SearchReducer from "./reducers/SearchReducer";
 import CartReducer from "./reducers/CartReducer";
 import OrdersReducer from "./reducers/OrdersReducer";
 import ProductsReducer from "./StoreReducers/ProductsReducer";
+import SavedCartsReducer from "./reducers/SavedCartsReducer";
 
 
 export const API_URL = '/faker/';
@@ -46,6 +48,10 @@ export const AppProvider = ({ children }) => {
 
   const [ordersState, ordersDispatch] = useReducer(OrdersReducer, initialOrdersState);
 
+  const [savedCartsState, savedCartsDispatch] = useReducer(SavedCartsReducer, initialSavedCartsState);
+
+  
+
 
   const [storeProductsState, storeProductsDispatch] = useReducer(ProductsReducer, initialStoreProductsState);
 
@@ -68,6 +74,8 @@ export const AppProvider = ({ children }) => {
         cartDispatch,
         orders: ordersState, 
         ordersDispatch,
+        savedCarts: savedCartsState, 
+        savedCartsDispatch,
 
         storeProducts: storeProductsState, 
         storeProductsDispatch
