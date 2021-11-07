@@ -23,14 +23,14 @@ export default function Products() {
 
   //const { t } = useTranslation();
 
-  const { storeProducts: {
+  const { products: {
     products: {
       products,
       productsFetchStatus,
       productsPage,
       productsNumberOfPages
     }
-  }, storeProductsDispatch } = useAppContext();
+  }, productsDispatch } = useAppContext();
 
   useEffect(()=> {
     async function fetchProducts() {
@@ -45,7 +45,7 @@ export default function Products() {
         
         let data = await response.json();
         
-        storeProductsDispatch({
+        productsDispatch({
           type: PRODUCT.LIST_FETCHED,
           payload: {
             products: data.data,
@@ -54,19 +54,19 @@ export default function Products() {
         });
 
       } catch (err) {
-        storeProductsDispatch(getProductsFetchStatusAction(FETCH_STATUSES.ERROR));
+        productsDispatch(getProductsFetchStatusAction(FETCH_STATUSES.ERROR));
       }
     }
 
     fetchProducts();
 
-  }, [productsFetchStatus, storeProductsDispatch]);
+  }, [productsFetchStatus, productsDispatch]);
 
   function refetchProducts() {
     if (productsFetchStatus === FETCH_STATUSES.LOADING) 
       return;
     
-    storeProductsDispatch(getProductsFetchStatusAction(FETCH_STATUSES.LOADING));
+    productsDispatch(getProductsFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (
@@ -74,7 +74,7 @@ export default function Products() {
       
       <div className="container-x">
 
-        <AddButton text="_product.Add_product" href="/products" />
+        <AddButton text="_product.Add_product" href="/product/add" />
       
         <InfiniteScroll 
           dataLength={products.length}

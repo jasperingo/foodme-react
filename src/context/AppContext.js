@@ -10,7 +10,8 @@ import {
   initialCartState,
   initialOrdersState,
   initialSavedCartsState,
-  initialStoreProductsState
+  initialTransactionsState,
+  initialProductsState
 } from './AppInitialStates';
 import CustomerReducer from './reducers/CustomerReducer';
 import HomeReducer from './reducers/HomeReducer';
@@ -20,9 +21,9 @@ import ProductReducer from './reducers/ProductReducer';
 import SearchReducer from "./reducers/SearchReducer";
 import CartReducer from "./reducers/CartReducer";
 import OrdersReducer from "./reducers/OrdersReducer";
-import ProductsReducer from "./StoreReducers/ProductsReducer";
+import ProductsReducer from "./reducers/ProductsReducer";
 import SavedCartsReducer from "./reducers/SavedCartsReducer";
-
+import TransactionsReducer from "./reducers/TransactionsReducer";
 
 export const API_URL = '/faker/';
 
@@ -50,10 +51,10 @@ export const AppProvider = ({ children }) => {
 
   const [savedCartsState, savedCartsDispatch] = useReducer(SavedCartsReducer, initialSavedCartsState);
 
-  
+  const [transactionsState, transactionsDispatch] = useReducer(TransactionsReducer, initialTransactionsState);
 
 
-  const [storeProductsState, storeProductsDispatch] = useReducer(ProductsReducer, initialStoreProductsState);
+  const [productsState, productsDispatch] = useReducer(ProductsReducer, initialProductsState);
 
 
   return (
@@ -76,9 +77,11 @@ export const AppProvider = ({ children }) => {
         ordersDispatch,
         savedCarts: savedCartsState, 
         savedCartsDispatch,
+        transactions: transactionsState, 
+        transactionsDispatch,
 
-        storeProducts: storeProductsState, 
-        storeProductsDispatch
+        products: productsState, 
+        productsDispatch
       }}
     >
       { children }

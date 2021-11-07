@@ -10,11 +10,13 @@ import StoreIcon from '../../icons/StoreIcon';
 import UserIcon from '../../icons/UserIcon';
 import WalletIcon from '../../icons/WalletIcon';
 import Profile from './Profile';
+import SavedCarts from './SavedCarts';
+import Wallet from './Wallet';
 
 const MENU_ITEMS = [
   { text: '_user.Profile', Icon: UserIcon, href: '/account/profile'},
-  { text: '_transaction.Wallet', Icon: WalletIcon, href: '/account'},
-  { text: '_cart.Saved_carts', Icon: CartIcon, href: '/account'},
+  { text: '_transaction.Wallet', Icon: WalletIcon, href: '/account/wallet'},
+  { text: '_cart.Saved_carts', Icon: CartIcon, href: '/account/saved-carts'},
   
 ];
 
@@ -37,6 +39,8 @@ export default function AccountMenu() {
           </div>
 
           <Switch>
+            <Route path={`${match.url}/saved-carts`} render={()=> <SavedCarts />} />
+            <Route path={`${match.url}/wallet`} render={()=> <Wallet />} />
             <Route path={`${match.url}/profile`} render={()=> <Profile />} />
             <Route 
               path={match.url} 

@@ -64,7 +64,7 @@ function RaterDialog({ startRate, onSubmitClicked, onCancelClicked }) {
           style={{minHeight: '80px'}}
           onInput={(e)=> setText(e.target.value)}
           placeholder={t('_review.Tell_us_your_experience')}
-          className="w-full bg-color text-color border-b border-yellow-500 outline-none "
+          className="w-full max-h-52 bg-color text-color border-b border-yellow-500 outline-none"
           >
         </textarea>
         <div className="text-right">

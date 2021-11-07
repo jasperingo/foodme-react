@@ -39,12 +39,15 @@ export function useHeader2Title() {
 
   if (path === '/cart')
     return '_cart.Cart';
-  
-  if (path === '/search/products')
-    return '_search.Search';
 
   if (path === '/search/history' || path === '/search/products' || path === '/search/stores')
     return '_search.Search';
+
+  if (path === '/promotion/add')
+    return '_discount.Add_promotion';
+
+  if (path === '/product/add')
+    return '_product.Add_product';
 
   if (path === '/account/address/add')
     return '_user.Add_address';
@@ -55,6 +58,9 @@ export function useHeader2Title() {
   if (/account\/address\/[0-9]+/.test(path))
     return '_user.Edit_address';
   
+  if (path === '/account/wallet')
+    return '_transaction.Wallet';
+
   if (path === '/account/transactions')
     return '_transaction.Transactions';
   
@@ -73,7 +79,7 @@ export function useHeader2Title() {
   if (/messages\/[0-9]+/.test(path))
     return '_message.Messages';
 
-  if (/account\/order\/[0-9]+/.test(path))
+  if (/account\/order\/[0-9]+/.test(path) || /order\/[0-9]+/.test(path))
     return '_order.Order_details';
     
   if (/store\/[0-9]+\/products/.test(path) || /store\/[0-9]+\/reviews/.test(path) || /store\/[0-9]+\/promotions/.test(path))

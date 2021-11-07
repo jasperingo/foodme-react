@@ -1,10 +1,20 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/AddButton';
+import Loading from '../../components/Loading';
+import Reload from '../../components/Reload';
+import { FETCH_STATUSES, USER_ADDRESS } from '../../context/AppActions';
+import { API_URL, useAppContext } from '../../context/AppContext';
+import { useListRender } from '../../context/AppHooks';
 import DeleteIcon from '../../icons/DeleteIcon';
 import EditIcon from '../../icons/EditIcon';
+
+const getFetchStatusAction = (payload) => ({
+  type: USER_ADDRESS.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
 
 function AddressItem({ address: { id, title, street, city, state, is_default } }) {
 
@@ -42,7 +52,51 @@ function AddressItem({ address: { id, title, street, city, state, is_default } }
 
 export default function Addresses() {
 
-  
+  const { customer: {
+    addresses: {
+      addresses,
+      addressesFetchStatus
+    }
+  }, customerDispatch } = useAppContext();
+
+  useEffect(()=> {
+
+    async function fetchAddresses() {
+
+      if (addressesFetchStatus !== FETCH_STATUSES.LOADING) 
+        return;
+      
+      try {
+        let response = await fetch(`${API_URL}addresses.json`);
+
+        if (!response.ok)
+          throw new Error(response.status);
+        
+        let data = await response.json();
+
+        //data.data = [];
+
+        customerDispatch({
+          type: USER_ADDRESS.LIST_FETCHED,
+          payload: data.data
+        });
+        
+      } catch (err) {
+        customerDispatch(getFetchStatusAction(FETCH_STATUSES.ERROR));
+      }
+    }
+
+    fetchAddresses(); 
+
+  }, [addressesFetchStatus, customerDispatch]);
+
+  function refetchAddresses() {
+    if (addressesFetchStatus === FETCH_STATUSES.LOADING) 
+      return;
+
+    customerDispatch(getFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+
 
   return (
     <section className="flex-grow">
@@ -50,29 +104,18 @@ export default function Addresses() {
       <div className="container-x">
 
         <AddButton text="_user.Add_address" href="/account/address/add" />
+        
 
         <ul className="list-2-x">
-          <AddressItem 
-            address={{
-              id: 1,
-              title: 'Home address', 
-              street: '30 Jones street', 
-              city: 'Owerri-ihiagwa', 
-              state: 'Imo',
-              is_default: true
-            }}
-            />
-
-          <AddressItem 
-            address={{
-              id: 2,
-              title: 'Office address', 
-              street: '2 Mack street, off free road', 
-              city: 'Owerri-Oji', 
-              state: 'Imo',
-              is_default: false
-            }}
-            />
+          { 
+            useListRender(
+              addresses, 
+              addressesFetchStatus,
+              (item, i)=> <AddressItem key={`addresses-${i}`} address={item} />,
+              (k)=> <li key={k}> <Loading /> </li>, 
+              (k)=> <li key={k}> <Reload action={refetchAddresses} /> </li>,
+            )
+          }
         </ul>
 
       </div>

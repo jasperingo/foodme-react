@@ -2,7 +2,17 @@
 import { FETCH_STATUSES } from './AppActions';
 
 
-export const initialCustomerState = null;
+export const initialCustomerState = {
+  customer: null,
+  addresses: {
+    addresses: [null],
+    addressesFetchStatus: FETCH_STATUSES.LOADING
+  },
+  address: {
+    address: null,
+    addressFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
 
 export const initialHomeState = {
   categories: {
@@ -128,7 +138,17 @@ export const initialSavedCartsState = {
 };
 
 
-export const initialStoreProductsState = {
+export const initialTransactionsState = {
+  transactions: {
+    transactions: [null],
+    transactionsPage: 0,
+    transactionsNumberOfPages: 0,
+    transactionsFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
+
+
+export const initialProductsState = {
   products: {
     products: [null],
     productsPage: 0,

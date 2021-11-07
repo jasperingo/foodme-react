@@ -251,6 +251,10 @@ function ProductProfile({ product }) {
     });
   }
 
+  function favoriteProduct() {
+    alert('Adding product to favourites');
+  }
+
   return(
     <>
       <div className="lg:w-1/3">
@@ -270,9 +274,9 @@ function ProductProfile({ product }) {
         <div className="flex">
           <div className="font-bold text-2xl text-color-primary mb-2 flex-grow">{ useMoneyFormat(product.price) }</div>
           <div>
-            <button>
+            <button onClick={favoriteProduct}>
               <span className="sr-only">{ t('_product.Add_product_to_favorites') }</span>
-              <FavoriteIcon classList="text-red-500" />
+              <FavoriteIcon classList="w-8 h-8 text-red-500" />
             </button>
           </div>
         </div>

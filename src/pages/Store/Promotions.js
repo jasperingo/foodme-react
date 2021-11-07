@@ -72,7 +72,7 @@ export default function Promotions() {
       
       <div className="container-x">
 
-        <AddButton text="_discount.Add_promotion" href="/promotions" />
+        <AddButton text="_discount.Add_promotion" href="/promotion/add" />
       
         <InfiniteScroll 
           dataLength={promotions.length}

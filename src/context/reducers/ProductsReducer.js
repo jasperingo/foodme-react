@@ -3,7 +3,7 @@ import { PRODUCT } from "../AppActions";
 import { useListFetchStatus } from "../AppHooks";
 
 
-export default function StoreReducer (state, action) {
+export default function ProductsReducer (state, action) {
 
   const fetchUpdater = useListFetchStatus();
   

@@ -97,6 +97,9 @@ export const TRANSLATIONS_EN = {
     for: 'for',
     Start: 'Start',
     End: 'End',
+
+    Approved: 'Approved',
+    Failed: 'Failed',
   },
 
   _search: {
@@ -198,6 +201,8 @@ export const TRANSLATIONS_EN = {
     Transactions: 'Transactions',
     Wallet: 'Wallet',
     Withdraw: 'Withdraw',
+    Refund: 'Refund',
+    Payment: 'Payment',
     Payment_method: 'Payment method',
     Payment_details: 'Payment details',
   },
@@ -215,6 +220,7 @@ export const TRANSLATIONS_EN = {
     No_category: 'No category',
     No_product: 'No product',
     No_review: 'No review',
+    No_transaction: 'No transaction',
     No_promotion: 'No promotion',
     No_saved_cart: 'No saved cart',
     No_store_category: 'No store category',

@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import AddButton from '../../components/AddButton';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import Loading from '../../components/Loading';
@@ -69,8 +68,6 @@ export default function Orders() {
     <section>
       
       <div className="container-x">
-
-        <AddButton text="_order.Add_order" href="/orders" />
       
         <InfiniteScroll
           dataLength={orders.length}
