@@ -84,6 +84,10 @@
     @apply bg-blue-500 text-white dark:text-gray-800 hover:bg-blue-400 dark:hover:bg-blue-300;
   }
 
+  .btn-color-red {
+    @apply bg-red-500 text-white dark:text-gray-800 hover:bg-red-400 dark:hover:bg-red-300;
+  }
+
   .list-x {
     @apply py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4;
   }

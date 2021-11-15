@@ -351,9 +351,7 @@ export default function Product() {
     }
 
     if (product !== null && pID !== product.id) {
-      productDispatch({
-        type: PRODUCT.UNFETCH
-      });
+      productDispatch({ type: PRODUCT.UNFETCH });
     }
 
     fetchProduct(); 

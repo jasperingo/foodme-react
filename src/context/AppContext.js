@@ -11,7 +11,8 @@ import {
   initialOrdersState,
   initialSavedCartsState,
   initialTransactionsState,
-  initialProductsState
+  initialProductsState,
+  initialPromotionsState
 } from './AppInitialStates';
 import CustomerReducer from './reducers/CustomerReducer';
 import HomeReducer from './reducers/HomeReducer';
@@ -21,6 +22,7 @@ import ProductReducer from './reducers/ProductReducer';
 import SearchReducer from "./reducers/SearchReducer";
 import CartReducer from "./reducers/CartReducer";
 import OrdersReducer from "./reducers/OrdersReducer";
+import PromotionsReducer from "./reducers/PromotionsReducer";
 import ProductsReducer from "./reducers/ProductsReducer";
 import SavedCartsReducer from "./reducers/SavedCartsReducer";
 import TransactionsReducer from "./reducers/TransactionsReducer";
@@ -48,6 +50,8 @@ export const AppProvider = ({ children }) => {
   const [cartState, cartDispatch] = useReducer(CartReducer, initialCartState);
 
   const [ordersState, ordersDispatch] = useReducer(OrdersReducer, initialOrdersState);
+
+  const [promotionsState, promotionsDispatch] = useReducer(PromotionsReducer, initialPromotionsState);
 
   const [savedCartsState, savedCartsDispatch] = useReducer(SavedCartsReducer, initialSavedCartsState);
 
@@ -79,6 +83,8 @@ export const AppProvider = ({ children }) => {
         savedCartsDispatch,
         transactions: transactionsState, 
         transactionsDispatch,
+        promotions: promotionsState,
+        promotionsDispatch,
 
         products: productsState, 
         productsDispatch

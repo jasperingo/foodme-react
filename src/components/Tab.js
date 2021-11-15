@@ -12,8 +12,9 @@ function TabItem({ title, href }) {
   return (
     <li>
       <NavLink 
+        exact 
         to={`${match.url}${href}`}
-        className="block px-2 py-1 rounded btn-color-gray"
+        className="block px-2 py-1 rounded btn-color-gray whitespace-nowrap"
         activeClassName="btn-color-primary"
         >
         { t(title) }
@@ -25,7 +26,7 @@ function TabItem({ title, href }) {
 export default function Tab({ items, keyPrefix }) {
 
   return (
-    <ul className="flex my-4 gap-1">
+    <ul className="flex my-4 gap-1 overflow-auto">
       {
         items.map((item, i)=> (
           <TabItem 

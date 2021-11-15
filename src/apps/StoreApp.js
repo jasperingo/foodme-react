@@ -33,7 +33,15 @@ export const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
   { href: '/register', exclude: true },
   { title : '_product.Products', icon: ProductIcon, href: '/products' },
-  { title : '_order.Orders', icon: OrderIcon, href: '/orders' },
+  { title : '_order.Orders', icon: OrderIcon, href: '/orders', hrefs: [
+      '/orders/processing', 
+      '/orders/delivered', 
+      '/orders/in-transit', 
+      '/orders/declined', 
+      '/orders/cancelled',
+      '/orders/returned'
+    ]
+  },
   { title : '_discount.Promotions', icon: DiscountIcon, href: '/promotions' },
   { title : '_user.Account', icon: StoreIcon, href: '/account' }
 ];

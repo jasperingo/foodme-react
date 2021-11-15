@@ -115,6 +115,7 @@ export const initialOrdersState = {
   orders: {
     orders: [null],
     ordersPage: 0,
+    ordersStatus: 'pending',
     ordersNumberOfPages: 0,
     ordersFetchStatus: FETCH_STATUSES.LOADING,
   },
@@ -134,6 +135,25 @@ export const initialSavedCartsState = {
   savedCartItems: {
     savedCartItems: [null],
     savedCartItemsFetchStatus: FETCH_STATUSES.LOADING,
+  }
+};
+
+export const initialPromotionsState = {
+  promotions: {
+    promotions: [null],
+    promotionsPage: 0,
+    promotionsNumberOfPages: 0,
+    promotionsFetchStatus: FETCH_STATUSES.LOADING,
+  },
+  products: {
+    products: [null],
+    productsPage: 0,
+    productsNumberOfPages: 0,
+    productsFetchStatus: FETCH_STATUSES.LOADING
+  },
+  promotion: {
+    promotion: null,
+    promotionFetchStatus: FETCH_STATUSES.LOADING,
   }
 };
 

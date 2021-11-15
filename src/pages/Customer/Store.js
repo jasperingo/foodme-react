@@ -243,6 +243,7 @@ function StoreProductsList({ categories }) {
   }, storeDispatch } = useAppContext();
 
   useEffect(()=> {
+    
     async function fetchProducts() {
       if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
         return;

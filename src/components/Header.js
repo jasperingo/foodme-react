@@ -56,7 +56,7 @@ export default function Header({ navLinks, topNavLinks }) {
 
   const { t } = useTranslation();
 
-  const showHeader = navLinks.find(item=> item.href === pathname || (item.subHrefs && item.subHrefs.includes(pathname)));
+  const showHeader = navLinks.find(item=> item.href === pathname || (item.hrefs && item.hrefs.includes(pathname)));
 
   function onSearchPage() {
     return (pathname==='/search/history' || pathname==='/search/stores' || pathname==='/search/products');

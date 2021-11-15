@@ -1,15 +1,27 @@
 
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useLocation } from 'react-router';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import Loading from '../../components/Loading';
 import OrderItem from '../../components/OrderItem';
 import Reload from '../../components/Reload';
+import Tab from '../../components/Tab';
 import { FETCH_STATUSES, ORDER } from '../../context/AppActions';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
 import OrderIcon from '../../icons/OrderIcon';
+
+const TAB_LINKS = [
+  { title : '_order.Pending', href: '' },
+  { title : '_order.Processing', href: '/processing' },
+  { title : '_order.Delivered', href: '/delivered' },
+  { title : '_order.In_transit', href: '/in-transit' },
+  { title : '_order.Declined', href: '/declined' },
+  { title : '_order.Cancelled', href: '/cancelled' },
+  { title : '_order.Returned', href: '/returned' }
+];
 
 const getFetchStatusAction = (payload) => ({
   type: ORDER.LIST_FETCH_STATUS_CHANGED,
@@ -18,14 +30,22 @@ const getFetchStatusAction = (payload) => ({
 
 export default function Orders() {
 
+  const paths = useLocation().pathname.split('/');
+
+  const status = paths.length < 3 ? 'pending' : paths[paths.length-1];
+
   const { orders: {
     orders: {
       orders,
+      ordersStatus,
       ordersFetchStatus,
       ordersPage,
       ordersNumberOfPages
     }
   }, ordersDispatch } = useAppContext();
+
+
+  console.log(ordersStatus);
 
   useEffect(()=>{
 
@@ -34,7 +54,7 @@ export default function Orders() {
         return;
       
       try {
-        let response = await fetch(`${API_URL}orders.json`);
+        let response = await fetch(`${API_URL}orders.json?status=${status}`);
 
         if (!response.ok)
           throw new Error(response.status);
@@ -53,9 +73,18 @@ export default function Orders() {
         ordersDispatch(getFetchStatusAction(FETCH_STATUSES.ERROR));
       }
     }
+    
+    
+    if (status !== ordersStatus) {
+      ordersDispatch({
+        type: ORDER.LIST_STATUS_FILTER_CHANGED,
+        payload: status
+      });
+    }
 
     fetchOrders();
-  });
+
+  }, [status, ordersFetchStatus, ordersStatus, ordersDispatch]);
 
   function refetchOrders() {
     if (ordersFetchStatus === FETCH_STATUSES.LOADING) 
@@ -68,6 +97,8 @@ export default function Orders() {
     <section>
       
       <div className="container-x">
+
+        <Tab items={ TAB_LINKS } keyPrefix="orders-tab" />
       
         <InfiniteScroll
           dataLength={orders.length}
