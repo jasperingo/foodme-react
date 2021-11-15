@@ -48,7 +48,7 @@ function NavTopListItem({ title, Icon, href, useCounter }) {
   );
 }
 
-export default function Header({ navLinks, topNavLinks }) {
+export default function Header({ navLinks, topNavLinks, searchHref }) {
 
   const history = useHistory();
 
@@ -83,7 +83,7 @@ export default function Header({ navLinks, topNavLinks }) {
           </div>
           
           <div className={`${(showHeader || !onSearchPage()) && 'hidden'} flex-grow lg:block`}>
-            <SearchForm />
+            <SearchForm href={searchHref} />
           </div>
 
           <nav className="flex items-center">

@@ -22,23 +22,19 @@ import CartIcon from '../icons/CartIcon';
 import UserIcon from '../icons/UserIcon';
 import SearchIcon from '../icons/SearchIcon';
 import MessageIcon from '../icons/MessageIcon';
-import { useAppContext } from '../context/AppContext';
 import Messages from '../pages/Customer/Messages';
 import Promotion from '../pages/Customer/Promotion';
+import { useCartCounter } from '../context/AppHooks';
 
-
-export const HEADER_NAV_LINKS = [
+const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: HomeIcon, href: '/' },
   { title : '_extra.Categories', icon: CategoriesIcon, href: '/categories' },
   { title : '_message.Messages', icon: MessageIcon, href: '/messages', useCounter: ()=> 0 },
   { title : '_user.Account', icon: UserIcon, href: '/account' }
 ];
 
-export const HEADER_TOP_NAV_LINKS = [
-  { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: ()=> {
-      const { cart: {cartItems} } = useAppContext();
-      return cartItems.length-1 < 100 ? cartItems.length-1 : '99+';
-    },
+const HEADER_TOP_NAV_LINKS = [
+  { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: useCartCounter,
     pages: [
       /*/store\/[0-9]+\/products/,
       /store\/[0-9]+\/reviews/,
@@ -46,7 +42,7 @@ export const HEADER_TOP_NAV_LINKS = [
       /store\/[0-9]+\/product\/[0-9]+/*/
     ] 
   },
-  { title : '_search.Search', icon: SearchIcon, href: '/search/history', hasCounter: false, pages: [] }
+  { title : '_search.Search', icon: SearchIcon, href: '/search/history', pages: [] }
 ];
 
 export default function CustomerApp() {
@@ -56,6 +52,7 @@ export default function CustomerApp() {
       <Header 
         navLinks={HEADER_NAV_LINKS}
         topNavLinks={HEADER_TOP_NAV_LINKS}
+        searchHref="/search/store"
         />
       <main className="pb-52">
         <Switch>
@@ -80,4 +77,7 @@ export default function CustomerApp() {
     </>
   );
 }
+
+
+CustomerApp.TYPE = 'customer';
 

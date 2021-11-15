@@ -10,6 +10,11 @@
       "id": 3,
       "name": "Immaculate kitchen"
     },
+    "customer": {
+      "id": 2,
+      "first_name": "John",
+      "last_name": "Doe"
+    },
     "payment_method": "Debit card",
     "items_total": 20000.40,
     "delivery_fee": 500,

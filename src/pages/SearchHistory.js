@@ -1,19 +1,8 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import HistoryIcon from '../icons/HistoryIcon';
+import SearchHistoryItem from '../components/SearchHistoryItem';
 
-function HistoryItem({ text }) {
-  return (
-    <li>
-      <Link to={`/search/stores?q=${text}`} className="flex hover:bg-color-gray-h py-4">
-        <HistoryIcon classList="fill-current text-color" />
-        <div className="flex-grow ml-1">{ text }</div>
-      </Link>
-    </li>
-  );
-}
 
 export default function SearchHistory() {
 
@@ -25,10 +14,10 @@ export default function SearchHistory() {
       <div className="container-x">
         <h3 className="font-bold my-2">{ t('_search.Search_history') }</h3>
         <ul>
-          <HistoryItem text="Chicken pizza" />
-          <HistoryItem text="Egusi soup" />
-          <HistoryItem text="chika booker" />
-          <HistoryItem text="Palace Fast food" />
+          <SearchHistoryItem text="Chicken pizza" />
+          <SearchHistoryItem text="Egusi soup" />
+          <SearchHistoryItem text="chika booker" />
+          <SearchHistoryItem text="Palace Fast food" />
         </ul>
       </div>
 

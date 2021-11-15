@@ -17,7 +17,6 @@ const getFetchStatusAction = (payload) => ({
   payload
 });
 
-
 export default function Transactions() {
 
   const { transactions: {

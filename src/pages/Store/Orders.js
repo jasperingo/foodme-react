@@ -44,9 +44,6 @@ export default function Orders() {
     }
   }, ordersDispatch } = useAppContext();
 
-
-  console.log(ordersStatus);
-
   useEffect(()=>{
 
     async function fetchOrders() {

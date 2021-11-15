@@ -30,7 +30,7 @@ export default function Register() {
 
           <FormField ID="email-input" label="_user.Email" type="email" />
 
-          <FormField ID="email-input" label="_user.Phone_number" type="email" />
+          <FormField ID="phone-input" label="_user.Phone_number" type="email" />
 
           <FormField ID="password-input" label="_user.Password" type="password" />
 

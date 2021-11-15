@@ -1,27 +1,53 @@
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import StoreApp from '../../apps/StoreApp';
+import CartCheckOutOrSave from '../../components/CartCheckOutOrSave';
+import CartCodeForm from '../../components/CartCodeForm';
+import CartItem from '../../components/CartItem';
+import EmptyList from '../../components/EmptyList';
+import { FETCH_STATUSES } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
+import { useListRender } from '../../context/AppHooks';
+import CartEmptyIcon from '../../icons/CartEmptyIcon';
 
 export default function Cart() {
 
-  const { t } = useTranslation();
+  const { cart: {
+      cartItems,
+      cartItemsFetchStatus
+    } 
+  } = useAppContext();
 
   return (
     <section>
 
-      <div className="container-x">
-        <form className="py-3 flex gap-2" onSubmit={(e)=> e.preventDefault()}>
-          <input 
-            type="text" 
-            placeholder={ t('_cart.Enter_cart_code')}
-            className="p-2 flex-grow rounded outline-none border border-yellow-500 bg-color" 
-            />
-          <button className="p-2 rounded btn-color-primary">{ t('_search.Search') }</button>
-        </form>
-      </div>
+      <CartCodeForm />
 
       <div className="container-x">
-        Cart
+        <div className="lg:flex lg:gap-4 lg:items-start">
+          <ul className="py-2 lg:flex-grow">
+            { 
+              useListRender(
+                cartItems, 
+                cartItemsFetchStatus,
+                (item, i)=> (
+                  <CartItem
+                    key={`cart-item-${i}`} 
+                    cartItem={item} 
+                    />
+                ),
+                null, 
+                null,
+                (k)=> (
+                  <li key={k}>
+                    <EmptyList text="_empty.Your_cart_is_empty" Icon={CartEmptyIcon} />
+                  </li>
+                )
+              )
+            }
+          </ul>
+          { cartItemsFetchStatus === FETCH_STATUSES.DONE && <CartCheckOutOrSave appType={StoreApp.TYPE} /> }
+        </div>
       </div>
     </section>
   );

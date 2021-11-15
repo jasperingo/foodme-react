@@ -1,34 +1,24 @@
 
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { API_URL, useAppContext } from '../../context/AppContext';
-import { FETCH_STATUSES, PRODUCT, CART, REVIEW } from '../../context/AppActions';
-import { /*useListRender,*/ useDataRender, useHasMoreToFetchViaScroll, useListRender, useMoneyFormat } from '../../context/AppHooks';
+import { FETCH_STATUSES, PRODUCT } from '../../context/AppActions';
+import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
 import StoreItem from '../../components/StoreItem';
 import Reload from '../../components/Reload';
 import Loading from '../../components/Loading';
-import QuantityChooser from '../../components/QuantityChooser';
-import AlertDialog from '../../components/AlertDialog';
-import ReviewItem from '../../components/ReviewItem';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
-import StarIcon from '../../icons/StarIcon';
 import ProductItem from '../../components/ProductItem';
 import ProductIcon from '../../icons/ProductIcon';
-import ReviewSummary from '../../components/ReviewSummary';
-import FavoriteIcon from '../../icons/FavoriteIcon';
-import Rater from '../../components/Rater';
-
+import ProductProfile from '../../components/ProductProfile';
+import CustomerApp from '../../apps/CustomerApp';
+import H4Heading from '../../components/H4Heading';
+import ProductReviewsList from '../../components/ProductReviewsList';
 
 const getProductFetchStatusAction = (payload) => ({
   type: PRODUCT.FETCH_STATUS_CHANGED,
-  payload
-});
-
-const getReviewsFetchStatusAction = (payload) => ({
-  type: REVIEW.FETCH_STATUS_CHANGED,
   payload
 });
 
@@ -36,14 +26,6 @@ const getRelatedFetchStatusAction = (payload) => ({
   type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
   payload
 });
-
-
-function H4Heading({ text }) {
-
-  const { t } = useTranslation();
-
-  return (<h3 className="font-bold mb-1">{ t(text) }</h3>);
-}
 
 function RelatedProductsList() {
 
@@ -124,198 +106,9 @@ function RelatedProductsList() {
 }
 
 
-function ProductReviewsList() {
-
-  const pID = parseInt(useParams().pID);
-
-  const { product: {
-    reviews: {
-      reviews,
-      reviewsFetchStatus
-    }
-  }, productDispatch } = useAppContext();
-
-
-  useEffect(()=> {
-    async function fetchReviews() {
-      if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}reviews.json?id=${pID}`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-        
-        productDispatch({
-          type: REVIEW.FETCHED,
-          payload: {
-            reviews: data.data,
-            reviewsNumberOfPages: 1, //data.total_pages
-          }
-        });
-
-      } catch (err) {
-        productDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
-    }
-
-    fetchReviews();
-
-  }, [pID, reviewsFetchStatus, productDispatch]);
-
-  function refetchReviews() {
-    if (reviewsFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-    
-    productDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
-  
-  function newRate(rate, text) {
-    alert('Rate product: '+rate+' with note: '+text);
-  }
-
-  return (
-    <div className="container-x flex-grow md:w-1/2">
-      <H4Heading text="_review.Reviews" />
-
-      <div className="md:flex md:gap-10">
-        <div className="flex-grow md:text-center">
-          <Rater 
-            title="_review.Rate_this_product" 
-            onRateSubmitted={newRate}
-            />
-        </div>
-        <div className="flex-grow">
-          <ReviewSummary />
-        </div>
-      </div>
-
-      <div>
-        <ul className="list-x">
-          { 
-            useListRender(
-              reviews, 
-              reviewsFetchStatus,
-              (item, i)=> <li key={`prod-${i}`}> <ReviewItem review={item} /> </li>, 
-              (k)=> <li key={k}> <Loading /> </li>, 
-              (k)=> <li key={k}> <Reload action={refetchReviews} /> </li>,
-              (k)=> <li key={k}> <EmptyList text="_empty.No_review" Icon={StarIcon} /> </li>, 
-              (k)=> <li key={k}> <FetchMoreButton action={refetchReviews} /> </li>,
-            )
-          }
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-function ProductProfile({ product }) {
-
-  const { t } = useTranslation();
-
-  const { cartDispatch } = useAppContext();
-  
-  const [dialog, setDialog] = useState(null);
-
-  const [quantity, setQuantity] = useState(1);
-  
-  function onQuantityButtonClicked(value) {
-    value = (quantity || 1) + value;
-    setQuantity(value < 1 ? 1 : value);
-  }
-
-  function onAddToCart() {
-    
-    cartDispatch({
-      type: CART.ITEM_ADDED,
-      payload: {
-        amount: (product.price*quantity),
-        delivery_fee: 200.00,
-        unit: product.unit,
-        quantity,
-        product
-      }
-    });
-
-    setDialog({
-      body: '_product.Product_has_been_added_to_cart',
-      positiveButton: {
-        text: '_extra.Done',
-        action() {
-          setDialog(null);
-        }
-      }
-    });
-  }
-
-  function favoriteProduct() {
-    alert('Adding product to favourites');
-  }
-
-  return(
-    <>
-      <div className="lg:w-1/3">
-        <div className="container mx-auto">
-          <img 
-            src={`/photos/products/${product.photo}`}
-            alt={product.title}
-            className="h-60 w-full lg:h-96 sm:rounded"
-            />
-        </div>
-      </div>
-
-      <div className="container-x py-4 flex-grow lg:w-1/2 lg:pt-0">
-
-        { dialog && <AlertDialog dialog={dialog} /> }
-
-        <div className="flex">
-          <div className="font-bold text-2xl text-color-primary mb-2 flex-grow">{ useMoneyFormat(product.price) }</div>
-          <div>
-            <button onClick={favoriteProduct}>
-              <span className="sr-only">{ t('_product.Add_product_to_favorites') }</span>
-              <FavoriteIcon classList="w-8 h-8 text-red-500" />
-            </button>
-          </div>
-        </div>
-
-        <h3 className="text-xl mb-2">{ product.title }</h3>
-
-        <div className="text-color-gray text-sm mb-2">{ product.sub_title }</div>
-        
-        <div className="mb-2">
-          <div className="text-sm mb-1">{ t('_product.Quantity') }</div>
-          <QuantityChooser
-            quantity={quantity}
-            unit={product.unit} 
-            onQuantityChanged={onQuantityButtonClicked}
-            />
-        </div>
-
-        <button 
-          onClick={onAddToCart}
-          className="w-full btn-color-primary my-4 py-3 px-5 font-bold rounded lg:w-auto"
-        >
-          { t('_product.Add_to_cart') }
-        </button>
-
-        <div className="p-2 border rounded">
-          <H4Heading text="Description" />
-          <p className="max-h-40 overflow-auto">{ product.description }</p>
-        </div>
-
-      </div>
-    </>
-  );
-}
-
 export default function Product() {
 
   const pID = parseInt(useParams().pID);
-
-  //const { t } = useTranslation();
 
   const { product: {
     product: {
@@ -369,20 +162,15 @@ export default function Product() {
     <section>
 
       <div className="md:container mx-auto">
-        
-        <div className="lg:flex lg:items-start lg:gap-2 lg:mt-4">
-          { 
-            useDataRender(
-              product, 
-              productFetchStatus,
-              ()=> <ProductProfile product={product} />,
-              (k)=> <div className="container-x"> <Loading /> </div>, 
-              (k)=> <div className="container-x"> <Reload action={refetchProduct} /> </div>,
-            )
-          }
-        </div>
 
-        <div className="md:flex md:items-start md:gap-2 lg:py-4">
+        <ProductProfile 
+          product={product} 
+          productFetchStatus={productFetchStatus} 
+          appType={CustomerApp.TYPE} 
+          refetchProduct={refetchProduct} 
+          />
+
+        <div className="md:flex md:items-start md:gap-4 md:py-4">
           { 
             product && 
             <div className="container-x md:w-1/6">
@@ -391,10 +179,7 @@ export default function Product() {
             </div>
           }
 
-          { 
-            product && <ProductReviewsList />
-          }
-
+          { product && <ProductReviewsList pID={pID} appType={CustomerApp.TYPE} /> }
         </div>
 
         { product && <RelatedProductsList /> }

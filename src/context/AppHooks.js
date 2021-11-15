@@ -1,6 +1,7 @@
 
 import { useLocation } from "react-router-dom";
 import { FETCH_STATUSES } from './AppActions';
+import { useAppContext } from "./AppContext";
 
 export function useURLQuery() {
   return new URLSearchParams(useLocation().search);
@@ -14,6 +15,10 @@ export function useDateFormat(date) {
   return date;
 }
 
+export function useCartCounter() {
+  const { cart: {cartItems} } = useAppContext();
+  return cartItems.length-1 < 100 ? cartItems.length-1 : '99+';
+}
 
 export function useHeader2Title() {
 

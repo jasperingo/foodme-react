@@ -6,7 +6,7 @@ export default function OrderItemItem({ item: { quantity, amount, delivery_fee, 
 
   return (
     <li>
-      <div className="mb-5">
+      <div className="mb-5 md:shadow">
         <div className="flex">
           <img 
             src={`/photos/products/${photo}`} 

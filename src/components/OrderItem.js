@@ -12,7 +12,7 @@ export default function OrderItem({ href, order: { store_name, total, status, cr
 
   return (
     <li>
-      <Link to={href} className="block p-2 my-2 rounded hover:bg-color-gray-h lg:shadow">
+      <Link to={href} className="block py-2 mb-2 rounded hover:bg-color-gray-h lg:px-2 lg:shadow">
         <div className="font-bold text-xl">{ store_name }</div>
         <div>{ useMoneyFormat(total) }</div>
         <div className="flex flex-wrap">

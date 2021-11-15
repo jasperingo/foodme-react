@@ -1,22 +1,22 @@
 
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import CustomerApp from "../apps/CustomerApp";
+import StoreApp from "../apps/StoreApp";
 import { CART } from "../context/AppActions";
 import { useAppContext } from "../context/AppContext";
-import { useMoneyFormat } from "../context/AppHooks";
+import { useDataRender, useMoneyFormat } from "../context/AppHooks";
+import EditIcon from "../icons/EditIcon";
 import FavoriteIcon from "../icons/FavoriteIcon";
 import AlertDialog from "./AlertDialog";
+import H4Heading from "./H4Heading";
+import Loading from "./Loading";
 import QuantityChooser from "./QuantityChooser";
+import Reload from "./Reload";
 
 
-function H4Heading({ text }) {
-
-  const { t } = useTranslation();
-
-  return <h3 className="font-bold mb-1">{ t(text) }</h3>;
-}
-
-export default function ProductProfile({ product }) {
+function ProductProfileView({ product, appType }) {
 
   const { t } = useTranslation();
 
@@ -78,10 +78,19 @@ export default function ProductProfile({ product }) {
         <div className="flex">
           <div className="font-bold text-2xl text-color-primary mb-2 flex-grow">{ useMoneyFormat(product.price) }</div>
           <div>
-            <button onClick={favoriteProduct}>
-              <span className="sr-only">{ t('_product.Add_product_to_favorites') }</span>
-              <FavoriteIcon classList="w-8 h-8 text-red-500" />
-            </button>
+            {
+              appType === CustomerApp.TYPE && <button onClick={favoriteProduct}>
+                <span className="sr-only">{ t('_product.Add_product_to_favorites') }</span>
+                <FavoriteIcon classList="w-8 h-8 text-red-500" />
+              </button>
+            }
+
+            { 
+              appType === StoreApp.TYPE && <Link to="/product/add">
+                <span className="sr-only">{ t('_product.Edit_product') }</span>
+                <EditIcon classList="w-8 h-8 text-color-primary" />
+              </Link>
+            }
           </div>
         </div>
 
@@ -106,7 +115,7 @@ export default function ProductProfile({ product }) {
         </button>
 
         <div className="p-2 border rounded">
-          <H4Heading text="Description" />
+          <H4Heading text="_extra.Description" />
           <p className="max-h-40 overflow-auto">{ product.description }</p>
         </div>
 
@@ -114,3 +123,21 @@ export default function ProductProfile({ product }) {
     </>
   );
 }
+
+export default function ProductProfile({ product, productFetchStatus, appType, refetchProduct }) {
+
+  return (
+    <div className="lg:flex lg:items-start lg:gap-2 lg:mt-4">
+      { 
+        useDataRender(
+          product, 
+          productFetchStatus,
+          ()=> <ProductProfileView product={product} appType={appType} />,
+          (k)=> <div className="container-x"> <Loading /> </div>, 
+          (k)=> <div className="container-x"> <Reload action={refetchProduct} /> </div>,
+        )
+      }
+    </div>
+  );
+}
+

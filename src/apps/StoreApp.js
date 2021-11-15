@@ -3,6 +3,7 @@ import React from 'react';
 import { Switch, Route } from "react-router-dom";
 import Footer from '../components/Footer';
 import Header from '../components/Header';
+import { useCartCounter } from '../context/AppHooks';
 import CartIcon from '../icons/CartIcon';
 import DiscountIcon from '../icons/DiscountIcon';
 import MessageIcon from '../icons/MessageIcon';
@@ -25,11 +26,12 @@ import Promotion from '../pages/Store/Promotion';
 import PromotionAdd from '../pages/Store/PromotionAdd';
 import Promotions from '../pages/Store/Promotions';
 import Register from '../pages/Store/Register';
+import Search from '../pages/Store/Search';
 import SearchHistory from '../pages/Store/SearchHistory';
 import TermsOfService from '../pages/TermsOfService';
 
 
-export const HEADER_NAV_LINKS = [
+const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
   { href: '/register', exclude: true },
   { title : '_product.Products', icon: ProductIcon, href: '/products' },
@@ -46,24 +48,25 @@ export const HEADER_NAV_LINKS = [
   { title : '_user.Account', icon: StoreIcon, href: '/account' }
 ];
 
-export const HEADER_TOP_NAV_LINKS = [
-  { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: ()=> 0, pages: [] },
+const HEADER_TOP_NAV_LINKS = [
+  { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: useCartCounter, pages: [] },
   { title : '_message.Messages', icon: MessageIcon, href: '/messages', useCounter: ()=> 0, pages: [] },
   { title : '_search.Search', icon: SearchIcon, href: '/search/history', pages: [] }
 ];
 
 export default function StoreApp() {
 
-
   return (
     <>
       <Header 
         navLinks={HEADER_NAV_LINKS}
         topNavLinks={HEADER_TOP_NAV_LINKS}
+        searchHref="/search/products"
         />
       <main className="pb-52">
         <Switch>
           <Route path="/search/history" render={()=> <SearchHistory />} />
+          <Route path="/search" render={()=> <Search />} />
           <Route path="/messages" render={()=> <Messages />} />
           <Route path="/cart" render={()=> <Cart />} />
           <Route path="/account" render={()=> <AccountMenu />} />
@@ -86,4 +89,6 @@ export default function StoreApp() {
     </>
   );
 }
+
+StoreApp.TYPE = 'store';
 

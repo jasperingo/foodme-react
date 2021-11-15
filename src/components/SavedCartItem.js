@@ -91,18 +91,18 @@ export default function SavedCartItem({ cart: { code, name, number_of_items } })
         <div className="text-lg font-bold mb-1">{ code }</div>
         <div className="text-lg mb-1">{ name }</div>
         <div className="mb-1 text-color-gray">{ t('_order.item__Num', { count: number_of_items }) }</div>
-        <div className="flex justify-between gap-1">
-          <button className="flex gap-2 btn-color-blue p-2 rounded" onClick={copyCode}>
-            <CopyIcon />
-            <span>{ t('_cart.Copy_code') }</span>
-          </button>
-          <button className="flex gap-2 btn-color-primary p-2 rounded" onClick={openCart}>
+        <div className="flex gap-4">
+          <button className="flex flex-grow gap-2 btn-color-primary p-2 rounded" onClick={openCart}>
             <CartIcon />
             <span>{ t('_cart.Open_cart') }</span>
           </button>
+          <button className="flex gap-2 btn-color-blue p-2 rounded" onClick={copyCode}>
+            <CopyIcon />
+            <span className="sr-only">{ t('_cart.Copy_code') }</span>
+          </button>
           <button className="flex gap-2 btn-color-red p-2 rounded" onClick={deleteCart}>
             <DeleteIcon />
-            <span>{ t('_extra.Delete') }</span>
+            <span className="sr-only">{ t('_extra.Delete') }</span>
           </button>
         </div>
         { dialog && <AlertDialog dialog={dialog} /> }
