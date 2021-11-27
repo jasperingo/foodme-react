@@ -9,12 +9,11 @@ import { useCategoryColor, useListRender, useHasMoreToFetchViaScroll } from '../
 import Reload from '../../components/Reload';
 import Loading from '../../components/Loading';
 import StoreItem from '../../components/StoreItem';
-import CategoriesIcon from '../../icons/CategoriesIcon';
-import StoreIcon from '../../icons/StoreIcon';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import ProductItem from '../../components/ProductItem';
-import ProductIcon from '../../icons/ProductIcon';
+import Icon from '@mdi/react';
+import { categoryIcon, productIcon, storeIcon } from '../../assets/icons';
 
 const getCategoriesFetchStatusAction = (payload) => ({
   type: CATEGORIES.FETCH_STATUS_CHANGED,
@@ -43,7 +42,7 @@ function CategoryItem({ category, index }) {
         to={`/search/${path}?q=${category.name}&category=${category.name}`}
         className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-1`}
         >
-        <CategoriesIcon classList="fill-current mx-auto" />
+        <Icon path={categoryIcon} className="block h-6 w-6 mx-auto" />
         <div className="flex-grow text-sm break-all">{ category.name }</div>
       </Link>
     </li>
@@ -239,7 +238,7 @@ export default function Home() {
                       (item, i)=> <li key={`store-${i}`}> <StoreItem store={item} /> </li>, 
                       (k)=> <li key={k}> <Loading /> </li>, 
                       (k)=> <li key={k}> <Reload action={refetchStores} /> </li>,
-                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" Icon={StoreIcon} /> </li>, 
+                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>, 
                       (k)=> <li key={k}> <FetchMoreButton action={refetchStores} /> </li>,
                     )
                   }
@@ -262,7 +261,7 @@ export default function Home() {
                       (item, i)=> <li key={`store-${i}`}> <ProductItem prod={item} /> </li>, 
                       (k)=> <li key={k}> <Loading /> </li>, 
                       (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" Icon={ProductIcon} /> </li>, 
+                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={productIcon} /> </li>, 
                       (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
                     )
                   }

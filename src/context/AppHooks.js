@@ -48,7 +48,7 @@ export function useHeader2Title() {
   if (path === '/cart')
     return '_cart.Cart';
 
-  if (path === '/search/history' || path === '/search/products' || path === '/search/stores')
+  if (path === '/search/history' || path === '/search/products' || path === '/search/stores' || path === '/search/orders')
     return '_search.Search';
 
   if (path === '/promotion/add')
@@ -74,6 +74,9 @@ export function useHeader2Title() {
   
   if (path === '/account/favorites')
     return '_extra.Favorites';
+
+  if (path === '/account/reviews')
+    return '_review.Reviews';
 
   if (path === '/account/saved-carts')
     return '_cart.Saved_carts';

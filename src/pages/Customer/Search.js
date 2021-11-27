@@ -6,15 +6,14 @@ import { useHasMoreToFetchViaScroll, useListRender, useURLQuery } from '../../co
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { FETCH_STATUSES, PRODUCT, SEARCH, STORE } from '../../context/AppActions';
 import Loading from '../../components/Loading';
-import ProductIcon from '../../icons/ProductIcon';
 import ProductItem from '../../components/ProductItem';
 import Reload from '../../components/Reload';
 import EmptyList from '../../components/EmptyList';
 import Tab from '../../components/Tab';
-import StoreIcon from '../../icons/StoreIcon';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import StoreItem from '../../components/StoreItem';
 import FetchMoreButton from '../../components/FetchMoreButton';
+import { productIcon, storeIcon } from '../../assets/icons';
 
 
 const TAB_LINKS = [
@@ -167,7 +166,7 @@ export default function Search() {
                       (item, i)=> <li key={`store-${i}`}> <StoreItem store={item} /> </li>, 
                       (k)=> <li key={k}> <Loading /> </li>, 
                       (k)=> <li key={k}> <Reload action={refetchStores} /> </li>,
-                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" Icon={StoreIcon} /> </li>, 
+                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>, 
                       (k)=> <li key={k}> <FetchMoreButton action={refetchStores} /> </li>,
                     )
                   }
@@ -188,7 +187,7 @@ export default function Search() {
                       (item, i)=> <li key={`prod-${i}`}> <ProductItem prod={item} /> </li>, 
                       (k)=> <li key={k}> <Loading /> </li>, 
                       (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-                      (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={ProductIcon} /> </li>, 
+                      (k)=> <li key={k}> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>, 
                       (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
                     )
                   }

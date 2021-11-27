@@ -1,15 +1,15 @@
 
+import Icon from '@mdi/react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { deleteIcon, editIcon } from '../../assets/icons';
 import AddButton from '../../components/AddButton';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import { FETCH_STATUSES, USER_ADDRESS } from '../../context/AppActions';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { useListRender } from '../../context/AppHooks';
-import DeleteIcon from '../../icons/DeleteIcon';
-import EditIcon from '../../icons/EditIcon';
 
 const getFetchStatusAction = (payload) => ({
   type: USER_ADDRESS.LIST_FETCH_STATUS_CHANGED,
@@ -37,12 +37,12 @@ function AddressItem({ address: { id, title, street, city, state, is_default } }
 
           <Link to={`/account/address/${id}`}>
             <span className="sr-only">{ t('_extra.Edit') }</span>
-            <EditIcon classList="text-color-primary" />
+            <Icon path={editIcon} classList="text-color-primary" />
           </Link>
 
           <button>
             <span className="sr-only">{ t('_extra.Delete') }</span>
-            <DeleteIcon classList="text-color-primary" />
+            <Icon path={deleteIcon} classList="text-color-primary" />
           </button>
         </div>
       </div>

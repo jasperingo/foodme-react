@@ -1,6 +1,7 @@
 
 import React from 'react';
 import StoreApp from '../../apps/StoreApp';
+import { cartIcon } from '../../assets/icons';
 import CartCheckOutOrSave from '../../components/CartCheckOutOrSave';
 import CartCodeForm from '../../components/CartCodeForm';
 import CartItem from '../../components/CartItem';
@@ -8,7 +9,6 @@ import EmptyList from '../../components/EmptyList';
 import { FETCH_STATUSES } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 import { useListRender } from '../../context/AppHooks';
-import CartEmptyIcon from '../../icons/CartEmptyIcon';
 
 export default function Cart() {
 
@@ -40,7 +40,7 @@ export default function Cart() {
                 null,
                 (k)=> (
                   <li key={k}>
-                    <EmptyList text="_empty.Your_cart_is_empty" Icon={CartEmptyIcon} />
+                    <EmptyList text="_empty.Your_cart_is_empty" icon={cartIcon} />
                   </li>
                 )
               )

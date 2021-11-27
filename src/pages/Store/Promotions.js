@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { promotionIcon } from '../../assets/icons';
 import AddButton from '../../components/AddButton';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
@@ -10,7 +11,6 @@ import Reload from '../../components/Reload';
 import { FETCH_STATUSES, PROMOTION } from '../../context/AppActions';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
-import DiscountIcon from '../../icons/DiscountIcon';
 
 const getPromotionsFetchStatusAction = (payload) => ({
   type: PROMOTION.LIST_FETCH_STATUS_CHANGED,
@@ -87,7 +87,7 @@ export default function Promotions() {
                 (item, i)=> <PromotionItem key={`prod-${i}`} promotion={item} href={`/promotion/${item.id}`} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchPromotions} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_review" Icon={DiscountIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_review" icon={promotionIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchPromotions} /> </li>,
               )
             }

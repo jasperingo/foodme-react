@@ -2,10 +2,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { storeIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
-import StoreIcon from '../../icons/StoreIcon';
 
 export default function Register() {
 
@@ -15,6 +15,10 @@ export default function Register() {
     e.preventDefault();
   }
   
+  function jj(params) {
+    
+  }
+
   return (
     <section>
 
@@ -22,21 +26,21 @@ export default function Register() {
 
         <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x">
 
-          <AuthFormHeader Icon={StoreIcon} text="_user.Join_us" />
+          <AuthFormHeader icon={storeIcon} text="_user.Join_us" />
 
-          <FormField ID="name-input" label="_user.Name" />
+          <FormField ID="name-input" label="_user.Name" onInputChanged={jj} />
 
-          <FormField ID="category-input" label="_store.Store_category" />
+          <FormField ID="category-input" label="_store.Store_category" onInputChanged={jj} />
 
-          <FormField ID="email-input" label="_user.Email" type="email" />
+          <FormField ID="email-input" label="_user.Email" type="email" onInputChanged={jj} />
 
-          <FormField ID="phone-input" label="_user.Phone_number" type="email" />
+          <FormField ID="phone-input" label="_user.Phone_number" type="tel" onInputChanged={jj} />
 
-          <FormField ID="password-input" label="_user.Password" type="password" />
+          <FormField ID="password-input" label="_user.Password" type="password" onInputChanged={jj} />
 
           <div className="mb-4 text-sm">
             <span>{ t('By_registering_you_agree_to_our') }</span>
-            <Link to="/terms-of-service" className="text-blue-500 font-bold"> { t('Terms_of_service') }.</Link>
+            <Link to="/terms-of-service" className="text-blue-500 font-bold"> { t('_extra.Terms_of_service') }.</Link>
           </div>
 
           <FormButton text="Register" />

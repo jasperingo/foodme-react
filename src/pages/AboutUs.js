@@ -1,21 +1,20 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import DeliveryIcon from '../icons/DeliveryIcon';
-import DiscountIcon from '../icons/DiscountIcon';
-import StoreIcon from '../icons/StoreIcon';
+import { deliveryIcon, promotionIcon, storeIcon } from '../assets/icons';
 
 
 const h2Style = "font-bold text-xl mb-2";
 
-function AboutFeature({ Icon, text }) {
+function AboutFeature({ icon, text }) {
 
   return (
     <li className="mb-2 border rounded md:flex-grow md:hover:bg-gray-200">
       <div className="my-4 p-4">
         <div className="text-yellow-500">
-          <Icon classList="mx-auto text-yellow-500 fill-current" />
+          <Icon path={icon} className="w-6 h-6 mx-auto text-yellow-500" />
         </div>
         <div className="text-center font-bold">{ text }</div>
       </div>
@@ -69,9 +68,9 @@ export default function AboutUs() {
           <div className="py-4">
             <h2 className={h2Style}>{ t('Why_our_customers_choose_us') }</h2>
             <ul className="md:flex md:gap-2">
-              <AboutFeature Icon={DeliveryIcon} text={ t('Express_Delivery') } />
-              <AboutFeature Icon={StoreIcon} text={ t('_store.store__Num', { num : '50+' }) } />
-              <AboutFeature Icon={DiscountIcon} text={ t('Discount_System') } />
+              <AboutFeature icon={deliveryIcon} text={ t('Express_Delivery') } />
+              <AboutFeature icon={storeIcon} text={ t('_store.store__Num', { num : '50+' }) } />
+              <AboutFeature icon={promotionIcon} text={ t('Discount_System') } />
             </ul>
           </div>
           

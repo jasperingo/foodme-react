@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
+import { messageIcon } from '../../assets/icons';
 import DualPaneIntro from '../../components/DualPaneIntro';
 import MessagesItem from '../../components/MessagesItem';
-import MessageIcon from '../../icons/MessageIcon';
 import Message from './Message';
 
 export default function Messages() {
@@ -47,7 +47,7 @@ export default function Messages() {
           <Route path={`${match.url}/:ID`} render={()=> <Message />} />
           <Route 
             path={match.url} 
-            render={()=> <DualPaneIntro Icon={MessageIcon} text="_message.Start_a_conversation" />} 
+            render={()=> <DualPaneIntro icon={messageIcon} text="_message.Start_a_conversation" />} 
             />
         </Switch>
       </div>

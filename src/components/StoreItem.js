@@ -1,7 +1,8 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import LocationIcon from '../icons/LocationIcon';
+import { locationIcon } from '../assets/icons';
 import ReviewStars from './ReviewStars';
 
 export default function StoreItem({ store: { id, logo, name, address, ratings } }) {
@@ -11,7 +12,7 @@ export default function StoreItem({ store: { id, logo, name, address, ratings } 
       <div className="flex-grow pl-2 lg:pt-2">
         <h4 className="font-bold mb-1">{ name }</h4>
         <div className="text-color-gray mb-1 flex items-center">
-          <LocationIcon classList="fill-current inline-block w-5 h-5" />
+          <Icon path={locationIcon} className="inline-block w-5 h-5" />
           <span className="inline-block">{ address }</span>
         </div>
         <ReviewStars ratings={ratings} />

@@ -1,10 +1,11 @@
 
+import Icon from '@mdi/react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { deleteIcon } from '../assets/icons';
 import { CART } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
 import { useMoneyFormat } from '../context/AppHooks';
-import DeleteIcon from '../icons/DeleteIcon';
 import AlertDialog from './AlertDialog';
 import QuantityChooser from './QuantityChooser';
 
@@ -74,7 +75,7 @@ export default function CartItem({ cartItem }) {
             onQuantityChanged={onQuantityButtonClicked}
             />
           <button onClick={onRemoveClicked}>
-            <DeleteIcon classList="fill-current text-color-primary" />
+            <Icon path={deleteIcon} className="w-6 h-6 text-color-primary" />
             <span className="sr-only">{ t('_cart.Remove_cart_item') }</span>
           </button>
         </div>

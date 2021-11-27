@@ -1,18 +1,13 @@
 
 import React from 'react';
 import { Switch, Route } from "react-router-dom";
+import { cartIcon, messageIcon, orderIcon, productIcon, promotionIcon, searchIcon, storeIcon } from '../assets/icons';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { useCartCounter } from '../context/AppHooks';
-import CartIcon from '../icons/CartIcon';
-import DiscountIcon from '../icons/DiscountIcon';
-import MessageIcon from '../icons/MessageIcon';
-import OrderIcon from '../icons/OrderIcon';
-import ProductIcon from '../icons/ProductIcon';
-import SearchIcon from '../icons/SearchIcon';
-import StoreIcon from '../icons/StoreIcon';
 import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
 import AccountMenu from '../pages/Store/AccountMenu';
 import Cart from '../pages/Store/Cart';
 import LogIn from '../pages/Store/LogIn';
@@ -34,8 +29,8 @@ import TermsOfService from '../pages/TermsOfService';
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
   { href: '/register', exclude: true },
-  { title : '_product.Products', icon: ProductIcon, href: '/products' },
-  { title : '_order.Orders', icon: OrderIcon, href: '/orders', hrefs: [
+  { title : '_product.Products', icon: productIcon, href: '/products' },
+  { title : '_order.Orders', icon: orderIcon, href: '/orders', hrefs: [
       '/orders/processing', 
       '/orders/delivered', 
       '/orders/in-transit', 
@@ -44,14 +39,14 @@ const HEADER_NAV_LINKS = [
       '/orders/returned'
     ]
   },
-  { title : '_discount.Promotions', icon: DiscountIcon, href: '/promotions' },
-  { title : '_user.Account', icon: StoreIcon, href: '/account' }
+  { title : '_discount.Promotions', icon: promotionIcon, href: '/promotions' },
+  { title : '_user.Account', icon: storeIcon, href: '/account' }
 ];
 
 const HEADER_TOP_NAV_LINKS = [
-  { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: useCartCounter, pages: [] },
-  { title : '_message.Messages', icon: MessageIcon, href: '/messages', useCounter: ()=> 0, pages: [] },
-  { title : '_search.Search', icon: SearchIcon, href: '/search/history', pages: [] }
+  { title : '_cart.Cart', icon: cartIcon, href: '/cart', useCounter: useCartCounter, pages: [] },
+  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0, pages: [] },
+  { title : '_search.Search', icon: searchIcon, href: '/search/history', pages: [] }
 ];
 
 export default function StoreApp() {
@@ -79,6 +74,7 @@ export default function StoreApp() {
           <Route path="/product/:ID" render={()=> <Product />} />
           <Route path="/products" render={()=> <Products />} />
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
+          <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
           <Route path="/register" render={()=> <Register />} />

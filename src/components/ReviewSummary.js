@@ -1,7 +1,8 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import StarIcon from '../icons/StarIcon';
+import { reviewIcon } from '../assets/icons';
 import ReviewStars from './ReviewStars';
 
 function ReviewNumberData({ num }) {
@@ -10,7 +11,7 @@ function ReviewNumberData({ num }) {
     <li>
       <div className="flex gap-1 items-center">
         <div className="inline-block">{ num }</div>
-        <StarIcon classList="w-4 h-4 text-yellow-500 fill-current" />
+        <Icon path={reviewIcon} className="w-4 h-4 text-yellow-500" />
         <div>({ num + 5 })</div>
         <div className="ml-2 bg-yellow-500 flex-grow h-2 rounded"></div>
       </div>

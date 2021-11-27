@@ -1,7 +1,8 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import CheckIcon from '../icons/CheckIcon';
+import { checkIcon } from '../assets/icons';
 
 export default function MessagesItem({ href, message: { id, date, sender_name, sender_photo, unread_messages_count, last_message, last_message_status}}) {
   return (
@@ -20,7 +21,7 @@ export default function MessagesItem({ href, message: { id, date, sender_name, s
             <span className="text-color-gray text-sm">{ date }</span>
           </div>
           <div className="flex gap-2 items-start">
-            <CheckIcon classList="text-blue-500" />
+            <Icon path={checkIcon} className="w-6 h-6 text-blue-500" />
             <div className="flex-grow truncate text-color-gray w-10">{ last_message }</div>
             <div className="px-2 py-0.5 text-sm text-white bg-color-primary rounded-full">{ unread_messages_count }</div>
           </div>

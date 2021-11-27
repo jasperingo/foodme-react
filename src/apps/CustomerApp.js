@@ -16,26 +16,21 @@ import SearchHistory from '../pages/SearchHistory';
 import Register from '../pages/Customer/Register';
 import Store from '../pages/Customer/Store';
 import Product from '../pages/Customer/Product';
-import HomeIcon from '../icons/HomeIcon';
-import CategoriesIcon from '../icons/CategoriesIcon';
-import CartIcon from '../icons/CartIcon';
-import UserIcon from '../icons/UserIcon';
-import SearchIcon from '../icons/SearchIcon';
-import MessageIcon from '../icons/MessageIcon';
 import Messages from '../pages/Customer/Messages';
 import Promotion from '../pages/Customer/Promotion';
 import { useCartCounter } from '../context/AppHooks';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
+import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
 
 const HEADER_NAV_LINKS = [
-  { title : '_extra.Home', icon: HomeIcon, href: '/' },
-  { title : '_extra.Categories', icon: CategoriesIcon, href: '/categories' },
-  { title : '_message.Messages', icon: MessageIcon, href: '/messages', useCounter: ()=> 0 },
-  { title : '_user.Account', icon: UserIcon, href: '/account' }
+  { title : '_extra.Home', icon: homeIcon, href: '/' },
+  { title : '_extra.Categories', icon: categoryIcon, href: '/categories' },
+  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0 },
+  { title : '_user.Account', icon: userIcon, href: '/account' }
 ];
 
 const HEADER_TOP_NAV_LINKS = [
-  { title : '_cart.Cart', icon: CartIcon, href: '/cart', useCounter: useCartCounter,
+  { title : '_cart.Cart', icon: cartIcon, href: '/cart', useCounter: useCartCounter,
     pages: [
       /*/store\/[0-9]+\/products/,
       /store\/[0-9]+\/reviews/,
@@ -43,7 +38,7 @@ const HEADER_TOP_NAV_LINKS = [
       /store\/[0-9]+\/product\/[0-9]+/*/
     ] 
   },
-  { title : '_search.Search', icon: SearchIcon, href: '/search/history', pages: [] }
+  { title : '_search.Search', icon: searchIcon, href: '/search/history', pages: [] }
 ];
 
 export default function CustomerApp() {

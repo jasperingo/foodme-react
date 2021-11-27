@@ -1,17 +1,15 @@
 
+import Icon from '@mdi/react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link } from 'react-router-dom';
 import CustomerApp from '../apps/CustomerApp';
 import StoreApp from '../apps/StoreApp';
+import { dateIcon, editIcon, productIcon, storeIcon } from '../assets/icons';
 import { FETCH_STATUSES, PRODUCT } from '../context/AppActions';
 import { API_URL, useAppContext } from '../context/AppContext';
 import { useDateFormat, useHasMoreToFetchViaScroll, useListRender, useMoneyFormat } from '../context/AppHooks';
-import ClockIcon from '../icons/ClockIcon';
-import EditIcon from '../icons/EditIcon';
-import ProductIcon from '../icons/ProductIcon';
-import StoreIcon from '../icons/StoreIcon';
 import EmptyList from './EmptyList';
 import FetchMoreButton from './FetchMoreButton';
 import Loading from './Loading';
@@ -88,12 +86,12 @@ export default function PromotionView({ appType, promotion: { id, store, title, 
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 items-center">
             <div className="flex items-center gap-1">
-              <ClockIcon className="w-5 h-5" />
+              <Icon path={dateIcon} className="w-5 h-5" />
               <span>{ t('_extra.Start') }: </span> 
               <span>{ useDateFormat(start_time) }</span>
             </div>
             <div className="flex items-center gap-1">
-              <ClockIcon className="w-5 h-5" />
+              <Icon path={dateIcon} className="w-5 h-5" />
               <span>{ t('_extra.End') }: </span>
               <span>{ useDateFormat(stop_time) }</span> 
             </div>
@@ -104,7 +102,7 @@ export default function PromotionView({ appType, promotion: { id, store, title, 
             <div className="my-2">
               <div className="text-sm font-bold">{ t('_store.Store') }</div>
               <Link to={`/store/${store.id}/products`} className="flex gap-1 items-center">
-                <StoreIcon classList="text-color-primary w-8 h-8" />
+                <Icon path={storeIcon} className="text-color-primary w-8 h-8" />
                 <div>{ store.name }</div>
               </Link>
             </div>
@@ -114,7 +112,7 @@ export default function PromotionView({ appType, promotion: { id, store, title, 
             appType === StoreApp.TYPE && 
             <div className="my-2">
               <Link to={`/promotion/add`} className="inline-flex gap-1 items-center py-1 px-2 rounded btn-color-primary">
-                <EditIcon classList="w-5 h-5" />
+                <Icon path={editIcon} className="w-5 h-5" />
                 <div>{ t('_extra.Edit') }</div>
               </Link>
             </div>
@@ -138,7 +136,7 @@ export default function PromotionView({ appType, promotion: { id, store, title, 
                 (item, i)=> <li key={`prod-${i}`}> <ProductItem prod={item} /> </li>, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={ProductIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={productIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
               )
             }

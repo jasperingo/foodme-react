@@ -10,7 +10,7 @@ export default function OrderItemItem({ item: { quantity, amount, delivery_fee, 
         <div className="flex">
           <img 
             src={`/photos/products/${photo}`} 
-            alt={'ja'} 
+            alt={title} 
             className="w-20 h-20 border rounded block md:w-40 md:h-40" 
             />
           <div className="flex-grow pl-2">
@@ -21,7 +21,7 @@ export default function OrderItemItem({ item: { quantity, amount, delivery_fee, 
               <span>{ quantity }</span>
             </div>
             <div className="text-sm text-blue-500">
-              <span>Delivery: </span>
+              <span>*Delivery: </span>
               <span className="">{ useMoneyFormat(delivery_fee) }</span>
             </div>
           </div>

@@ -2,13 +2,13 @@
 import React from 'react';
 import { useListRender } from '../../context/AppHooks';
 import EmptyList from '../../components/EmptyList';
-import CartEmptyIcon from '../../icons/CartEmptyIcon';
 import { useAppContext } from '../../context/AppContext';
 import { FETCH_STATUSES } from '../../context/AppActions';
 import CartItem from '../../components/CartItem';
 import CartCodeForm from '../../components/CartCodeForm';
 import CartCheckOutOrSave from '../../components/CartCheckOutOrSave';
 import CustomerApp from '../../apps/CustomerApp';
+import { cartIcon } from '../../assets/icons';
 
 
 export default function Cart() {
@@ -41,7 +41,7 @@ export default function Cart() {
                 null,
                 (k)=> (
                   <li key={k}>
-                    <EmptyList text="_empty.Your_cart_is_empty" Icon={CartEmptyIcon} />
+                    <EmptyList text="_empty.Your_cart_is_empty" icon={cartIcon} />
                   </li>
                 )
               )

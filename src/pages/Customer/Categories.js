@@ -5,9 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { FETCH_STATUSES, CATEGORIES } from '../../context/AppActions';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { useCategoryColor, useListRender } from '../../context/AppHooks';
-import CategoriesIcon from '../../icons/CategoriesIcon';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
+import { categoryIcon } from '../../assets/icons';
+import Icon from '@mdi/react';
 
 const getStoresFetchStatusAction = (payload) => ({
   type: CATEGORIES.STORES_FETCH_STATUS_CHANGED,
@@ -33,7 +34,7 @@ function CategoryItem({ category, index }) {
         to={`/search/${path}?q=${category.name}&category=${category.name}`} 
         className={ `flex gap-2 bg-color py-2 rounded md:shadow md:block md:text-center hover:bg-color-gray-h ${iconColor}` }
         >
-        <CategoriesIcon classList="fill-current mx-auto" />
+        <Icon path={categoryIcon} className="w-8 h-8 block mx-auto" />
         <div className="flex-grow">
           <div className="font-bold">{ category.name }</div>
           <div className="text-sm text-color-gray">

@@ -1,6 +1,7 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
-import StarIcon from '../icons/StarIcon';
+import { reviewIcon } from '../assets/icons';
 
 export default function ReviewStars({ ratings }) {
   
@@ -8,9 +9,9 @@ export default function ReviewStars({ ratings }) {
 
   for(let i=0; i<5; i++) {
     if (i < ratings) 
-      stars.push(<StarIcon key={i} classList="w-4 h-4 text-yellow-500 fill-current" />);
+      stars.push(<Icon path={reviewIcon} key={i} className="w-4 h-4 text-yellow-500" />);
     else 
-      stars.push(<StarIcon key={i} classList="w-4 h-4 text-gray-500 fill-current" />);
+      stars.push(<Icon path={reviewIcon} key={i} className="w-4 h-4 text-gray-500" />);
   }
 
   return (
@@ -19,3 +20,4 @@ export default function ReviewStars({ ratings }) {
     </div>
   );
 }
+

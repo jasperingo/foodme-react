@@ -1,8 +1,9 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { storeIcon } from '../assets/icons';
 import { useMoneyFormat } from '../context/AppHooks';
-import StoreIcon from '../icons/StoreIcon';
 
 export default function ProductItem({ prod, href = `/store/${prod.store.id}/product/${prod.id}`, layout = ProductItem.LAYOUT_LIST_GRID }) {
 
@@ -42,7 +43,7 @@ export default function ProductItem({ prod, href = `/store/${prod.store.id}/prod
         <div className="text-color-gray text-sm mb-1">{ prod.sub_title }</div>
         <div className="font-bold mb-1">{ useMoneyFormat(prod.price) }</div>
         <div className="flex flex-wrap gap-1 items-center bg-color-primary text-sm text-white py-1 px-2 rounded-full w-max">
-          <StoreIcon classList="w-5 h-5" />
+          <Icon path={storeIcon} className="w-5 h-5" />
           <div>{ prod.store.name }</div>
         </div>
       </div>

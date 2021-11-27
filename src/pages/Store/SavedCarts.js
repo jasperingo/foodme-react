@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { cartIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import Loading from '../../components/Loading';
@@ -9,7 +10,6 @@ import SavedCartItem from '../../components/SavedCartItem';
 import { FETCH_STATUSES, SAVED_CART } from '../../context/AppActions';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
-import CartIcon from '../../icons/CartIcon';
 
 const getListFetchStatusAction = (payload) => ({
   type: SAVED_CART.LIST_FETCH_STATUS_CHANGED,
@@ -83,7 +83,7 @@ export default function SavedCarts() {
                 (item, i)=> <SavedCartItem key={`saved-cart-${i}`} cart={item} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchSavedCarts} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_saved_cart" Icon={CartIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_saved_cart" icon={cartIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchSavedCarts} /> </li>,
               )
             }

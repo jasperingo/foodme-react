@@ -1,18 +1,15 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { deliveryIcon } from '../../assets/icons';
+import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
-import SocialLoginList from '../../components/SocialLoginList';
-import { USER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
 
-export default function Login() {
+export default function LogIn() {
 
   const { t } = useTranslation();
-
-  const { customer, customerDispatch } = useAppContext();
 
   const [email, setEmail] = useState('');
 
@@ -21,6 +18,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
 
   const [passwordError, setPasswordError] = useState('');
+
 
   function loginIn(e) {
     e.preventDefault();
@@ -40,16 +38,11 @@ export default function Login() {
       setPasswordError('');
 
     if (!error) {
-      customerDispatch({
-        type: USER.FETCHED
-      });
+      console.log('Yes');
     }
 
   }
 
-  if (customer === 88) {
-    return (<Redirect to="/account" />)
-  }
   
   return (
     <section>
@@ -58,10 +51,11 @@ export default function Login() {
 
         <form method="POST" action="" onSubmit={loginIn} className="form-1-x">
 
-          <FormField 
+          <AuthFormHeader icon={deliveryIcon} text="_user.Welcome_back" />
+
+          <FormField
             ID="email-input" 
             label="Email" 
-            type="email"
             value={email} 
             onInputChanged={setEmail} 
             error={emailError}
@@ -87,13 +81,10 @@ export default function Login() {
             <Link to="/register" className="text-blue-500 font-bold">{ t('Register') }</Link>
           </div>
 
-          <SocialLoginList href="/login" />
-
         </form>
 
       </div>
     </section>
   );
 }
-
 

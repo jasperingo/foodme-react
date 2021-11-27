@@ -8,14 +8,6 @@ import { FETCH_STATUSES, STORE, PRODUCT, REVIEW, PROMOTION } from '../../context
 import { useListRender, useDataRender, useHasMoreToFetchViaScroll } from '../../context/AppHooks';
 import Tab from '../../components/Tab';
 import Loading from '../../components/Loading';
-import LocationIcon from '../../icons/LocationIcon';
-import ReviewIcon from '../../icons/ReviewIcon';
-import StarIcon from '../../icons/StarIcon';
-import PhoneIcon from '../../icons/PhoneIcon';
-import EmailIcon from '../../icons/EmailIcon';
-import FilterIcon from '../../icons/FilterIcon';
-import CategoriesIcon from '../../icons/CategoriesIcon';
-import ProductIcon from '../../icons/ProductIcon';
 import ProductItem from '../../components/ProductItem';
 import Reload from '../../components/Reload';
 import EmptyList from '../../components/EmptyList';
@@ -23,10 +15,10 @@ import FetchMoreButton from '../../components/FetchMoreButton';
 import ReviewItem from '../../components/ReviewItem';
 import Rater from '../../components/Rater';
 import ReviewSummary from '../../components/ReviewSummary';
-import DiscountIcon from '../../icons/DiscountIcon';
 import { useTranslation } from 'react-i18next';
-import MessageIcon from '../../icons/MessageIcon';
 import PromotionItem from '../../components/PromotionItem';
+import { categoryIcon, emailIcon, filterIcon, locationIcon, messageIcon, phoneIcon, productIcon, promotionIcon, reviewIcon } from '../../assets/icons';
+import Icon from '@mdi/react';
 
 
 const PROFILE_NAV_LINKS = [
@@ -123,7 +115,7 @@ function StorePromotionsList() {
                 (item, i)=> <PromotionItem key={`prod-${i}`} promotion={item} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchPromotions} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_review" Icon={DiscountIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_review" icon={promotionIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchPromotions} /> </li>,
               )
             }
@@ -217,7 +209,7 @@ function StoreReviewsList() {
                   (item, i)=> <li key={`prod-${i}`}> <ReviewItem review={item} /> </li>, 
                   (k)=> <li key={k}> <Loading /> </li>, 
                   (k)=> <li key={k}> <Reload action={refetchReviews} /> </li>,
-                  (k)=> <li key={k}> <EmptyList text="_empty.No_review" Icon={StarIcon} /> </li>, 
+                  (k)=> <li key={k}> <EmptyList text="_empty.No_review" icon={reviewIcon} /> </li>, 
                   (k)=> <li key={k}> <FetchMoreButton action={refetchReviews} /> </li>,
                 )
               }
@@ -291,7 +283,7 @@ function StoreProductsList({ categories }) {
     <div>
       <div className="container-x">
         <div className="flex my-4">
-          <FilterIcon classList="fill-current text-color" />
+          <Icon path={filterIcon} className="text-color w-6 h-6" />
           <select 
             className="bg-color-gray ml-1 p-1 rounded" 
             onChange={(e)=> onFilterChange(e.target.value)}
@@ -323,7 +315,7 @@ function StoreProductsList({ categories }) {
                 (item, i)=> <li key={`prod-${i}`}> <ProductItem prod={item} /> </li>, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={ProductIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={productIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
               )
             }
@@ -336,11 +328,11 @@ function StoreProductsList({ categories }) {
 
 
 
-function StoreProfileItem({ Icon, data }) {
+function StoreProfileItem({ icon, data }) {
   return (
     <li className="inline-flex">
       <div className="bg-color-gray text-color flex items-center px-2 py-1 rounded mr-2 mb-2">
-        <Icon classList="fill-current inline-block w-5 h-5 " />
+        <Icon path={icon} className="inline-block w-5 h-5 " />
         <span className="inline-block ml-1 text-sm">{ data }</span>
       </div>
     </li>
@@ -368,22 +360,22 @@ function StoreProfile({ storeData }) {
             className="btn-color-primary rounded-full p-2 block"
             >
             <span className="sr-only">{ t('_message.Message_store') }</span>
-            <MessageIcon classList="w-4 h-4" />
+            <Icon path={messageIcon} className="w-4 h-4" />
           </Link>
         </div>
       </div>
 
       <ul className="pt-3">
 
-        <StoreProfileItem Icon={LocationIcon} data={ storeData.address } />
+        <StoreProfileItem icon={locationIcon} data={ storeData.address } />
 
-        <StoreProfileItem Icon={PhoneIcon} data={ storeData.phone } />
+        <StoreProfileItem icon={phoneIcon} data={ storeData.phone } />
 
-        <StoreProfileItem Icon={EmailIcon} data={ storeData.email } />
+        <StoreProfileItem icon={emailIcon} data={ storeData.email } />
 
-        <StoreProfileItem Icon={CategoriesIcon} data={ storeData.category } />
+        <StoreProfileItem icon={categoryIcon} data={ storeData.category } />
 
-        <StoreProfileItem Icon={ReviewIcon} data={ storeData.rating } />
+        <StoreProfileItem icon={reviewIcon} data={ storeData.rating } />
 
       </ul>
 

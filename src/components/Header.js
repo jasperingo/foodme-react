@@ -2,9 +2,10 @@
 import React from 'react';
 import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
+import Icon from '@mdi/react';
 import { useHeader2Title } from '../context/AppHooks';
 import SearchForm from './SearchForm';
-import BackIcon from '../icons/BackIcon';
+import { backIcon } from '../assets/icons';
 
 function CartCounter({ useCounter }) {
   return (
@@ -14,7 +15,7 @@ function CartCounter({ useCounter }) {
   );
 }
 
-function NavItem({ title, Icon, href, useCounter }) {
+function NavItem({ title, icon, href, useCounter }) {
 
   return (
     <li className="flex-1 text-center">
@@ -24,7 +25,7 @@ function NavItem({ title, Icon, href, useCounter }) {
         className="block width-full py-2 px-4 text-sm text-color-gray bg-color relative hover:bg-color-gray-h"
         activeClassName="text-color-primary"
       >
-        <Icon classList="fill-current mx-auto inline-block" />
+        <Icon path={icon} className="w-7 h-7 mx-auto inline-block" />
         { useCounter && <CartCounter useCounter={useCounter} /> }
         <span className="block lg:sr-only">{ title }</span>
       </NavLink>
@@ -32,7 +33,7 @@ function NavItem({ title, Icon, href, useCounter }) {
   );
 }
 
-function NavTopListItem({ title, Icon, href, useCounter }) {
+function NavTopListItem({ title, icon, href, useCounter }) {
 
   return (
     <li>
@@ -40,7 +41,7 @@ function NavTopListItem({ title, Icon, href, useCounter }) {
         to={href}
         className="text-color-gray bg-color text-sm relative hover:bg-color-gray-h block p-1 lg:py-2 lg:px-4"
         >
-        <Icon classList="fill-current mx-auto inline-block" />
+        <Icon path={icon} className="w-7 h-7 mx-auto inline-block" />
         { useCounter && <CartCounter useCounter={useCounter} /> }
         <span className="sr-only">{ title }</span>
       </Link>
@@ -59,7 +60,7 @@ export default function Header({ navLinks, topNavLinks, searchHref }) {
   const showHeader = navLinks.find(item=> item.href === pathname || (item.hrefs && item.hrefs.includes(pathname)));
 
   function onSearchPage() {
-    return (pathname==='/search/history' || pathname==='/search/stores' || pathname==='/search/products');
+    return ['/search/history', '/search/stores', '/search/products', '/search/orders'].includes(pathname);
   }
 
   return (
@@ -70,11 +71,12 @@ export default function Header({ navLinks, topNavLinks, searchHref }) {
             <Link to="/">{ t('app_name') }</Link>
           </h1>
 
-          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center lg:flex-grow-0 lg:bg-color-primary-lg lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
+          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center gap-1 lg:flex-grow-0 lg:bg-color-primary-lg lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
             <button
               onClick={ ()=> { history.goBack(); } }
-              className="hover:bg-color-gray-h lg:hidden">
-              <BackIcon classList="fill-current text-color" />
+              className="hover:bg-color-gray-h lg:hidden"
+              >
+              <Icon path={backIcon} className="w-7 h-7 text-color" />
               <span className="sr-only">{ t('Previous_page') }</span>
             </button>
             <h2 className={`font-bold flex-grow text-left text-xl ${onSearchPage() && 'hidden'} lg:block`}>
@@ -99,7 +101,7 @@ export default function Header({ navLinks, topNavLinks, searchHref }) {
                     <NavItem 
                       key={i}
                       title={t(item.title)}  
-                      Icon={item.icon} 
+                      icon={item.icon} 
                       href={item.href} 
                       useCounter={item.useCounter}
                       />
@@ -127,7 +129,7 @@ export default function Header({ navLinks, topNavLinks, searchHref }) {
                     <NavTopListItem 
                       key={i}
                       href={item.href} 
-                      Icon={item.icon} 
+                      icon={item.icon} 
                       useCounter={item.useCounter} 
                       title={ t(item.title) } 
                       />

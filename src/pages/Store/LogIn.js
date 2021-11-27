@@ -2,10 +2,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { storeIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
-import StoreIcon from '../../icons/StoreIcon';
 
 export default function LogIn() {
 
@@ -51,7 +51,7 @@ export default function LogIn() {
 
         <form method="POST" action="" onSubmit={loginIn} className="form-1-x">
 
-          <AuthFormHeader Icon={StoreIcon} text="_user.Welcome_back" />
+          <AuthFormHeader icon={storeIcon} text="_user.Welcome_back" />
 
           <FormField
             ID="email-input" 

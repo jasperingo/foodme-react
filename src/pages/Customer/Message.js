@@ -1,8 +1,8 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CheckIcon from '../../icons/CheckIcon';
-import SendIcon from '../../icons/SendIcon';
+import { checkIcon, sendIcon } from '../../assets/icons';
 
 
 function MessageItem({ from, content, date, status }) {
@@ -12,7 +12,7 @@ function MessageItem({ from, content, date, status }) {
       <div className={`p-2 rounded-lg border ${from===0 ? 'border-yellow-500' : 'border-black'}`} style={{maxWidth: '80%'}}>
         <div>{ content }</div>
         <div className="flex justify-end gap-2">
-          <CheckIcon classList="text-blue-500" />
+          <Icon path={checkIcon} className="w-5 h-5 text-blue-500" />
           <span className="text-color-gray">{ date }</span>
         </div>
       </div>
@@ -59,7 +59,7 @@ export default function Message() {
         ></textarea>
         <button className="w-10 h-10 rounded-full btn-color-primary inline-flex justify-center items-center">
           <span className="sr-only">{ t('_message.Send') }</span>
-          <SendIcon className="text" />
+          <Icon path={sendIcon} className="w-6 h-6" />
         </button>
       </form>
     </section>

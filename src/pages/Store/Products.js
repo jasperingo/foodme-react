@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { productIcon } from '../../assets/icons';
 //import { useTranslation } from 'react-i18next';
 import AddButton from '../../components/AddButton';
 import EmptyList from '../../components/EmptyList';
@@ -11,7 +12,6 @@ import Reload from '../../components/Reload';
 import { FETCH_STATUSES, PRODUCT } from '../../context/AppActions';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
-import ProductIcon from '../../icons/ProductIcon';
 
 
 const getProductsFetchStatusAction = (payload) => ({
@@ -89,7 +89,7 @@ export default function Products() {
                 (item, i)=> <li key={`prod-${i}`}> <ProductItem prod={item} href={`/product/${item.id}`} /> </li>, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={ProductIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
               )
             }

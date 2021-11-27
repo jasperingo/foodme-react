@@ -1,10 +1,12 @@
 
 import React from 'react';
+import AppSwitch from '../AppSwitch';
 
 export default function AdminApp() {
   return (
     <div>
-      Admin app
+      <div>Admin app</div>
+      <AppSwitch />
     </div>
-  )
+  );
 }

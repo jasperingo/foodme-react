@@ -1,8 +1,8 @@
 
+import Icon from '@mdi/react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import StarEmptyIcon from '../icons/StarEmptyIcon';
-import StarIcon from '../icons/StarIcon';
+import { reviewEmptyIcon, reviewIcon } from '../assets/icons';
 import AlertDialog from './AlertDialog';
 
 function RateButton({ num, rate, onButtonClicked }) {
@@ -10,8 +10,8 @@ function RateButton({ num, rate, onButtonClicked }) {
   return (
     <button onClick={()=> onButtonClicked(num)}>
       {rate >= num ? 
-        <StarIcon classList="w-10 h-10 text-yellow-500 fill-current" /> :
-        <StarEmptyIcon classList="w-10 h-10 text-yellow-500 fill-current" /> 
+        <Icon path={reviewIcon} className="w-10 h-10 text-yellow-500" /> :
+        <Icon path={reviewEmptyIcon} className="w-10 h-10 text-yellow-500" /> 
       }
     </button>
   );

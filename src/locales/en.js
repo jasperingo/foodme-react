@@ -96,6 +96,7 @@ export const TRANSLATIONS_EN = {
     Yes: 'Yes',
     No: 'No',
     By: 'By',
+    Load_more: 'Load more',
     Favorites: 'Favorites',
     Save: 'Save',
     Make_default: 'Make default',
@@ -179,6 +180,8 @@ export const TRANSLATIONS_EN = {
     Delivery_company: 'Delivery company',
     Delivery_address: 'Delivery address',
     Become_a_courier_partner: 'Become a courier partner',
+    Routes: 'Routes',
+    Add_route: 'Add route',
   },
 
   _order: {

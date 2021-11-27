@@ -11,11 +11,11 @@ import Loading from '../../components/Loading';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import ProductItem from '../../components/ProductItem';
-import ProductIcon from '../../icons/ProductIcon';
 import ProductProfile from '../../components/ProductProfile';
 import CustomerApp from '../../apps/CustomerApp';
 import H4Heading from '../../components/H4Heading';
 import ProductReviewsList from '../../components/ProductReviewsList';
+import { productIcon } from '../../assets/icons';
 
 const getProductFetchStatusAction = (payload) => ({
   type: PRODUCT.FETCH_STATUS_CHANGED,
@@ -94,7 +94,7 @@ function RelatedProductsList() {
                 (item, i)=> <li key={`prod-${i}`} > <ProductItem prod={item} layout={ProductItem.LAYOUT_GRID} /> </li>, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchRelated} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={ProductIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchRelated} /> </li>,
               )
             }

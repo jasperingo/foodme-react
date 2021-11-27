@@ -82,9 +82,9 @@ export default function ContactUs() {
 
           <div className="bg-color-gray rounded p-4 pb-1 my-4">
             <dl>
-              <ContactUsData param="Phone_number" value="+ 234 702 045 9383" />
-              <ContactUsData param="Email" value="info@foodme.com" />
-              <ContactUsData param="Working_hours" value="Mon - Sat: 9:00am - 10:00pm" />
+              <ContactUsData param="Phone_number" value="+234806470889" />
+              <ContactUsData param="Email" value="dailyneeds785@gmail.com" />
+              <ContactUsData param="Working_hours" value="Monday - Sunday: 24/7" />
             </dl>
           </div>
 

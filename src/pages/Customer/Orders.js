@@ -9,7 +9,7 @@ import FetchMoreButton from '../../components/FetchMoreButton';
 import Loading from '../../components/Loading';
 import OrderItem from '../../components/OrderItem';
 import Reload from '../../components/Reload';
-import OrderIcon from '../../icons/OrderIcon';
+import { orderIcon } from '../../assets/icons';
 
 const getFetchStatusAction = (payload) => ({
   type: ORDER.LIST_FETCH_STATUS_CHANGED,
@@ -81,7 +81,7 @@ export default function Orders() {
                 (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/account/order/${item.id}`} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchOrders} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_order" Icon={OrderIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchOrders} /> </li>,
               )
             }

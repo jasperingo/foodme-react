@@ -1,14 +1,14 @@
 
+import Icon from "@mdi/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import CustomerApp from "../apps/CustomerApp";
 import StoreApp from "../apps/StoreApp";
+import { editIcon, favoriteIcon } from "../assets/icons";
 import { CART } from "../context/AppActions";
 import { useAppContext } from "../context/AppContext";
 import { useDataRender, useMoneyFormat } from "../context/AppHooks";
-import EditIcon from "../icons/EditIcon";
-import FavoriteIcon from "../icons/FavoriteIcon";
 import AlertDialog from "./AlertDialog";
 import H4Heading from "./H4Heading";
 import Loading from "./Loading";
@@ -81,14 +81,14 @@ function ProductProfileView({ product, appType }) {
             {
               appType === CustomerApp.TYPE && <button onClick={favoriteProduct}>
                 <span className="sr-only">{ t('_product.Add_product_to_favorites') }</span>
-                <FavoriteIcon classList="w-8 h-8 text-red-500" />
+                <Icon path={favoriteIcon} className="w-8 h-8 text-red-500" />
               </button>
             }
 
             { 
               appType === StoreApp.TYPE && <Link to="/product/add">
                 <span className="sr-only">{ t('_product.Edit_product') }</span>
-                <EditIcon classList="w-8 h-8 text-color-primary" />
+                <Icon path={editIcon} className="w-8 h-8 text-color-primary" />
               </Link>
             }
           </div>

@@ -1,13 +1,12 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import CustomerApp from '../apps/CustomerApp';
 import StoreApp from '../apps/StoreApp';
+import { deliveryIcon, storeIcon, userIcon } from '../assets/icons';
 import { useDateFormat, useMoneyFormat, useOrderStatus } from '../context/AppHooks';
-import DeliveryIcon from '../icons/DeliveryIcon';
-import StoreIcon from '../icons/StoreIcon';
-import UserIcon from '../icons/UserIcon';
 import OrderItemItem from './OrderItemItem';
 
 export default function OrderView({ order, appType }) {
@@ -43,7 +42,7 @@ export default function OrderView({ order, appType }) {
               <div className="my-2">
                 <div className="text-sm font-bold">{ t('_order.Ordered_from') }</div>
                 <Link to={`/store/${order.store.id}/products`} className="flex gap-1 items-center">
-                  <StoreIcon classList="text-color-primary w-8 h-8" />
+                  <Icon path={storeIcon} className="text-color-primary w-8 h-8" />
                   <div>{ order.store.name }</div>
                 </Link>
               </div>
@@ -57,7 +56,7 @@ export default function OrderView({ order, appType }) {
             <div className="my-2">
               <div className="text-sm font-bold">{ t('_order.Ordered_by') }</div>
               <Link to={`/messages/${order.customer.id}`} className="flex gap-1 items-center">
-                <UserIcon classList="text-color-primary w-8 h-8" />
+                <Icon path={userIcon} className="text-color-primary w-8 h-8" />
                 <div>{ order.customer.first_name } { order.customer.last_name }</div>
               </Link>
             </div>
@@ -112,7 +111,7 @@ export default function OrderView({ order, appType }) {
                 <dt className="text-sm font-bold">{ t('_delivery.Delivery_company') }</dt>
                 <dd>
                   <div className="flex gap-1 items-center">
-                    <DeliveryIcon classList="text-color-primary w-8 h-8" />
+                    <Icon path={deliveryIcon} className="text-color-primary w-8 h-8" />
                     <div>{ order.delivery_agent.name }</div>
                   </div>
                 </dd>

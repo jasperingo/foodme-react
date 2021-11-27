@@ -1,18 +1,18 @@
 
-import React, { useEffect } from 'react'
-import CustomerApp from '../apps/CustomerApp'
-import { FETCH_STATUSES, REVIEW } from '../context/AppActions'
-import { API_URL, useAppContext } from '../context/AppContext'
-import { useListRender } from '../context/AppHooks'
-import StarIcon from '../icons/StarIcon'
-import EmptyList from './EmptyList'
-import FetchMoreButton from './FetchMoreButton'
-import H4Heading from './H4Heading'
-import Loading from './Loading'
-import Rater from './Rater'
-import Reload from './Reload'
-import ReviewItem from './ReviewItem'
-import ReviewSummary from './ReviewSummary'
+import React, { useEffect } from 'react';
+import CustomerApp from '../apps/CustomerApp';
+import { reviewIcon } from '../assets/icons';
+import { FETCH_STATUSES, REVIEW } from '../context/AppActions';
+import { API_URL, useAppContext } from '../context/AppContext';
+import { useListRender } from '../context/AppHooks';
+import EmptyList from './EmptyList';
+import FetchMoreButton from './FetchMoreButton';
+import H4Heading from './H4Heading';
+import Loading from './Loading';
+import Rater from './Rater';
+import Reload from './Reload';
+import ReviewItem from './ReviewItem';
+import ReviewSummary from './ReviewSummary';
 
 
 const getReviewsFetchStatusAction = (payload) => ({
@@ -100,12 +100,12 @@ export default function ProductReviewsList({ pID, appType }) {
               (item, i)=> <li key={`prod-${i}`}> <ReviewItem review={item} /> </li>, 
               (k)=> <li key={k}> <Loading /> </li>, 
               (k)=> <li key={k}> <Reload action={refetchReviews} /> </li>,
-              (k)=> <li key={k}> <EmptyList text="_empty.No_review" Icon={StarIcon} /> </li>, 
+              (k)=> <li key={k}> <EmptyList text="_empty.No_review" icon={reviewIcon} /> </li>, 
               (k)=> <li key={k}> <FetchMoreButton action={refetchReviews} /> </li>,
             )
           }
         </ul>
       </div>
     </div>
-  )
+  );
 }

@@ -1,16 +1,16 @@
 
+import Icon from '@mdi/react';
 import React from 'react'
 import { useTranslation } from 'react-i18next';
-import AddRoundIcon from '../icons/AddRoundIcon';
-import RemoveRoundIcon from '../icons/RemoveRoundIcon';
+import { addIcon, minusIcon } from '../assets/icons';
 
-function QuantityChangeButton({ text, Icon, negative, onButtonClicked }) {
+function QuantityChangeButton({ text, icon, negative, onButtonClicked }) {
 
   const { t } = useTranslation();
 
   return (
     <button onClick={()=> onButtonClicked(negative ? -1 : 1)}>
-      <Icon classList="fill-current text-color-primary" />
+      <Icon path={icon} className="w-6 h-6 text-color-primary" />
       <span className="sr-only">{ t(text) }</span>
     </button>
   );
@@ -21,14 +21,14 @@ export default function QuantityChooser({ quantity, unit, onQuantityChanged }) {
     <div className="flex gap-2 items-center flex-grow">
       <QuantityChangeButton
         negative={true}
-        Icon={RemoveRoundIcon} 
+        icon={minusIcon} 
         text="_product.Decrease_quantity" 
         onButtonClicked={onQuantityChanged}
         />
       <span className="inline-block px-2 shadow">{ quantity }</span>
       <QuantityChangeButton 
         negative={false}
-        Icon={AddRoundIcon}
+        icon={addIcon}
         text="_product.Increase_quantity"  
         onButtonClicked={onQuantityChanged}
         />

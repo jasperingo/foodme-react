@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { transactionIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import Loading from '../../components/Loading';
@@ -9,7 +10,6 @@ import TransactionItem from '../../components/TransactionItem';
 import { FETCH_STATUSES, TRANSACTION } from '../../context/AppActions';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
-import TransactionIcon from '../../icons/TransactionIcon';
 
 
 const getFetchStatusAction = (payload) => ({
@@ -86,7 +86,7 @@ export default function Transactions() {
                 (item, i)=> <TransactionItem key={`transaction-${i}`} transaction={item} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchTransactions} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_transaction" Icon={TransactionIcon} /> </li>, 
+                (k)=> <li key={k}> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>, 
                 (k)=> <li key={k}> <FetchMoreButton action={refetchTransactions} /> </li>,
               )
             }

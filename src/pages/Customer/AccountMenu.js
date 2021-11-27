@@ -2,16 +2,11 @@
 import React from 'react';
 import { Redirect, Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
 import AppSwitch from '../../AppSwitch';
+import { cartIcon, favoritedIcon, locationIcon, orderIcon, transactionIcon, userIcon } from '../../assets/icons';
 import AccountMenuList from '../../components/AccountMenuList';
 import AccountMenuTop from '../../components/AccountMenuTop';
 import DualPaneIntro from '../../components/DualPaneIntro';
 import { useAppContext } from '../../context/AppContext';
-import CartIcon from '../../icons/CartIcon';
-import FavoritedIcon from '../../icons/FavoritedIcon';
-import LocationIcon from '../../icons/LocationIcon';
-import OrderIcon from '../../icons/OrderIcon';
-import TransactionIcon from '../../icons/TransactionIcon';
-import UserIcon from '../../icons/UserIcon';
 import Address from './Address';
 import Addresses from './Addresses';
 import Favourites from './Favourites';
@@ -23,12 +18,12 @@ import Transactions from './Transactions';
 
 
 const MENU_ITEMS = [
-  { text: '_user.Profile', Icon: UserIcon, href: '/account/profile'},
-  { text: '_order.Orders', Icon: OrderIcon, href: '/account/orders'},
-  { text: '_extra.Favorites', Icon: FavoritedIcon, href: '/account/favorites'},
-  { text: '_cart.Saved_carts', Icon: CartIcon, href: '/account/saved-carts'},
-  { text: '_user.Addresses', Icon: LocationIcon, href: '/account/addresses'},
-  { text: '_transaction.Transactions', Icon: TransactionIcon, href: '/account/transactions'},
+  { text: '_user.Profile', icon: userIcon, href: '/account/profile'},
+  { text: '_order.Orders', icon: orderIcon, href: '/account/orders'},
+  { text: '_extra.Favorites', icon: favoritedIcon, href: '/account/favorites'},
+  { text: '_cart.Saved_carts', icon: cartIcon, href: '/account/saved-carts'},
+  { text: '_user.Addresses', icon: locationIcon, href: '/account/addresses'},
+  { text: '_transaction.Transactions', icon: transactionIcon, href: '/account/transactions'},
 ];
 
 export default function UserAccount() {
@@ -66,7 +61,7 @@ export default function UserAccount() {
             <Route path={`${match.url}/profile`} render={()=> <Profile />} />
             <Route 
               path={match.url} 
-              render={()=> <DualPaneIntro Icon={UserIcon} text="_user.Manage_your_account" />}
+              render={()=> <DualPaneIntro icon={userIcon} text="_user.Manage_your_account" />}
               />
           </Switch>
         </div>

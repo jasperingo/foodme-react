@@ -21,7 +21,7 @@ export default function Profile() {
       
         <form method="POST" action="" className="form-1-x" onSubmit={updateProfile}>
 
-           <FormField ID="name-input" label="_user.Name" />
+          <FormField ID="name-input" label="_user.Name" />
 
           <FormField ID="category-input" label="_store.Store_category" />
 
