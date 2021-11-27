@@ -12,7 +12,7 @@ const h2Style = "font-bold text-xl mb-2";
 function AboutFeature({ Icon, text }) {
 
   return (
-    <li className="md:flex-grow md:border md:rounded md:hover:bg-gray-200">
+    <li className="mb-2 border rounded md:flex-grow md:hover:bg-gray-200">
       <div className="my-4 p-4">
         <div className="text-yellow-500">
           <Icon classList="mx-auto text-yellow-500 fill-current" />
@@ -51,11 +51,11 @@ export default function AboutUs() {
   const { t } = useTranslation();
 
   return (
-    <section>
+    <section className="md:text-center">
 
       <div>
       
-        <div className="container px-2 mx-auto">
+        <div className="container-x md:max-w-2xl">
           
           <div className="py-4">
             <h2 className={h2Style}>{ t('Who_we_are') }</h2>
@@ -81,14 +81,14 @@ export default function AboutUs() {
 
       <div className="bg-gray-900">
 
-        <div className="container px-2 mx-auto">
+        <div className="container-x md:max-w-2xl">
           
           <div className="py-10">
             <h2 className="text-white text-3xl font-bold mb-5">
               <span>{ t('Make_orders_with_our') }</span> 
               <span className="text-yellow-500"> { t('Application') }</span>
             </h2>
-            <ul className="flex">
+            <ul className="flex md:justify-center">
               <li>
                 <a href="/about-us" className="border border-white text-white p-3 rounded block w-28 mr-2">Android</a>
               </li>
@@ -103,7 +103,7 @@ export default function AboutUs() {
 
       <div>
 
-        <div className="container px-2 mx-auto">
+        <div className="container-x md:max-w-2xl">
           
           <div className="py-10">
             <h2 className={h2Style}>{ t('Partner_with_us') }</h2>

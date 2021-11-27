@@ -26,9 +26,9 @@ export default function ContactUs() {
   return (
     <section>
 
-      <div className="container px-2 mx-auto">
+      <div className="container-x">
       
-        <div className="py-4 md:flex md:gap-4 md:justify-center">
+        <div className="py-4 md:max-w-2xl md:mx-auto md:flex md:gap-4 md:justify-center">
 
           <div>
 

@@ -31,13 +31,16 @@ export function useHeader2Title() {
     return 'Register';
   
   if (path === '/about-us')
-    return 'About_us';
+    return '_extra.About_us';
 
   if (path === '/contact-us')
-    return 'Contact_us';
+    return '_extra.Contact_us';
+
+  if (path === '/privacy-policy')
+    return '_extra.Privacy_policy';
 
   if (path === '/terms-of-service')
-    return 'Terms_of_service';
+    return '_extra.Terms_of_service';
 
   if (path === '/messages')
     return '_message.Messages';

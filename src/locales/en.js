@@ -9,10 +9,7 @@ export const TRANSLATIONS_EN = {
 
   Retry: 'Retry',
   Previous_page: 'Previous page',
-  Contact_us: 'Contact us',
-  About_us: 'About us',
-  Terms_of_service: 'Terms of service',
-
+  
   Make_orders_with_our: 'Make orders with our',
   Who_we_are: 'Who we are',
   Why_our_customers_choose_us: 'Why our customers choose us',
@@ -77,6 +74,10 @@ export const TRANSLATIONS_EN = {
 
   _extra: {
     Home: 'Home',
+    Contact_us: 'Contact us',
+    About_us: 'About us',
+    Privacy_policy: 'Privacy policy',
+    Terms_of_service: 'Terms of service',
     categories: 'categories',
     Categories: 'Categories',
     Title: 'Title',

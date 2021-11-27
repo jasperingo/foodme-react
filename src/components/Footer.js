@@ -25,9 +25,10 @@ export default function Footer() {
           <FooterLink text="_user.Log_in" href="/login" />
           <FooterLink text="_store.Become_a_store_partner" href="/" />
           <FooterLink text="_delivery.Become_a_courier_partner" href="/" />
-          <FooterLink text="About_us" href="/about-us" />
-          <FooterLink text="Contact_us" href="/contact-us" />
-          <FooterLink text="Terms_of_service" href="/terms-of-service" />
+          <FooterLink text="_extra.About_us" href="/about-us" />
+          <FooterLink text="_extra.Contact_us" href="/contact-us" />
+          <FooterLink text="_extra.Privacy_policy" href="/privacy-policy" />
+          <FooterLink text="_extra.Terms_of_service" href="/terms-of-service" />
         </ul>
       </div>
     </footer>
