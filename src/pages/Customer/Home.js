@@ -14,6 +14,25 @@ import FetchMoreButton from '../../components/FetchMoreButton';
 import ProductItem from '../../components/ProductItem';
 import Icon from '@mdi/react';
 import { categoryIcon, productIcon, storeIcon } from '../../assets/icons';
+// import CarouselX from '../../components/CarouselX';
+
+// const CAROUSEL_IMGS = [
+//   {
+//     title: 'Buy food',
+//     photo: '/home/burger.jpg'
+//   },{
+//     title: 'Instant delivery',
+//     photo: '/home/delivery.jpg'
+//   }, 
+//   {
+//     title: 'Buy medicine',
+//     photo: '/home/drugs.jpg'
+//   },
+//   {
+//     title: 'Buy drinks',
+//     photo: '/home/drink.jpg'
+//   }
+// ];
 
 const getCategoriesFetchStatusAction = (payload) => ({
   type: CATEGORIES.FETCH_STATUS_CHANGED,
@@ -196,7 +215,13 @@ export default function Home() {
 
   return (
     <section>
+
+      {/* <div className="container-x">
+        <CarouselX items={CAROUSEL_IMGS} />
+      </div> */}
+
       <div className="lg:container mx-auto">
+
         <div className="lg:flex lg:items-start lg:gap-2">
 
           <div className="bg-color-gray lg:rounded lg:my-2 lg:w-60">
