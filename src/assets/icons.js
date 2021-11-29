@@ -6,6 +6,7 @@ import {
   mdiTruck,
   mdiMessage,
   mdiAccount,
+  mdiAccountTie,
   mdiWallet,
   mdiStar,
   mdiStarOutline,
@@ -37,12 +38,14 @@ import {
   mdiFilter,
   mdiPhone,
   mdiEmail,
+  mdiViewDashboard,
 
 
 
 } from '@mdi/js';
 
 export const homeIcon = mdiHome;
+export const dashboardIcon = mdiViewDashboard;
 export const storeIcon = mdiStore;
 export const productIcon = mdiArchive;
 export const categoryIcon = mdiGrid;
@@ -68,6 +71,7 @@ export const orderIcon = mdiOrder;
 export const deliveryIcon = mdiTruck;
 export const messageIcon = mdiMessage;
 export const userIcon = mdiAccount;
+export const adminIcon = mdiAccountTie;
 export const walletIcon = mdiWallet;
 export const reviewIcon = mdiStar;
 export const reviewEmptyIcon = mdiStarOutline;

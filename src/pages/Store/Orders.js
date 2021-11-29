@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useLocation } from 'react-router';
+import StoreApp from '../../apps/StoreApp';
 import { orderIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
@@ -107,7 +108,7 @@ export default function Orders() {
               useListRender(
                 orders, 
                 ordersFetchStatus,
-                (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/order/${item.id}`} />, 
+                (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/order/${item.id}`} appType={StoreApp.TYPE} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchOrders} /> </li>,
                 (k)=> <li key={k}> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>, 

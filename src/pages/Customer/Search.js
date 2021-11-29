@@ -17,7 +17,7 @@ import { productIcon, storeIcon } from '../../assets/icons';
 
 
 const TAB_LINKS = [
-  { title : '_store.Stores', href: '/stores' },
+  { title : '_store.Stores', href: '' },
   { title : '_product.Products', href: '/products' }
 ];
 
@@ -152,7 +152,7 @@ export default function Search() {
       <div className="container-x">
         {
           <Switch>
-            <Route path={`${match.url}/stores`}>
+            <Route path={match.url}>
               <InfiniteScroll
                 dataLength={stores.length}
                 next={refetchStores}

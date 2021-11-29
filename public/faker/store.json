@@ -7,7 +7,7 @@
     "phone" : "09035382455",
     "email" : "eataer@gmail.com",
     "category" : "Restaurant",
-    "rating" : "3.9",
+    "rating" : 3.9,
     "categories" : [
       {
         "id": 0,

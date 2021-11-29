@@ -42,7 +42,6 @@ export default function DeliveryApp() {
       <Header 
         navLinks={HEADER_NAV_LINKS}
         topNavLinks={HEADER_TOP_NAV_LINKS}
-        searchHref="/search/orders"
         />
       <main className="pb-52">
         <Switch>

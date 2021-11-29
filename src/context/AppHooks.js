@@ -41,6 +41,18 @@ export function useHeader2Title() {
 
   if (path === '/terms-of-service')
     return '_extra.Terms_of_service';
+  
+  if (path === '/profile')
+    return '_user.Profile';
+
+  if (path === '/customers')
+    return '_user.Customers';
+  
+  if (path === '/stores')
+    return '_store.Stores';
+
+  if (path === '/delivery-firms')
+    return '_delivery.Delivery_firms';
 
   if (path === '/messages')
     return '_message.Messages';
@@ -48,10 +60,13 @@ export function useHeader2Title() {
   if (path === '/cart')
     return '_cart.Cart';
 
-  if (path === '/search/history' || path === '/search/products' || path === '/search/stores' || path === '/search/orders')
+  if (['/search', '/search/history', '/search/customers', '/search/stores', '/search/products', '/search/orders', '/search/delivery-firms'].includes(path))
     return '_search.Search';
 
-  if (path === '/promotion/add')
+  if (path === '/account/promotions')
+    return '_discount.Promotions';
+
+  if (path === '/account/promotion/add')
     return '_discount.Add_promotion';
 
   if (path === '/product/add')
@@ -89,14 +104,20 @@ export function useHeader2Title() {
 
   if (/messages\/[0-9]+/.test(path))
     return '_message.Messages';
+  
+  if (/customer\/[0-9]+/.test(path))
+    return '_user.Customer';
+  
+  if (/delivery-firm\/[0-9]+/.test(path))
+    return '_delivery.Delivery_firm';
 
   if (/account\/order\/[0-9]+/.test(path) || /order\/[0-9]+/.test(path))
     return '_order.Order_details';
     
-  if (/store\/[0-9]+\/products/.test(path) || /store\/[0-9]+\/reviews/.test(path) || /store\/[0-9]+\/promotions/.test(path))
+  if (/store\/[0-9]+/.test(path) || /store\/[0-9]+\/products/.test(path) || /store\/[0-9]+\/reviews/.test(path) || /store\/[0-9]+\/promotions/.test(path))
     return '_store.Store';
 
-  if (/store\/[0-9]+\/promotion\/[0-9]+/.test(path) || /promotion\/[0-9]+/.test(path))
+  if (/store\/[0-9]+\/promotion\/[0-9]+/.test(path) || /account\/promotion\/[0-9]+/.test(path))
     return '_discount.Promotion';
 
   if (/store\/[0-9]+\/product\/[0-9]+/.test(path) || /product\/[0-9]+/.test(path))

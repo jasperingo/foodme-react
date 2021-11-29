@@ -72,19 +72,19 @@ export default function Promotions() {
       
       <div className="container-x">
 
-        <AddButton text="_discount.Add_promotion" href="/promotion/add" />
+        <AddButton text="_discount.Add_promotion" href="/account/promotion/add" />
       
         <InfiniteScroll 
           dataLength={promotions.length}
           next={refetchPromotions}
           hasMore={useHasMoreToFetchViaScroll(promotionsPage, promotionsNumberOfPages, promotionsFetchStatus)}
           >
-          <ul className="list-x">
+          <ul className="list-2-x">
             { 
               useListRender(
                 promotions, 
                 promotionsFetchStatus,
-                (item, i)=> <PromotionItem key={`prod-${i}`} promotion={item} href={`/promotion/${item.id}`} />, 
+                (item, i)=> <PromotionItem key={`prod-${i}`} promotion={item} href={`/account/promotion/${item.id}`} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchPromotions} /> </li>,
                 (k)=> <li key={k}> <EmptyList text="_empty.No_review" icon={promotionIcon} /> </li>, 

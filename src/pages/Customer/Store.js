@@ -22,7 +22,7 @@ import Icon from '@mdi/react';
 
 
 const PROFILE_NAV_LINKS = [
-  { title : '_product.Products', href: '/products' },
+  { title : '_product.Products', href: '' },
   { title : '_extra.Reviews', href: '/reviews' },
   { title : '_store.Promotions', href: '/promotions' }
 ];
@@ -461,9 +461,9 @@ export default function Store() {
       {
         store && 
         <Switch>
-          <Route path={`${match.url}/products`} render={()=> <StoreProductsList categories={store.categories} />} />
           <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList />} />
           <Route path={`${match.url}/promotions`} render={()=> <StorePromotionsList />} />
+          <Route path={match.url} render={()=> <StoreProductsList categories={store.categories} />} />
         </Switch>
       }
       

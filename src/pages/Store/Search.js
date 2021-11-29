@@ -10,6 +10,12 @@ import EmptyList from '../../components/EmptyList';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import { productIcon } from '../../assets/icons';
+import Tab from '../../components/Tab';
+
+const TAB_LINKS = [
+  { title : '_product.Products', href: '' },
+  { title : '_order.Orders', href: '/orders' },
+];
 
 const getProductFetchStatusAction = (payload) => ({
   type: PRODUCT.FETCH_STATUS_CHANGED,
@@ -77,6 +83,10 @@ export default function Search() {
 
   return (
     <section>
+
+      <div className="container-x">
+        <Tab items={ TAB_LINKS.map(item=> ({...item, href:`${item.href}?q=${queryParam}` })) } keyPrefix="search-tab" />
+      </div>
 
       <div className="container-x">
         {

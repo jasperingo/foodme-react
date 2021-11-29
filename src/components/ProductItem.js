@@ -39,7 +39,7 @@ export default function ProductItem({ prod, href = `/store/${prod.store.id}/prod
         className={`${layoutImgStyle} border rounded block`}
         />
       <div className={`flex-grow ${layoutBodyStyle}`}>
-        <h4 className="mb-1">{ prod.title }</h4>
+        <div className="mb-1">{ prod.title }</div>
         <div className="text-color-gray text-sm mb-1">{ prod.sub_title }</div>
         <div className="font-bold mb-1">{ useMoneyFormat(prod.price) }</div>
         <div className="flex flex-wrap gap-1 items-center bg-color-primary text-sm text-white py-1 px-2 rounded-full w-max">

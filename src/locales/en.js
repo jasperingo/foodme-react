@@ -48,6 +48,9 @@ export const TRANSLATIONS_EN = {
     Join_us: 'Join us',
     Welcome_back: 'Welcome back',
     Account: 'Account',
+    Customer: 'Customer',
+    Customers: 'Customers',
+    Recent_customers: 'Recent customers',
     Profile: 'Profile',
     Addresses: 'Addresses',
     Add_address: 'Add address',
@@ -74,6 +77,7 @@ export const TRANSLATIONS_EN = {
 
   _extra: {
     Home: 'Home',
+    Dashboard: 'Dashboard',
     Contact_us: 'Contact us',
     About_us: 'About us',
     Privacy_policy: 'Privacy policy',
@@ -96,6 +100,7 @@ export const TRANSLATIONS_EN = {
     Yes: 'Yes',
     No: 'No',
     By: 'By',
+    View_all: 'View all',
     Load_more: 'Load more',
     Favorites: 'Favorites',
     Save: 'Save',
@@ -103,6 +108,7 @@ export const TRANSLATIONS_EN = {
     for: 'for',
     Start: 'Start',
     End: 'End',
+    Statistics: 'Statistics',
 
     Approved: 'Approved',
     Failed: 'Failed',
@@ -117,6 +123,7 @@ export const TRANSLATIONS_EN = {
   _store: {
     Store: 'Store',
     Stores: 'Stores',
+    Recent_stores: 'Recent stores',
     Recommended_stores: 'Recommended stores',
     Become_a_store_partner : 'Become a store partner',
     Store_category: 'Store category',
@@ -175,6 +182,10 @@ export const TRANSLATIONS_EN = {
   },
 
   _delivery: {
+    Logistics: 'Logistics',
+    Delivery_firm: 'Delivery firm',
+    Delivery_firms: 'Delivery firms',
+    Recent_delivery_firms: 'Recent delivery firms',
     Delivery_fee: 'Delivery fee',
     Delivery_method: 'Delivery method',
     Delivery_company: 'Delivery company',
@@ -205,6 +216,8 @@ export const TRANSLATIONS_EN = {
     Items_total: 'Items total',
     Payment_information: 'Payment information',
     Delivery_information: 'Delivery information',
+    Recent_orders: 'Recent orders',
+
   },
 
   _transaction: {
@@ -215,6 +228,7 @@ export const TRANSLATIONS_EN = {
     Payment: 'Payment',
     Payment_method: 'Payment method',
     Payment_details: 'Payment details',
+    Earnings: 'Earnings',
   },
 
   _message: {

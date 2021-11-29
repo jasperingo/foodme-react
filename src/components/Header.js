@@ -49,7 +49,7 @@ function NavTopListItem({ title, icon, href, useCounter }) {
   );
 }
 
-export default function Header({ navLinks, topNavLinks, searchHref }) {
+export default function Header({ navLinks, topNavLinks }) {
 
   const history = useHistory();
 
@@ -60,7 +60,7 @@ export default function Header({ navLinks, topNavLinks, searchHref }) {
   const showHeader = navLinks.find(item=> item.href === pathname || (item.hrefs && item.hrefs.includes(pathname)));
 
   function onSearchPage() {
-    return ['/search/history', '/search/stores', '/search/products', '/search/orders'].includes(pathname);
+    return ['/search', '/search/history', '/search/customers', '/search/stores', '/search/products', '/search/orders', '/search/delivery-firms'].includes(pathname);
   }
 
   return (
@@ -85,7 +85,7 @@ export default function Header({ navLinks, topNavLinks, searchHref }) {
           </div>
           
           <div className={`${(showHeader || !onSearchPage()) && 'hidden'} flex-grow lg:block`}>
-            <SearchForm href={searchHref} />
+            <SearchForm />
           </div>
 
           <nav className="flex items-center">

@@ -3,6 +3,7 @@
   "data": [
     {
       "id": 1,
+      "customer_name": "John Doe",
       "store_name": "Favour Stores",
       "total": 300,
       "status": "delivered",
@@ -10,6 +11,7 @@
     },
     {
       "id": 2,
+      "customer_name": "Frank Ikechukwu",
       "store_name": "Robin foods",
       "total": 5900.89,
       "status": "in-transit",
@@ -17,6 +19,7 @@
     },
     {
       "id": 3,
+      "customer_name": "Israel Anthill",
       "store_name": "Mr Ben Ice",
       "total": 2400.77,
       "status": "delivered",
@@ -24,6 +27,7 @@
     },
     {
       "id": 4,
+      "customer_name": "Rita Max",
       "store_name": "Black rose mini mart",
       "total": 19000.23,
       "status": "cancelled",
@@ -31,6 +35,7 @@
     },
     {
       "id": 5,
+      "customer_name": "Gift Rex",
       "store_name": "Bulls On grills",
       "total": 33000.12,
       "status": "pending",
