@@ -9,7 +9,7 @@ export default function PromotionAdd() {
   }
 
   return (
-    <section>
+    <section className="flex-grow">
       <div className="container-x">
         
         <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x">

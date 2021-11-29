@@ -111,7 +111,7 @@ export default function PromotionView({ appType, promotion: { id, store, title, 
           {
             appType === StoreApp.TYPE && 
             <div className="my-2">
-              <Link to={`/promotion/add`} className="inline-flex gap-1 items-center py-1 px-2 rounded btn-color-primary">
+              <Link to={`/account/promotion/add`} className="inline-flex gap-1 items-center py-1 px-2 rounded btn-color-primary">
                 <Icon path={editIcon} className="w-5 h-5" />
                 <div>{ t('_extra.Edit') }</div>
               </Link>
@@ -133,7 +133,7 @@ export default function PromotionView({ appType, promotion: { id, store, title, 
               useListRender(
                 products, 
                 productsFetchStatus,
-                (item, i)=> <li key={`prod-${i}`}> <ProductItem prod={item} /> </li>, 
+                (item, i)=> <li key={`prod-${i}`}> <ProductItem prod={item} href={`/product/${item.id}`} /> </li>, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
                 (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={productIcon} /> </li>, 

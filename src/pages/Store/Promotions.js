@@ -68,7 +68,7 @@ export default function Promotions() {
   }
 
   return (
-    <section>
+    <section className="flex-grow">
       
       <div className="container-x">
 

@@ -68,7 +68,7 @@ export default function Promotion() {
   }
 
   return (
-    <section>
+    <section className="flex-grow">
       { 
         useDataRender(
           promotion, 
