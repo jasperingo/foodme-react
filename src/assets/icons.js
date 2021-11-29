@@ -39,6 +39,8 @@ import {
   mdiPhone,
   mdiEmail,
   mdiViewDashboard,
+  mdiChevronLeft,
+  mdiChevronRight,
 
 
 
@@ -83,4 +85,6 @@ export const googleIcon = mdiGoogle;
 export const filterIcon = mdiFilter;
 export const emailIcon = mdiEmail;
 export const phoneIcon = mdiPhone;
+export const nextIcon = mdiChevronRight;
+export const prevIcon = mdiChevronLeft;
 

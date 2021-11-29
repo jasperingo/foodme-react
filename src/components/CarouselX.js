@@ -1,27 +1,76 @@
 
-import React from 'react';
-import Carousel from 'react-bootstrap/Carousel';
-//import 'bootstrap/dist/css/bootstrap.min.css';
+import Icon from '@mdi/react';
+import React, { useEffect, useState } from 'react';
+import { nextIcon, prevIcon } from '../assets/icons';
 
 export default function CarouselX({ items }) {
+  
+  const INTERVAL = 5000;
+
+  const [navUsed, setNavUsed] = useState(false);
+
+  const [started, setStarted] = useState(false);
+
+  const [current, setCurrent] = useState(0);
+
+  function navNext() {
+    setNavUsed(true);
+    setCurrent(c=> c+1 >= items.length ? 0 : c+1);
+  }
+
+  function navPrev() {
+    setNavUsed(true);
+    setCurrent(c=> c-1 < 0 ? 0 : c-1);
+  }
+
+  useEffect(()=> {
+
+    function changeCurrent() {
+
+      if (!navUsed) setCurrent(c=> c+1 >= items.length ? 0 : c+1);
+  
+      setNavUsed(false);
+  
+      setTimeout(changeCurrent, INTERVAL);
+    }
+
+    if (!started) {
+      setStarted(true);
+      setTimeout(changeCurrent, INTERVAL);
+    }
+
+  }, [started, navUsed, items.length]);
+
 
   return (
-    <Carousel className="my-4">
+    <div className="my-4 relative h-52 overflow-x-hidden md:h-96">
       {
         items.map((item, i)=> (
-          <Carousel.Item key={i}>
+          <div key={i} className={`w-full transition-all absolute top-0 ${i !== current ? '-right-full' : 'right-0'}`}>
+            
             <img
               className="block w-full h-52 rounded filter brightness-75 md:h-96"
               src={`/photos${item.photo}`}
               alt={item.title}
             />
-            <Carousel.Caption>
-              <h3 className="font-bold text-3xl">{ item.title }</h3>
+
+            <div className="absolute z-10 bottom-0 text-center w-full p-4 text-white">
+              <p className="font-bold text-3xl">{ item.title }</p>
               <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-            </Carousel.Caption>
-          </Carousel.Item>
+            </div>
+
+            <div className="w-full flex justify-between absolute top-1/2 z-20 text-white">
+              <button onClick={navPrev}>
+                <Icon path={prevIcon} className="w-8 h-8" />
+              </button>
+              <button onClick={navNext}>
+                <Icon path={nextIcon} className="w-8 h-8" />
+              </button>
+            </div>
+
+          </div>
         ))
       }
-    </Carousel>
+    </div>
   );
 }

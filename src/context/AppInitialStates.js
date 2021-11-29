@@ -1,6 +1,17 @@
 
 import { FETCH_STATUSES } from './AppActions';
 
+export const initialUserState = {
+  user: null,
+  addresses: {
+    addresses: [null],
+    addressesFetchStatus: FETCH_STATUSES.LOADING
+  },
+  address: {
+    address: null,
+    addressFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
 
 export const initialCustomerState = {
   customer: null,

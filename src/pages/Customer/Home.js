@@ -2,10 +2,9 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import { API_URL, useAppContext } from '../../context/AppContext';
 import { CATEGORIES, FETCH_STATUSES, PRODUCT, STORE } from '../../context/AppActions';
-import { useCategoryColor, useListRender, useHasMoreToFetchViaScroll } from '../../context/AppHooks';
+import { useCategoryColor, useListRender } from '../../context/AppHooks';
 import Reload from '../../components/Reload';
 import Loading from '../../components/Loading';
 import StoreItem from '../../components/StoreItem';
@@ -14,25 +13,25 @@ import FetchMoreButton from '../../components/FetchMoreButton';
 import ProductItem from '../../components/ProductItem';
 import Icon from '@mdi/react';
 import { categoryIcon, productIcon, storeIcon } from '../../assets/icons';
-// import CarouselX from '../../components/CarouselX';
+import CarouselX from '../../components/CarouselX';
 
-// const CAROUSEL_IMGS = [
-//   {
-//     title: 'Buy food',
-//     photo: '/home/burger.jpg'
-//   },{
-//     title: 'Instant delivery',
-//     photo: '/home/delivery.jpg'
-//   }, 
-//   {
-//     title: 'Buy medicine',
-//     photo: '/home/drugs.jpg'
-//   },
-//   {
-//     title: 'Buy drinks',
-//     photo: '/home/drink.jpg'
-//   }
-// ];
+const CAROUSEL_IMGS = [
+  {
+    title: 'Buy food',
+    photo: '/home/burger.jpg'
+  },{
+    title: 'Instant delivery',
+    photo: '/home/delivery.jpg'
+  }, 
+  {
+    title: 'Buy medicine',
+    photo: '/home/drugs.jpg'
+  },
+  {
+    title: 'Buy drinks',
+    photo: '/home/drink.jpg'
+  }
+];
 
 const getCategoriesFetchStatusAction = (payload) => ({
   type: CATEGORIES.FETCH_STATUS_CHANGED,
@@ -53,12 +52,12 @@ function CategoryItem({ category, index }) {
 
   const iconColor = useCategoryColor(index);
 
-  const path = category.type === 'product' ? 'products' : 'stores';
+  const path = category.type === 'product' ? '/products' : '';
 
   return (
     <li className="lg:mb-2">
       <Link 
-        to={`/search/${path}?q=${category.name}&category=${category.name}`}
+        to={`/search${path}?q=${category.name}&category=${category.name}`}
         className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-1`}
         >
         <Icon path={categoryIcon} className="block h-6 w-6 mx-auto" />
@@ -79,14 +78,10 @@ export default function Home() {
     },
     stores: {
       stores,
-      storesFetchStatus,
-      storesPage,
-      storesNumberOfPages
+      storesFetchStatus
     },
     products: {
       products,
-      productsPage,
-      productsNumberOfPages,
       productsFetchStatus
     }
   }, homeDispatch } = useAppContext();
@@ -216,9 +211,9 @@ export default function Home() {
   return (
     <section>
 
-      {/* <div className="container-x">
+      <div className="container-x">
         <CarouselX items={CAROUSEL_IMGS} />
-      </div> */}
+      </div>
 
       <div className="lg:container mx-auto">
 
@@ -250,48 +245,36 @@ export default function Home() {
           <div className="flex-grow">
             <div className="container-x py-2">
               <h2 className="font-bold my-2">{ t('_store.Recommended_stores') }</h2>
-              <InfiniteScroll 
-                dataLength={stores.length}
-                next={refetchStores}
-                hasMore={useHasMoreToFetchViaScroll(storesPage, storesNumberOfPages, storesFetchStatus)}
-                >
-                <ul className="list-x">
-                  { 
-                    useListRender(
-                      stores, 
-                      storesFetchStatus,
-                      (item, i)=> <li key={`store-${i}`}> <StoreItem store={item} /> </li>, 
-                      (k)=> <li key={k}> <Loading /> </li>, 
-                      (k)=> <li key={k}> <Reload action={refetchStores} /> </li>,
-                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>, 
-                      (k)=> <li key={k}> <FetchMoreButton action={refetchStores} /> </li>,
-                    )
-                  }
-                </ul>
-              </InfiniteScroll>
+              <ul className="list-x">
+                { 
+                  useListRender(
+                    stores, 
+                    storesFetchStatus,
+                    (item, i)=> <li key={`store-${i}`}> <StoreItem store={item} /> </li>, 
+                    (k)=> <li key={k}> <Loading /> </li>, 
+                    (k)=> <li key={k}> <Reload action={refetchStores} /> </li>,
+                    (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>, 
+                    (k)=> <li key={k}> <FetchMoreButton action={refetchStores} /> </li>,
+                  )
+                }
+              </ul>
             </div>
 
             <div className="container-x py-2">
               <h2 className="font-bold my-2">{ t('_product.Recommended_products') }</h2>
-              <InfiniteScroll 
-                dataLength={products.length}
-                next={refetchProducts}
-                hasMore={useHasMoreToFetchViaScroll(productsPage, productsNumberOfPages, productsFetchStatus)}
-                >
-                <ul className="list-x">
-                  { 
-                    useListRender(
-                      products, 
-                      productsFetchStatus,
-                      (item, i)=> <li key={`store-${i}`}> <ProductItem prod={item} /> </li>, 
-                      (k)=> <li key={k}> <Loading /> </li>, 
-                      (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-                      (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={productIcon} /> </li>, 
-                      (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
-                    )
-                  }
-                </ul>
-              </InfiniteScroll>
+              <ul className="list-x">
+                { 
+                  useListRender(
+                    products, 
+                    productsFetchStatus,
+                    (item, i)=> <li key={`store-${i}`}> <ProductItem prod={item} /> </li>, 
+                    (k)=> <li key={k}> <Loading /> </li>, 
+                    (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
+                    (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={productIcon} /> </li>, 
+                    (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
+                  )
+                }
+              </ul>
             </div>
           </div>
 
