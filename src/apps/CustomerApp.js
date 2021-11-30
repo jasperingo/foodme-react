@@ -21,6 +21,8 @@ import Promotion from '../pages/Customer/Promotion';
 import { useCartCounter } from '../context/AppHooks';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
+import useAuth from '../middlewares/useAuth';
+import useGuest from '../middlewares/useGuest';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -42,6 +44,10 @@ const HEADER_TOP_NAV_LINKS = [
 ];
 
 export default function CustomerApp() {
+
+  const authMiddleware = useAuth('/login');
+
+  const guestMiddleware = useGuest('/account');
   
   return (
     <>
@@ -58,12 +64,12 @@ export default function CustomerApp() {
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
-          <Route path="/register" render={()=> <Register />} />
-          <Route path="/login" render={()=> <Login />} />
+          <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} />
+          <Route path="/login" render={()=> guestMiddleware() || <Login guestMiddleware={guestMiddleware} />} />
           <Route path="/search/history" render={()=> <SearchHistory />} />
           <Route path="/search" render={()=> <Search />} />
-          <Route path="/account" render={()=> <AccountMenu />} />
-          <Route path="/messages" render={()=> <Messages />} />
+          <Route path="/account" render={()=> authMiddleware() || <AccountMenu authMiddleware={authMiddleware} />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/cart" render={()=> <Cart />} />
           <Route path="/categories" render={()=> <Categories />} />
           <Route path="/" render={()=> <Home />} />

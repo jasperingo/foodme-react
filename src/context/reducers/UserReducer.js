@@ -1,16 +1,31 @@
 
 import { FETCH_STATUSES, USER, USER_ADDRESS } from "../AppActions";
-import { initialCustomerState } from "../AppInitialStates";
+import { initialUserState } from "../AppInitialStates";
 
-export default function CustomerReducer (state, action) {
+export default function UserReducer (state, action) {
   
   switch (action.type) { 
 
-    case USER.FETCHED:
+    case USER.AUTHED:
+    case USER.UPDATED:
       return {
-        first_name: 'Betty',
-        last_name: 'Butter',
-        email: 'yam@gmail.com',
+        ...state,
+        user: action.payload,
+        userFetchStatus: FETCH_STATUSES.DONE
+      };
+    
+    case USER.AUTH_FAILED:
+    case USER.UPDATE_FAILED:
+      return {
+        ...state,
+        userErrors: action.payload,
+        userFetchStatus: FETCH_STATUSES.ERROR
+      };
+    
+    case USER.FETCH_STATUS_CHANGED: 
+      return {
+        ...state,
+        userFetchStatus: action.payload
       };
 
     case USER_ADDRESS.LIST_FETCH_STATUS_CHANGED: 
@@ -34,7 +49,7 @@ export default function CustomerReducer (state, action) {
     case USER_ADDRESS.UNFETCHED:
       return {
         ...state,
-        address: initialCustomerState.address
+        address: initialUserState.address
       };
 
     case USER_ADDRESS.FETCH_STATUS_CHANGED: 

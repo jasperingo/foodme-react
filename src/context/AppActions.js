@@ -8,7 +8,14 @@ export const FETCH_STATUSES = {
 };
 
 export const USER = {
+  AUTHED: 'AUTHED',
+  AUTH_FAILED: 'AUTH_FAILED',
+  UPDATED: 'UPDATED',
+  UPDATE_FAILED: 'UPDATE_FAILED',
+
+
   FETCHED: 'USER_FETCHED',
+  FETCH_STATUS_CHANGED: 'USER_FETCH_STATUS_CHANGED',
 };
 
 export const USER_ADDRESS = {
@@ -18,6 +25,17 @@ export const USER_ADDRESS = {
   LIST_FETCHED: 'USER_ADDRESS_LIST_FETCHED',
   LIST_FETCH_STATUS_CHANGED: 'USER_ADDRESS_LIST_FETCH_STATUS_CHANGED',
 };
+
+export const getUserAddressListFetchStatusAction = (payload) => ({
+  type: USER_ADDRESS.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getUserAddressFetchStatusAction = (payload) => ({
+  type: USER_ADDRESS.FETCH_STATUS_CHANGED,
+  payload
+});
+
 
 export const CATEGORIES = {
   UNFETCH: 'CATEGORIES_UNFETCH',

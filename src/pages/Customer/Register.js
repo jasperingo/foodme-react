@@ -1,37 +1,173 @@
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import apiAuthUser from '../../api/user/apiAuthUser';
+import AlertDialog from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
+import FormError from '../../components/FormError';
 import FormField from '../../components/FormField';
+import Loading from '../../components/Loading';
 import SocialLoginList from '../../components/SocialLoginList';
+import { FETCH_STATUSES, USER } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
 
-export default function Register() {
+export default function Register({ guestMiddleware }) {
 
   const { t } = useTranslation();
 
+  const { user: {
+    userErrors,
+    userFetchStatus
+  }, userDispatch } = useAppContext();
+
+  const firstNameInput = useRef(null);
+
+  const lastNameInput = useRef(null);
+
+  const emailInput = useRef(null);
+
+  const passwordInput = useRef(null);
+
+  const [dialog, setDialog] = useState(null);
+
+  const [formError, setFormError] = useState('');
+
+  const [firstNameError, setFirstNameError] = useState('');
+
+  const [lastNameError, setLastNameError] = useState('');
+
+  const [emailError, setEmailError] = useState('');
+
+  const [passwordError, setPasswordError] = useState('');
+
+
   function onRegisterSubmit(e) {
     e.preventDefault();
-  }
 
-  function jj(params) {
+    let error = false;
+
+    setFormError('');
     
+    if (!firstNameInput.current.validity.valid) {
+      error = true;
+      setFirstNameError('_errors.This_field_is_required');
+    } else {
+      setFirstNameError('');
+    }
+
+    if (!lastNameInput.current.validity.valid) {
+      error = true;
+      setLastNameError('_errors.This_field_is_required');
+    } else {
+      setLastNameError('');
+    }
+
+    if (!emailInput.current.validity.valid) {
+      error = true;
+      setEmailError('_errors.This_field_is_required');
+    } else {
+      setEmailError('');
+    }
+
+    if (!passwordInput.current.validity.valid) {
+
+      error = true;
+      
+      if (passwordInput.current.validity.tooShort) 
+        setPasswordError('_errors.Password_must_be_a_minimium_of_5_characters');
+      else 
+        setPasswordError('_errors.This_field_is_required');
+
+    } else {
+      setPasswordError('');
+    }
+    
+    if (!error) {
+
+      userDispatch({
+        type: USER.FETCH_STATUS_CHANGED,
+        payload: FETCH_STATUSES.LOADING
+      });
+      
+      setDialog({
+        body: {
+          layout() {
+            return <Loading />
+          }
+        }
+      });
+    }
+
   }
   
-  return (
+  useEffect(()=> {
+
+    if (userFetchStatus === FETCH_STATUSES.LOADING) {
+      apiAuthUser(userDispatch, 'post/auth-customer.json', {
+        first_name: firstNameInput.current.value,
+        last_name: lastNameInput.current.value,
+        email: emailInput.current.value,
+        password: passwordInput.current.value
+      });
+    } else if (dialog !== null) {
+      setDialog(null);
+    }
+
+    if (userFetchStatus === FETCH_STATUSES.ERROR) {
+      setFormError(userErrors.form);
+      setFirstNameError(userErrors.first_name);
+      setLastNameError(userErrors.first_name);
+      setEmailError(userErrors.email);
+      setPasswordError(userErrors.password);
+    }
+
+  }, [userErrors, userFetchStatus, dialog, userDispatch]);
+
+  
+  return guestMiddleware() || (
     <section>
 
       <div className="container-x">
 
-        <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x">
+        <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x" noValidate>
 
-          <FormField ID="fn-input" label="_user.First_name" onInputChanged={jj} />
+          { formError && <FormError text={formError} /> }
 
-          <FormField ID="ln-input" label="_user.Last_name" onInputChanged={jj} />
+          <FormField 
+            ref={firstNameInput}
+            error={firstNameError}
+            ID="fn-input" 
+            label="_user.First_name" 
+            required={true}
+            />
 
-          <FormField ID="email-input" label="_user.Email" type="email" onInputChanged={jj} />
+          <FormField 
+            ref={lastNameInput}
+            error={lastNameError}
+            ID="ln-input" 
+            label="_user.Last_name" 
+            required={true}
+            />
 
-          <FormField ID="password-input" label="_user.Password" type="password" onInputChanged={jj} />
+          <FormField 
+            ref={emailInput}
+            error={emailError}
+            ID="email-input" 
+            label="_user.Email" 
+            type="email" 
+            required={true}
+            />
+
+          <FormField 
+            ref={passwordInput}
+            error={passwordError}
+            ID="password-input" 
+            label="_user.Password" 
+            type="password"
+            required={true}
+            minLength={6}
+            />
 
           <div className="mb-4 text-sm">
             <span>{ t('By_registering_you_agree_to_our') }</span>
@@ -50,6 +186,8 @@ export default function Register() {
         </form>
         
       </div>
+
+      { dialog && <AlertDialog dialog={dialog} /> }
       
     </section>
   );

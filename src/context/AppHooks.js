@@ -15,6 +15,16 @@ export function useDateFormat(date) {
   return date;
 }
 
+export function useUserAuthed() {
+  const { user: { user } } = useAppContext();
+  return user !== null && user.api_token !== undefined;
+}
+
+export function useAuthHTTPHeader() {
+  const { user: { user } } = useAppContext();
+  return { 'Authorization': `Bearer ${user.api_token}` };
+}
+
 export function useCartCounter() {
   const { cart: {cartItems} } = useAppContext();
   return cartItems.length-1 < 100 ? cartItems.length-1 : '99+';

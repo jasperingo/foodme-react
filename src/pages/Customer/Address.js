@@ -1,19 +1,14 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import apiGetAddress from '../../api/user/apiGetAddress';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import { FETCH_STATUSES, USER_ADDRESS } from '../../context/AppActions';
-import { API_URL, useAppContext } from '../../context/AppContext';
-import { useDataRender } from '../../context/AppHooks';
-
-const getFetchStatusAction = (payload) => ({
-  type: USER_ADDRESS.FETCH_STATUS_CHANGED,
-  payload
-});
-
+import { FETCH_STATUSES, getUserAddressFetchStatusAction, USER_ADDRESS } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
+import { useAuthHTTPHeader, useDataRender } from '../../context/AppHooks';
 
 export default function Address() {
 
@@ -21,53 +16,24 @@ export default function Address() {
 
   const ID  = idParam === 'add' ? 0 : parseInt(idParam);
 
-  const { customer: {
+  const { user: {
     address: {
       address,
       addressFetchStatus
     }
-  }, customerDispatch } = useAppContext();
+  }, userDispatch } = useAppContext();
+
+  const headers = useAuthHTTPHeader();
 
 
-  async function fetchAddress() {
+  useEffect(()=> {
 
-    if (addressFetchStatus !== FETCH_STATUSES.LOADING) 
-      return;
-    
-    try {
-      let response = await fetch(`${API_URL}address.json`);
-
-      if (!response.ok)
-        throw new Error(response.status);
-      
-      let data = await response.json();
-
-      data.data.id = ID;
-
-      customerDispatch({
-        type: USER_ADDRESS.FETCHED,
-        payload: data.data
-      });
-      
-    } catch (err) {
-      customerDispatch(getFetchStatusAction(FETCH_STATUSES.ERROR));
-    }
-  }
-  
-  function refetchAddress() {
-    if (addressFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-
-    customerDispatch(getFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
-
-  if (address !== null && address.id !== ID)
-    customerDispatch({ type: USER_ADDRESS.UNFETCHED });
-  else if (ID !== 0) {
-    fetchAddress();
-  } else {
-    if (addressFetchStatus === FETCH_STATUSES.LOADING)
-      customerDispatch({
+    if (address !== null && address.id !== ID) {
+      userDispatch({ type: USER_ADDRESS.UNFETCHED });
+    } else if (ID !== 0 && addressFetchStatus === FETCH_STATUSES.LOADING) {
+      apiGetAddress(userDispatch, `customer/address.json?=${ID}`, headers);
+    } else if (addressFetchStatus === FETCH_STATUSES.LOADING) {
+      userDispatch({
         type: USER_ADDRESS.FETCHED,
         payload: {
           id: 0,
@@ -77,6 +43,15 @@ export default function Address() {
           state: ''
         }
       });
+    }
+  });
+  
+  
+  function refetchAddress() {
+    if (addressFetchStatus === FETCH_STATUSES.LOADING) 
+      return;
+
+    userDispatch(getUserAddressFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   function onFormSubmit(e) {

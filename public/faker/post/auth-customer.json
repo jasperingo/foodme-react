@@ -1,0 +1,10 @@
+{
+  "data": {
+    "first_name": "John",
+    "last_name": "Green",
+    "email": "johngreen@gmail.com",
+    "phone_number": "",
+    "api_token": "jwt-token",
+    "photo": "user.jpg"
+  }
+}

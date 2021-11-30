@@ -1,7 +1,6 @@
 
 import React, { useReducer, useContext, createContext } from "react";
-import { 
-  initialCustomerState,
+import {
   initialHomeState, 
   initialCategoriesState, 
   initialProductState, 
@@ -12,9 +11,10 @@ import {
   initialSavedCartsState,
   initialTransactionsState,
   initialProductsState,
-  initialPromotionsState
+  initialPromotionsState,
+  initialUserState
 } from './AppInitialStates';
-import CustomerReducer from './reducers/CustomerReducer';
+import UserReducer from './reducers/UserReducer';
 import HomeReducer from './reducers/HomeReducer';
 import CategoriesReducer from './reducers/CategoriesReducer';
 import StoreReducer from './reducers/StoreReducer';
@@ -35,7 +35,7 @@ export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
 
-  const [customerState, customerDispatch] = useReducer(CustomerReducer, initialCustomerState);
+  const [userState, userDispatch] = useReducer(UserReducer, initialUserState);
   
   const [homeState, homeDispatch] = useReducer(HomeReducer, initialHomeState);
 
@@ -63,8 +63,8 @@ export const AppProvider = ({ children }) => {
 
   return (
     <AppContext.Provider value={{
-        customer: customerState,
-        customerDispatch,
+        user: userState,
+        userDispatch,
         home: homeState, 
         homeDispatch,
         categories: categoriesState, 

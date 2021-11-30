@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Redirect, Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
+import { Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
 import AppSwitch from '../../AppSwitch';
 import { cartIcon, favoritedIcon, locationIcon, orderIcon, transactionIcon, userIcon } from '../../assets/icons';
 import AccountMenuList from '../../components/AccountMenuList';
@@ -26,17 +26,13 @@ const MENU_ITEMS = [
   { text: '_transaction.Transactions', icon: transactionIcon, href: '/account/transactions'},
 ];
 
-export default function UserAccount() {
+export default function AccountMenu({ authMiddleware }) {
 
   const match = useRouteMatch();
 
   const location = useLocation();
 
-  const { customer } = useAppContext();
-
-  if (customer === 10) {
-    return (<Redirect to="/login" />)
-  }
+  const { user: { user } } = useAppContext();
 
   return (
     <section>
@@ -44,21 +40,21 @@ export default function UserAccount() {
         
         <div className="lg:flex lg:gap-5">
           <div className={`${location.pathname !== '/account' && 'hidden'} lg:block`}>
-            <AccountMenuTop photo="user.jpg" name="Paul Johnson" />
+            <AccountMenuTop photo={user.photo} name={`${user.first_name} ${user.last_name}`} />
             <AccountMenuList items={MENU_ITEMS} />
             
             <AppSwitch />
           </div>
 
           <Switch>
-            <Route path={`${match.url}/transactions`} render={()=> <Transactions />} />
-            <Route path={`${match.url}/orders`} render={()=> <Orders />} />
-            <Route path={`${match.url}/order/:ID`} render={()=> <Order />} />
-            <Route path={`${match.url}/saved-carts`} render={()=> <SavedCarts />} />
-            <Route path={`${match.url}/favorites`} render={()=> <Favourites />} />
-            <Route path={`${match.url}/address/:ID`} render={()=> <Address />} />
-            <Route path={`${match.url}/addresses`} render={()=> <Addresses />} />
-            <Route path={`${match.url}/profile`} render={()=> <Profile />} />
+            <Route path={`${match.url}/transactions`} render={()=> authMiddleware() || <Transactions />} />
+            <Route path={`${match.url}/orders`} render={()=> authMiddleware() || <Orders />} />
+            <Route path={`${match.url}/order/:ID`} render={()=> authMiddleware() || <Order />} />
+            <Route path={`${match.url}/saved-carts`} render={()=> authMiddleware() || <SavedCarts />} />
+            <Route path={`${match.url}/favorites`} render={()=> authMiddleware() || <Favourites />} />
+            <Route path={`${match.url}/address/:ID`} render={()=> authMiddleware() || <Address />} />
+            <Route path={`${match.url}/addresses`} render={()=> authMiddleware() || <Addresses />} />
+            <Route path={`${match.url}/profile`} render={()=> authMiddleware() || <Profile />} />
             <Route 
               path={match.url} 
               render={()=> <DualPaneIntro icon={userIcon} text="_user.Manage_your_account" />}

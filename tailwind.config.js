@@ -10,8 +10,10 @@ module.exports = {
     }
   },
   variants: {
-    extend: {},
+    extend: {
+      borderColor: ['invalid']
+    },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-invalid-variant-plugin')],
 }
 

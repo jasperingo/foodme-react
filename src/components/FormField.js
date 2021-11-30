@@ -1,14 +1,18 @@
 
 import Icon from '@mdi/react';
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { visibilityIcon } from '../assets/icons';
 
-export default function FormField({ ID, label, type, error, value, onInputChanged }) {
+const FormField = forwardRef(function ({ ID, label, type, error, value = '', required, minLength }, ref) {
 
   const { t } = useTranslation();
 
   const [visible, setVisible] = useState(false);
+
+  const borderColor = !error ? 'border-yellow-500' : 'border-red-500';
+
+  const padding = type === 'password' ? 'p-2 pr-12' : 'p-2';
 
   function toggleVisibility() {
     setVisible(!visible);
@@ -18,12 +22,14 @@ export default function FormField({ ID, label, type, error, value, onInputChange
     <div className="mb-4">
       <label htmlFor={ID} className="sr-only">{ t(label) }</label>
       <input 
+        ref={ ref }
         id={ ID }
-        value={ value }
+        defaultValue={ value }
+        placeholder={ `${t(label)} ${!required ? `(${t('_extra.optional')})` : ''}` }
         type={ type === 'password' && visible ? 'text' : (type || 'text') }
-        placeholder={ t(label) }
-        onInput={ (e)=> onInputChanged(e.target.value) }
-        className={`inline-block w-full border ${error ? 'border-red-500' : 'border-yellow-500'} bg-color focus:outline-none rounded p-2 font-bold ${type === "password" && 'pr-12'}`} 
+        className={ `inline-block w-full border bg-color focus:outline-none rounded font-bold ${borderColor} ${padding}` } 
+        required={ required }
+        minLength={ minLength }
         />
         {type === "password" && <button type="button" className="-ml-8 hover:bg-color-gray-h" onClick={toggleVisibility}>
           <Icon path={visibilityIcon} className="w-5 h-5 inline-block" />
@@ -31,6 +37,9 @@ export default function FormField({ ID, label, type, error, value, onInputChange
         <div className="text-red-500 text-sm">{ t(error) }</div>
     </div>
   );
-}
+});
+
+
+export default FormField;
 
 

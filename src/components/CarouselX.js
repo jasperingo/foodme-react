@@ -9,8 +9,6 @@ export default function CarouselX({ items }) {
 
   const [navUsed, setNavUsed] = useState(false);
 
-  const [started, setStarted] = useState(false);
-
   const [current, setCurrent] = useState(0);
 
   function navNext() {
@@ -20,10 +18,12 @@ export default function CarouselX({ items }) {
 
   function navPrev() {
     setNavUsed(true);
-    setCurrent(c=> c-1 < 0 ? 0 : c-1);
+    setCurrent(c=> c-1 < 0 ? (items.length-1) : c-1);
   }
 
   useEffect(()=> {
+
+    let timeoutHandler = null;
 
     function changeCurrent() {
 
@@ -31,19 +31,30 @@ export default function CarouselX({ items }) {
   
       setNavUsed(false);
   
-      setTimeout(changeCurrent, INTERVAL);
+      timeoutHandler = setTimeout(changeCurrent, INTERVAL);
+    }
+    
+    timeoutHandler = setTimeout(changeCurrent, INTERVAL);
+
+    return function clean() {
+      clearTimeout(timeoutHandler)
     }
 
-    if (!started) {
-      setStarted(true);
-      setTimeout(changeCurrent, INTERVAL);
-    }
-
-  }, [started, navUsed, items.length]);
+  }, [navUsed, items.length]);
 
 
   return (
     <div className="my-4 relative h-52 overflow-x-hidden md:h-96">
+
+      <div className="w-full flex justify-between absolute top-1/2 z-20 text-white">
+        <button onClick={navPrev}>
+          <Icon path={prevIcon} className="w-8 h-8" />
+        </button>
+        <button onClick={navNext}>
+          <Icon path={nextIcon} className="w-8 h-8" />
+        </button>
+      </div>
+
       {
         items.map((item, i)=> (
           <div key={i} className={`w-full transition-all absolute top-0 ${i !== current ? '-right-full' : 'right-0'}`}>
@@ -57,15 +68,6 @@ export default function CarouselX({ items }) {
             <div className="absolute z-10 bottom-0 text-center w-full p-4 text-white">
               <p className="font-bold text-3xl">{ item.title }</p>
               <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-            </div>
-
-            <div className="w-full flex justify-between absolute top-1/2 z-20 text-white">
-              <button onClick={navPrev}>
-                <Icon path={prevIcon} className="w-8 h-8" />
-              </button>
-              <button onClick={navNext}>
-                <Icon path={nextIcon} className="w-8 h-8" />
-              </button>
             </div>
 
           </div>

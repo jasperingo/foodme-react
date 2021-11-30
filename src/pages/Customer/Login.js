@@ -1,79 +1,99 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import apiAuthUser from '../../api/user/apiAuthUser';
+import AlertDialog from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
+import FormError from '../../components/FormError';
 import SocialLoginList from '../../components/SocialLoginList';
-import { USER } from '../../context/AppActions';
+import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
+import Loading from '../../components/Loading';
 
-export default function Login() {
+export default function Login({ guestMiddleware }) {
 
   const { t } = useTranslation();
 
-  const { customer, customerDispatch } = useAppContext();
+  const { user: { 
+    userErrors,
+    userFetchStatus
+  }, userDispatch } = useAppContext();
 
-  const [email, setEmail] = useState('');
+  const emailInput = useRef(null);
 
-  const [emailError, setEmailError] = useState('');
+  const passwordInput = useRef(null);
 
-  const [password, setPassword] = useState('');
+  const [dialog, setDialog] = useState(null);
 
-  const [passwordError, setPasswordError] = useState('');
-
-  function loginIn(e) {
+  const [formError, setFormError] = useState('');
+  
+  function onLoginSubmit(e) {
     e.preventDefault();
 
-    let error = false;
-
-    if (email === '') {
-      error = true;
-      setEmailError('_errors.This_Field_is_required');
-    } else
-      setEmailError('');
-
-    if (password === '') {
-      error = true;
-      setPasswordError('_errors.This_Field_is_required');
-    } else 
-      setPasswordError('');
-
-    if (!error) {
-      customerDispatch({
-        type: USER.FETCHED
+    if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
+      setFormError('_errors.Credentials_are_incorrect');
+    } else {
+      setFormError('');
+      
+      userDispatch({
+        type: USER.FETCH_STATUS_CHANGED,
+        payload: FETCH_STATUSES.LOADING
+      });
+      
+      setDialog({
+        body: {
+          layout() {
+            return <Loading />
+          }
+        }
       });
     }
 
   }
 
-  if (customer === 88) {
-    return (<Redirect to="/account" />)
-  }
+  useEffect(()=> {
+
+    if (userFetchStatus === FETCH_STATUSES.LOADING) {
+      apiAuthUser(userDispatch, 'post/auth-customer.json', {
+        email: emailInput.current.value,
+        password: passwordInput.current.value
+      });
+    } else if (dialog !== null) {
+      setDialog(null);
+    }
+
+    if (userFetchStatus === FETCH_STATUSES.ERROR) {
+      setFormError(userErrors.form);
+    }
+
+  }, [userErrors, userFetchStatus, userDispatch, dialog]);
   
-  return (
+  return guestMiddleware() || (
     <section>
 
       <div className="container-x">
 
-        <form method="POST" action="" onSubmit={loginIn} className="form-1-x">
+        <form method="POST" action="" onSubmit={onLoginSubmit} className="form-1-x" noValidate>
+
+          { formError && <FormError text={formError} /> }
 
           <FormField 
+            ref={emailInput} 
             ID="email-input" 
-            label="Email" 
+            label="_user.Email" 
             type="email"
-            value={email} 
-            onInputChanged={setEmail} 
-            error={emailError}
+            required={true}
             />
 
           <FormField 
+            ref={passwordInput}
             ID="password-input" 
-            label="Password" 
+            label="_user.Password" 
             type="password" 
-            value={password} 
-            onInputChanged={setPassword} 
-            error={passwordError}
+            required={true}
+            minLength={6}
             />
 
           <div className="mb-4 text-sm">
@@ -92,6 +112,9 @@ export default function Login() {
         </form>
 
       </div>
+
+      { dialog && <AlertDialog dialog={dialog} /> }
+
     </section>
   );
 }

@@ -82,6 +82,9 @@ export const TRANSLATIONS_EN = {
     About_us: 'About us',
     Privacy_policy: 'Privacy policy',
     Terms_of_service: 'Terms of service',
+    Unit: 'Unit',
+    Category: 'Category',
+    Sub_category: 'Sub category',
     categories: 'categories',
     Categories: 'Categories',
     Title: 'Title',
@@ -109,6 +112,10 @@ export const TRANSLATIONS_EN = {
     Start: 'Start',
     End: 'End',
     Statistics: 'Statistics',
+    Optional: 'Optional',
+    optional: 'optional',
+    Add_photo: 'Add photo',
+    Edit_photo: 'Edit photo',
 
     Approved: 'Approved',
     Failed: 'Failed',
@@ -255,7 +262,11 @@ export const TRANSLATIONS_EN = {
 
   _errors: {
     Something_went_wrong: 'Something went wrong',
-    This_Field_is_required: 'This field is required'
+    Credentials_are_incorrect: 'Credentials are incorrect',
+    This_field_is_required: 'This field is required',
+    This_field_is_invalid: 'This field is invalid',
+    Email_already_exists: 'Email already exists',
+    Password_must_be_a_minimium_of_5_characters: 'Password must be a minimium of 6 characters'
   },
 
 };
