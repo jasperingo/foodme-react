@@ -1,5 +1,5 @@
 
-import { USER } from "../../context/AppActions";
+import { getFormRequestFailedAction, USER } from "../../context/AppActions";
 import { API_URL } from "../../context/AppContext";
 
 export default async function apiUpdate(userDispatch, url, formData, headers) {
@@ -21,9 +21,6 @@ export default async function apiUpdate(userDispatch, url, formData, headers) {
     });
     
   } catch (err) {
-    userDispatch({
-      type: USER.UPDATE_FAILED,
-      payload: { form: '_errors.Something_went_wrong' }
-    });
+    userDispatch(getFormRequestFailedAction(USER.UPDATE_FAILED));
   }
 }

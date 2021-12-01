@@ -3,11 +3,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import apiAuthUser from '../../api/user/apiAuthUser';
-import AlertDialog from '../../components/AlertDialog';
+import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
-import FormError from '../../components/FormError';
+import FormMessage from '../../components/FormMessage';
 import FormField from '../../components/FormField';
-import Loading from '../../components/Loading';
 import SocialLoginList from '../../components/SocialLoginList';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
@@ -17,7 +16,7 @@ export default function Register({ guestMiddleware }) {
   const { t } = useTranslation();
 
   const { user: {
-    userErrors,
+    userResponse,
     userFetchStatus
   }, userDispatch } = useAppContext();
 
@@ -90,13 +89,7 @@ export default function Register({ guestMiddleware }) {
         payload: FETCH_STATUSES.LOADING
       });
       
-      setDialog({
-        body: {
-          layout() {
-            return <Loading />
-          }
-        }
-      });
+      setDialog(LOADING_DIALOG);
     }
 
   }
@@ -108,21 +101,22 @@ export default function Register({ guestMiddleware }) {
         first_name: firstNameInput.current.value,
         last_name: lastNameInput.current.value,
         email: emailInput.current.value,
-        password: passwordInput.current.value
+        password: passwordInput.current.value,
+        confirm_password: passwordInput.current.value
       });
     } else if (dialog !== null) {
       setDialog(null);
     }
 
     if (userFetchStatus === FETCH_STATUSES.ERROR) {
-      setFormError(userErrors.form);
-      setFirstNameError(userErrors.first_name);
-      setLastNameError(userErrors.first_name);
-      setEmailError(userErrors.email);
-      setPasswordError(userErrors.password);
+      setFormError(userResponse.errors.form);
+      setFirstNameError(userResponse.errors.first_name);
+      setLastNameError(userResponse.errors.first_name);
+      setEmailError(userResponse.errors.email);
+      setPasswordError(userResponse.errors.password);
     }
 
-  }, [userErrors, userFetchStatus, dialog, userDispatch]);
+  }, [userResponse, userFetchStatus, dialog, userDispatch]);
 
   
   return guestMiddleware() || (
@@ -132,7 +126,7 @@ export default function Register({ guestMiddleware }) {
 
         <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x" noValidate>
 
-          { formError && <FormError text={formError} /> }
+          { formError && <FormMessage text={formError} /> }
 
           <FormField 
             ref={firstNameInput}

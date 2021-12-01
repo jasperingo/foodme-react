@@ -11,15 +11,24 @@ export default function UserReducer (state, action) {
       return {
         ...state,
         user: action.payload,
+        userResponse: { success: 'Success' || action.payload.msg },
         userFetchStatus: FETCH_STATUSES.DONE
       };
     
     case USER.AUTH_FAILED:
     case USER.UPDATE_FAILED:
+    case USER.RESET_PASSWORD_FAILED: 
       return {
         ...state,
-        userErrors: action.payload,
+        userResponse: { errors: action.payload },
         userFetchStatus: FETCH_STATUSES.ERROR
+      };
+
+    case USER.RESET_PASSWORD: 
+      return {
+        ...state,
+        userResponse: { success: action.payload.message },
+        userFetchStatus: FETCH_STATUSES.DONE
       };
     
     case USER.FETCH_STATUS_CHANGED: 
@@ -56,6 +65,7 @@ export default function UserReducer (state, action) {
       return {
         ...state,
         address: {
+          ...state.address,
           address: state.address.address,
           addressFetchStatus: action.payload
         }
@@ -65,8 +75,38 @@ export default function UserReducer (state, action) {
       return {
         ...state,
         address: {
+          ...state.address,
           address: action.payload, 
           addressFetchStatus: FETCH_STATUSES.DONE,
+        }
+      };
+
+    case USER_ADDRESS.CREATED:
+      return {
+        ...state,
+        address: {
+          ...state.address,
+          addressResponse: { success: action.payload.msg },
+          addressPostFetchStatus: FETCH_STATUSES.DONE
+        }
+      };
+
+    case USER_ADDRESS.CREATE_FAILED:
+      return {
+        ...state,
+        address: {
+          ...state.address,
+          addressResponse: { errors: action.payload },
+          addressPostFetchStatus: FETCH_STATUSES.ERROR
+        }
+      };
+
+    case USER_ADDRESS.CREATE_STATUS_CHANGED:
+      return {
+        ...state,
+        address: {
+          ...state.address,
+          addressPostFetchStatus: action.payload
         }
       };
     

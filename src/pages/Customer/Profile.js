@@ -1,11 +1,10 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import apiUpdate from '../../api/user/apiUpdate';
-import AlertDialog from '../../components/AlertDialog';
+import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
-import FormError from '../../components/FormError';
+import FormMessage from '../../components/FormMessage';
 import FormField from '../../components/FormField';
-import Loading from '../../components/Loading';
 import PhotoChooser from '../../components/PhotoChooser';
 import UpdatePassword from '../../components/UpdatePassword';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
@@ -16,7 +15,7 @@ export default function Profile() {
 
   const { user: { 
     user,
-    userErrors,
+    userResponse,
     userFetchStatus 
   }, userDispatch } = useAppContext();
 
@@ -31,6 +30,8 @@ export default function Profile() {
   const [dialog, setDialog] = useState(null);
 
   const [formError, setFormError] = useState('');
+
+  const [formSuccess, setFormSuccess] = useState('');
 
   const [firstNameError, setFirstNameError] = useState('');
 
@@ -49,6 +50,8 @@ export default function Profile() {
     let error = false;
 
     setFormError('');
+
+    setFormSuccess('');
     
     if (!firstNameInput.current.validity.valid) {
       error = true;
@@ -85,13 +88,7 @@ export default function Profile() {
         payload: FETCH_STATUSES.LOADING
       });
       
-      setDialog({
-        body: {
-          layout() {
-            return <Loading />
-          }
-        }
-      });
+      setDialog(LOADING_DIALOG);
     }
   }
 
@@ -118,14 +115,16 @@ export default function Profile() {
     }
 
     if (userFetchStatus === FETCH_STATUSES.ERROR) {
-      setFormError(userErrors.form);
-      setFirstNameError(userErrors.first_name);
-      setLastNameError(userErrors.first_name);
-      setEmailError(userErrors.email);
-      setPhoneError(userErrors.phone_number);
+      setFormError(userResponse.errors.form);
+      setFirstNameError(userResponse.errors.first_name);
+      setLastNameError(userResponse.errors.first_name);
+      setEmailError(userResponse.errors.email);
+      setPhoneError(userResponse.errors.phone_number);
+    } else if (userFetchStatus === FETCH_STATUSES.DONE) {
+      setFormSuccess(userResponse.success);
     }
 
-  }, [userErrors, userFetchStatus, dialog, userDispatch, headers]);
+  }, [userResponse, userFetchStatus, dialog, userDispatch, headers]);
 
   return (
     <section className="flex-grow">
@@ -134,7 +133,13 @@ export default function Profile() {
 
         <form method="POST" action="" className="form-1-x" onSubmit={updateProfile}>
 
-          { formError && <FormError text={formError} /> }
+          { 
+            (formError || formSuccess) && 
+            <FormMessage 
+              text={formSuccess ? formSuccess : formError} 
+              type={formSuccess ? FormMessage.TYPE_SUCCESS : FormMessage.TYPE_ERROR} 
+              /> 
+          }
 
           <PhotoChooser src={`/photos/${user.photo}`} text="_extra.Edit_photo" />
 

@@ -1,38 +1,38 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import apiAuthUser from '../../api/user/apiAuthUser';
+import apiForgotPassword from '../../api/user/apiForgotPassword';
 import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
-import SocialLoginList from '../../components/SocialLoginList';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
-export default function Login({ guestMiddleware }) {
-
-  const { t } = useTranslation();
+export default function ResetPassword() {
 
   const { user: { 
     userResponse,
     userFetchStatus
   }, userDispatch } = useAppContext();
 
-  const emailInput = useRef(null);
-
   const passwordInput = useRef(null);
 
   const [dialog, setDialog] = useState(null);
 
   const [formError, setFormError] = useState('');
-  
-  function onLoginSubmit(e) {
+
+  const [formSuccess, setFormSuccess] = useState('');
+
+  function onFormSubmit(e) {
     e.preventDefault();
 
-    if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
-      setFormError('_errors.Credentials_are_incorrect');
+    setFormSuccess('');
+
+    if (!passwordInput.current.validity.valid) {
+      if (passwordInput.current.validity.tooShort) 
+        setFormError('_errors.Password_must_be_a_minimium_of_5_characters');
+      else 
+        setFormError('_errors.This_field_is_required');
     } else {
       setFormError('');
       
@@ -43,14 +43,12 @@ export default function Login({ guestMiddleware }) {
       
       setDialog(LOADING_DIALOG);
     }
-
   }
 
   useEffect(()=> {
 
     if (userFetchStatus === FETCH_STATUSES.LOADING) {
-      apiAuthUser(userDispatch, 'post/auth-customer.json', {
-        email: emailInput.current.value,
+      apiForgotPassword(userDispatch, 'forgot-password.json', {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       });
@@ -60,28 +58,28 @@ export default function Login({ guestMiddleware }) {
 
     if (userFetchStatus === FETCH_STATUSES.ERROR) {
       setFormError(userResponse.errors.form);
+    } else if (userFetchStatus === FETCH_STATUSES.DONE) {
+      setFormSuccess(userResponse.success);
     }
 
   }, [userResponse, userFetchStatus, userDispatch, dialog]);
-  
-  return guestMiddleware() || (
-    <section>
 
+  return (
+    <section>
+      
       <div className="container-x">
 
-        <form method="POST" action="" onSubmit={onLoginSubmit} className="form-1-x" noValidate>
+        <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x" noValidate>
 
-          { formError && <FormMessage text={formError} /> }
+          { 
+            (formError || formSuccess) && 
+            <FormMessage 
+              text={formSuccess ? formSuccess : formError} 
+              type={formSuccess ? FormMessage.TYPE_SUCCESS : FormMessage.TYPE_ERROR} 
+              /> 
+          }
 
-          <FormField 
-            ref={emailInput} 
-            ID="email-input" 
-            label="_user.Email" 
-            type="email"
-            required={true}
-            />
-
-          <FormField 
+          <FormField
             ref={passwordInput}
             ID="password-input" 
             label="_user.Password" 
@@ -90,18 +88,7 @@ export default function Login({ guestMiddleware }) {
             minLength={6}
             />
 
-          <div className="mb-4 text-sm">
-            <Link to="/forgot-password" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
-          </div>
-
-          <FormButton text="_user.Log_in" />
-
-          <div className="mb-4 text-center text-sm">
-            <span>{ t('Dont_have_an_account') } </span>
-            <Link to="/register" className="text-blue-500 font-bold">{ t('Register') }</Link>
-          </div>
-
-          <SocialLoginList href="/login" />
+          <FormButton text="_user.Reset_password" />
 
         </form>
 
@@ -112,5 +99,3 @@ export default function Login({ guestMiddleware }) {
     </section>
   );
 }
-
-

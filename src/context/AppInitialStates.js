@@ -3,15 +3,23 @@ import { FETCH_STATUSES } from './AppActions';
 
 export const initialUserState = {
   user: null,
-  userErrors: null,
-  userFetchStatus: FETCH_STATUSES.DONE,
+  userResponse: {
+    success: null,
+    errors: null
+  },
+  userFetchStatus: FETCH_STATUSES.PENDING,
   addresses: {
     addresses: [null],
     addressesFetchStatus: FETCH_STATUSES.LOADING
   },
   address: {
     address: null,
-    addressFetchStatus: FETCH_STATUSES.LOADING
+    addressResponse: {
+      success: null,
+      errors: null
+    },
+    addressFetchStatus: FETCH_STATUSES.LOADING,
+    addressPostFetchStatus: FETCH_STATUSES.PENDING
   },
 };
 

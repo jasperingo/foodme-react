@@ -23,6 +23,8 @@ import PrivacyPolicy from '../pages/PrivacyPolicy';
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
 import useAuth from '../middlewares/useAuth';
 import useGuest from '../middlewares/useGuest';
+import ForgotPassword from '../pages/Customer/ForgotPassword';
+import ResetPassword from '../pages/Customer/ResetPassword';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -64,6 +66,8 @@ export default function CustomerApp() {
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} />
           <Route path="/login" render={()=> guestMiddleware() || <Login guestMiddleware={guestMiddleware} />} />
           <Route path="/search/history" render={()=> <SearchHistory />} />

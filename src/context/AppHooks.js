@@ -35,10 +35,16 @@ export function useHeader2Title() {
   const path = useLocation().pathname;
 
   if (path === '/login')
-    return 'Login';
+    return '_user.Log_in';
 
   if (path === '/register')
-    return 'Register';
+    return '_user.Register';
+
+  if (path === '/forgot-password')
+    return '_user.Forgot_password';
+
+  if (path === '/reset-password')
+    return '_user.Reset_password';
   
   if (path === '/about-us')
     return '_extra.About_us';

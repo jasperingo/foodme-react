@@ -2,7 +2,7 @@
 import { getFormRequestFailedAction, USER } from "../../context/AppActions";
 import { API_URL } from "../../context/AppContext";
 
-export default async function apiAuthUser(userDispatch, url, formData) {
+export default async function apiForgotPassword(userDispatch, url, formData) {
 
   try {
     let response = await fetch(`${API_URL}${url}`, {
@@ -16,11 +16,11 @@ export default async function apiAuthUser(userDispatch, url, formData) {
     let data = await response.json();
 
     userDispatch({
-      type: USER.AUTHED,
+      type: USER.RESET_PASSWORD,
       payload: data.data
     });
     
   } catch (err) {
-    userDispatch(getFormRequestFailedAction(USER.AUTH_FAILED));
+    userDispatch(getFormRequestFailedAction(USER.RESET_PASSWORD_FAILED));
   }
 }

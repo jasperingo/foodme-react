@@ -1,12 +1,12 @@
 
-import { getFormRequestFailedAction, USER } from "../../context/AppActions";
+import { getFormRequestFailedAction, USER_ADDRESS } from "../../context/AppActions";
 import { API_URL } from "../../context/AppContext";
 
-export default async function apiAuthUser(userDispatch, url, formData) {
+export default async function apiPostAddress(userDispatch, url, method, headers, formData) {
 
   try {
     let response = await fetch(`${API_URL}${url}`, {
-      method: 'GET', //'POST',
+      method: 'GET',
       //body: JSON.stringify(formData)
     });
 
@@ -16,11 +16,11 @@ export default async function apiAuthUser(userDispatch, url, formData) {
     let data = await response.json();
 
     userDispatch({
-      type: USER.AUTHED,
+      type: USER_ADDRESS.CREATED,
       payload: data.data
     });
     
   } catch (err) {
-    userDispatch(getFormRequestFailedAction(USER.AUTH_FAILED));
+    userDispatch(getFormRequestFailedAction(USER_ADDRESS.CREATE_FAILED));
   }
 }

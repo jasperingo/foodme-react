@@ -1,6 +1,16 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import Loading from './Loading';
+
+
+export const LOADING_DIALOG = {
+  body: {
+    layout() {
+      return <Loading />
+    }
+  }
+};
 
 function DialogButton({ btn, negative }) {
 

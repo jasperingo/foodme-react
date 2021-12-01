@@ -1,5 +1,6 @@
 
 export const FETCH_STATUSES = {
+  PENDING: 'PENDING',
   LOADING: 'LOADING',
   ERROR: 'ERROR',
   EMPTY: 'EMPTY',
@@ -7,12 +8,18 @@ export const FETCH_STATUSES = {
   DONE: 'DONE',
 };
 
+export const getFormRequestFailedAction = (type) => ({
+  type,
+  payload: { form: '_errors.Something_went_wrong' }
+});
+
 export const USER = {
   AUTHED: 'AUTHED',
   AUTH_FAILED: 'AUTH_FAILED',
   UPDATED: 'UPDATED',
   UPDATE_FAILED: 'UPDATE_FAILED',
-
+  RESET_PASSWORD: 'RESET_PASSWORD',
+  RESET_PASSWORD_FAILED: 'RESET_PASSWORD_FAILED',
 
   FETCHED: 'USER_FETCHED',
   FETCH_STATUS_CHANGED: 'USER_FETCH_STATUS_CHANGED',
@@ -24,6 +31,10 @@ export const USER_ADDRESS = {
   FETCH_STATUS_CHANGED: 'USER_ADDRESS_FETCH_STATUS_CHANGED',
   LIST_FETCHED: 'USER_ADDRESS_LIST_FETCHED',
   LIST_FETCH_STATUS_CHANGED: 'USER_ADDRESS_LIST_FETCH_STATUS_CHANGED',
+
+  CREATED: 'USER_ADDRESS_CREATED',
+  CREATE_FAILED: 'USER_ADDRESS_CREATE_FAILED',
+  CREATE_STATUS_CHANGED: 'USER_ADDRESS_CREATE_STATUS_CHANGED',
 };
 
 export const getUserAddressListFetchStatusAction = (payload) => ({
@@ -35,7 +46,6 @@ export const getUserAddressFetchStatusAction = (payload) => ({
   type: USER_ADDRESS.FETCH_STATUS_CHANGED,
   payload
 });
-
 
 export const CATEGORIES = {
   UNFETCH: 'CATEGORIES_UNFETCH',
