@@ -4,7 +4,7 @@ import { Switch, Route } from "react-router-dom";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Home from '../pages/Customer/Home';
-import Login from '../pages/Customer/Login';
+import LogIn from '../pages/Customer/LogIn';
 import Cart from '../pages/Customer/Cart';
 import AccountMenu from '../pages/Customer/AccountMenu';
 import AboutUs from '../pages/AboutUs';
@@ -23,8 +23,8 @@ import PrivacyPolicy from '../pages/PrivacyPolicy';
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
 import useAuth from '../middlewares/useAuth';
 import useGuest from '../middlewares/useGuest';
-import ForgotPassword from '../pages/Customer/ForgotPassword';
-import ResetPassword from '../pages/Customer/ResetPassword';
+import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -66,10 +66,10 @@ export default function CustomerApp() {
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
-          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword url="forgot-password.json" />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword url="forgot-password.json" />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} />
-          <Route path="/login" render={()=> guestMiddleware() || <Login guestMiddleware={guestMiddleware} />} />
+          <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
           <Route path="/search/history" render={()=> <SearchHistory />} />
           <Route path="/search" render={()=> <Search />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu authMiddleware={authMiddleware} />} />

@@ -3,10 +3,6 @@ import { FETCH_STATUSES } from './AppActions';
 
 export const initialUserState = {
   user: null,
-  userResponse: {
-    success: null,
-    errors: null
-  },
   userFetchStatus: FETCH_STATUSES.PENDING,
   addresses: {
     addresses: [null],
@@ -14,12 +10,7 @@ export const initialUserState = {
   },
   address: {
     address: null,
-    addressResponse: {
-      success: null,
-      errors: null
-    },
-    addressFetchStatus: FETCH_STATUSES.LOADING,
-    addressPostFetchStatus: FETCH_STATUSES.PENDING
+    addressFetchStatus: FETCH_STATUSES.LOADING
   },
 };
 

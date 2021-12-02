@@ -11,14 +11,11 @@ import SocialLoginList from '../../components/SocialLoginList';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
-export default function Login({ guestMiddleware }) {
+export default function LogIn({ guestMiddleware }) {
 
   const { t } = useTranslation();
 
-  const { user: { 
-    userResponse,
-    userFetchStatus
-  }, userDispatch } = useAppContext();
+  const { userDispatch } = useAppContext();
 
   const emailInput = useRef(null);
 
@@ -27,6 +24,9 @@ export default function Login({ guestMiddleware }) {
   const [dialog, setDialog] = useState(null);
 
   const [formError, setFormError] = useState('');
+
+  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+
   
   function onLoginSubmit(e) {
     e.preventDefault();
@@ -35,34 +35,37 @@ export default function Login({ guestMiddleware }) {
       setFormError('_errors.Credentials_are_incorrect');
     } else {
       setFormError('');
-      
-      userDispatch({
-        type: USER.FETCH_STATUS_CHANGED,
-        payload: FETCH_STATUSES.LOADING
-      });
-      
+      setFetchStatus(FETCH_STATUSES.LOADING);
       setDialog(LOADING_DIALOG);
     }
-
   }
 
   useEffect(()=> {
 
-    if (userFetchStatus === FETCH_STATUSES.LOADING) {
-      apiAuthUser(userDispatch, 'post/auth-customer.json', {
+    if (fetchStatus === FETCH_STATUSES.LOADING) {
+      
+      apiAuthUser('post/auth-customer.json', {
         email: emailInput.current.value,
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
+      }).then(res=> {
+        userDispatch({ type: USER.AUTHED, payload: res });
+      }).catch(err=> {
+
+        setFetchStatus(FETCH_STATUSES.ERROR);
+
+        if (err.errors) {
+          setFormError(err.errors.msg);
+        } else {
+          setFormError('_errors.Something_went_wrong');
+        }
       });
+
     } else if (dialog !== null) {
       setDialog(null);
     }
 
-    if (userFetchStatus === FETCH_STATUSES.ERROR) {
-      setFormError(userResponse.errors.form);
-    }
-
-  }, [userResponse, userFetchStatus, userDispatch, dialog]);
+  }, [fetchStatus, userDispatch, dialog]);
   
   return guestMiddleware() || (
     <section>

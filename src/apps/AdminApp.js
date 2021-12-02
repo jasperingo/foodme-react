@@ -6,7 +6,7 @@ import Header from '../components/Header';
 import AccountMenu from '../pages/Admin/AccountMenu';
 import Customers from '../pages/Admin/Customers';
 import Dashboard from '../pages/Admin/Dashboard';
-import Login from '../pages/Admin/Login';
+import LogIn from '../pages/Admin/LogIn';
 import DeliveryFirms from '../pages/Admin/DeliveryFirms';
 import Messages from '../pages/Admin/Messages';
 import Orders from '../pages/Admin/Orders';
@@ -68,7 +68,7 @@ export default function AdminApp() {
           <Route path="/dashboard" render={()=> <Dashboard />} />
           <Route path="/search/history" render={()=> <SearchHistory />} />
           <Route path="/search" render={()=> <Search />} />
-          <Route path="/" render={()=> <Login />} />
+          <Route path="/" render={()=> <LogIn />} />
         </Switch>
       </main>
     </>

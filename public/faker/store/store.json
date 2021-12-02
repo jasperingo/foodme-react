@@ -1,0 +1,20 @@
+{
+  "data": {
+    "name": "Free store",
+    "category": "Super market",
+    "email": "johngreen@gmail.com",
+    "phone_number": "08037848934",
+    "api_token": "jwt-token",
+    "photo": "store.jpeg",
+    "account": {
+      "bank_name": "Eco bank",
+      "account_number": "0309849494",
+      "account_type": "Current"
+    },
+    "address": {
+      "street": "50 faith street",
+      "city": "Owerri",
+      "state": "Imo state"
+    }
+  }
+}

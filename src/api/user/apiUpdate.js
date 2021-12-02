@@ -1,26 +1,22 @@
 
-import { getFormRequestFailedAction, USER } from "../../context/AppActions";
 import { API_URL } from "../../context/AppContext";
+//import makeHeaders from "../makeHeaders";
 
-export default async function apiUpdate(userDispatch, url, formData, headers) {
+export default async function apiUpdate(url, authHeader, formData) {
+  
+  let response = await fetch(`${API_URL}${url}`, {
+    method: 'GET', //'POST',
+    //headers: makeHeaders(authHeader),
+    //body: JSON.stringify(formData)
+  });
 
-  try {
-    let response = await fetch(`${API_URL}${url}`, {
-      method: 'GET', //'POST',
-      //body: JSON.stringify(formData)
-    });
+  if (!response.status >= 500)
+    throw new Error(response.status);
+  
+  let data = await response.json();
 
-    if (!response.ok)
-      throw new Error(response.status);
-    
-    let data = await response.json();
+  if (!response.status >= 400)
+    throw data;
 
-    userDispatch({
-      type: USER.UPDATED,
-      payload: data.data
-    });
-    
-  } catch (err) {
-    userDispatch(getFormRequestFailedAction(USER.UPDATE_FAILED));
-  }
+  return data.data;
 }

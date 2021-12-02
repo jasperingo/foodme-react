@@ -52,6 +52,7 @@ export const TRANSLATIONS_EN = {
     Customers: 'Customers',
     Recent_customers: 'Recent customers',
     Profile: 'Profile',
+    Update_profile: 'Update profile',
     Addresses: 'Addresses',
     Add_address: 'Add address',
     Edit_address: 'Edit address',
@@ -64,6 +65,7 @@ export const TRANSLATIONS_EN = {
     Or_login_with: 'Or login with',
     Manage_your_account: 'Manage your account',
     _forgot_password_instruction: 'To reset your password, enter your email address',
+    _reset_password_instruction: 'Enter your new password, use a password you will not forget',
     Name: 'Name',
     First_name: 'First name',
     Last_name: 'Last name',
@@ -76,6 +78,7 @@ export const TRANSLATIONS_EN = {
     Street: 'Street',
     State: 'State',
     City: 'City',
+    Save_address: 'Save address',
   },
 
   _extra: {
@@ -85,6 +88,8 @@ export const TRANSLATIONS_EN = {
     About_us: 'About us',
     Privacy_policy: 'Privacy policy',
     Terms_of_service: 'Terms of service',
+    Remove_photo: 'Remove photo',
+    Uploading_photo: 'Uploading photo',
     Unit: 'Unit',
     Category: 'Category',
     Sub_category: 'Sub category',
@@ -227,7 +232,7 @@ export const TRANSLATIONS_EN = {
     Payment_information: 'Payment information',
     Delivery_information: 'Delivery information',
     Recent_orders: 'Recent orders',
-
+    Track_order: 'Track order',
   },
 
   _transaction: {
@@ -235,10 +240,16 @@ export const TRANSLATIONS_EN = {
     Wallet: 'Wallet',
     Withdraw: 'Withdraw',
     Refund: 'Refund',
+    Amount: 'Amount',
     Payment: 'Payment',
     Payment_method: 'Payment method',
     Payment_details: 'Payment details',
     Earnings: 'Earnings',
+    Bank_name: 'Bank name',
+    Account_number: 'Account number',
+    Account_type: 'Account type',
+    Withdrawal_account: 'Withdrawal account',
+    Change_withdrawal_account: 'Change withdrawal account'
   },
 
   _message: {
@@ -269,7 +280,8 @@ export const TRANSLATIONS_EN = {
     This_field_is_required: 'This field is required',
     This_field_is_invalid: 'This field is invalid',
     Email_already_exists: 'Email already exists',
-    Password_must_be_a_minimium_of_5_characters: 'Password must be a minimium of 6 characters'
+    Password_must_be_a_minimium_of_5_characters: 'Password must be a minimium of 6 characters',
+    _Minimium_withdrawal: 'Can\'t withdraw 1000 and below'
   },
 
 };

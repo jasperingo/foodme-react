@@ -2,9 +2,9 @@
 import Icon from '@mdi/react';
 import React, { useState, forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { visibilityIcon } from '../assets/icons';
+import { visibilityIcon, visibilityOffIcon } from '../assets/icons';
 
-const FormField = forwardRef(function ({ ID, label, type, error, value = '', required, minLength }, ref) {
+const FormField = forwardRef(function ({ ID, label, type, error, value = '', required, minLength, maxLength, step, min, max }, ref) {
 
   const { t } = useTranslation();
 
@@ -30,10 +30,16 @@ const FormField = forwardRef(function ({ ID, label, type, error, value = '', req
         className={ `inline-block w-full border bg-color focus:outline-none rounded font-bold ${borderColor} ${padding}` } 
         required={ required }
         minLength={ minLength }
+        maxLength={ maxLength }
+        step={ step }
+        min={ min }
+        max={ max }
         />
-        {type === "password" && <button type="button" className="-ml-8 hover:bg-color-gray-h" onClick={toggleVisibility}>
-          <Icon path={visibilityIcon} className="w-5 h-5 inline-block" />
-        </button>}
+        {
+          type === "password" && <button type="button" className="-ml-8 hover:bg-color-gray-h" onClick={toggleVisibility}>
+            <Icon path={visible ? visibilityOffIcon : visibilityIcon} className="w-5 h-5 inline-block" />
+          </button>
+        }
         <div className="text-red-500 text-sm">{ t(error) }</div>
     </div>
   );

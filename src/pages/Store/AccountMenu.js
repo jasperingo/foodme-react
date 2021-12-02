@@ -13,6 +13,7 @@ import Wallet from './Wallet';
 import Promotion from './Promotion';
 import Promotions from './Promotions';
 import PromotionAdd from './PromotionAdd';
+import { useAppContext } from '../../context/AppContext';
 
 const MENU_ITEMS = [
   { text: '_user.Profile', icon: userIcon, href: '/account/profile'},
@@ -23,11 +24,13 @@ const MENU_ITEMS = [
   
 ];
 
-export default function AccountMenu() {
+export default function AccountMenu({ authMiddleware }) {
 
   const match = useRouteMatch();
 
   const location = useLocation();
+
+  const { user: { user } } = useAppContext();
 
   return (
     <section>
@@ -35,20 +38,20 @@ export default function AccountMenu() {
         
         <div className="lg:flex lg:gap-5">
           <div className={`${location.pathname !== '/account' && 'hidden'} lg:block`}>
-            <AccountMenuTop photo="store.jpeg" name="Rails Foods" />
+            <AccountMenuTop photo={user.photo} name={user.name} />
             <AccountMenuList items={MENU_ITEMS} />
 
             <AppSwitch />
           </div>
 
           <Switch>
-            <Route path={`${match.url}/reviews`} render={()=> <Reviews />} />
-            <Route path={`${match.url}/promotion/add`} render={()=> <PromotionAdd />} />
-            <Route path={`${match.url}/promotion/:ID`} render={()=> <Promotion />} />
-            <Route path={`${match.url}/promotions`} render={()=> <Promotions />} />
-            <Route path={`${match.url}/saved-carts`} render={()=> <SavedCarts />} />
-            <Route path={`${match.url}/wallet`} render={()=> <Wallet />} />
-            <Route path={`${match.url}/profile`} render={()=> <Profile />} />
+            <Route path={`${match.url}/reviews`} render={()=> authMiddleware() || <Reviews />} />
+            <Route path={`${match.url}/promotion/add`} render={()=> authMiddleware() || <PromotionAdd />} />
+            <Route path={`${match.url}/promotion/:ID`} render={()=> authMiddleware() || <Promotion />} />
+            <Route path={`${match.url}/promotions`} render={()=> authMiddleware() || <Promotions />} />
+            <Route path={`${match.url}/saved-carts`} render={()=> authMiddleware() || <SavedCarts />} />
+            <Route path={`${match.url}/wallet`} render={()=> authMiddleware() || <Wallet />} />
+            <Route path={`${match.url}/profile`} render={()=> authMiddleware() || <Profile />} />
             <Route 
               path={match.url} 
               render={()=> <DualPaneIntro icon={storeIcon} text="_user.Manage_your_account" />} 

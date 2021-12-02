@@ -12,6 +12,21 @@ export const LOADING_DIALOG = {
   }
 };
 
+export const LOADING_TEXT_DIALOG = (text)=> {
+  return { 
+    body: {
+      layout() {
+        return (
+          <div>
+            <div className="text-center">{ text }</div>
+            <Loading />
+          </div>
+        );
+      }
+    }
+  }
+};
+
 function DialogButton({ btn, negative }) {
 
   const { t } = useTranslation();

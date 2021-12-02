@@ -71,7 +71,7 @@ export default function LogIn() {
             />
 
           <div className="mb-4 text-sm">
-            <Link to="/login" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
+            <Link to="/forgot-password" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
           </div>
 
           <FormButton text="Login" />

@@ -5,9 +5,13 @@ import { cartIcon, messageIcon, orderIcon, productIcon, searchIcon, storeIcon } 
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { useCartCounter } from '../context/AppHooks';
+import useAuth from '../middlewares/useAuth';
+import useGuest from '../middlewares/useGuest';
 import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
+import ForgotPassword from '../pages/ForgotPassword';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
+import ResetPassword from '../pages/ResetPassword';
 import AccountMenu from '../pages/Store/AccountMenu';
 import Cart from '../pages/Store/Cart';
 import LogIn from '../pages/Store/LogIn';
@@ -47,6 +51,10 @@ const HEADER_TOP_NAV_LINKS = [
 
 export default function StoreApp() {
 
+  const authMiddleware = useAuth('/login');
+
+  const guestMiddleware = useGuest('/account');
+
   return (
     <>
       <Header 
@@ -55,22 +63,24 @@ export default function StoreApp() {
         />
       <main className="pb-52">
         <Switch>
-          <Route path="/search/history" render={()=> <SearchHistory />} />
-          <Route path="/search" render={()=> <Search />} />
-          <Route path="/messages" render={()=> <Messages />} />
-          <Route path="/cart" render={()=> <Cart />} />
-          <Route path="/account" render={()=> <AccountMenu />} />
-          <Route path="/order/:ID" render={()=> <Order />} />
-          <Route path="/orders" render={()=> <Orders />} />
-          <Route path="/product/add" render={()=> <ProductAdd />} />
-          <Route path="/product/:ID" render={()=> <Product />} />
-          <Route path="/products" render={()=> <Products />} />
+          <Route path="/search/history" render={()=> authMiddleware() || <SearchHistory />} />
+          <Route path="/search" render={()=> authMiddleware() || <Search />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
+          <Route path="/account" render={()=> authMiddleware() || <AccountMenu authMiddleware={authMiddleware} />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/product/add" render={()=> authMiddleware() || <ProductAdd />} />
+          <Route path="/product/:ID" render={()=> authMiddleware() || <Product />} />
+          <Route path="/products" render={()=> authMiddleware() || <Products />} />
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
-          <Route path="/register" render={()=> <Register />} />
-          <Route path="/" render={()=> <LogIn />} />
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword url="forgot-password.json" />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword url="forgot-password.json" />} />
+          <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} />
+          <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>
       <Footer />
@@ -79,4 +89,3 @@ export default function StoreApp() {
 }
 
 StoreApp.TYPE = 'store';
-

@@ -20,9 +20,10 @@ export default function OrderView({ order, appType }) {
       <div className="py-4 border-b">
         <div className="container-x">
           
-          <h3 className="text-3xl font-bold mb-1">#{ order.number }</h3>
-
-          <div className={`${statusColor} inline-block py-1 px-2 rounded mb-1`}>{ t(theStatus) }</div>
+          <div className="flex gap-2 flex-wrap">
+            <h3 className="text-3xl font-bold mb-1 flex-grow">#{ order.number }</h3>
+            <div className={`${statusColor} inline-block py-1 px-2 rounded mb-1`}>{ t(theStatus) }</div>
+          </div>
 
           <div className="mb-1">{ t('_order.item__Num', { count: order.number_of_items }) }</div>
 
@@ -38,17 +39,13 @@ export default function OrderView({ order, appType }) {
 
           {
             appType === CustomerApp.TYPE && 
-            <>
-              <div className="my-2">
-                <div className="text-sm font-bold">{ t('_order.Ordered_from') }</div>
-                <Link to={`/store/${order.store.id}/products`} className="flex gap-1 items-center">
-                  <Icon path={storeIcon} className="text-color-primary w-8 h-8" />
-                  <div>{ order.store.name }</div>
-                </Link>
-              </div>
-              
-              <button className="btn-color-primary p-2 rounded my-2">{ t('_order.Reorder') }</button>
-            </>
+            <div className="my-2">
+              <div className="text-sm font-bold">{ t('_order.Ordered_from') }</div>
+              <Link to={`/store/${order.store.id}`} className="flex gap-1 items-center">
+                <Icon path={storeIcon} className="text-color-primary w-8 h-8" />
+                <div>{ order.store.name }</div>
+              </Link>
+            </div>
           }
 
           {
@@ -61,6 +58,11 @@ export default function OrderView({ order, appType }) {
               </Link>
             </div>
           }
+
+          <div className="flex gap-2">
+            { appType === CustomerApp.TYPE && <button className="btn-color-primary p-2 rounded my-2">{ t('_order.Reorder') }</button> }
+            <button className="btn-color-primary p-2 rounded my-2">{ t('_order.Track_order') }</button>
+          </div>
 
         </div>
       </div>

@@ -1,7 +1,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import apiUpdate from '../../api/user/apiUpdate';
-import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
+import AlertDialog, { LOADING_DIALOG, LOADING_TEXT_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
 import FormMessage from '../../components/FormMessage';
 import FormField from '../../components/FormField';
@@ -10,14 +11,13 @@ import UpdatePassword from '../../components/UpdatePassword';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 import { useAuthHTTPHeader } from '../../context/AppHooks';
+import apiUpdatePhoto from '../../api/user/apiUpdatePhoto';
 
 export default function Profile() {
+  
+  const { t } = useTranslation();
 
-  const { user: { 
-    user,
-    userResponse,
-    userFetchStatus 
-  }, userDispatch } = useAppContext();
+  const { user: { user }, userDispatch } = useAppContext();
 
   const firstNameInput = useRef(null);
 
@@ -26,6 +26,8 @@ export default function Profile() {
   const emailInput = useRef(null);
 
   const phoneInput = useRef(null);
+
+  const photoInput = useRef(null);
   
   const [dialog, setDialog] = useState(null);
 
@@ -41,7 +43,11 @@ export default function Profile() {
 
   const [phoneError, setPhoneError] = useState('');
 
-  const headers = useAuthHTTPHeader();
+  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+
+  const [photoFetchStatus, setPhotoFetchStatus] = useState(FETCH_STATUSES.PENDING);
+
+  const authHeader = useAuthHTTPHeader();
 
 
   function updateProfile(e) {
@@ -52,6 +58,10 @@ export default function Profile() {
     setFormError('');
 
     setFormSuccess('');
+
+    setFetchStatus(FETCH_STATUSES.PENDING);
+
+    setPhotoFetchStatus(FETCH_STATUSES.PENDING);
     
     if (!firstNameInput.current.validity.valid) {
       error = true;
@@ -82,56 +92,91 @@ export default function Profile() {
     }
     
     if (!error) {
-
-      userDispatch({
-        type: USER.FETCH_STATUS_CHANGED,
-        payload: FETCH_STATUSES.LOADING
-      });
-      
+      setFetchStatus(FETCH_STATUSES.LOADING);
       setDialog(LOADING_DIALOG);
     }
   }
 
-  function updatePassword(e) {
-    
-  }
-
   useEffect(()=> {
 
-    if (userFetchStatus === FETCH_STATUSES.LOADING) {
-      apiUpdate(
-        userDispatch, 
-        'post/auth-customer.json', 
-        {
-          first_name: firstNameInput.current.value,
-          last_name: lastNameInput.current.value,
-          email: emailInput.current.value,
-          phone_number: phoneInput.current.value
-        }, 
-        headers
-      );
-    } else if (dialog !== null) {
+    if (fetchStatus === FETCH_STATUSES.LOADING) {
+      
+      apiUpdate('post/auth-customer.json', authHeader, {
+        first_name: firstNameInput.current.value,
+        last_name: lastNameInput.current.value,
+        email: emailInput.current.value,
+        phone_number: phoneInput.current.value
+      }).then(res=> {
+        
+        setFormSuccess(res.msg);
+        setFetchStatus(FETCH_STATUSES.DONE);
+        userDispatch({ type: USER.UPDATED, payload: res });
+
+      }).catch(err=> {
+
+        setFetchStatus(FETCH_STATUSES.ERROR);
+
+        if (err.errors) {
+          setFormError(err.errors.form);
+          setFirstNameError(err.errors.first_name);
+          setLastNameError(err.errors.last_name);
+          setEmailError(err.errors.email);
+          setPhoneError(err.errors.phone_number);
+        } else {
+          setFormError('_errors.Something_went_wrong');
+        }
+
+      });
+
+    } else if (
+      fetchStatus === FETCH_STATUSES.DONE && 
+      photoFetchStatus === FETCH_STATUSES.PENDING && 
+      photoInput.current.files[0]
+    ) {
+      
+      setPhotoFetchStatus(FETCH_STATUSES.LOADING);
+      setDialog(LOADING_TEXT_DIALOG(t('_extra.Uploading_photo')));
+
+      let form = new FormData();
+      form.append('photo', photoInput.current.files[0]);
+
+      apiUpdatePhoto('post/auth-customer.json', authHeader, form)
+      .then(res=> {
+        
+        setFormSuccess(res.msg);
+        setPhotoFetchStatus(FETCH_STATUSES.DONE);
+        userDispatch({ type: USER.UPDATED, payload: res });
+
+      })
+      .catch(err=> {
+
+        setFetchStatus(FETCH_STATUSES.ERROR);
+
+        if (err.errors) {
+          setFormError(err.errors.form);
+        } else {
+          setFormSuccess('_errors.Something_went_wrong');
+        }
+
+      });
+
+    } else if (
+      fetchStatus !== FETCH_STATUSES.LOADING && 
+      photoFetchStatus !== FETCH_STATUSES.LOADING && 
+      dialog !== null
+    ) {
       setDialog(null);
     }
 
-    if (userFetchStatus === FETCH_STATUSES.ERROR) {
-      setFormError(userResponse.errors.form);
-      setFirstNameError(userResponse.errors.first_name);
-      setLastNameError(userResponse.errors.first_name);
-      setEmailError(userResponse.errors.email);
-      setPhoneError(userResponse.errors.phone_number);
-    } else if (userFetchStatus === FETCH_STATUSES.DONE) {
-      setFormSuccess(userResponse.success);
-    }
+  }, [t, fetchStatus, photoFetchStatus, dialog, userDispatch, authHeader]);
 
-  }, [userResponse, userFetchStatus, dialog, userDispatch, headers]);
 
   return (
     <section className="flex-grow">
       
       <div className="container-x">
 
-        <form method="POST" action="" className="form-1-x" onSubmit={updateProfile}>
+        <form method="POST" action="" className="form-1-x" onSubmit={updateProfile} noValidate>
 
           { 
             (formError || formSuccess) && 
@@ -141,7 +186,12 @@ export default function Profile() {
               /> 
           }
 
-          <PhotoChooser src={`/photos/${user.photo}`} text="_extra.Edit_photo" />
+          <PhotoChooser 
+            ref={photoInput} 
+            src={`/photos/${user.photo}`} 
+            text="_extra.Edit_photo" 
+            status={photoFetchStatus}
+            />
 
           <FormField 
             ref={firstNameInput}
@@ -181,11 +231,11 @@ export default function Profile() {
             required={false}
             />
 
-          <FormButton text="_extra.Submit" />
+          <FormButton text="_user.Update_profile" />
 
         </form>
 
-        <UpdatePassword onUpdatePassword={updatePassword} />
+        <UpdatePassword url="success.json" />
 
       </div>
 

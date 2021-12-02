@@ -16,6 +16,10 @@ import Register from '../pages/Delivery/Register';
 import SearchHistory from '../pages/Delivery/SearchHistory';
 import Search from '../pages/Delivery/Search';
 import Messages from '../pages/Delivery/Messages';
+import ResetPassword from '../pages/ResetPassword';
+import ForgotPassword from '../pages/ForgotPassword';
+//import useAuth from '../middlewares/useAuth';
+import useGuest from '../middlewares/useGuest';
 
 
 const HEADER_NAV_LINKS = [
@@ -37,6 +41,11 @@ const HEADER_TOP_NAV_LINKS = [
 ];
 
 export default function DeliveryApp() {
+
+  //const authMiddleware = useAuth('/login');
+
+  const guestMiddleware = useGuest('/account');
+
   return (
     <>
       <Header 
@@ -55,6 +64,8 @@ export default function DeliveryApp() {
           <Route path="/messages" render={()=> <Messages />} />
           <Route path="/orders" render={()=> <Orders />} />
           <Route path="/routes" render={()=> <TheRoutes />} />
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword url="forgot-password.json" />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword url="forgot-password.json" />} />
           <Route path="/register" render={()=> <Register />} />
           <Route path="/" render={()=> <LogIn />} />
         </Switch>

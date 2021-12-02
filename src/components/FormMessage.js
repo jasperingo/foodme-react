@@ -9,7 +9,7 @@ export default function FormMessage({ text, type = FormMessage.TYPE_ERROR }) {
   const color = type === FormMessage.TYPE_SUCCESS ? 'bg-green-500' : 'bg-red-500';
 
   return (
-    <div className={`${color} my-4 p-2 text-white rounded text-sm`}>{ t(text) }</div>
+    <div className={`${color} mb-4 p-2 text-white rounded text-sm`}>{ t(text) }</div>
   );
 }
 

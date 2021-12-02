@@ -8,7 +8,7 @@ import FormField from '../../components/FormField';
 import { USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
-export default function Login() {
+export default function LogIn() {
 
   const { customer, customerDispatch } = useAppContext();
 

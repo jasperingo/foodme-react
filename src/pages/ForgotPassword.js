@@ -1,20 +1,17 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
-import FormButton from '../../components/FormButton';
-import FormMessage from '../../components/FormMessage';
-import FormField from '../../components/FormField';
-import FormTopTip from '../../components/FormTopTip';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import apiForgotPassword from '../../api/user/apiForgotPassword';
+import AlertDialog, { LOADING_DIALOG } from '../components/AlertDialog';
+import FormButton from '../components/FormButton';
+import FormMessage from '../components/FormMessage';
+import FormField from '../components/FormField';
+import FormTopTip from '../components/FormTopTip';
+import { FETCH_STATUSES } from '../context/AppActions';
+import { useAppContext } from '../context/AppContext';
+import apiForgotPassword from '../api/user/apiForgotPassword';
 
-export default function ForgotPassword() {
+export default function ForgotPassword({ url }) {
 
-  const { user: { 
-    userResponse,
-    userFetchStatus
-  }, userDispatch } = useAppContext();
+  const { userDispatch } = useAppContext();
 
   const emailInput = useRef(null);
 
@@ -23,44 +20,49 @@ export default function ForgotPassword() {
   const [formError, setFormError] = useState('');
 
   const [formSuccess, setFormSuccess] = useState('');
+  
+  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
   function onFormSubmit(e) {
     e.preventDefault();
 
     setFormSuccess('');
 
+    setFetchStatus(FETCH_STATUSES.PENDING);
+
     if (!emailInput.current.validity.valid) {
+      setFetchStatus(FETCH_STATUSES.ERROR);
       setFormError('_errors.This_field_is_required');
     } else {
       setFormError('');
-      
-      userDispatch({
-        type: USER.FETCH_STATUS_CHANGED,
-        payload: FETCH_STATUSES.LOADING
-      });
-      
+      setFetchStatus(FETCH_STATUSES.LOADING);
       setDialog(LOADING_DIALOG);
     }
   }
 
   useEffect(()=> {
 
-    if (userFetchStatus === FETCH_STATUSES.LOADING) {
-      apiForgotPassword(userDispatch, 'forgot-password.json', {
+    if (fetchStatus === FETCH_STATUSES.LOADING) {
+      
+      apiForgotPassword(url, {
         email: emailInput.current.value,
+      }).then(res=> {
+        setFormSuccess(res.msg);
+        setFetchStatus(FETCH_STATUSES.DONE);
+      }).catch(err=> {
+        setFetchStatus(FETCH_STATUSES.ERROR);
+        if (err.errors) {
+          setFormError(err.errors.msg);
+        } else {
+          setFormError('_errors.Something_went_wrong');
+        }
       });
+
     } else if (dialog !== null) {
       setDialog(null);
     }
 
-    if (userFetchStatus === FETCH_STATUSES.ERROR) {
-      setFormError(userResponse.errors.form);
-    } else if (userFetchStatus === FETCH_STATUSES.DONE) {
-      setFormSuccess(userResponse.success);
-    }
-
-  }, [userResponse, userFetchStatus, userDispatch, dialog]);
-
+  }, [url, fetchStatus, userDispatch, dialog]);
 
   return (
     <section>

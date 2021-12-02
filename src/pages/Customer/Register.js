@@ -15,10 +15,7 @@ export default function Register({ guestMiddleware }) {
 
   const { t } = useTranslation();
 
-  const { user: {
-    userResponse,
-    userFetchStatus
-  }, userDispatch } = useAppContext();
+  const { userDispatch } = useAppContext();
 
   const firstNameInput = useRef(null);
 
@@ -39,6 +36,8 @@ export default function Register({ guestMiddleware }) {
   const [emailError, setEmailError] = useState('');
 
   const [passwordError, setPasswordError] = useState('');
+  
+  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
 
   function onRegisterSubmit(e) {
@@ -83,40 +82,42 @@ export default function Register({ guestMiddleware }) {
     }
     
     if (!error) {
-
-      userDispatch({
-        type: USER.FETCH_STATUS_CHANGED,
-        payload: FETCH_STATUSES.LOADING
-      });
-      
+      setFetchStatus(FETCH_STATUSES.LOADING);
       setDialog(LOADING_DIALOG);
     }
-
   }
   
   useEffect(()=> {
 
-    if (userFetchStatus === FETCH_STATUSES.LOADING) {
-      apiAuthUser(userDispatch, 'post/auth-customer.json', {
+    if (fetchStatus === FETCH_STATUSES.LOADING) {
+      
+      apiAuthUser('post/auth-customer.json', {
         first_name: firstNameInput.current.value,
         last_name: lastNameInput.current.value,
         email: emailInput.current.value,
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
+      }).then(res=> {
+        userDispatch({ type: USER.AUTHED, payload: res });
+      }).catch(err=> {
+
+        setFetchStatus(FETCH_STATUSES.ERROR);
+
+        if (err.errors) {
+          setFirstNameError(err.errors.first_name);
+          setLastNameError(err.errors.last_name);
+          setEmailError(err.errors.email);
+          setPasswordError(err.errors.password);
+        } else {
+          setFormError('_errors.Something_went_wrong');
+        }
       });
+
     } else if (dialog !== null) {
       setDialog(null);
     }
 
-    if (userFetchStatus === FETCH_STATUSES.ERROR) {
-      setFormError(userResponse.errors.form);
-      setFirstNameError(userResponse.errors.first_name);
-      setLastNameError(userResponse.errors.first_name);
-      setEmailError(userResponse.errors.email);
-      setPasswordError(userResponse.errors.password);
-    }
-
-  }, [userResponse, userFetchStatus, dialog, userDispatch]);
+  }, [formError, fetchStatus, dialog, userDispatch]);
 
   
   return guestMiddleware() || (

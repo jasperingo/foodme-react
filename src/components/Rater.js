@@ -1,9 +1,11 @@
 
 import Icon from '@mdi/react';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { reviewEmptyIcon, reviewIcon } from '../assets/icons';
 import AlertDialog from './AlertDialog';
+import AlertDialogDualButton from './AlertDialogDualButton';
+import FormTextArea from './FormTextArea';
 
 function RateButton({ num, rate, onButtonClicked }) {
 
@@ -39,9 +41,11 @@ function RaterDialog({ startRate, onSubmitClicked, onCancelClicked }) {
 
   const { t } = useTranslation();
 
-  const [text, setText] = useState('');
+  const msgInput = useRef(null);
 
   const [rate, setRate] = useState(startRate);
+
+  const [msgError, setMsgError] = useState('');
 
   function onRateClicked(num) {
     setRate(num);
@@ -49,32 +53,29 @@ function RaterDialog({ startRate, onSubmitClicked, onCancelClicked }) {
 
   function onRateSubmit() {
 
-    if (text === '')
-      return;
-    
-    onSubmitClicked(rate, text);
+    if (!msgInput.current.validity.valid) {
+      setMsgError('_errors.This_field_is_required');
+    } else {
+      setMsgError('');
+      onSubmitClicked(rate, msgInput.current.value);
+    }
   }
   
   return (
     <div className="p-4">
       <RateButtons rate={rate} onRateClicked={onRateClicked} />
       <form onSubmit={(e)=> e.preventDefault()} className="mt-5">
-        <textarea 
-          value={text}
-          style={{minHeight: '80px'}}
-          onInput={(e)=> setText(e.target.value)}
-          placeholder={t('_review.Tell_us_your_experience')}
-          className="w-full max-h-52 bg-color text-color border-b border-yellow-500 outline-none"
-          >
-        </textarea>
-        <div className="text-right">
-          <button className="text-yellow-500 font-bold p-2 hover:bg-color-gray-h" onClick={onCancelClicked}>
-            { t('_extra.Cancel') }
-          </button>
-          <button className="text-yellow-500 font-bold p-2 hover:bg-color-gray-h" onClick={onRateSubmit}>
-            { t('_extra.Submit') }
-          </button>
-        </div>
+        <FormTextArea 
+          ref={msgInput}
+          error={msgError}
+          ID="review-message-input"
+          label={t('_review.Tell_us_your_experience')}
+          required={true}
+          />
+        <AlertDialogDualButton 
+          onBad={onCancelClicked}
+          onGood={onRateSubmit}
+          />
       </form>
     </div>
   );

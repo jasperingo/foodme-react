@@ -80,35 +80,6 @@ export default function UserReducer (state, action) {
           addressFetchStatus: FETCH_STATUSES.DONE,
         }
       };
-
-    case USER_ADDRESS.CREATED:
-      return {
-        ...state,
-        address: {
-          ...state.address,
-          addressResponse: { success: action.payload.msg },
-          addressPostFetchStatus: FETCH_STATUSES.DONE
-        }
-      };
-
-    case USER_ADDRESS.CREATE_FAILED:
-      return {
-        ...state,
-        address: {
-          ...state.address,
-          addressResponse: { errors: action.payload },
-          addressPostFetchStatus: FETCH_STATUSES.ERROR
-        }
-      };
-
-    case USER_ADDRESS.CREATE_STATUS_CHANGED:
-      return {
-        ...state,
-        address: {
-          ...state.address,
-          addressPostFetchStatus: action.payload
-        }
-      };
     
     default: 
       return state;

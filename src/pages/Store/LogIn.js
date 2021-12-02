@@ -1,47 +1,72 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import apiAuthUser from '../../api/user/apiAuthUser';
 import { storeIcon } from '../../assets/icons';
+import { LOADING_DIALOG } from '../../components/AlertDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
+import FormMessage from '../../components/FormMessage';
+import { FETCH_STATUSES, USER } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
 
 export default function LogIn() {
 
   const { t } = useTranslation();
 
-  const [email, setEmail] = useState('');
+  const { userDispatch } = useAppContext();
 
-  const [emailError, setEmailError] = useState('');
+  const emailInput = useRef(null);
 
-  const [password, setPassword] = useState('');
+  const passwordInput = useRef(null);
 
-  const [passwordError, setPasswordError] = useState('');
+  const [dialog, setDialog] = useState(null);
 
+  const [formError, setFormError] = useState('');
 
-  function loginIn(e) {
+  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+
+  
+  function onLoginSubmit(e) {
     e.preventDefault();
 
-    let error = false;
+    if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
+      setFormError('_errors.Credentials_are_incorrect');
+    } else {
+      setFormError('');
+      setFetchStatus(FETCH_STATUSES.LOADING);
+      setDialog(LOADING_DIALOG);
+    }
+  }
 
-    if (email === '') {
-      error = true;
-      setEmailError('_errors.This_Field_is_required');
-    } else
-      setEmailError('');
+  useEffect(()=> {
 
-    if (password === '') {
-      error = true;
-      setPasswordError('_errors.This_Field_is_required');
-    } else 
-      setPasswordError('');
+    if (fetchStatus === FETCH_STATUSES.LOADING) {
+      
+      apiAuthUser('store/store.json', {
+        email: emailInput.current.value,
+        password: passwordInput.current.value,
+        confirm_password: passwordInput.current.value
+      }).then(res=> {
+        userDispatch({ type: USER.AUTHED, payload: res });
+      }).catch(err=> {
 
-    if (!error) {
-      console.log('Yes');
+        setFetchStatus(FETCH_STATUSES.ERROR);
+
+        if (err.errors) {
+          setFormError(err.errors.msg);
+        } else {
+          setFormError('_errors.Something_went_wrong');
+        }
+      });
+
+    } else if (dialog !== null) {
+      setDialog(null);
     }
 
-  }
+  }, [fetchStatus, userDispatch, dialog]);
 
   
   return (
@@ -49,32 +74,34 @@ export default function LogIn() {
 
       <div className="container-x">
 
-        <form method="POST" action="" onSubmit={loginIn} className="form-1-x">
+        <form method="POST" action="" onSubmit={onLoginSubmit} className="form-1-x" noValidate>
 
           <AuthFormHeader icon={storeIcon} text="_user.Welcome_back" />
 
+          { formError && <FormMessage text={formError} /> }
+
           <FormField
+            ref={emailInput} 
             ID="email-input" 
             label="Email" 
-            value={email} 
-            onInputChanged={setEmail} 
-            error={emailError}
+            type="email"
+            required={true}
             />
 
           <FormField 
+            ref={passwordInput}
             ID="password-input" 
             label="Password" 
             type="password" 
-            value={password} 
-            onInputChanged={setPassword} 
-            error={passwordError}
+            required={true}
+            minLength={6}
             />
 
           <div className="mb-4 text-sm">
-            <Link to="/login" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
+            <Link to="/forgot-password" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
           </div>
 
-          <FormButton text="Login" />
+          <FormButton text="_user.Log_in" />
 
           <div className="mb-4 text-center text-sm">
             <span>{ t('Dont_have_an_account') } </span>
