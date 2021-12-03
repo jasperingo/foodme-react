@@ -4,7 +4,9 @@ import React from 'react';
 export default function Reviews() {
   return (
     <section>
-      Reviews..
+      <div className="container-x">
+        Reviews..
+      </div>
     </section>
   );
 }
