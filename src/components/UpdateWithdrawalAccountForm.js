@@ -1,10 +1,9 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
-import apiUpdatePassword from '../api/user/apiUpdatePassword';
+import UserApi from '../api/UserApi';
 import { FETCH_STATUSES } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
-import { useAuthHTTPHeader } from '../context/AppHooks';
 import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 import FormButton from './FormButton';
 import FormField from './FormField';
@@ -13,7 +12,7 @@ import FormSelect from './FormSelect';
 
 export default function UpdateWithdrawalAccountForm({ url, account }) {
   
-  const { userDispatch } = useAppContext();
+  const { user: { user }, userDispatch } = useAppContext();
 
   const nameInput = useRef(null);
 
@@ -34,8 +33,6 @@ export default function UpdateWithdrawalAccountForm({ url, account }) {
   const [typeError, setTypeError] = useState('');
   
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
-  const authHeader = useAuthHTTPHeader();
 
   function onFormSubmit(e) {
     e.preventDefault();
@@ -79,7 +76,8 @@ export default function UpdateWithdrawalAccountForm({ url, account }) {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
 
-      apiUpdatePassword(url, authHeader, {
+      const api = new UserApi(user.api_token);
+      api.updatePassword({
         bank_name: nameInput.current.value,
         acount_number: numberInput.current.value,
         acount_type: typeInput.current.value,
@@ -105,7 +103,7 @@ export default function UpdateWithdrawalAccountForm({ url, account }) {
       setDialog(null);
     }
 
-  }, [url, fetchStatus, dialog, authHeader, userDispatch]);
+  }, [url, user, fetchStatus, dialog, userDispatch]);
 
 
   return (

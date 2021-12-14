@@ -2,9 +2,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import apiUpdate from '../../api/user/apiUpdate';
-import apiUpdatePhoto from '../../api/user/apiUpdatePhoto';
-import AlertDialog, { LOADING_DIALOG, LOADING_TEXT_DIALOG } from '../../components/AlertDialog';
+import UserApi from '../../api/UserApi';
+import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
@@ -15,7 +14,6 @@ import UpdatePassword from '../../components/UpdatePassword';
 import UpdateWithdrawalAccountForm from '../../components/UpdateWithdrawalAccountForm';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
-import { useAuthHTTPHeader } from '../../context/AppHooks';
 
 export default function Profile() {
 
@@ -30,8 +28,6 @@ export default function Profile() {
   const emailInput = useRef(null);
 
   const phoneInput = useRef(null);
-
-  const photoInput = useRef(null);
   
   const [dialog, setDialog] = useState(null);
 
@@ -50,8 +46,6 @@ export default function Profile() {
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
   const [photoFetchStatus, setPhotoFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
-  const authHeader = useAuthHTTPHeader();
 
   function updateProfile(e) {
     e.preventDefault();
@@ -100,12 +94,33 @@ export default function Profile() {
     }
   }
 
-  
+  function onPhotoSuccess(res) {
+
+    setPhotoFetchStatus(FETCH_STATUSES.DONE);
+
+    if (res !== null) {
+      setFormSuccess(res.msg);
+      userDispatch({ type: USER.UPDATED, payload: res });
+    }
+  }
+
+  function onPhotoError(err) {
+    
+    setFetchStatus(FETCH_STATUSES.ERROR);
+
+    if (err.errors) {
+      setFormError(err.errors.form);
+    } else {
+      setFormSuccess('_errors.Something_went_wrong');
+    }
+  }
+
   useEffect(()=> {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      apiUpdate('store/store.json', authHeader, {
+      const api = new UserApi(user.api_token);
+      api.updateStore({
         name: nameInput.current.value,
         category: categoryInput.current.value,
         email: emailInput.current.value,
@@ -132,47 +147,13 @@ export default function Profile() {
 
       });
 
-    } else if (
-      fetchStatus === FETCH_STATUSES.DONE && 
-      photoFetchStatus === FETCH_STATUSES.PENDING && 
-      photoInput.current.files[0]
-    ) {
-      
+    } else if(fetchStatus === FETCH_STATUSES.DONE && photoFetchStatus === FETCH_STATUSES.PENDING) {
       setPhotoFetchStatus(FETCH_STATUSES.LOADING);
-      setDialog(LOADING_TEXT_DIALOG(t('_extra.Uploading_photo')));
-
-      let form = new FormData();
-      form.append('photo', photoInput.current.files[0]);
-
-      apiUpdatePhoto('store/store.json', authHeader, form)
-      .then(res=> {
-        
-        setFormSuccess(res.msg);
-        setPhotoFetchStatus(FETCH_STATUSES.DONE);
-        userDispatch({ type: USER.UPDATED, payload: res });
-
-      })
-      .catch(err=> {
-
-        setFetchStatus(FETCH_STATUSES.ERROR);
-
-        if (err.errors) {
-          setFormError(err.errors.form);
-        } else {
-          setFormSuccess('_errors.Something_went_wrong');
-        }
-
-      });
-
-    } else if (
-      fetchStatus !== FETCH_STATUSES.LOADING && 
-      photoFetchStatus !== FETCH_STATUSES.LOADING && 
-      dialog !== null
-    ) {
+    } else if (dialog !== null) {
       setDialog(null);
     }
 
-  }, [t, fetchStatus, photoFetchStatus, dialog, userDispatch, authHeader]);
+  }, [t, user, fetchStatus, photoFetchStatus, dialog, userDispatch]);
 
   return (
     <section className="flex-grow">
@@ -190,10 +171,12 @@ export default function Profile() {
           }
 
           <PhotoChooser 
-            ref={photoInput} 
+            url="post/auth-customer.json"
             src={`/photos/${user.photo}`} 
             text="_extra.Edit_photo" 
             status={photoFetchStatus}
+            onSuccess={onPhotoSuccess}
+            onError={onPhotoError}
             />
 
           <FormField 
@@ -241,11 +224,7 @@ export default function Profile() {
 
         </form>
 
-        <UpdateAddressForm 
-          url="success.json"
-          method="PUT"
-          address={user.address}
-          />
+        <UpdateAddressForm address={user.address} />
 
         <UpdateWithdrawalAccountForm 
           url="success.json"

@@ -86,7 +86,7 @@ export default function SavedCartItem({ cart: { code, name, number_of_items } })
 
   return (
     <li>
-      <div className="mb-4 rounded md:shadow md:p-2">
+      <div className="mb-4 py-2 rounded md:shadow md:px-2">
         <div className="text-lg font-bold mb-1">{ code }</div>
         <div className="text-lg mb-1">{ name }</div>
         <div className="mb-1 text-color-gray">{ t('_order.item__Num', { count: number_of_items }) }</div>

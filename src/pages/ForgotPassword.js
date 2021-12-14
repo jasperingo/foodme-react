@@ -7,7 +7,7 @@ import FormField from '../components/FormField';
 import FormTopTip from '../components/FormTopTip';
 import { FETCH_STATUSES } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
-import apiForgotPassword from '../api/user/apiForgotPassword';
+import UserApi from '../api/UserApi';
 
 export default function ForgotPassword({ url }) {
 
@@ -43,8 +43,8 @@ export default function ForgotPassword({ url }) {
   useEffect(()=> {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-      apiForgotPassword(url, {
+      const api = new UserApi();
+      api.forgotPassword({
         email: emailInput.current.value,
       }).then(res=> {
         setFormSuccess(res.msg);
@@ -71,7 +71,7 @@ export default function ForgotPassword({ url }) {
 
         <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x" noValidate>
 
-        { 
+          { 
             (formError || formSuccess) && 
             <FormMessage 
               text={formSuccess ? formSuccess : formError} 

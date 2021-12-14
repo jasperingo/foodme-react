@@ -3,14 +3,14 @@ import Icon from '@mdi/react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import apiGetAddresses from '../../api/user/apiGetAddresses';
+import AddressApi from '../../api/AddressApi';
 import { deleteIcon, editIcon } from '../../assets/icons';
 import AddButton from '../../components/AddButton';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import { FETCH_STATUSES, getUserAddressListFetchStatusAction } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
-import { useAuthHTTPHeader, useListRender } from '../../context/AppHooks';
+import { useListRender } from '../../context/AppHooks';
 
 
 function AddressItem({ address: { id, title, street, city, state, is_default } }) {
@@ -50,20 +50,21 @@ function AddressItem({ address: { id, title, street, city, state, is_default } }
 export default function Addresses() {
 
   const { user: {
+    user,
     addresses: {
       addresses,
       addressesFetchStatus
     }
   }, userDispatch } = useAppContext();
 
-  const headers = useAuthHTTPHeader();
-
   useEffect(()=> {
 
-    if (addressesFetchStatus === FETCH_STATUSES.LOADING) 
-      apiGetAddresses(userDispatch, 'customer/addresses.json', headers);
+    if (addressesFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new AddressApi(user.api_token);
+      api.getList(userDispatch);
+    }
 
-  }, [headers, addressesFetchStatus, userDispatch]);
+  }, [user, addressesFetchStatus, userDispatch]);
 
   function refetchAddresses() {
     if (addressesFetchStatus === FETCH_STATUSES.LOADING) 

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import apiAuthUser from '../../api/user/apiAuthUser';
+import UserApi from '../../api/UserApi';
 import { storeIcon } from '../../assets/icons';
 import { LOADING_DIALOG } from '../../components/AlertDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
@@ -45,7 +45,8 @@ export default function LogIn() {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      apiAuthUser('store/store.json', {
+      const api = new UserApi();
+      api.authStore({
         email: emailInput.current.value,
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value

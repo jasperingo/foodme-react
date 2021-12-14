@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import apiAuthUser from '../../api/user/apiAuthUser';
+import UserApi from '../../api/UserApi';
 import { storeIcon } from '../../assets/icons';
 import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
@@ -104,7 +104,8 @@ export default function Register({ guestMiddleware }) {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      apiAuthUser('store/store.json', {
+      const api = new UserApi();
+      api.authStore({
         store_name: nameInput.current.value,
         store_cat_id: categoryInput.current.value,
         store_email: emailInput.current.value,

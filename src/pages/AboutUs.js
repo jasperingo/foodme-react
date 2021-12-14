@@ -58,10 +58,23 @@ export default function AboutUs() {
           
           <div className="py-4">
             <h2 className={h2Style}>{ t('Who_we_are') }</h2>
-            <p>
-              Mollit culpa nulla aliqua enim. Ullamco ad id est sunt officia occaecat nisi est nulla.
-              Duis exercitation aute non culpa minim velit ea occaecat enim est commodo laborum adipisicing non. 
-              Commodo proident qui pariatur nisi esse excepteur ea ullamco ea anim quis. 
+            <p className="mb-4">
+              Hello and welcome to Dailyneeds! We are an e-commerce company where you can discover and shop for your daily consumer products such as dishes, groceries, drugs, etc for every taste and occasion. 
+            </p>
+            <p className="mb-4">
+              Starting as a small business in Owerri City, Imo State in Nigeria, we have big dreams. Our ambition is to grow across and beyond the country and to continue providing our customers with products that keep them happy, at prices that keep them happy. With a motivated and creative team, we’re always looking for innovative new ways to get the best to them. We strive daily to be industrious, innovative, build long-lasting and meaningful relations that bring smiles to their faces. 
+            </p>
+            <p className="mb-4">
+              We always keep an eye on the latest trends in food, groceries, drugs, etc and put our customers’ wishes first. We aim to offer our customers a variety of the latest Daily consumer needs such as food, drugs, groceries, etc. If you’re looking for something new, you’re in the right place. 
+            </p>
+            <p className="mb-4">
+              We thoroughly check the quality of goods on our platform, working only with reliable suppliers so that our customers only receive the best quality product that are guaranteed to meet their needs and keep them satisfied. We’ve come a long way, so we know exactly which direction to take when supplying you with high quality yet budget-friendly products. 
+            </p>
+            <p className="mb-4">
+              Most importantly, we believe shopping is a right, not a luxury, so we strive to deliver the best products at the most affordable prices, and ship them to you regardless of where you are located. We believe passionately in great bargains and excellent service, which is why we commit ourselves to giving you the best of both. Our customers are always our top priority. We offer all of this while providing excellent customer service and friendly support. 
+            </p>
+            <p className="mb-4">
+              That is why we have satisfied customers all over the place, and are thrilled to be a part of the Consumer needs industry. We hope you will enjoy shopping your daily needs on our platform as much as we enjoy making them available to you.
             </p>
           </div>
 

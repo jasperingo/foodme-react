@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import apiAuthUser from '../../api/user/apiAuthUser';
+import UserApi from '../../api/UserApi';
 import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
@@ -44,7 +44,8 @@ export default function LogIn({ guestMiddleware }) {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      apiAuthUser('post/auth-customer.json', {
+      const api = new UserApi();
+      api.auth({
         email: emailInput.current.value,
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value

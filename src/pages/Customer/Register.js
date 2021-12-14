@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import apiAuthUser from '../../api/user/apiAuthUser';
 import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
 import FormMessage from '../../components/FormMessage';
@@ -10,6 +9,7 @@ import FormField from '../../components/FormField';
 import SocialLoginList from '../../components/SocialLoginList';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
+import UserApi from '../../api/UserApi';
 
 export default function Register({ guestMiddleware }) {
 
@@ -91,7 +91,8 @@ export default function Register({ guestMiddleware }) {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      apiAuthUser('post/auth-customer.json', {
+      const api = new UserApi();
+      api.auth({
         first_name: firstNameInput.current.value,
         last_name: lastNameInput.current.value,
         email: emailInput.current.value,

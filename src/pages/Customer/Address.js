@@ -1,13 +1,13 @@
 
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import apiGetAddress from '../../api/user/apiGetAddress';
+import AddressApi from '../../api/AddressApi';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import UpdateAddressForm from '../../components/UpdateAddressForm';
 import { FETCH_STATUSES, getUserAddressFetchStatusAction, USER_ADDRESS } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
-import { useAuthHTTPHeader, useDataRender } from '../../context/AppHooks';
+import { useDataRender } from '../../context/AppHooks';
 
 export default function Address() {
 
@@ -16,30 +16,24 @@ export default function Address() {
   const ID  = idParam === 'add' ? 0 : parseInt(idParam);
 
   const { user: {
+    user, 
     address: {
       address,
       addressFetchStatus,
     }
   }, userDispatch } = useAppContext();
 
-  const authHeader = useAuthHTTPHeader();
-
   useEffect(()=> {
-
+    
     if (address !== null && address.id !== ID) {
       userDispatch({ type: USER_ADDRESS.UNFETCHED });
     } else if (ID !== 0 && addressFetchStatus === FETCH_STATUSES.LOADING) {
-      apiGetAddress(userDispatch, `customer/address.json?=${ID}`, authHeader);
+      const api = new AddressApi(user.api_token);
+      api.get(ID, userDispatch);
     } else if (addressFetchStatus === FETCH_STATUSES.LOADING) {
       userDispatch({
         type: USER_ADDRESS.FETCHED,
-        payload: {
-          id: 0,
-          title: '', 
-          street: '', 
-          city: '', 
-          state: ''
-        }
+        payload: { id: 0, title: '', street: '', city: '', state: '' }
       });
     }
   });
@@ -49,7 +43,6 @@ export default function Address() {
       userDispatch(getUserAddressFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
-
   return (
     <section className="flex-grow">
       <div className="container-x">
@@ -58,14 +51,7 @@ export default function Address() {
           useDataRender(
             address, 
             addressFetchStatus,
-            ()=> (
-              <UpdateAddressForm 
-                url={`customer/address.json?id=${ID}`}
-                method={ID === 0 ? 'POST' : 'PUT'}
-                address={address}
-                hasTitle={true}
-                />
-            ),
+            ()=> <UpdateAddressForm address={address} hasTitle={true} />,
             ()=> <Loading />, 
             ()=> <Reload action={refetchAddress} />,
           )

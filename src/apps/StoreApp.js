@@ -51,7 +51,7 @@ const HEADER_TOP_NAV_LINKS = [
 
 export default function StoreApp() {
 
-  const authMiddleware = useAuth('/login');
+  const authMiddleware = useAuth('/');
 
   const guestMiddleware = useGuest('/account');
 

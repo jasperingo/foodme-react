@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import apiForgotPassword from '../api/user/apiForgotPassword';
+import UserApi from '../api/UserApi';
 import AlertDialog, { LOADING_DIALOG } from '../components/AlertDialog';
 import FormButton from '../components/FormButton';
 import FormField from '../components/FormField';
@@ -46,7 +46,8 @@ export default function ResetPassword({ url }) {
   useEffect(()=> {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
-      apiForgotPassword(url, {
+      const api = new UserApi();
+      api.forgotPassword({
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {

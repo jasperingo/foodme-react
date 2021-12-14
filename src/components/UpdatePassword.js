@@ -1,14 +1,16 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import apiUpdatePassword from '../api/user/apiUpdatePassword';
+import UserApi from '../api/UserApi';
 import { FETCH_STATUSES } from '../context/AppActions';
-import { useAuthHTTPHeader } from '../context/AppHooks';
+import { useAppContext } from '../context/AppContext';
 import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 import FormButton from './FormButton';
 import FormField from './FormField';
 import FormMessage from './FormMessage';
 
 export default function UpdatePassword({ url }) {
+
+  const { user: { user } } = useAppContext();
 
   const newPasswordInput = useRef(null);
 
@@ -25,8 +27,6 @@ export default function UpdatePassword({ url }) {
   const [currentPasswordError, setCurrentPasswordError] = useState('');
 
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
-  const authHeader = useAuthHTTPHeader();
 
 
   function updatePassword(e) {
@@ -70,7 +70,8 @@ export default function UpdatePassword({ url }) {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
 
-      apiUpdatePassword(url, authHeader, {
+      const api = new UserApi(user.api_token);
+      api.updatePassword({
         current_password: currentPasswordInput.current.value,
         new_password: newPasswordInput.current.value,
       }).then(res=> {
@@ -94,7 +95,7 @@ export default function UpdatePassword({ url }) {
       setDialog(null);
     }
 
-  }, [url, fetchStatus, dialog, authHeader]);
+  }, [url, user, fetchStatus, dialog]);
 
   useEffect(()=> {
     if (formSuccess) {

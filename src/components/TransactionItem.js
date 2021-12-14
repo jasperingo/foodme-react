@@ -39,7 +39,7 @@ export default function TransactionItem({ transaction: { amount, type, created_a
 
   return (
     <li>
-      <div className="pb-2 rounded md:px-2 md:shadow">
+      <div className="mb-4 py-2 rounded md:px-2 md:shadow">
         <div className="text-2xl font-bold mb-1">{ useMoneyFormat(amount) }</div>
         <div className="text-color-primary mb-1">{ t(theType) }</div>
         <div className="flex flex-wrap">

@@ -1,21 +1,18 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
-import apiPostAddress from '../api/user/apiPostAddress';
+import AddressApi from '../api/AddressApi';
 import { FETCH_STATUSES, USER_ADDRESS } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
-import { useAuthHTTPHeader } from '../context/AppHooks';
 import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 import FormButton from './FormButton';
 import FormField from './FormField';
 import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 
-export default function UpdateAddressForm({ url, method, address, hasTitle }) {
+export default function UpdateAddressForm({ address, hasTitle }) {
 
-  const { userDispatch } = useAppContext();
-
-  const authHeader = useAuthHTTPHeader();
+  const { user: { user }, userDispatch } = useAppContext();
 
   const titleInput = useRef(null);
 
@@ -91,17 +88,19 @@ export default function UpdateAddressForm({ url, method, address, hasTitle }) {
   useEffect(()=> {
 
     if (postFetchStatus === FETCH_STATUSES.LOADING) {
-      apiPostAddress(
-        url, 
-        method, 
-        authHeader,
-        {
-          title: hasTitle ? titleInput.current.value : undefined,
-          street: streetInput.current.value,
-          city: cityInput.current.value,
-          state: stateInput.current.value
-        }
-      ).then(res=> {
+
+      const api = new AddressApi(user.api_token);
+
+      const form = {
+        title: hasTitle ? titleInput.current.value : undefined,
+        street: streetInput.current.value,
+        city: cityInput.current.value,
+        state: stateInput.current.value
+      }
+
+      const request = address.id === 0 ? api.add(form) : api.update(address.id, form);
+
+      request.then(res=> {
         
         setFormSuccess(res.msg);
         setPostFetchStatus(FETCH_STATUSES.DONE);
@@ -126,7 +125,7 @@ export default function UpdateAddressForm({ url, method, address, hasTitle }) {
       setDialog(null);
     }
 
-  }, [url, method, hasTitle, authHeader, postFetchStatus, dialog, userDispatch]);
+  }, [hasTitle, address, user, postFetchStatus, dialog, userDispatch]);
 
   return (
     <form method="POST" action="" className="form-1-x" onSubmit={onFormSubmit} noValidate>
