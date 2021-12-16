@@ -1,156 +1,69 @@
 
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FETCH_STATUSES, CATEGORIES } from '../../context/AppActions';
-import { API_URL, useAppContext } from '../../context/AppContext';
-import { useCategoryColor, useListRender } from '../../context/AppHooks';
+import CategoryApi from '../../api/CategoryApi';
+import CategoryItem from '../../components/CategoryItem';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import { categoryIcon } from '../../assets/icons';
-import Icon from '@mdi/react';
-
-const getStoresFetchStatusAction = (payload) => ({
-  type: CATEGORIES.STORES_FETCH_STATUS_CHANGED,
-  payload
-});
-
-const getProductsFetchStatusAction = (payload) => ({
-  type: CATEGORIES.PRODUCTS_FETCH_STATUS_CHANGED,
-  payload
-});
-
-function CategoryItem({ category, index }) {
-
-  const { t } = useTranslation();
-
-  const iconColor = useCategoryColor(index);
-
-  const path = category.type === 'product' ? 'products' : 'stores';
-
-  return (
-    <li className="">
-      <Link 
-        to={`/search/${path}?q=${category.name}&category=${category.name}`} 
-        className={ `flex gap-2 bg-color py-2 rounded md:shadow md:block md:text-center hover:bg-color-gray-h ${iconColor}` }
-        >
-        <Icon path={categoryIcon} className="w-8 h-8 block mx-auto" />
-        <div className="flex-grow">
-          <div className="font-bold">{ category.name }</div>
-          <div className="text-sm text-color-gray">
-            { category.stores_count && t('_store.store__Count', { count : parseInt(category.stores_count) }) }
-            { category.products_count && t('_product.product__Count', { count : parseInt(category.products_count) }) }
-          </div>
-        </div>
-      </Link>
-    </li>
-  );
-}
+import { FETCH_STATUSES, getCategoriesProductFetchStatusAction, getCategoriesStoreFetchStatusAction } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
+import { useListRender } from '../../context/AppHooks';
 
 export default function Categories() {
 
   const { t } = useTranslation();
 
-  const { categories: {
-    products: {
-      products,
-      productsFetchStatus
-    },
-    stores: {
-      stores,
-      storesFetchStatus
-    }
-  }, categoriesDispatch } = useAppContext();
-
-  const listStyle = "md:grid md:grid-cols-3 md:gap-4";
+  const { 
+    categories: {
+      products: {
+        products,
+        productsFetchStatus
+      },
+      stores: {
+        stores,
+        storesFetchStatus
+      }
+    }, 
+    categoriesDispatch
+  } = useAppContext();
 
   useEffect(()=> {
-    async function fetchStores() {
+    const api = new CategoryApi();
 
-      if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}category-store.json`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-
-        //data.data = [];
-
-        categoriesDispatch({
-          type: CATEGORIES.STORES_FETCHED,
-          payload: data.data
-        });
-        
-      } catch (err) {
-        categoriesDispatch(getStoresFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (storesFetchStatus === FETCH_STATUSES.LOADING) {
+      api.getListByStore(categoriesDispatch);
     }
 
-    fetchStores(); 
-
-  }, [storesFetchStatus, categoriesDispatch]);
+    if (productsFetchStatus === FETCH_STATUSES.LOADING) {
+      api.getListByProduct(categoriesDispatch);
+    }
+  }, [storesFetchStatus, productsFetchStatus, categoriesDispatch]);
 
   function refetchStores() {
-    if (storesFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-
-    categoriesDispatch(getStoresFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
+      categoriesDispatch(getCategoriesStoreFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
-  useEffect(()=> {
-    async function fetchProducts() {
-
-      if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}category-product.json`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-
-        //data.data = [];
-
-        categoriesDispatch({
-          type: CATEGORIES.PRODUCTS_FETCHED,
-          payload: data.data
-        });
-        
-      } catch (err) {
-        categoriesDispatch(getProductsFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
-    }
-
-    fetchProducts(); 
-
-  }, [productsFetchStatus, categoriesDispatch]);
-
   function refetchProducts() {
-    if (productsFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-
-    categoriesDispatch(getProductsFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
+      categoriesDispatch(getCategoriesProductFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (
     <section>
+      
       <div className="container-x">
+
         <div className="py-2">
           <h2 className="font-bold my-2">{ t('_store.Store_categories') }</h2>
-          <ul className={listStyle}>
+          <ul className="category-list">
             { 
               useListRender(
                 stores, 
                 storesFetchStatus,
                 (item, i)=> (
                   <CategoryItem 
-                    key={`categories-${i}`} 
+                    key={`store-category-${i}`} 
                     index={i}
                     category={item} 
                     />
@@ -161,16 +74,17 @@ export default function Categories() {
             }
           </ul>
         </div>
+
         <div className="py-2">
           <h2 className="font-bold my-2">{ t('_product.Product_categories') }</h2>
-          <ul className={listStyle}>
+          <ul className="category-list">
             { 
               useListRender(
                 products, 
                 productsFetchStatus,
                 (item, i)=> (
                   <CategoryItem 
-                    key={`categories-${i}`} 
+                    key={`product-category-${i}`} 
                     index={i}
                     category={item} 
                     />
@@ -181,9 +95,9 @@ export default function Categories() {
             }
           </ul>
         </div>
+
       </div>
+
     </section>
   );
 }
-
-

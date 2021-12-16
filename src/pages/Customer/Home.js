@@ -244,7 +244,7 @@ export default function Home() {
 
           <div className="flex-grow">
             <div className="container-x py-2">
-              <h2 className="font-bold my-2">{ t('_store.Recommended_stores') }</h2>
+              <h2 className="font-bold my-2">{ t('_store.Stores_on_Dailyneeds') }</h2>
               <ul className="list-x">
                 { 
                   useListRender(
@@ -261,7 +261,7 @@ export default function Home() {
             </div>
 
             <div className="container-x py-2">
-              <h2 className="font-bold my-2">{ t('_product.Recommended_products') }</h2>
+              <h2 className="font-bold my-2">{ t('_product.Products_on_Dailyneeds') }</h2>
               <ul className="list-x">
                 { 
                   useListRender(

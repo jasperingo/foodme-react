@@ -1,4 +1,5 @@
 
+import { FETCH_STATUSES, getStoresListFetchStatusAction, STORE } from "../context/AppActions";
 import API from "./API";
 
 export default class StoreApi extends API {
@@ -23,6 +24,26 @@ export default class StoreApi extends API {
     );
   
     return data.data;
+  }
+
+  async getList(dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `store/stores.json`,
+        'GET'
+      );
+      
+      dispatch({
+        type: STORE.LIST_FETCHED,
+        payload: {
+          stores: data.data,
+          storesNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
   }
 
 }

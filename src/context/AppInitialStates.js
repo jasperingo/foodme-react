@@ -52,7 +52,6 @@ export const initialCustomerState = {
   customers: {
     customers: [null],
     customersPage: 0,
-    customersCategory: 0,
     customersNumberOfPages: 0,
     customersFetchStatus: FETCH_STATUSES.LOADING
   },
@@ -62,6 +61,12 @@ export const initialStoreState = {
   store: {
     store: null,
     storeFetchStatus: FETCH_STATUSES.LOADING
+  },
+  stores: {
+    stores: [null],
+    storesPage: 0,
+    storesNumberOfPages: 0,
+    storesFetchStatus: FETCH_STATUSES.LOADING
   },
   products: {
     products: [null],
@@ -100,6 +105,19 @@ export const initialProductState = {
     relatedPage: 0,
     relatedNumberOfPages: 0,
     relatedFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
+
+export const initialDeliveryFirmState = {
+  deliveryFirm: {
+    deliveryFirm: null,
+    deliveryFirmFetchStatus: FETCH_STATUSES.LOADING
+  },
+  deliveryFirms: {
+    deliveryFirms: [null],
+    deliveryFirmsPage: 0,
+    deliveryFirmsNumberOfPages: 0,
+    deliveryFirmsFetchStatus: FETCH_STATUSES.LOADING
   },
 };
 

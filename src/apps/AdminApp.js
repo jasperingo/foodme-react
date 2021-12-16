@@ -30,6 +30,7 @@ import StoreUpdate from '../pages/Admin/StoreUpdate';
 import StoreAdd from '../pages/Admin/StoreAdd';
 import DeliveryFirmUpdate from '../pages/Admin/DeliveryFirmUpdate';
 import DeliveryFirmAdd from '../pages/Admin/DeliveryFirmAdd';
+import Category from '../pages/Admin/Category';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -71,6 +72,7 @@ export default function AdminApp() {
         <Switch>
           <Route path="/category/:ID/update" render={()=> authMiddleware() || <CategoryUpdate />} />
           <Route path="/category/add" render={()=> authMiddleware() || <CategoryAdd />} />
+          <Route path="/category/:ID" render={()=> authMiddleware() || <Category />} />
           <Route path="/categories" render={()=> authMiddleware() || <Categories />} />
           <Route path="/delivery-firm/:ID/update" render={()=> authMiddleware() || <DeliveryFirmUpdate />} />
           <Route path="/delivery-firm/add" render={()=> authMiddleware() || <DeliveryFirmAdd />} />

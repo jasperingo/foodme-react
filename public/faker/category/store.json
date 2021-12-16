@@ -1,0 +1,26 @@
+{
+  "data" : [
+    {
+      "id": 89,
+      "name": "Restaurant",
+      "type": "store",
+      "stores_count": 20,
+      "photo": "store-cat.jpg"
+    },
+    {
+      "id": 90,
+      "name": "Supermarket",
+      "type": "store",
+      "stores_count": 34,
+      "photo": "store-cat.jpg"
+    },
+    {
+      "id": 100,
+      "name": "Pharmacy",
+      "type": "store",
+      "stores_count": 12,
+      "photo": "store-cat.jpg"
+    }
+  ]
+}
+

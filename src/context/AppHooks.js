@@ -70,6 +70,9 @@ export function useHeader2Title() {
   if (path === '/delivery-firms')
     return '_delivery.Delivery_firms';
 
+  if (path === '/categories')
+    return '_extra.Categories';
+
   if (path === '/messages')
     return '_message.Messages';
 
@@ -129,6 +132,9 @@ export function useHeader2Title() {
   
   if (/delivery-firm\/[0-9]+/.test(path))
     return '_delivery.Delivery_firm';
+
+  if (/category\/[0-9]+/.test(path))
+    return '_extra.Category';
 
   if (/account\/order\/[0-9]+/.test(path) || /order\/[0-9]+/.test(path))
     return '_order.Order_details';

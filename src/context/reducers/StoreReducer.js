@@ -10,6 +10,35 @@ export default function StoreReducer (state, action) {
   
   switch (action.type) {  
 
+    case STORE.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        stores: {
+          ...state.stores,
+          storesFetchStatus: action.payload
+        }
+      };
+    
+    case STORE.LIST_FETCHED :
+      let statusx = fetchUpdater(
+        state.stores.storesPage, 
+        action.payload.storesNumberOfPages, 
+        state.stores.stores.length, 
+        action.payload.stores.length
+      );
+      
+      const st = state.stores.stores.filter(i=> i !== null);
+      
+      return {
+        ...state,
+        stores: {
+          storesFetchStatus: statusx,
+          storesPage: state.stores.storesPage+1,
+          storesNumberOfPages: action.payload.storesNumberOfPages,
+          stores: [...st, ...action.payload.stores, null],
+        }
+      };
+
     case STORE.UNFETCH: 
       return initialStoreState;
     

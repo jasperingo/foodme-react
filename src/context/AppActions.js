@@ -56,6 +56,16 @@ export const CATEGORIES = {
   PRODUCTS_FETCH_STATUS_CHANGED: 'PRODUCTS_FETCH_STATUS_CHANGED',
 };
 
+export const getCategoriesStoreFetchStatusAction = (payload) => ({
+  type: CATEGORIES.STORES_FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getCategoriesProductFetchStatusAction = (payload) => ({
+  type: CATEGORIES.PRODUCTS_FETCH_STATUS_CHANGED,
+  payload
+});
+
 export const CUSTOMER = {
   UNFETCH: 'CUSTOMER_UNFETCH',
   FETCHED: 'CUSTOMER_FETCHED',
@@ -84,6 +94,16 @@ export const STORE = {
   LIST_FETCH_STATUS_CHANGED: 'STORES_FETCH_STATUS_CHANGED',
 };
 
+export const getStoreFetchStatusAction = (payload) => ({
+  type: STORE.FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getStoresListFetchStatusAction = (payload) => ({
+  type: STORE.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+
 export const PRODUCT = {
   UNFETCH: 'PRODUCT_UNFETCH',
   FETCHED: 'PRODUCT_FETCHED',
@@ -102,6 +122,20 @@ export const getProductsListFetchStatusAction = (payload) => ({
   type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
   payload
 });
+
+export const DELIVERY_FIRM = {
+  UNFETCH: 'DELIVERY_FIRM_UNFETCH',
+  FETCHED: 'DELIVERY_FIRM_FETCHED',
+  FETCH_STATUS_CHANGED: 'DELIVERY_FIRM_FETCH_STATUS_CHANGED',
+  LIST_FETCHED: 'DELIVERY_FIRMS_FETCHED',
+  LIST_FETCH_STATUS_CHANGED: 'DELIVERY_FIRMS_FETCH_STATUS_CHANGED',
+};
+
+export const getDeliveryFirmsListFetchStatusAction = (payload) => ({
+  type: DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+
 
 export const REVIEW = {
   UNFETCH: 'REVIEW_UNFETCH',

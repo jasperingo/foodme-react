@@ -14,7 +14,8 @@ import {
   initialPromotionsState,
   initialUserState,
   initialReviewsState,
-  initialCustomerState
+  initialCustomerState,
+  initialDeliveryFirmState
 } from './AppInitialStates';
 import UserReducer from './reducers/UserReducer';
 import HomeReducer from './reducers/HomeReducer';
@@ -30,6 +31,7 @@ import SavedCartsReducer from "./reducers/SavedCartsReducer";
 import TransactionsReducer from "./reducers/TransactionsReducer";
 import ReviewsReducer from "./reducers/ReviewsReducer";
 import CustomersReducer from "./reducers/CustomersReducer";
+import DeliveryFirmsReducer from "./reducers/DeliveryFirmsReducer";
 
 export const API_URL = '/faker/';
 
@@ -49,7 +51,7 @@ export const AppProvider = ({ children }) => {
 
   const [productState, productDispatch] = useReducer(ProductReducer, initialProductState);
 
-  const [storeState, storeDispatch] = useReducer(StoreReducer, initialStoreState);
+  const [storesState, storesDispatch] = useReducer(StoreReducer, initialStoreState);
 
   const [searchState, searchDispatch] = useReducer(SearchReducer, initialSearchState);
 
@@ -68,6 +70,8 @@ export const AppProvider = ({ children }) => {
 
   const [productsState, productsDispatch] = useReducer(ProductsReducer, initialProductsState);
 
+  const [deliveryFirmsState, deliveryFirmsDispatch] = useReducer(DeliveryFirmsReducer, initialDeliveryFirmState);
+
 
   return (
     <AppContext.Provider value={{
@@ -81,8 +85,8 @@ export const AppProvider = ({ children }) => {
         categoriesDispatch,
         product: productState, 
         productDispatch,
-        store: storeState, 
-        storeDispatch,
+        stores: storesState, 
+        storesDispatch,
         search: searchState,
         searchDispatch,
         cart: cartState,
@@ -99,7 +103,9 @@ export const AppProvider = ({ children }) => {
         reviewsDispatch,
 
         products: productsState, 
-        productsDispatch
+        productsDispatch,
+        deliveryFirms: deliveryFirmsState, 
+        deliveryFirmsDispatch
       }}
     >
       { children }

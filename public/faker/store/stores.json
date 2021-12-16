@@ -1,0 +1,34 @@
+{
+  "total_pages": 10,
+  "data" : [
+    {
+      "id" : 1,
+      "name" : "Grill D' Punch",
+      "logo" : "r1.webp",
+      "address" : "Ihiagwa, Owerri",
+      "ratings" : 4.7
+    },
+    {
+      "id" : 2,
+      "name" : "Mama Best",
+      "logo" : "r2.jpg",
+      "address" : "28 Douglas Road, Owerri",
+      "ratings" : 3.0
+    },
+    {
+      "id" : 3,
+      "name" : "King chef arena",
+      "logo" : "r3.jpg",
+      "address" : "Nekede, Owerri",
+      "ratings" : 4.2
+    },
+    {
+      "id" : 4,
+      "name" : "Good food",
+      "logo" : "r4.webp",
+      "address" : "42 Obinze, Owerri",
+      "ratings" : 4.9
+    }
+  ]
+}
+
