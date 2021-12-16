@@ -1,23 +1,15 @@
 
 import React from 'react';
-import FormField from '../../components/FormField';
+import PromotionForm from '../../components/PromotionForm';
 
 export default function PromotionAdd() {
 
-  function onFormSubmit(e) {
-    e.preventDefault();
-  }
+  const promotion = {};
 
   return (
     <section className="flex-grow">
       <div className="container-x">
-        
-        <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x">
-
-          <FormField ID="title-input" label="_extra.Title" />
-
-        </form>
-
+        <PromotionForm promotion={promotion} />
       </div>
     </section>
   );

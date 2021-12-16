@@ -1,86 +1,106 @@
 
-import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import AdminApi from '../../api/AdminApi';
 import { adminIcon } from '../../assets/icons';
+import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
-import { USER } from '../../context/AppActions';
+import FormMessage from '../../components/FormMessage';
+import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
-export default function LogIn() {
+export default function LogIn({ guestMiddleware }) {
 
-  const { customer, customerDispatch } = useAppContext();
+  const { userDispatch } = useAppContext();
 
-  const [email, setEmail] = useState('');
+  const emailInput = useRef(null);
 
-  const [emailError, setEmailError] = useState('');
+  const passwordInput = useRef(null);
 
-  const [password, setPassword] = useState('');
+  const [dialog, setDialog] = useState(null);
 
-  const [passwordError, setPasswordError] = useState('');
+  const [formError, setFormError] = useState('');
 
-  function loginIn(e) {
+  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+
+  
+  function onLoginSubmit(e) {
     e.preventDefault();
 
-    let error = false;
+    if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
+      setFormError('_errors.Credentials_are_incorrect');
+    } else {
+      setFormError('');
+      setFetchStatus(FETCH_STATUSES.LOADING);
+      setDialog(LOADING_DIALOG);
+    }
+  }
 
-    if (email === '') {
-      error = true;
-      setEmailError('_errors.This_Field_is_required');
-    } else
-      setEmailError('');
+  useEffect(()=> {
 
-    if (password === '') {
-      error = true;
-      setPasswordError('_errors.This_Field_is_required');
-    } else 
-      setPasswordError('');
+    if (fetchStatus === FETCH_STATUSES.LOADING) {
+      
+      const api = new AdminApi();
+      api.auth({
+        email: emailInput.current.value,
+        password: passwordInput.current.value,
+        confirm_password: passwordInput.current.value
+      }).then(res=> {
+        userDispatch({ type: USER.AUTHED, payload: res });
+      }).catch(err=> {
 
-    if (!error) {
-      customerDispatch({
-        type: USER.FETCHED
+        setFetchStatus(FETCH_STATUSES.ERROR);
+
+        if (err.errors) {
+          setFormError(err.errors.msg);
+        } else {
+          setFormError('_errors.Something_went_wrong');
+        }
       });
+
+    } else if (dialog !== null) {
+      setDialog(null);
     }
 
-  }
-
-  if (customer === 88) {
-    return (<Redirect to="/dashboard" />)
-  }
+  }, [fetchStatus, userDispatch, dialog]);
   
-  return (
+  return guestMiddleware() || (
     <section>
 
       <div className="container-x">
 
-        <form method="POST" action="" onSubmit={loginIn} className="form-1-x">
+        <form method="POST" action="" onSubmit={onLoginSubmit} className="form-1-x" noValidate>
 
-          <AuthFormHeader icon={adminIcon} text="_user.Welcome_back" /> 
+          { formError && <FormMessage text={formError} /> }
+
+          <AuthFormHeader icon={adminIcon} text="_user.Welcome_back" />
 
           <FormField 
+            ref={emailInput} 
             ID="email-input" 
-            label="Email" 
+            label="_user.Email" 
             type="email"
-            value={email} 
-            onInputChanged={setEmail} 
-            error={emailError}
+            required={true}
             />
 
           <FormField 
+            ref={passwordInput}
             ID="password-input" 
-            label="Password" 
+            label="_user.Password" 
             type="password" 
-            value={password} 
-            onInputChanged={setPassword} 
-            error={passwordError}
+            required={true}
+            minLength={6}
             />
 
-          <FormButton text="Login" />
+          <FormButton text="_user.Log_in" />
 
         </form>
 
       </div>
+
+      { dialog && <AlertDialog dialog={dialog} /> }
+
     </section>
   );
 }

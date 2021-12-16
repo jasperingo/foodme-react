@@ -67,12 +67,9 @@ export default function Addresses() {
   }, [user, addressesFetchStatus, userDispatch]);
 
   function refetchAddresses() {
-    if (addressesFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-
-    userDispatch(getUserAddressListFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (addressesFetchStatus !== FETCH_STATUSES.LOADING) 
+      userDispatch(getUserAddressListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
-
 
   return (
     <section className="flex-grow">

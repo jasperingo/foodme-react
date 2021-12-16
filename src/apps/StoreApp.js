@@ -21,6 +21,7 @@ import Orders from '../pages/Store/Orders';
 import Product from '../pages/Store/Product';
 import ProductAdd from '../pages/Store/ProductAdd';
 import Products from '../pages/Store/Products';
+import ProductUpdate from '../pages/Store/ProductUpdate';
 import Register from '../pages/Store/Register';
 import Search from '../pages/Store/Search';
 import SearchHistory from '../pages/Store/SearchHistory';
@@ -70,6 +71,7 @@ export default function StoreApp() {
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu authMiddleware={authMiddleware} />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />
           <Route path="/product/add" render={()=> authMiddleware() || <ProductAdd />} />
           <Route path="/product/:ID" render={()=> authMiddleware() || <Product />} />
           <Route path="/products" render={()=> authMiddleware() || <Products />} />

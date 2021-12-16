@@ -12,7 +12,9 @@ import {
   initialTransactionsState,
   initialProductsState,
   initialPromotionsState,
-  initialUserState
+  initialUserState,
+  initialReviewsState,
+  initialCustomerState
 } from './AppInitialStates';
 import UserReducer from './reducers/UserReducer';
 import HomeReducer from './reducers/HomeReducer';
@@ -26,6 +28,8 @@ import PromotionsReducer from "./reducers/PromotionsReducer";
 import ProductsReducer from "./reducers/ProductsReducer";
 import SavedCartsReducer from "./reducers/SavedCartsReducer";
 import TransactionsReducer from "./reducers/TransactionsReducer";
+import ReviewsReducer from "./reducers/ReviewsReducer";
+import CustomersReducer from "./reducers/CustomersReducer";
 
 export const API_URL = '/faker/';
 
@@ -36,6 +40,8 @@ export const useAppContext = () => useContext(AppContext);
 export const AppProvider = ({ children }) => {
 
   const [userState, userDispatch] = useReducer(UserReducer, initialUserState);
+
+  const [customerState, customersDispatch] = useReducer(CustomersReducer, initialCustomerState);
   
   const [homeState, homeDispatch] = useReducer(HomeReducer, initialHomeState);
 
@@ -57,6 +63,8 @@ export const AppProvider = ({ children }) => {
 
   const [transactionsState, transactionsDispatch] = useReducer(TransactionsReducer, initialTransactionsState);
 
+  const [reviewsState, reviewsDispatch] = useReducer(ReviewsReducer, initialReviewsState);
+
 
   const [productsState, productsDispatch] = useReducer(ProductsReducer, initialProductsState);
 
@@ -67,6 +75,8 @@ export const AppProvider = ({ children }) => {
         userDispatch,
         home: homeState, 
         homeDispatch,
+        customers: customerState, 
+        customersDispatch,
         categories: categoriesState, 
         categoriesDispatch,
         product: productState, 
@@ -85,6 +95,8 @@ export const AppProvider = ({ children }) => {
         transactionsDispatch,
         promotions: promotionsState,
         promotionsDispatch,
+        reviews: reviewsState,
+        reviewsDispatch,
 
         products: productsState, 
         productsDispatch

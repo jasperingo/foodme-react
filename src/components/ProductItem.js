@@ -42,7 +42,7 @@ export default function ProductItem({ prod, href = `/store/${prod.store.id}/prod
         <div className="mb-1">{ prod.title }</div>
         <div className="text-color-gray text-sm mb-1">{ prod.sub_title }</div>
         <div className="font-bold mb-1">{ useMoneyFormat(prod.price) }</div>
-        <div className="flex flex-wrap gap-1 items-center bg-color-primary text-sm text-white py-1 px-2 rounded-full w-max">
+        <div className="flex gap-1 items-start text-color-primary text-sm py-1 w-full">
           <Icon path={storeIcon} className="w-5 h-5" />
           <div>{ prod.store.name }</div>
         </div>

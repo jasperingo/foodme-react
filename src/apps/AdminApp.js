@@ -19,6 +19,17 @@ import Customer from '../pages/Admin/Customer';
 import Order from '../pages/Admin/Order';
 import Search from '../pages/Admin/Search';
 import SearchHistory from '../pages/Admin/SearchHistory';
+import useGuest from '../middlewares/useGuest';
+import useAuth from '../middlewares/useAuth';
+import Categories from '../pages/Admin/Categories';
+import CategoryAdd from '../pages/Admin/CategoryAdd';
+import CustomerAdd from '../pages/Admin/CustomerAdd';
+import CustomerUpdate from '../pages/Admin/CustomerUpdate';
+import CategoryUpdate from '../pages/Admin/CategoryUpdate';
+import StoreUpdate from '../pages/Admin/StoreUpdate';
+import StoreAdd from '../pages/Admin/StoreAdd';
+import DeliveryFirmUpdate from '../pages/Admin/DeliveryFirmUpdate';
+import DeliveryFirmAdd from '../pages/Admin/DeliveryFirmAdd';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -44,6 +55,11 @@ const HEADER_TOP_NAV_LINKS = [
 ];
 
 export default function AdminApp() {
+
+  const authMiddleware = useAuth('/');
+
+  const guestMiddleware = useGuest('/account');
+
   return (
     <>
       <Header 
@@ -53,22 +69,31 @@ export default function AdminApp() {
         />
       <main className="pb-52">
         <Switch>
-          <Route path="/delivery-firm/:ID" render={()=> <DeliveryFirm />} />
-          <Route path="/delivery-firms" render={()=> <DeliveryFirms />} />
-          <Route path="/store/:ID" render={()=> <Store />} />
-          <Route path="/stores" render={()=> <Stores />} />
-          <Route path="/customer/:ID" render={()=> <Customer />} />
-          <Route path="/customers" render={()=> <Customers />} />
-          <Route path="/profile" render={()=> <Profile />} />
-          <Route path="/account" render={()=> <AccountMenu />} />
-          <Route path="/messages" render={()=> <Messages />} />
-          <Route path="/order/:ID" render={()=> <Order />} />
-          <Route path="/orders" render={()=> <Orders />} />
-          <Route path="/transactions" render={()=> <Transactions />} />
-          <Route path="/dashboard" render={()=> <Dashboard />} />
-          <Route path="/search/history" render={()=> <SearchHistory />} />
-          <Route path="/search" render={()=> <Search />} />
-          <Route path="/" render={()=> <LogIn />} />
+          <Route path="/category/:ID/update" render={()=> authMiddleware() || <CategoryUpdate />} />
+          <Route path="/category/add" render={()=> authMiddleware() || <CategoryAdd />} />
+          <Route path="/categories" render={()=> authMiddleware() || <Categories />} />
+          <Route path="/delivery-firm/:ID/update" render={()=> authMiddleware() || <DeliveryFirmUpdate />} />
+          <Route path="/delivery-firm/add" render={()=> authMiddleware() || <DeliveryFirmAdd />} />
+          <Route path="/delivery-firm/:ID" render={()=> authMiddleware() || <DeliveryFirm />} />
+          <Route path="/delivery-firms" render={()=> authMiddleware() || <DeliveryFirms />} />
+          <Route path="/store/:ID/update" render={()=> authMiddleware() || <StoreUpdate />} />
+          <Route path="/store/add" render={()=> authMiddleware() || <StoreAdd />} />
+          <Route path="/store/:ID" render={()=> authMiddleware() || <Store />} />
+          <Route path="/stores" render={()=> authMiddleware() || <Stores />} />
+          <Route path="/customer/:ID/update" render={()=> authMiddleware() || <CustomerUpdate />} />
+          <Route path="/customer/add" render={()=> authMiddleware() || <CustomerAdd />} />
+          <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer />} />
+          <Route path="/customers" render={()=> authMiddleware() || <Customers />} />
+          <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
+          <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
+          <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} />
+          <Route path="/search/history" render={()=> authMiddleware() || <SearchHistory />} />
+          <Route path="/search" render={()=> authMiddleware() || <Search />} />
+          <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>
     </>

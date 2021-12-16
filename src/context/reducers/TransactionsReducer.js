@@ -26,7 +26,7 @@ export default function TransactionsReducer (state, action) {
         action.payload.transactions.length
       );
       
-      state.transactions.transactions.pop();
+      const trans = state.transactions.transactions.filter(i=> i !== null);
 
       return {
         ...state,
@@ -34,10 +34,9 @@ export default function TransactionsReducer (state, action) {
           transactionsFetchStatus: status,
           transactionsPage: state.transactions.transactionsPage+1,
           transactionsNumberOfPages: action.payload.transactionsNumberOfPages,
-          transactions: [...state.transactions.transactions, ...action.payload.transactions, null],
+          transactions: [...trans, ...action.payload.transactions, null],
         }
       };
-    
     
     default:
       return state;

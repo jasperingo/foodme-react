@@ -46,7 +46,6 @@ export default function Address() {
   return (
     <section className="flex-grow">
       <div className="container-x">
-
         { 
           useDataRender(
             address, 
@@ -57,7 +56,6 @@ export default function Address() {
           )
         }
       </div>
-
     </section>
   );
 }

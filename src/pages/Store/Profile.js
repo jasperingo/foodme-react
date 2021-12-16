@@ -1,8 +1,7 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import UserApi from '../../api/UserApi';
+import StoreApi from '../../api/StoreApi';
 import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
@@ -16,8 +15,6 @@ import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
 export default function Profile() {
-
-  const { t } = useTranslation();
 
   const { user: { user }, userDispatch } = useAppContext();
 
@@ -46,6 +43,8 @@ export default function Profile() {
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
   const [photoFetchStatus, setPhotoFetchStatus] = useState(FETCH_STATUSES.PENDING);
+
+  const api = useMemo(() => new StoreApi(user.api_token), [user]);
 
   function updateProfile(e) {
     e.preventDefault();
@@ -119,8 +118,7 @@ export default function Profile() {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      const api = new UserApi(user.api_token);
-      api.updateStore({
+      api.update({
         name: nameInput.current.value,
         category: categoryInput.current.value,
         email: emailInput.current.value,
@@ -153,7 +151,7 @@ export default function Profile() {
       setDialog(null);
     }
 
-  }, [t, user, fetchStatus, photoFetchStatus, dialog, userDispatch]);
+  }, [user, api, fetchStatus, photoFetchStatus, dialog, userDispatch]);
 
   return (
     <section className="flex-grow">
@@ -171,7 +169,7 @@ export default function Profile() {
           }
 
           <PhotoChooser 
-            url="post/auth-customer.json"
+            api={api}
             src={`/photos/${user.photo}`} 
             text="_extra.Edit_photo" 
             status={photoFetchStatus}

@@ -118,6 +118,9 @@ export function useHeader2Title() {
   if (path === '/account/orders')
     return '_order.Orders';
 
+  if (/product\/[0-9]+\/update/.test(path))
+    return '_product.Edit_product';
+
   if (/messages\/[0-9]+/.test(path))
     return '_message.Messages';
   

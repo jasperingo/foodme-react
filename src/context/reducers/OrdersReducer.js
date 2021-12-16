@@ -39,7 +39,7 @@ export default function OrdersReducer (state, action) {
         action.payload.orders.length
       );
       
-      state.orders.orders.pop();
+      const ord = state.orders.orders.filter(i=> i !== null);
       
       return {
         ...state,
@@ -48,7 +48,7 @@ export default function OrdersReducer (state, action) {
           ordersPage: state.orders.ordersPage+1,
           ordersStatus: state.orders.ordersStatus,
           ordersNumberOfPages: action.payload.ordersNumberOfPages,
-          orders: [...state.orders.orders, ...action.payload.orders, null],
+          orders: [...ord, ...action.payload.orders, null],
         }
       };
 

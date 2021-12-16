@@ -1,70 +1,40 @@
 
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import PromotionApi from '../../api/PromotionApi';
 import StoreApp from '../../apps/StoreApp';
 import Loading from '../../components/Loading';
 import PromotionView from '../../components/PromotionView';
 import Reload from '../../components/Reload';
-import { FETCH_STATUSES, PROMOTION } from '../../context/AppActions';
-import { API_URL, useAppContext } from '../../context/AppContext';
+import { FETCH_STATUSES, getPromotionFetchStatusAction, PROMOTION } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
 import { useDataRender } from '../../context/AppHooks';
-
-const getFetchStatusAction = (payload) => ({
-  type: PROMOTION.FETCH_STATUS_CHANGED,
-  payload
-});
 
 export default function Promotion() {
 
   const ID = parseInt(useParams().ID);
 
-  const {promotions: {
+  const { promotions: {
     promotion: {
       promotion,
       promotionFetchStatus
     }
-  }, promotionsDispatch} = useAppContext();
+  }, promotionsDispatch } = useAppContext();
 
   useEffect(()=>{
 
-    async function fetchPromotion() {
-
-      if (promotionFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}promotion.json?id=${ID}`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-
-        data.data.id = ID;
-        
-        promotionsDispatch({
-          type: PROMOTION.FETCHED,
-          payload: data.data
-        });
-
-      } catch (err) {
-        promotionsDispatch(getFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
-    }
-
     if (promotion !== null && ID !== promotion.id) {
       promotionsDispatch({ type: PROMOTION.UNFETCH });
+    } else if (promotionFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new PromotionApi();
+      api.get(ID, promotionsDispatch);
     }
-
-    fetchPromotion();
 
   }, [ID, promotion, promotionFetchStatus, promotionsDispatch]);
 
   function refetchPromotion() {
-    if (promotionFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-    
-    promotionsDispatch(getFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (promotionFetchStatus !== FETCH_STATUSES.LOADING) 
+      promotionsDispatch(getPromotionFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (

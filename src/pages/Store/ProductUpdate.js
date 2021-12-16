@@ -1,29 +1,31 @@
 
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router';
+import { useParams } from 'react-router-dom';
 import ProductApi from '../../api/ProductApi';
-import StoreApp from '../../apps/StoreApp';
-import ProductProfile from '../../components/ProductProfile';
-import ProductReviewsList from '../../components/ProductReviewsList';
+import Loading from '../../components/Loading';
+import ProductForm from '../../components/ProductForm';
+import Reload from '../../components/Reload';
 import { FETCH_STATUSES, getProductFetchStatusAction, PRODUCT } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
+import { useDataRender } from '../../context/AppHooks';
 
-export default function Product() {
+export default function ProductUpdate() {
 
   const pID = parseInt(useParams().ID);
 
-  const { user: { user }, product: {
+  const { user: { user }, 
     product: {
-      product,
-      productFetchStatus
-    }
+      product: {
+        product,
+        productFetchStatus
+      }
   }, productDispatch } = useAppContext();
-  
+
   useEffect(()=> {
 
     if (product !== null && pID !== product.id) {
       productDispatch({ type: PRODUCT.UNFETCH });
-    } else if (productFetchStatus === FETCH_STATUSES.LOADING) {
+    } else if (product !== null && productFetchStatus === FETCH_STATUSES.LOADING) {
       const api = new ProductApi(user.api_token);
       api.get(pID, productDispatch);
     }
@@ -36,20 +38,17 @@ export default function Product() {
   }
 
   return (
-    <section>
-      <div className="md:container mx-auto">
-        
-        <ProductProfile 
-          product={product} 
-          productFetchStatus={productFetchStatus} 
-          appType={StoreApp.TYPE} 
-          refetchProduct={refetchProduct} 
-          />
-
-        <div className="md:flex md:items-start md:gap-4 md:py-4">
-          { product && <ProductReviewsList pID={pID} /> }
-        </div>
-
+    <section className="flex-grow">
+      <div className="container-x">
+        { 
+          useDataRender(
+            product, 
+            productFetchStatus,
+            ()=> <ProductForm type={ProductForm.UPDATE} product={product} />,
+            ()=> <Loading />, 
+            ()=> <Reload action={refetchProduct} />,
+          )
+        }
       </div>
     </section>
   );

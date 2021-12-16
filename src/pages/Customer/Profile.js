@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import FormButton from '../../components/FormButton';
 import FormMessage from '../../components/FormMessage';
@@ -40,7 +40,8 @@ export default function Profile() {
 
   const [photoFetchStatus, setPhotoFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
-
+  const api = useMemo(() => new UserApi(user.api_token), [user]);
+  
   function updateProfile(e) {
     e.preventDefault();
 
@@ -113,7 +114,6 @@ export default function Profile() {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      const api = new UserApi(user.api_token);
       api.update({
         first_name: firstNameInput.current.value,
         last_name: lastNameInput.current.value,
@@ -147,7 +147,7 @@ export default function Profile() {
       setDialog(null);
     }
 
-  }, [user, fetchStatus, photoFetchStatus, dialog, userDispatch]);
+  }, [user, api, fetchStatus, photoFetchStatus, dialog, userDispatch]);
 
 
   return (
@@ -166,7 +166,7 @@ export default function Profile() {
           }
 
           <PhotoChooser 
-            url="post/auth-customer.json"
+            api={api}
             src={`/photos/${user.photo}`} 
             text="_extra.Edit_photo" 
             status={photoFetchStatus}

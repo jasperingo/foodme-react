@@ -3,17 +3,15 @@ import Icon from '@mdi/react';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import UserApi from '../api/UserApi';
+import API from '../api/API';
 import { minusIcon } from '../assets/icons';
 import { FETCH_STATUSES } from '../context/AppActions';
-import { useAppContext } from '../context/AppContext';
 import AlertDialog, { LOADING_TEXT_DIALOG } from './AlertDialog';
 
-export default function PhotoChooser({ src, text = '_extra.Add_photo', status, required, onSuccess, onError }) {
+
+export default function PhotoChooser({ api, src, text = '_extra.Add_photo', status, required, onSuccess, onError }) {
 
   const { t } = useTranslation();
-
-  const { user: { user } } = useAppContext();
 
   const photoInput = useRef(null);
 
@@ -42,6 +40,7 @@ export default function PhotoChooser({ src, text = '_extra.Add_photo', status, r
   }
 
   useEffect(()=> {
+    
     if (status === FETCH_STATUSES.LOADING && photoInput.current.files[0]) {
 
       setDialog(LOADING_TEXT_DIALOG(t('_extra.Uploading_photo')));
@@ -49,7 +48,8 @@ export default function PhotoChooser({ src, text = '_extra.Add_photo', status, r
       const form = new FormData();
       form.append('photo', photoInput.current.files[0]);
 
-      const api = new UserApi(user.api_token, 'multipart/form-data');
+      api.contentType = API.FILE_CONTENT_TYPE;
+
       api.updatePhoto(form)
         .then(res=> {
           reset();
@@ -62,7 +62,7 @@ export default function PhotoChooser({ src, text = '_extra.Add_photo', status, r
     } else if (dialog !== null) {
       setDialog(null);
     }
-  }, [t, reset, status, dialog, user, onSuccess, onError]);
+  }, [t, reset, status, api, dialog, onSuccess, onError]);
 
   return (
     <div className="text-center mb-4">
@@ -83,4 +83,5 @@ export default function PhotoChooser({ src, text = '_extra.Add_photo', status, r
     </div>
   );
 }
+
 

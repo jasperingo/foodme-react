@@ -72,7 +72,6 @@ export default function Transactions() {
   return (
     <section className="flex-grow">
       <div className="container-x">
-
         <InfiniteScroll
           dataLength={transactions.length}
           next={refetchTransactions}

@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import UserApi from '../../api/UserApi';
+import StoreApi from '../../api/StoreApi';
 import { storeIcon } from '../../assets/icons';
 import { LOADING_DIALOG } from '../../components/AlertDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
@@ -12,7 +12,7 @@ import FormMessage from '../../components/FormMessage';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
-export default function LogIn() {
+export default function LogIn({ guestMiddleware }) {
 
   const { t } = useTranslation();
 
@@ -45,8 +45,8 @@ export default function LogIn() {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      const api = new UserApi();
-      api.authStore({
+      const api = new StoreApi();
+      api.auth({
         email: emailInput.current.value,
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
@@ -70,7 +70,7 @@ export default function LogIn() {
   }, [fetchStatus, userDispatch, dialog]);
 
   
-  return (
+  return guestMiddleware() || (
     <section>
 
       <div className="container-x">

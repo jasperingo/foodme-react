@@ -3,12 +3,14 @@ export default class API {
 
   static API_URL = '/faker/';
 
+  static FILE_CONTENT_TYPE = 'multipart/form-data';
+
   constructor( apiToken = null, contentType = 'application/json' ) {
     this.apiToken = apiToken;
     this.contentType = contentType;
   }
  
-  apiFetch(url, method, body = undefined) {
+  async apiFetch(url, method, body = undefined) {
 
     const headers = { 
       'Content-Type': this.contentType,
@@ -19,11 +21,21 @@ export default class API {
       headers['Authorization'] = `Bearer ${this.apiToken}`;
     }
 
-    return fetch(`${API.API_URL}${url}`, {
+    const response = await fetch(`${API.API_URL}${url}`, {
       method,
       //headers,
       //body
     });
+
+    if (response.status === 401 || response.status >= 500)
+      throw new Error(response.status);
+
+    let data = await response.json();
+
+    if (response.status >= 400)
+      throw data;
+    
+    return data;
   }
 
 }

@@ -13,6 +13,7 @@ import Wallet from './Wallet';
 import Promotion from './Promotion';
 import Promotions from './Promotions';
 import PromotionAdd from './PromotionAdd';
+import PromotionUpdate from './PromotionUpdate';
 import { useAppContext } from '../../context/AppContext';
 
 const MENU_ITEMS = [
@@ -46,6 +47,7 @@ export default function AccountMenu({ authMiddleware }) {
 
           <Switch>
             <Route path={`${match.url}/reviews`} render={()=> authMiddleware() || <Reviews />} />
+            <Route path={`${match.url}/promotion/:ID/update`} render={()=> authMiddleware() || <PromotionUpdate />} />
             <Route path={`${match.url}/promotion/add`} render={()=> authMiddleware() || <PromotionAdd />} />
             <Route path={`${match.url}/promotion/:ID`} render={()=> authMiddleware() || <Promotion />} />
             <Route path={`${match.url}/promotions`} render={()=> authMiddleware() || <Promotions />} />

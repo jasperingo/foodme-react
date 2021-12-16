@@ -44,6 +44,20 @@ export const initialCategoriesState = {
   }
 };
 
+export const initialCustomerState = {
+  customer: {
+    customer: null,
+    customerFetchStatus: FETCH_STATUSES.LOADING
+  },
+  customers: {
+    customers: [null],
+    customersPage: 0,
+    customersCategory: 0,
+    customersNumberOfPages: 0,
+    customersFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
+
 export const initialStoreState = {
   store: {
     store: null,
@@ -167,6 +181,14 @@ export const initialTransactionsState = {
   },
 };
 
+export const initialReviewsState = {
+  reviews: {
+    reviews: [null],
+    reviewsPage: 0,
+    reviewsNumberOfPages: 0,
+    reviewsFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
 
 export const initialProductsState = {
   products: {

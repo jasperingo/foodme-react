@@ -4,11 +4,12 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link } from 'react-router-dom';
+import PromotionApi from '../api/PromotionApi';
 import CustomerApp from '../apps/CustomerApp';
 import StoreApp from '../apps/StoreApp';
 import { dateIcon, editIcon, productIcon, storeIcon } from '../assets/icons';
-import { FETCH_STATUSES, PRODUCT } from '../context/AppActions';
-import { API_URL, useAppContext } from '../context/AppContext';
+import { FETCH_STATUSES, getProductsListFetchStatusAction } from '../context/AppActions';
+import { useAppContext } from '../context/AppContext';
 import { useDateFormat, useHasMoreToFetchViaScroll, useListRender, useMoneyFormat } from '../context/AppHooks';
 import EmptyList from './EmptyList';
 import FetchMoreButton from './FetchMoreButton';
@@ -16,10 +17,6 @@ import Loading from './Loading';
 import ProductItem from './ProductItem';
 import Reload from './Reload';
 
-const getProductsFetchStatusAction = (payload) => ({
-  type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
-  payload
-});
 
 export default function PromotionView({ appType, promotion: { id, store, title, number_of_products, deduction_amount, deduction_percent, start_time, stop_time } }) {
 
@@ -39,42 +36,17 @@ export default function PromotionView({ appType, promotion: { id, store, title, 
 
   useEffect(()=> {
     
-    async function fetchProducts() {
-      if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}store-products.json?id=${id}`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-        
-        promotionsDispatch({
-          type: PRODUCT.LIST_FETCHED,
-          payload: {
-            products: data.data,
-            productsNumberOfPages: data.total_pages
-          }
-        });
-
-      } catch (err) {
-        promotionsDispatch(getProductsFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (productsFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new PromotionApi();
+      api.getProducts(id, promotionsDispatch);
     }
-
-    fetchProducts();
-
+    
   }, [id, productsFetchStatus, promotionsDispatch]);
 
   function refetchProducts() {
-    if (productsFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-    
-    promotionsDispatch(getProductsFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
+      promotionsDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
-
 
   return (
     <>
@@ -111,7 +83,7 @@ export default function PromotionView({ appType, promotion: { id, store, title, 
           {
             appType === StoreApp.TYPE && 
             <div className="my-2">
-              <Link to={`/account/promotion/add`} className="inline-flex gap-1 items-center py-1 px-2 rounded btn-color-primary">
+              <Link to={`/account/promotion/${id}/update`} className="inline-flex gap-1 items-center py-1 px-2 rounded btn-color-primary">
                 <Icon path={editIcon} className="w-5 h-5" />
                 <div>{ t('_extra.Edit') }</div>
               </Link>
