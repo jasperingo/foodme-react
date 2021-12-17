@@ -70,7 +70,6 @@ export default function Order() {
 
   return (
     <section className="flex-grow">
-
       { 
         useDataRender(
           order, 
@@ -80,7 +79,6 @@ export default function Order() {
           (k)=> <div className="container-x"> <Reload action={refetchOrder} /> </div>,
         )
       }
-
     </section>
   );
 }

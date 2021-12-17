@@ -2,8 +2,13 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { API_URL, useAppContext } from '../../context/AppContext';
-import { CATEGORIES, FETCH_STATUSES, PRODUCT, STORE } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
+import { 
+  FETCH_STATUSES, 
+  getCategoriesListFetchStatusAction, 
+  getProductsListFetchStatusAction, 
+  getStoresListFetchStatusAction 
+} from '../../context/AppActions';
 import { useCategoryColor, useListRender } from '../../context/AppHooks';
 import Reload from '../../components/Reload';
 import Loading from '../../components/Loading';
@@ -12,8 +17,11 @@ import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import ProductItem from '../../components/ProductItem';
 import Icon from '@mdi/react';
-import { categoryIcon, productIcon, storeIcon } from '../../assets/icons';
+import { productIcon, storeIcon } from '../../assets/icons';
 import CarouselX from '../../components/CarouselX';
+import CategoryApi from '../../api/CategoryApi';
+import StoreApi from '../../api/StoreApi';
+import ProductApi from '../../api/ProductApi';
 
 const CAROUSEL_IMGS = [
   {
@@ -33,35 +41,23 @@ const CAROUSEL_IMGS = [
   }
 ];
 
-const getCategoriesFetchStatusAction = (payload) => ({
-  type: CATEGORIES.FETCH_STATUS_CHANGED,
-  payload
-});
-
-const getsStoresFetchStatusAction = (payload) => ({
-  type: STORE.FETCH_STATUS_CHANGED,
-  payload
-});
-
-const getsProductsFetchStatusAction = (payload) => ({
-  type: PRODUCT.FETCH_STATUS_CHANGED,
-  payload
-});
-
 function CategoryItem({ category, index }) {
 
   const iconColor = useCategoryColor(index);
 
-  const path = category.type === 'product' ? '/products' : '';
+  const iconType = category.type === 'product' ? productIcon : storeIcon;
 
   return (
     <li className="lg:mb-2">
       <Link 
-        to={`/search${path}?q=${category.name}&category=${category.name}`}
-        className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-1`}
+        to={`/category/${category.id}`} 
+        className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-2`}
         >
-        <Icon path={categoryIcon} className="block h-6 w-6 mx-auto" />
-        <div className="flex-grow text-sm break-all">{ category.name }</div>
+        <img src={`/photos/category/${category.photo}`} alt={category.name} width="100" height="100" className="w-10 h-10 block mx-auto rounded" />        
+        <div className="flex flex-grow gap-1 justify-center items-center lg:justify-start">
+          <div className="text-sm break-all">{ category.name }</div>
+          <Icon path={iconType} className='w-4 h-4' />
+        </div>
       </Link>
     </li>
   );
@@ -87,125 +83,39 @@ export default function Home() {
   }, homeDispatch } = useAppContext();
   
   useEffect(()=> {
-    async function fetchCategories() {
-
-      if (categoriesFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}category.json`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-
-        //data.data = [];
-
-        homeDispatch({
-          type: CATEGORIES.FETCHED,
-          payload: data.data
-        });
-        
-      } catch (err) {
-        homeDispatch(getCategoriesFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (categoriesFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new CategoryApi();
+      api.getListByRecommended(homeDispatch);
     }
-
-    fetchCategories(); 
-
   }, [categoriesFetchStatus, homeDispatch]);
 
   function refetchCategories() {
-    if (categoriesFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-
-    homeDispatch(getCategoriesFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (categoriesFetchStatus !== FETCH_STATUSES.LOADING) 
+      homeDispatch(getCategoriesListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
   
-
   useEffect(()=> {
-    async function fetchStores() {
-      
-      if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}stores.json`);
-        
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-
-        //data.data = [];
-        data.total_pages = 5;
-        
-        homeDispatch({
-          type: STORE.FETCHED,
-          payload: {
-            stores: data.data,
-            storesNumberOfPages: data.total_pages
-          }
-        });
-        
-      } catch (err) {
-        homeDispatch(getsStoresFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (storesFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new StoreApi();
+      api.getListByRecommended(homeDispatch);
     }
-
-    fetchStores(); 
-
   }, [storesFetchStatus, homeDispatch]);
 
   function refetchStores() {
-    
-    if (storesFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-
-    homeDispatch(getsStoresFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
+      homeDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   useEffect(()=> {
-    async function fetchProducts() {
-      
-      if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}store-products.json`);
-        
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-
-        //data.data = [];
-        data.total_pages = 5;
-        
-        homeDispatch({
-          type: PRODUCT.FETCHED,
-          payload: {
-            products: data.data,
-            productsNumberOfPages: data.total_pages
-          }
-        });
-        
-      } catch (err) {
-        homeDispatch(getsProductsFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (productsFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new ProductApi();
+      api.getListByRecommended(homeDispatch);
     }
-
-    fetchProducts(); 
-
   }, [productsFetchStatus, homeDispatch]);
 
   function refetchProducts() {
-    
-    if (productsFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-
-    homeDispatch(getsProductsFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
+      homeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (
@@ -229,7 +139,7 @@ export default function Home() {
                     categoriesFetchStatus,
                     (item, i)=> (
                       <CategoryItem 
-                        key={`categories-${i}`} 
+                        key={`category-${i}`} 
                         index={i}
                         category={item} 
                         />

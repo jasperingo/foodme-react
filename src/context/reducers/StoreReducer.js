@@ -60,7 +60,7 @@ export default function StoreReducer (state, action) {
         }
       };
 
-    case STORE.PRODUCTS_FETCH_STATUS_CHANGED :
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         products: {
@@ -69,7 +69,7 @@ export default function StoreReducer (state, action) {
         }
       };
     
-    case STORE.PRODUCTS_FETCHED :
+    case PRODUCT.LIST_FETCHED :
       let status = fetchUpdater(
         state.products.productsPage,
         action.payload.productsNumberOfPages,
@@ -77,7 +77,7 @@ export default function StoreReducer (state, action) {
         action.payload.products.length
       );
       
-      state.products.products.pop();
+      const prod = state.products.products.filter(i=> i !== null);
 
       return {
         ...state,
@@ -86,7 +86,7 @@ export default function StoreReducer (state, action) {
           productsPage: state.products.productsPage+1,
           productsCategory: state.products.productsCategory,
           productsNumberOfPages: action.payload.productsNumberOfPages,
-          products: [...state.products.products, ...action.payload.products, null],
+          products: [...prod, ...action.payload.products, null],
         }
       };
     
@@ -100,7 +100,7 @@ export default function StoreReducer (state, action) {
         }
       };
 
-    case REVIEW.FETCH_STATUS_CHANGED :
+    case REVIEW.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         reviews: {
@@ -109,7 +109,7 @@ export default function StoreReducer (state, action) {
         }
       };
 
-    case REVIEW.FETCHED:
+    case REVIEW.LIST_FETCHED:
       let status2 = fetchUpdater(
         state.reviews.reviewsPage,
         action.payload.reviewsNumberOfPages,
@@ -117,7 +117,7 @@ export default function StoreReducer (state, action) {
         action.payload.reviews.length
       );
         
-      state.reviews.reviews.pop();
+      const rev = state.reviews.reviews.filter(i=> i !== null);
 
       return {
         ...state,
@@ -125,7 +125,7 @@ export default function StoreReducer (state, action) {
           reviewsFetchStatus: status2,
           reviewsPage: state.reviews.reviewsPage+1,
           reviewsNumberOfPages: action.payload.reviewsNumberOfPages,
-          reviews: [...state.reviews.reviews, ...action.payload.reviews, null],
+          reviews: [...rev, ...action.payload.reviews, null],
         }
       }; 
 
@@ -146,7 +146,7 @@ export default function StoreReducer (state, action) {
         action.payload.promotions.length
       );
         
-      state.promotions.promotions.pop();
+      const prom = state.promotions.promotions.filter(i=> i !== null);
 
       return {
         ...state,
@@ -154,7 +154,7 @@ export default function StoreReducer (state, action) {
           promotionsFetchStatus: status3,
           promotionsPage: state.promotions.promotionsPage+1,
           promotionsNumberOfPages: action.payload.promotionsNumberOfPages,
-          promotions: [...state.promotions.promotions, ...action.payload.promotions, null],
+          promotions: [...prom, ...action.payload.promotions, null],
         }
       }; 
     

@@ -25,6 +25,7 @@ import useAuth from '../middlewares/useAuth';
 import useGuest from '../middlewares/useGuest';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
+import Category from '../pages/Category';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -75,6 +76,7 @@ export default function CustomerApp() {
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu authMiddleware={authMiddleware} />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/cart" render={()=> <Cart />} />
+          <Route path="/category/:ID" render={()=> <Category />} />
           <Route path="/categories" render={()=> <Categories />} />
           <Route path="/" render={()=> <Home />} />
         </Switch>

@@ -34,6 +34,10 @@ export const initialHomeState = {
 };
 
 export const initialCategoriesState = {
+  category: {
+    category: null,
+    categoryFetchStatus: FETCH_STATUSES.LOADING
+  },
   stores: {
     stores: [null],
     storesFetchStatus: FETCH_STATUSES.LOADING
@@ -89,7 +93,13 @@ export const initialStoreState = {
   }
 };
 
-export const initialProductState = {
+export const initialProductsState = {
+  products: {
+    products: [null],
+    productsPage: 0,
+    productsNumberOfPages: 0,
+    productsFetchStatus: FETCH_STATUSES.LOADING
+  },
   product: {
     product: null,
     productFetchStatus: FETCH_STATUSES.LOADING
@@ -207,16 +217,6 @@ export const initialReviewsState = {
     reviewsFetchStatus: FETCH_STATUSES.LOADING
   },
 };
-
-export const initialProductsState = {
-  products: {
-    products: [null],
-    productsPage: 0,
-    productsNumberOfPages: 0,
-    productsFetchStatus: FETCH_STATUSES.LOADING
-  }
-};
-
 
 
 

@@ -1,13 +1,16 @@
 
 import { PRODUCT, REVIEW, FETCH_STATUSES } from "../AppActions";
-import { initialProductState } from "../AppInitialStates";
+import { useListFetchStatus } from "../AppHooks";
+import { initialProductsState } from "../AppInitialStates";
 
 export default function ProductReducer (state, action) {
+
+  const fetchUpdater = useListFetchStatus();
   
   switch (action.type) {  
 
     case PRODUCT.UNFETCH:
-      return initialProductState;
+      return initialProductsState;
     
     case PRODUCT.FETCH_STATUS_CHANGED :
       return {
@@ -27,8 +30,7 @@ export default function ProductReducer (state, action) {
         }
       };
 
-
-    case REVIEW.FETCH_STATUS_CHANGED :
+    case REVIEW.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         reviews: {
@@ -37,15 +39,15 @@ export default function ProductReducer (state, action) {
         }
       };
 
-    case REVIEW.FETCHED:
-      let status2 = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
-      
-      if ((state.reviews.reviewsPage+1) < action.payload.reviewsNumberOfPages) 
-        status2 = FETCH_STATUSES.MORE;
-      else if (state.reviews.reviews.length === 1 && action.payload.reviews.length < 1) 
-        status2 = FETCH_STATUSES.EMPTY;
+    case REVIEW.LIST_FETCHED:
+      let status2 = fetchUpdater(
+        state.reviews.reviewsPage, 
+        action.payload.reviewsNumberOfPages, 
+        state.reviews.reviews.length, 
+        action.payload.reviews.length
+      );
         
-      state.reviews.reviews.pop();
+      const rev = state.reviews.reviews.filter(i=> i !== null);
 
       return {
         ...state,
@@ -53,11 +55,40 @@ export default function ProductReducer (state, action) {
           reviewsFetchStatus: status2,
           reviewsPage: state.reviews.reviewsPage+1,
           reviewsNumberOfPages: action.payload.reviewsNumberOfPages,
-          reviews: [...state.reviews.reviews, ...action.payload.reviews, null],
+          reviews: [...rev, ...action.payload.reviews, null],
         }
       }; 
 
     case PRODUCT.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        products: {
+          ...state.products,
+          productsFetchStatus: action.payload
+        }
+      };
+    
+    case PRODUCT.LIST_FETCHED :
+      let status = fetchUpdater(
+        state.products.productsPage, 
+        action.payload.productsNumberOfPages, 
+        state.products.products.length, 
+        action.payload.products.length
+      );
+      
+      const prods = state.products.products.filter(i=> i !== null);
+
+      return {
+        ...state,
+        products: {
+          productsFetchStatus: status,
+          productsPage: state.products.productsPage+1,
+          productsNumberOfPages: action.payload.productsNumberOfPages,
+          products: [...prods, ...action.payload.products, null],
+        }
+      };
+
+    case PRODUCT.RELATED_LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         related: {
@@ -66,15 +97,15 @@ export default function ProductReducer (state, action) {
         }
       };
     
-    case PRODUCT.LIST_FETCHED: 
-      let status3 = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
-        
-      if ((state.related.relatedPage+1) < action.payload.relatedNumberOfPages) 
-        status3 = FETCH_STATUSES.MORE;
-      else if (state.related.related.length === 1 && action.payload.related.length < 1) 
-        status3 = FETCH_STATUSES.EMPTY;
-        
-      state.related.related.pop();
+    case PRODUCT.RELATED_LIST_FETCHED :
+      let status3 = fetchUpdater(
+        state.related.relatedPage, 
+        action.payload.relatedNumberOfPages, 
+        state.related.related.length, 
+        action.payload.related.length
+      );
+      
+      const rel = state.related.related.filter(i=> i !== null);
 
       return {
         ...state,
@@ -82,7 +113,7 @@ export default function ProductReducer (state, action) {
           relatedFetchStatus: status3,
           relatedPage: state.related.relatedPage+1,
           relatedNumberOfPages: action.payload.relatedNumberOfPages,
-          related: [...state.related.related, ...action.payload.related, null],
+          related: [...rel, ...action.payload.related, null],
         }
       };
 

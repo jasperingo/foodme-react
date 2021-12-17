@@ -89,7 +89,7 @@
   }
 
   .list-x {
-    @apply py-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4;
+    @apply py-2 md:grid md:grid-cols-3 md:gap-4 lg:grid-cols-5;
   }
 
   .list-2-x {

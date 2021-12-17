@@ -1,5 +1,5 @@
 
-import { FETCH_STATUSES, PRODUCT, getProductFetchStatusAction } from "../context/AppActions";
+import { FETCH_STATUSES, PRODUCT, getProductFetchStatusAction, getProductsListFetchStatusAction, getRelatedProductsListFetchStatusAction } from "../context/AppActions";
 import API from "./API";
 
 export default class ProductApi extends API {
@@ -38,7 +38,7 @@ export default class ProductApi extends API {
     
     try {
       const data = await this.apiFetch(
-        `product.json?id=${id}`,
+        `product/get.json?id=${id}`,
         'GET'
       );
 
@@ -51,6 +51,66 @@ export default class ProductApi extends API {
       
     } catch (err) {
       dispatch(getProductFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
+  async getListByRecommended(dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `product/list.json`,
+        'GET'
+      );
+      
+      dispatch({
+        type: PRODUCT.LIST_FETCHED,
+        payload: {
+          products: data.data,
+          productsNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
+  async getListByStore(id, page, category, dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `product/list.json?id=${id}&page=${page}&category=${category}`,
+        'GET'
+      );
+      
+      dispatch({
+        type: PRODUCT.LIST_FETCHED,
+        payload: {
+          products: data.data,
+          productsNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
+  async getListByRelated(id, page, dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `product/list.json?id=${id}&page=${page}`,
+        'GET'
+      );
+      
+      dispatch({
+        type: PRODUCT.RELATED_LIST_FETCHED,
+        payload: {
+          related: data.data,
+          relatedNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
     }
   }
 

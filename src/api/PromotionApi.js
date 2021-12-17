@@ -30,10 +30,10 @@ export default class PromotionApi extends API {
     }
   }
 
-  async getListByStore(dispatch) {
+  async getListByStore(id, page, dispatch) {
     try {
       const data = await this.apiFetch(
-        `promotions.json`,
+        `promotion/list.json?id=${id}&page=${page}`,
         'GET'
       );
       

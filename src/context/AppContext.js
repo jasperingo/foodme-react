@@ -3,14 +3,13 @@ import React, { useReducer, useContext, createContext } from "react";
 import {
   initialHomeState, 
   initialCategoriesState, 
-  initialProductState, 
+  initialProductsState, 
   initialStoreState, 
   initialSearchState,
   initialCartState,
   initialOrdersState,
   initialSavedCartsState,
   initialTransactionsState,
-  initialProductsState,
   initialPromotionsState,
   initialUserState,
   initialReviewsState,
@@ -26,7 +25,6 @@ import SearchReducer from "./reducers/SearchReducer";
 import CartReducer from "./reducers/CartReducer";
 import OrdersReducer from "./reducers/OrdersReducer";
 import PromotionsReducer from "./reducers/PromotionsReducer";
-import ProductsReducer from "./reducers/ProductsReducer";
 import SavedCartsReducer from "./reducers/SavedCartsReducer";
 import TransactionsReducer from "./reducers/TransactionsReducer";
 import ReviewsReducer from "./reducers/ReviewsReducer";
@@ -49,7 +47,7 @@ export const AppProvider = ({ children }) => {
 
   const [categoriesState, categoriesDispatch] = useReducer(CategoriesReducer, initialCategoriesState);
 
-  const [productState, productDispatch] = useReducer(ProductReducer, initialProductState);
+  const [productsState, productsDispatch] = useReducer(ProductReducer, initialProductsState);
 
   const [storesState, storesDispatch] = useReducer(StoreReducer, initialStoreState);
 
@@ -67,9 +65,6 @@ export const AppProvider = ({ children }) => {
 
   const [reviewsState, reviewsDispatch] = useReducer(ReviewsReducer, initialReviewsState);
 
-
-  const [productsState, productsDispatch] = useReducer(ProductsReducer, initialProductsState);
-
   const [deliveryFirmsState, deliveryFirmsDispatch] = useReducer(DeliveryFirmsReducer, initialDeliveryFirmState);
 
 
@@ -83,8 +78,8 @@ export const AppProvider = ({ children }) => {
         customersDispatch,
         categories: categoriesState, 
         categoriesDispatch,
-        product: productState, 
-        productDispatch,
+        products: productsState, 
+        productsDispatch,
         stores: storesState, 
         storesDispatch,
         search: searchState,
@@ -101,9 +96,6 @@ export const AppProvider = ({ children }) => {
         promotionsDispatch,
         reviews: reviewsState,
         reviewsDispatch,
-
-        products: productsState, 
-        productsDispatch,
         deliveryFirms: deliveryFirmsState, 
         deliveryFirmsDispatch
       }}

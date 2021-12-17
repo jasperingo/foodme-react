@@ -97,6 +97,8 @@ export const TRANSLATIONS_EN = {
     Add_category: 'Add category',
     categories: 'categories',
     Categories: 'Categories',
+    sub_category__Count: '{{ count }} sub category',
+    sub_category__Count_plural: '{{ count }} sub categories',
     Title: 'Title',
     Sub_title: 'Sub title',
     Description: 'Description',

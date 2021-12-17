@@ -24,11 +24,10 @@ export default function Promotions() {
     }
   }, promotionsDispatch } = useAppContext();
 
-
   useEffect(()=> {
     if (promotionsFetchStatus === FETCH_STATUSES.LOADING) {
       const api = new PromotionApi(user.api_token);
-      api.getListByStore(promotionsDispatch);
+      api.getListByStore(0, promotionsDispatch);
     }
   }, [user, promotionsFetchStatus, promotionsDispatch]);
 

@@ -1,0 +1,47 @@
+{
+  "data" : [
+    {
+      "id": 1,
+      "name": "Restaurant",
+      "type": "store",
+      "stores_count": 20,
+      "photo": "store-cat.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Supermarket",
+      "type": "store",
+      "stores_count": 34,
+      "photo": "store-cat.jpg"
+    },
+    {
+      "id": 11,
+      "name": "Pharmacy",
+      "type": "store",
+      "stores_count": 12,
+      "photo": "store-cat.jpg"
+    },
+    {
+      "id": 14,
+      "name": "African dish",
+      "type": "product",
+      "stores_count": 34,
+      "photo": "food-cat.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Liquor",
+      "type": "product",
+      "stores_count": 34,
+      "photo": "food-cat.jpg"
+    },
+    {
+      "id": 34,
+      "name": "Snacks",
+      "type": "product",
+      "stores_count": 4,
+      "photo": "food-cat.jpg"
+    }
+  ]
+}
+

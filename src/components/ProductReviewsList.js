@@ -1,9 +1,10 @@
 
 import React, { useEffect } from 'react';
+import ReviewApi from '../api/ReviewApi';
 import CustomerApp from '../apps/CustomerApp';
 import { reviewIcon } from '../assets/icons';
-import { FETCH_STATUSES, REVIEW } from '../context/AppActions';
-import { API_URL, useAppContext } from '../context/AppContext';
+import { FETCH_STATUSES, getReviewsListFetchStatusAction } from '../context/AppActions';
+import { useAppContext } from '../context/AppContext';
 import { useListRender } from '../context/AppHooks';
 import EmptyList from './EmptyList';
 import FetchMoreButton from './FetchMoreButton';
@@ -15,57 +16,30 @@ import ReviewItem from './ReviewItem';
 import ReviewSummary from './ReviewSummary';
 
 
-const getReviewsFetchStatusAction = (payload) => ({
-  type: REVIEW.FETCH_STATUS_CHANGED,
-  payload
-});
-
 export default function ProductReviewsList({ pID, appType }) {
 
-  const { product: {
+  const { products: {
+    product: {
+      product
+    },
     reviews: {
       reviews,
+      reviewsPage,
       reviewsFetchStatus
     }
-  }, productDispatch } = useAppContext();
+  }, productsDispatch } = useAppContext();
 
 
   useEffect(()=> {
-
-    async function fetchReviews() {
-      if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}reviews.json?id=${pID}`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-        
-        productDispatch({
-          type: REVIEW.FETCHED,
-          payload: {
-            reviews: data.data,
-            reviewsNumberOfPages: 1, //data.total_pages
-          }
-        });
-
-      } catch (err) {
-        productDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (reviewsFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new ReviewApi();
+      api.getListByProduct(pID, reviewsPage, productsDispatch);
     }
-
-    fetchReviews();
-
-  }, [pID, reviewsFetchStatus, productDispatch]);
+  }, [pID, reviewsFetchStatus, reviewsPage, productsDispatch]);
 
   function refetchReviews() {
-    if (reviewsFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-    
-    productDispatch(getReviewsFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
+      productsDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
   
   function newRate(rate, text) {
@@ -87,7 +61,9 @@ export default function ProductReviewsList({ pID, appType }) {
           </div>
         }
         <div className="flex-grow">
-          <ReviewSummary />
+          <ReviewSummary 
+            ratings={product.ratings}
+            />
         </div>
       </div>
 

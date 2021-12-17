@@ -56,6 +56,16 @@ export const CATEGORIES = {
   PRODUCTS_FETCH_STATUS_CHANGED: 'PRODUCTS_FETCH_STATUS_CHANGED',
 };
 
+export const getCategoryFetchStatusAction = (payload) => ({
+  type: CATEGORIES.FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getCategoriesListFetchStatusAction = (payload) => ({
+  type: CATEGORIES.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+
 export const getCategoriesStoreFetchStatusAction = (payload) => ({
   type: CATEGORIES.STORES_FETCH_STATUS_CHANGED,
   payload
@@ -88,8 +98,6 @@ export const STORE = {
   UNFETCH: 'STORE_UNFETCH',
   FETCHED: 'STORE_FETCHED',
   FETCH_STATUS_CHANGED: 'STORE_FETCH_STATUS_CHANGED',
-  PRODUCTS_FETCHED: 'PRODUCTS_FETCHED',
-  PRODUCTS_FETCH_STATUS_CHANGED: 'PRODUCTS_FETCH_STATUS_CHANGED',
   LIST_FETCHED: 'STORES_FETCHED',
   LIST_FETCH_STATUS_CHANGED: 'STORES_FETCH_STATUS_CHANGED',
 };
@@ -111,6 +119,8 @@ export const PRODUCT = {
   FILTER_CHANGED: 'PRODUCT_FILTER_CHANGED',
   LIST_FETCHED: 'PRODUCTS_FETCHED',
   LIST_FETCH_STATUS_CHANGED: 'PRODUCTS_FETCH_STATUS_CHANGED',
+  RELATED_LIST_FETCHED: 'RELATED_PRODUCTS_FETCHED',
+  RELATED_LIST_FETCH_STATUS_CHANGED: 'RELATED_PRODUCTS_FETCH_STATUS_CHANGED',
 };
 
 export const getProductFetchStatusAction = (payload) => ({
@@ -120,6 +130,11 @@ export const getProductFetchStatusAction = (payload) => ({
 
 export const getProductsListFetchStatusAction = (payload) => ({
   type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getRelatedProductsListFetchStatusAction = (payload) => ({
+  type: PRODUCT.RELATED_LIST_FETCH_STATUS_CHANGED,
   payload
 });
 

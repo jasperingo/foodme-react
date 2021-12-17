@@ -9,16 +9,16 @@ export default function HomeReducer (state, action) {
   
   switch (action.type) {  
     
-    case CATEGORIES.FETCH_STATUS_CHANGED :
+    case CATEGORIES.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         categories: {
-          categories: state.categories.categories,
+          ...state.categories,
           categoriesFetchStatus: action.payload
         }
       };
     
-    case CATEGORIES.FETCHED :
+    case CATEGORIES.LIST_FETCHED :
       return {
         ...state,
         categories: {
@@ -27,7 +27,7 @@ export default function HomeReducer (state, action) {
         }
       };
     
-    case STORE.FETCH_STATUS_CHANGED :
+    case STORE.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         stores: {
@@ -36,7 +36,7 @@ export default function HomeReducer (state, action) {
         }
       };
     
-    case STORE.FETCHED :
+    case STORE.LIST_FETCHED :
       let status = fetchUpdater(
         state.stores.storesPage, 
         action.payload.storesNumberOfPages,
@@ -44,19 +44,19 @@ export default function HomeReducer (state, action) {
         action.payload.stores.length
       );
 
-      state.stores.stores.pop();
+      const st = state.stores.stores.filter(i=> i !== null);
 
       return {
         ...state,
         stores: {
-          stores: [...state.stores.stores, ...action.payload.stores, null],
           storesFetchStatus: status,
           storesPage: state.stores.storesPage+1,
-          storesNumberOfPages: action.payload.storesNumberOfPages
+          storesNumberOfPages: action.payload.storesNumberOfPages,
+          stores: [...st, ...action.payload.stores, null],
         }
       };
 
-    case PRODUCT.FETCH_STATUS_CHANGED :
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         products: {
@@ -65,7 +65,7 @@ export default function HomeReducer (state, action) {
         }
       };
     
-    case PRODUCT.FETCHED :
+    case PRODUCT.LIST_FETCHED :
       let status2 = fetchUpdater(
         state.products.productsPage, 
         action.payload.productsNumberOfPages,
@@ -73,7 +73,7 @@ export default function HomeReducer (state, action) {
         action.payload.products.length
       );
 
-      state.products.products.pop();
+      const prod = state.products.products.filter(i=> i !== null);
 
       return {
         ...state,
@@ -81,7 +81,7 @@ export default function HomeReducer (state, action) {
           productsFetchStatus: status2,
           productsPage: state.products.productsPage+1,
           productsNumberOfPages: action.payload.productsNumberOfPages,
-          products: [...state.products.products, ...action.payload.products, null],
+          products: [...prod, ...action.payload.products, null],
         }
       };
 

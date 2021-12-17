@@ -1,0 +1,41 @@
+{
+  "total_pages": 9,
+  "data" : [
+    { 
+      "id": 1,
+      "title": "December promo", 
+      "number_of_products": 8, 
+      "deduction_amount": null, 
+      "deduction_percent": 30, 
+      "start_time": "3 December 2021", 
+      "stop_time": "2 January 2022",
+      "store": {
+        "id": 1
+      }
+    },
+    { 
+      "id": 2,
+      "title": "Black friday", 
+      "number_of_products": 23, 
+      "deduction_amount": 200.45, 
+      "deduction_percent": null, 
+      "start_time": "3 November 2021", 
+      "stop_time": "12 November 2021",
+      "store": {
+        "id": 12
+      }
+    },
+    { 
+      "id": 3,
+      "title": "INdependence package", 
+      "number_of_products": 14, 
+      "deduction_amount": 50.45, 
+      "deduction_percent": null, 
+      "start_time": "1 October 2021", 
+      "stop_time": "2 October 2021",
+      "store": {
+        "id": 4
+      }
+    }
+  ]
+}

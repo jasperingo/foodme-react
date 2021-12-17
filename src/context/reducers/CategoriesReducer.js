@@ -1,5 +1,6 @@
 
 import { CATEGORIES, FETCH_STATUSES } from "../AppActions";
+import { initialCategoriesState } from '../AppInitialStates';
 
 export default function CategoriesReducer (state, action) {
   
@@ -38,6 +39,32 @@ export default function CategoriesReducer (state, action) {
         products: {
           products: action.payload, 
           productsFetchStatus: FETCH_STATUSES.DONE,
+        }
+      };
+
+    case CATEGORIES.UNFETCH:
+      return {
+        ...state,
+        category: {
+          ...initialCategoriesState.category
+        }
+      };
+      
+    case CATEGORIES.FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        category: {
+          category: state.category.category,
+          categoryFetchStatus: action.payload
+        }
+      };
+    
+    case CATEGORIES.FETCHED :
+      return {
+        ...state,
+        category: {
+          category: action.payload, 
+          categoryFetchStatus: FETCH_STATUSES.DONE,
         }
       };
 

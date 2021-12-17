@@ -14,27 +14,27 @@ export default function ProductUpdate() {
   const pID = parseInt(useParams().ID);
 
   const { user: { user }, 
-    product: {
+    products: {
       product: {
         product,
         productFetchStatus
       }
-  }, productDispatch } = useAppContext();
+  }, productsDispatch } = useAppContext();
 
   useEffect(()=> {
 
     if (product !== null && pID !== product.id) {
-      productDispatch({ type: PRODUCT.UNFETCH });
+      productsDispatch({ type: PRODUCT.UNFETCH });
     } else if (product !== null && productFetchStatus === FETCH_STATUSES.LOADING) {
       const api = new ProductApi(user.api_token);
-      api.get(pID, productDispatch);
+      api.get(pID, productsDispatch);
     }
 
-  }, [pID, user, product, productFetchStatus, productDispatch]);
+  }, [pID, user, product, productFetchStatus, productsDispatch]);
 
   function refetchProduct() {
     if (productFetchStatus !== FETCH_STATUSES.LOADING) 
-      productDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING));
+      productsDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (

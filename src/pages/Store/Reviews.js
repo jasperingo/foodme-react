@@ -26,7 +26,7 @@ export default function Reviews() {
   useEffect(()=>{
     if (reviewsFetchStatus === FETCH_STATUSES.LOADING) {
       const api = new ReviewApi(user.api_token);
-      api.getListByStore(reviewsDispatch);
+      api.getListByStore(0, reviewsDispatch);
     }
   }, [user, reviewsFetchStatus, reviewsDispatch]);
 

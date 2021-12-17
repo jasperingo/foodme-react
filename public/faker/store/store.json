@@ -1,11 +1,36 @@
 {
   "data": {
+    "id" : 23,
     "name": "Free store",
-    "category": "Super market",
+    "category": "Supermarket",
+    "sub_category": "Cereals",
     "email": "johngreen@gmail.com",
     "phone_number": "08037848934",
     "api_token": "jwt-token",
     "photo": "store.jpeg",
+    "rating" : 3.9,
+    "categories" : [
+      {
+        "id": 0,
+        "name": "All",
+        "products_count": 2
+      },
+      {
+        "id": 1,
+        "name": "African dish",
+        "products_count": 34
+      },
+      {
+        "id": 2,
+        "name": "Condiment",
+        "products_count": 20
+      },
+      {
+        "id": 3,
+        "name": "Snacks",
+        "products_count": 4
+      }
+    ],
     "account": {
       "bank_name": "Eco bank",
       "account_number": "0309849494",

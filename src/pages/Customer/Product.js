@@ -2,8 +2,13 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { API_URL, useAppContext } from '../../context/AppContext';
-import { FETCH_STATUSES, PRODUCT } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
+import { 
+  FETCH_STATUSES, 
+  getProductFetchStatusAction, 
+  getRelatedProductsListFetchStatusAction, 
+  PRODUCT 
+} from '../../context/AppActions';
 import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
 import StoreItem from '../../components/StoreItem';
 import Reload from '../../components/Reload';
@@ -16,65 +21,31 @@ import CustomerApp from '../../apps/CustomerApp';
 import H4Heading from '../../components/H4Heading';
 import ProductReviewsList from '../../components/ProductReviewsList';
 import { productIcon } from '../../assets/icons';
-
-const getProductFetchStatusAction = (payload) => ({
-  type: PRODUCT.FETCH_STATUS_CHANGED,
-  payload
-});
-
-const getRelatedFetchStatusAction = (payload) => ({
-  type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
-  payload
-});
+import ProductApi from '../../api/ProductApi';
 
 function RelatedProductsList() {
 
   const pID = parseInt(useParams().pID);
 
-  const { product: {
+  const { products: {
     related: {
       related,
       relatedFetchStatus,
       relatedPage, 
       relatedNumberOfPages
     }
-  }, productDispatch } = useAppContext();
+  }, productsDispatch } = useAppContext();
 
   useEffect(()=> {
-    async function fetchRelated() {
-      if (relatedFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}store-products.json?id=${pID}`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-        
-        productDispatch({
-          type: PRODUCT.LIST_FETCHED,
-          payload: {
-            related: data.data,
-            relatedNumberOfPages: data.total_pages
-          }
-        });
-
-      } catch (err) {
-        productDispatch(getRelatedFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (relatedFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new ProductApi();
+      api.getListByRelated(pID, relatedPage, productsDispatch);
     }
-
-    fetchRelated();
-
-  }, [pID, relatedFetchStatus, productDispatch]);
+  }, [pID, relatedFetchStatus, relatedPage, productsDispatch]);
 
   function refetchRelated() {
-    if (relatedFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-    
-    productDispatch(getRelatedFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (relatedFetchStatus !== FETCH_STATUSES.LOADING) 
+      productsDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (
@@ -91,7 +62,7 @@ function RelatedProductsList() {
               useListRender(
                 related, 
                 relatedFetchStatus,
-                (item, i)=> <li key={`prod-${i}`} > <ProductItem prod={item} layout={ProductItem.LAYOUT_GRID} /> </li>, 
+                (item, i)=> <li key={`related-prod-${i}`} > <ProductItem prod={item} layout={ProductItem.LAYOUT_GRID} /> </li>, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchRelated} /> </li>,
                 (k)=> <li key={k}> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>, 
@@ -110,52 +81,25 @@ export default function Product() {
 
   const pID = parseInt(useParams().pID);
 
-  const { product: {
+  const { products: {
     product: {
       product,
       productFetchStatus
     }
-  }, productDispatch } = useAppContext();
+  }, productsDispatch } = useAppContext();
   
   useEffect(()=> {
-    async function fetchProduct() {
-
-      if (productFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}product.json?id=${pID}`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-
-        data.data.id = pID;
-
-        productDispatch({
-          type: PRODUCT.FETCHED,
-          payload: data.data
-        });
-        
-      } catch (err) {
-        productDispatch(getProductFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
-    }
-
     if (product !== null && pID !== product.id) {
-      productDispatch({ type: PRODUCT.UNFETCH });
+      productsDispatch({ type: PRODUCT.UNFETCH });
+    } else if (productFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new ProductApi();
+      api.get(pID, productsDispatch);
     }
-
-    fetchProduct(); 
-
-  }, [pID, product, productFetchStatus, productDispatch]);
+  }, [pID, product, productFetchStatus, productsDispatch]);
 
   function refetchProduct() {
-    if (productFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-
-    productDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (productFetchStatus !== FETCH_STATUSES.LOADING) 
+      productsDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (
