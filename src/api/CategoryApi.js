@@ -1,8 +1,45 @@
 
-import { CATEGORIES, FETCH_STATUSES, getCategoriesListFetchStatusAction, getCategoriesProductFetchStatusAction, getCategoriesStoreFetchStatusAction, getCategoryFetchStatusAction } from "../context/AppActions";
+import { 
+  CATEGORIES, 
+  FETCH_STATUSES,
+  getCategoriesListFetchStatusAction, 
+  getCategoriesProductFetchStatusAction, 
+  getCategoriesStoreFetchStatusAction, 
+  getCategoryFetchStatusAction 
+} from "../context/AppActions";
 import API from "./API";
 
 export default class CategoryApi extends API {
+
+  async add(formData) {
+    const data = await this.apiFetch(
+      'category/post.json', 
+      'GET', //'POST',
+      formData
+    );
+  
+    return data.data;
+  }
+
+  async update(id, formData) {
+    const data = await this.apiFetch(
+      `category/post.json?id=${id}`, 
+      'GET', //'PUT',
+      formData
+    );
+  
+    return data.data;
+  }
+
+  async updatePhoto(formData) {
+    const data = await this.apiFetch(
+      'category/post.json', 
+      'GET', //'PUT',
+      formData
+    );
+  
+    return data.data;
+  }
 
   async get(id, dispatch) {
     try {

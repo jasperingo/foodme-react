@@ -61,6 +61,9 @@ export function useHeader2Title() {
   if (path === '/profile')
     return '_user.Profile';
 
+  if (path === '/customer/add')
+    return '_user.Add_customer';
+
   if (path === '/customers')
     return '_user.Customers';
   
@@ -70,8 +73,14 @@ export function useHeader2Title() {
   if (path === '/delivery-firms')
     return '_delivery.Delivery_firms';
 
+  if (path === '/sub-category/add')
+    return '_category.Add_sub_category';
+
+  if (path === '/category/add')
+    return '_category.Add_category';
+
   if (path === '/categories')
-    return '_extra.Categories';
+    return '_category.Categories';
 
   if (path === '/messages')
     return '_message.Messages';
@@ -121,6 +130,9 @@ export function useHeader2Title() {
   if (path === '/account/orders')
     return '_order.Orders';
 
+  if (/customer\/[0-9]+\/update/.test(path))
+    return '_user.Edit_customer';
+
   if (/product\/[0-9]+\/update/.test(path))
     return '_product.Edit_product';
 
@@ -132,9 +144,15 @@ export function useHeader2Title() {
   
   if (/delivery-firm\/[0-9]+/.test(path))
     return '_delivery.Delivery_firm';
+  
+  if (/sub-category\/[0-9]+\/update/.test(path))
+    return '_category.Edit_sub_category';
+  
+  if (/category\/[0-9]+\/update/.test(path))
+    return '_category.Edit_category';
 
   if (/category\/[0-9]+/.test(path))
-    return '_extra.Category';
+    return '_category.Category';
 
   if (/account\/order\/[0-9]+/.test(path) || /order\/[0-9]+/.test(path))
     return '_order.Order_details';

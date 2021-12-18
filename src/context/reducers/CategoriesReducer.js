@@ -54,7 +54,7 @@ export default function CategoriesReducer (state, action) {
       return {
         ...state,
         category: {
-          category: state.category.category,
+          ...state.category,
           categoryFetchStatus: action.payload
         }
       };
@@ -65,6 +65,32 @@ export default function CategoriesReducer (state, action) {
         category: {
           category: action.payload, 
           categoryFetchStatus: FETCH_STATUSES.DONE,
+        }
+      };
+
+    case CATEGORIES.SUB_UNFETCH:
+      return {
+        ...state,
+        category: {
+          ...initialCategoriesState.category
+        }
+      };
+      
+    case CATEGORIES.SUB_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        subCategory: {
+          ...state.subCategory,
+          subCategoryFetchStatus: action.payload
+        }
+      };
+    
+    case CATEGORIES.SUB_FETCHED:
+      return {
+        ...state,
+        subCategory: {
+          subCategory: action.payload, 
+          subCategoryFetchStatus: FETCH_STATUSES.DONE,
         }
       };
 

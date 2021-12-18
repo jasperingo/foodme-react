@@ -5,6 +5,8 @@
     "email": "johngreen@gmail.com",
     "phone_number": "0903983839",
     "api_token": "jwt-token",
-    "photo": "user.jpg"
+    "photo": "default.jpg",
+    "status": "active",
+    "created_at": "12 December 2021"
   }
 }

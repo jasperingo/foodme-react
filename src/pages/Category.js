@@ -4,41 +4,17 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import CategoryApi from '../api/CategoryApi';
-import { productIcon, storeIcon } from '../assets/icons';
+import AdminApp from '../apps/AdminApp';
+import { editIcon, productIcon, storeIcon } from '../assets/icons';
+import AddButton from '../components/AddButton';
+import CategoryItem from '../components/CategoryItem';
 import Loading from '../components/Loading';
 import Reload from '../components/Reload';
 import { CATEGORIES, FETCH_STATUSES, getCategoryFetchStatusAction } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
-import { useCategoryColor, useDataRender } from '../context/AppHooks';
+import { useDataRender } from '../context/AppHooks';
 
-function SubCategoryItem({ category, index }) {
-
-  const { t } = useTranslation();
-
-  const iconColor = useCategoryColor(index);
-
-  const path = category.type === 'product' ? 'products' : 'stores';
-
-  return (
-    <li className="mb-2">
-      <Link 
-        to={`/search/${path}?category=${category.id}`} 
-        className={ `flex gap-2 bg-color py-2 rounded md:py-3 md:shadow md:block md:text-center hover:bg-color-gray-h ${iconColor}` }
-        >
-        <img src={`/photos/category/${category.photo}`} alt={category.name} width="100" height="100" className="w-14 h-14 block mx-auto rounded" />
-        <div className="flex-grow">
-          <div className="font-bold">{ category.name }</div>
-          <div className="text-sm text-color-gray">
-            { category.stores_count && t('_store.store__Count', { count : parseInt(category.stores_count) }) }
-            { category.products_count && t('_product.product__Count', { count : parseInt(category.products_count) }) }
-          </div>
-        </div>
-      </Link>
-    </li>
-  );
-}
-
-export default function Category() {
+export default function Category({ appType }) {
 
   const { t } = useTranslation();
 
@@ -79,7 +55,7 @@ export default function Category() {
               <>
                 <div className="flex my-4 gap-2 items-center">
                   <img src={`/photos/category/${category.photo}`} alt="category" width="200" height="200" className="w-14 h-14 rounded" />
-                  <div>
+                  <div className="flex-grow">
                     <div className="flex gap-2 items-center">
                       <h3 className="font-bold text-xl">{ category.name }</h3>
                       <Icon path={(category.type === 'product') ? productIcon : storeIcon} className="w-6 h-6" />
@@ -89,13 +65,23 @@ export default function Category() {
                       { category.products_count && t('_product.product__Count', { count : parseInt(category.products_count) }) }
                     </div>
                   </div>
+                  {
+                    appType === AdminApp.TYPE && 
+                    <Link to={`/category/${category.id}/update`} className="btn-color-primary rounded p-1 flex gap-1">
+                      <Icon path={editIcon} className="w-5 h-5" />
+                      <span className="sr-onlyj flex-grow">{ t('_extra.Edit') }</span>
+                    </Link>
+                  }
                 </div>
 
                 <div>
-                  <h4 className="font-bold text-lg text-color-gray mb-1">{ t('_extra.sub_category__Count', { count: category.sub_categories.length }) }</h4>
+                  <h4 className="font-bold text-lg text-color-gray mb-1">{ t('_category.sub_category__Count', { count: category.sub_categories.length }) }</h4>
+                  {
+                    appType === AdminApp.TYPE && <AddButton text="_category.Add_sub_category" href={`/sub-category/add?category=${category.id}`} />
+                  }
                   <ul className="category-list">
                     {
-                      category.sub_categories.map((item, i)=> <SubCategoryItem key={`sub-category-${item.id}`} category={item} index={i} />)
+                      category.sub_categories.map((item, i)=> <CategoryItem key={`sub-category-${item.id}`} category={item} index={i} sub={true} />)
                     }
                   </ul>
                 </div>

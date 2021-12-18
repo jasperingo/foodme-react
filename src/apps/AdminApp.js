@@ -30,7 +30,9 @@ import StoreUpdate from '../pages/Admin/StoreUpdate';
 import StoreAdd from '../pages/Admin/StoreAdd';
 import DeliveryFirmUpdate from '../pages/Admin/DeliveryFirmUpdate';
 import DeliveryFirmAdd from '../pages/Admin/DeliveryFirmAdd';
-import Category from '../pages/Admin/Category';
+import Category from '../pages/Category';
+import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
+import SubCategoryAdd from '../pages/Admin/SubCategoryAdd';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -52,7 +54,6 @@ const HEADER_NAV_LINKS = [
 const HEADER_TOP_NAV_LINKS = [
   { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0, pages: [] },
   { title : '_search.Search', icon: searchIcon, href: '/search/history', pages: [] }
-
 ];
 
 export default function AdminApp() {
@@ -70,9 +71,11 @@ export default function AdminApp() {
         />
       <main className="pb-52">
         <Switch>
+          <Route path="/sub-category/:ID/update" render={()=> authMiddleware() || <SubCategoryUpdate />} />
+          <Route path="/sub-category/add" render={()=> authMiddleware() || <SubCategoryAdd />} />
           <Route path="/category/:ID/update" render={()=> authMiddleware() || <CategoryUpdate />} />
           <Route path="/category/add" render={()=> authMiddleware() || <CategoryAdd />} />
-          <Route path="/category/:ID" render={()=> authMiddleware() || <Category />} />
+          <Route path="/category/:ID" render={()=> authMiddleware() || <Category appType={AdminApp.TYPE} />} />
           <Route path="/categories" render={()=> authMiddleware() || <Categories />} />
           <Route path="/delivery-firm/:ID/update" render={()=> authMiddleware() || <DeliveryFirmUpdate />} />
           <Route path="/delivery-firm/add" render={()=> authMiddleware() || <DeliveryFirmAdd />} />

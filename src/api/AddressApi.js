@@ -69,5 +69,24 @@ export default class AddressApi extends API {
     }
   }
 
+  async getListByCustomer(id, dispatch) {
+  
+    try {
+      
+      const data = await this.apiFetch(
+        `address/list.json?id=${id}`,
+        'GET'
+      );
+  
+      dispatch({
+        type: USER_ADDRESS.LIST_FETCHED,
+        payload: data.data
+      });
+      
+    } catch (err) {
+      dispatch(getUserAddressListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
 }
 

@@ -31,15 +31,19 @@ export default function Orders() {
 
   const status = paths.length < 3 ? 'pending' : paths[paths.length-1];
 
-  const { user: { user }, orders: {
+  const { 
+    user: { user }, 
     orders: {
-      orders,
-      ordersStatus,
-      ordersFetchStatus,
-      ordersPage,
-      ordersNumberOfPages
-    }
-  }, ordersDispatch } = useAppContext();
+      orders: {
+        orders,
+        ordersStatus,
+        ordersFetchStatus,
+        ordersPage,
+        ordersNumberOfPages
+      }
+    }, 
+    ordersDispatch 
+  } = useAppContext();
 
   useEffect(()=>{
     

@@ -51,6 +51,7 @@ export const TRANSLATIONS_EN = {
     Customer: 'Customer',
     Customers: 'Customers',
     Add_customer: 'Add customer',
+    Edit_customer: 'Edit customer',
     Recent_customers: 'Recent customers',
     Profile: 'Profile',
     Update_profile: 'Update profile',
@@ -72,6 +73,7 @@ export const TRANSLATIONS_EN = {
     Last_name: 'Last name',
     Email: 'Email',
     Phone_number: 'Phone number',
+    Registration_date: 'Registration date',
     Password: 'Password',
     New_password: 'New password',
     Change_password: 'Change password',
@@ -83,6 +85,8 @@ export const TRANSLATIONS_EN = {
   },
 
   _extra: {
+    Name: 'Name',
+    Type: 'Type',
     Home: 'Home',
     Dashboard: 'Dashboard',
     Contact_us: 'Contact us',
@@ -92,13 +96,6 @@ export const TRANSLATIONS_EN = {
     Remove_photo: 'Remove photo',
     Uploading_photo: 'Uploading photo',
     Unit: 'Unit',
-    Category: 'Category',
-    Sub_category: 'Sub category',
-    Add_category: 'Add category',
-    categories: 'categories',
-    Categories: 'Categories',
-    sub_category__Count: '{{ count }} sub category',
-    sub_category__Count_plural: '{{ count }} sub categories',
     Title: 'Title',
     Sub_title: 'Sub title',
     Description: 'Description',
@@ -130,6 +127,7 @@ export const TRANSLATIONS_EN = {
     Edit_photo: 'Edit photo',
     Amount: 'Amount',
     Percent: 'Percent',
+    Status: 'Status',
 
     Approved: 'Approved',
     Failed: 'Failed',
@@ -139,6 +137,19 @@ export const TRANSLATIONS_EN = {
     Search: 'Search',
     Search__app: 'Search DailyNeeds',
     Search_history: 'Search history',
+  },
+  
+  _category: {
+    Category: 'Category',
+    Sub_category: 'Sub category',
+    Edit_category: 'Edit category',
+    Add_category: 'Add category',
+    categories: 'categories',
+    Categories: 'Categories',
+    Add_sub_category: 'Add sub category',
+    Edit_sub_category: 'Edit sub category',
+    sub_category__Count: '{{ count }} sub category',
+    sub_category__Count_plural: '{{ count }} sub categories',
   },
 
   _store: {

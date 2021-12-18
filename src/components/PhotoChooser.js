@@ -8,8 +8,7 @@ import { minusIcon } from '../assets/icons';
 import { FETCH_STATUSES } from '../context/AppActions';
 import AlertDialog, { LOADING_TEXT_DIALOG } from './AlertDialog';
 
-
-export default function PhotoChooser({ api, src, text = '_extra.Add_photo', status, required, onSuccess, onError }) {
+export default function PhotoChooser({ api, apiID, src, text = '_extra.Add_photo', status, required, onSuccess, onError }) {
 
   const { t } = useTranslation();
 
@@ -50,7 +49,7 @@ export default function PhotoChooser({ api, src, text = '_extra.Add_photo', stat
 
       api.contentType = API.FILE_CONTENT_TYPE;
 
-      api.updatePhoto(form)
+      api.updatePhoto(apiID, form)
         .then(res=> {
           reset();
           onSuccess(res);
@@ -62,7 +61,7 @@ export default function PhotoChooser({ api, src, text = '_extra.Add_photo', stat
     } else if (dialog !== null) {
       setDialog(null);
     }
-  }, [t, reset, status, api, dialog, onSuccess, onError]);
+  }, [t, reset, status, api, apiID, dialog, onSuccess, onError]);
 
   return (
     <div className="text-center mb-4">

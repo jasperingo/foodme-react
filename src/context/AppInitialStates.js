@@ -14,6 +14,17 @@ export const initialUserState = {
   },
 };
 
+export const initialAddressState = {
+  addresses: {
+    addresses: [null],
+    addressesFetchStatus: FETCH_STATUSES.LOADING
+  },
+  address: {
+    address: null,
+    addressFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
+
 export const initialHomeState = {
   categories: {
     categories: [null],
@@ -38,6 +49,10 @@ export const initialCategoriesState = {
     category: null,
     categoryFetchStatus: FETCH_STATUSES.LOADING
   },
+  subCategory: {
+    subCategory: null,
+    subCategoryFetchStatus: FETCH_STATUSES.LOADING
+  },
   stores: {
     stores: [null],
     storesFetchStatus: FETCH_STATUSES.LOADING
@@ -58,6 +73,16 @@ export const initialCustomerState = {
     customersPage: 0,
     customersNumberOfPages: 0,
     customersFetchStatus: FETCH_STATUSES.LOADING
+  },
+  orders: {
+    orders: [null],
+    ordersPage: 0,
+    ordersNumberOfPages: 0,
+    ordersFetchStatus: FETCH_STATUSES.LOADING,
+  },
+  addresses: {
+    addresses: [null],
+    addressesFetchStatus: FETCH_STATUSES.LOADING
   },
 };
 

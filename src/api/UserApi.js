@@ -9,7 +9,7 @@ export default class UserApi extends API {
     const data = await this.apiFetch(
       'post/auth-customer.json',
       'GET', //'POST',
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
     
     return data.data;
@@ -20,27 +20,27 @@ export default class UserApi extends API {
     const data = await this.apiFetch(
       'forgot-password.json',
       'GET', //'POST',
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
   
     return data.data;
   }
 
-  async update(formData) {
+  async update(id, formData) {
   
     const data = await this.apiFetch(
-      'post/auth-customer.json',
+      `customer/post.json?id=${id}`,
       'GET', //'PUT',
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
   
     return data.data;
   }
 
-  async updatePhoto(formData) {
+  async updatePhoto(id, formData) {
 
     const data = await this.apiFetch(
-      'post/auth-customer.json', 
+      `customer/post.json?id=${id}`, 
       'GET', //'PUT',
       formData
     );

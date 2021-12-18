@@ -55,7 +55,7 @@ export default function Categories() {
       
       <div className="container-x">
 
-        <AddButton text="_extra.Add_category" href="/category/add" />
+        <AddButton text="_category.Add_category" href="/category/add" />
 
         <div className="py-2">
           <h2 className="font-bold my-2">{ t('_store.Store_categories') }</h2>

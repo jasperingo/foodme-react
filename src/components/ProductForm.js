@@ -169,7 +169,7 @@ export default function ProductForm({ type, product }) {
         description: descriptionInput.current.value,
       };
       
-      const request = type === ProductForm.UPDATE ? api.update(form) : api.add(form);
+      const request = type === ProductForm.UPDATE ? api.update(product.id, form) : api.add(form);
       
       request.then(res=> {
         
@@ -211,7 +211,7 @@ export default function ProductForm({ type, product }) {
       setDialog(null);
     }
 
-  }, [type, user, api, fetchStatus, photoFetchStatus, dialog]);
+  }, [product, type, user, api, fetchStatus, photoFetchStatus, dialog]);
 
   return (
     <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x" noValidate>
@@ -226,6 +226,7 @@ export default function ProductForm({ type, product }) {
 
       <PhotoChooser 
         api={api}
+        apiID={product.id}
         src={`/photos/products/${product.photo}`}
         status={photoFetchStatus}
         onSuccess={onPhotoSuccess}
