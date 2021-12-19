@@ -1,4 +1,4 @@
-import { CUSTOMER, FETCH_STATUSES, ORDER } from "../AppActions";
+import { ADDRESS, CUSTOMER, FETCH_STATUSES, ORDER } from "../AppActions";
 import { useListFetchStatus } from "../AppHooks";
 import { initialCustomerState } from "../AppInitialStates";
 
@@ -88,7 +88,23 @@ export default function CustomersReducer (state, action) {
         }
       };
 
-    
+    case ADDRESS.LIST_FETCH_STATUS_CHANGED: 
+      return {
+        ...state,
+        addresses: {
+          ...state.addresses,
+          addressesFetchStatus: action.payload
+        }
+      };
+
+    case ADDRESS.LIST_FETCHED:
+      return {
+        ...state,
+        addresses: {
+          addresses: action.payload, 
+          addressesFetchStatus: FETCH_STATUSES.DONE,
+        }
+      };
 
     default:
       return state;

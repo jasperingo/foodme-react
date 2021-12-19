@@ -3,7 +3,9 @@ import {
   USER_ADDRESS,
   FETCH_STATUSES, 
   getUserAddressFetchStatusAction, 
-  getUserAddressListFetchStatusAction
+  getUserAddressListFetchStatusAction,
+  getAddressesListFetchStatusAction,
+  ADDRESS
 } from "../context/AppActions";
 import API from "./API";
 
@@ -79,12 +81,12 @@ export default class AddressApi extends API {
       );
   
       dispatch({
-        type: USER_ADDRESS.LIST_FETCHED,
+        type: ADDRESS.LIST_FETCHED,
         payload: data.data
       });
       
     } catch (err) {
-      dispatch(getUserAddressListFetchStatusAction(FETCH_STATUSES.ERROR));
+      dispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.ERROR));
     }
   }
 

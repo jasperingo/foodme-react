@@ -273,6 +273,7 @@ export const TRANSLATIONS_EN = {
 
   _message: {
     Send: 'Send',
+    Message: 'Message',
     Messages: 'Messages',
     Say_something: 'Say something',
     Message_store: 'Message store',

@@ -40,7 +40,7 @@ export default function CustomerUpdate() {
   }
 
   return (
-    <section className="flex-grow">
+    <section>
       <div className="container-x">
         { 
           useDataRender(

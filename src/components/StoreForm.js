@@ -1,6 +1,6 @@
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import UserApi from '../api/UserApi';
+import StoreApi from '../api/StoreApi';
 import AdminApp from '../apps/AdminApp';
 import { FETCH_STATUSES } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
@@ -11,13 +11,13 @@ import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 import PhotoChooser from './PhotoChooser';
 
-export default function CustomerForm({ customer, type, appType }) {
-  
-  const { user: { user } } = useAppContext();
+export default function StoreForm({ store, type, appType }) {
 
-  const firstNameInput = useRef(null);
+  const { user: { user }, userDispatch } = useAppContext();
 
-  const lastNameInput = useRef(null);
+  const nameInput = useRef(null);
+
+  const categoryInput = useRef(null);
 
   const emailInput = useRef(null);
 
@@ -31,9 +31,9 @@ export default function CustomerForm({ customer, type, appType }) {
 
   const [formSuccess, setFormSuccess] = useState('');
 
-  const [firstNameError, setFirstNameError] = useState('');
+  const [nameError, setNameError] = useState('');
 
-  const [lastNameError, setLastNameError] = useState('');
+  const [categoryError, setCategoryError] = useState('');
 
   const [emailError, setEmailError] = useState('');
 
@@ -45,8 +45,8 @@ export default function CustomerForm({ customer, type, appType }) {
 
   const [photoFetchStatus, setPhotoFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
-  const api = useMemo(() => new UserApi(user.api_token), [user]);
-  
+  const api = useMemo(() => new StoreApi(user.api_token), [user]);
+
   function updateProfile(e) {
     e.preventDefault();
 
@@ -60,18 +60,18 @@ export default function CustomerForm({ customer, type, appType }) {
 
     setPhotoFetchStatus(FETCH_STATUSES.PENDING);
     
-    if (!firstNameInput.current.validity.valid) {
+    if (!nameInput.current.validity.valid) {
       error = true;
-      setFirstNameError('_errors.This_field_is_required');
+      setNameError('_errors.This_field_is_required');
     } else {
-      setFirstNameError('');
+      setNameError('');
     }
 
-    if (!lastNameInput.current.validity.valid) {
+    if (!categoryInput.current.validity.valid) {
       error = true;
-      setLastNameError('_errors.This_field_is_required');
+      setCategoryError('_errors.This_field_is_required');
     } else {
-      setLastNameError('');
+      setCategoryError('');
     }
 
     if (!emailInput.current.validity.valid) {
@@ -126,53 +126,52 @@ export default function CustomerForm({ customer, type, appType }) {
     if (fetchStatus === FETCH_STATUSES.LOADING) {
 
       const form = {
-        first_name: firstNameInput.current.value,
-        last_name: lastNameInput.current.value,
+        name: nameInput.current.value,
+        category: categoryInput.current.value,
         email: emailInput.current.value,
-        phone_number: phoneInput.current.value,
-        status: statusInput.current.value,
+        phone_number: phoneInput.current.value
       };
 
-      const request = type === CustomerForm.UPDATE ? api.update(customer.id, form) : api.add(form);
+      const request = type === StoreForm.UPDATE ? api.update(store.id, form) : api.add(form);
       
       request.then(res=> {
         
         setFormSuccess(res.message);
         setFetchStatus(FETCH_STATUSES.DONE);
 
-        if (type === CustomerForm.ADD) {
-          firstNameInput.current.value = '';
-          lastNameInput.current.value = '';
+        if (type === StoreForm.ADD) {
+          nameInput.current.value = '';
+          categoryInput.current.value = '';
           emailInput.current.value = '';
           phoneInput.current.value = '';
           statusInput.current.value = '';
         }
+        
 
       }).catch(err=> {
-        
+
         setFetchStatus(FETCH_STATUSES.ERROR);
 
         if (err.errors) {
           setFormError(err.errors.form);
-          setFirstNameError(err.errors.first_name);
-          setLastNameError(err.errors.last_name);
+          setNameError(err.errors.name);
+          setCategoryError(err.errors.category);
           setEmailError(err.errors.email);
           setPhoneError(err.errors.phone_number);
-          setStatusError(err.errors.status);
         } else {
           setFormError('_errors.Something_went_wrong');
         }
 
       });
 
-    } else if (fetchStatus === FETCH_STATUSES.DONE && photoFetchStatus === FETCH_STATUSES.PENDING) {
+    } else if(fetchStatus === FETCH_STATUSES.DONE && photoFetchStatus === FETCH_STATUSES.PENDING) {
       setPhotoFetchStatus(FETCH_STATUSES.LOADING);
     } else if (dialog !== null) {
       setDialog(null);
     }
 
-  }, [customer, type, api, fetchStatus, photoFetchStatus, dialog]);
-  
+  }, [store, type, api, fetchStatus, photoFetchStatus, dialog, userDispatch]);
+
   return (
     <form method="POST" action="" className="form-1-x" onSubmit={updateProfile} noValidate>
 
@@ -186,28 +185,32 @@ export default function CustomerForm({ customer, type, appType }) {
 
       <PhotoChooser 
         api={api}
-        src={`/photos/customer/${customer.photo}`} 
+        src={`/photos/store/${store.photo}`} 
+        text="_extra.Edit_photo" 
         status={photoFetchStatus}
         onSuccess={onPhotoSuccess}
         onError={onPhotoError}
         />
 
       <FormField 
-        ref={firstNameInput}
-        error={firstNameError}
-        ID="fn-input" 
-        label="_user.First_name" 
+        ref={nameInput}
+        error={nameError}
+        ID="name-input" 
+        label="_user.Name" 
         required={true}
-        value={ customer.first_name }
+        value={ store.name }
         />
 
-      <FormField 
-        ref={lastNameInput}
-        error={lastNameError}
-        ID="ln-input" 
-        label="_user.Last_name" 
+      <FormSelect 
+        ref={categoryInput}
+        error={categoryError}
+        ID="category-input"
+        label="_store.Store_category" 
         required={true}
-        value={ customer.last_name }
+        value={ store.category }
+        options={[
+          'Phamarcy'
+        ]}
         />
 
       <FormField 
@@ -217,19 +220,19 @@ export default function CustomerForm({ customer, type, appType }) {
         label="_user.Email" 
         type="email" 
         required={true}
-        value={ customer.email }
+        value={ store.email }
         />
 
-      <FormField
+      <FormField 
         ref={phoneInput}
         error={phoneError}
         ID="phone-input" 
         label="_user.Phone_number" 
-        type="tel"
-        value={ customer.phone_number }
-        required={false}
+        type="tel" 
+        required={true}
+        value={ store.phone_number }
         />
-      
+
       { 
         appType === AdminApp.TYPE && 
         <FormSelect 
@@ -238,7 +241,7 @@ export default function CustomerForm({ customer, type, appType }) {
           ID="status-input" 
           label="_extra.Status" 
           required={true}
-          value={customer.status}
+          value={store.status}
           options={[
             'Active',
             'Suspended',
@@ -255,5 +258,5 @@ export default function CustomerForm({ customer, type, appType }) {
   );
 }
 
-CustomerForm.ADD = 'add';
-CustomerForm.UPDATE = 'update';
+StoreForm.ADD = 'add';
+StoreForm.UPDATE = 'update';

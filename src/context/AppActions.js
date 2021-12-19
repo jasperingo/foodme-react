@@ -51,7 +51,7 @@ export const ADDRESS = {
   LIST_FETCH_STATUS_CHANGED: 'ADDRESSES_LIST_FETCH_STATUS_CHANGED',
 };
 
-export const getAddressListFetchStatusAction = (payload) => ({
+export const getAddressesListFetchStatusAction = (payload) => ({
   type: ADDRESS.LIST_FETCH_STATUS_CHANGED,
   payload
 });
@@ -173,11 +173,15 @@ export const DELIVERY_FIRM = {
   LIST_FETCH_STATUS_CHANGED: 'DELIVERY_FIRMS_FETCH_STATUS_CHANGED',
 };
 
+export const getDeliveryFirmFetchStatusAction = (payload) => ({
+  type: DELIVERY_FIRM.FETCH_STATUS_CHANGED,
+  payload
+});
+
 export const getDeliveryFirmsListFetchStatusAction = (payload) => ({
   type: DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED,
   payload
 });
-
 
 export const REVIEW = {
   UNFETCH: 'REVIEW_UNFETCH',

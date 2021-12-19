@@ -66,6 +66,9 @@ export function useHeader2Title() {
 
   if (path === '/customers')
     return '_user.Customers';
+
+  if (path === '/store/add')
+    return '_store.Add_store';
   
   if (path === '/stores')
     return '_store.Stores';

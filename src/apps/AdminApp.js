@@ -14,7 +14,7 @@ import Profile from '../pages/Admin/Profile';
 import Stores from '../pages/Admin/Stores';
 import Transactions from '../pages/Admin/Transactions';
 import DeliveryFirm from '../pages/Admin/DeliveryFirm';
-import Store from '../pages/Admin/Store';
+import Store from '../pages/Store';
 import Customer from '../pages/Admin/Customer';
 import Order from '../pages/Admin/Order';
 import Search from '../pages/Admin/Search';
@@ -83,7 +83,7 @@ export default function AdminApp() {
           <Route path="/delivery-firms" render={()=> authMiddleware() || <DeliveryFirms />} />
           <Route path="/store/:ID/update" render={()=> authMiddleware() || <StoreUpdate />} />
           <Route path="/store/add" render={()=> authMiddleware() || <StoreAdd />} />
-          <Route path="/store/:ID" render={()=> authMiddleware() || <Store />} />
+          <Route path="/store/:ID" render={()=> authMiddleware() || <Store appType={AdminApp.TYPE} />} />
           <Route path="/stores" render={()=> authMiddleware() || <Stores />} />
           <Route path="/customer/:ID/update" render={()=> authMiddleware() || <CustomerUpdate />} />
           <Route path="/customer/add" render={()=> authMiddleware() || <CustomerAdd />} />

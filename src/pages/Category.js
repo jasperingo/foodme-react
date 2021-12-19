@@ -2,13 +2,14 @@
 import Icon from '@mdi/react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import CategoryApi from '../api/CategoryApi';
 import AdminApp from '../apps/AdminApp';
 import { editIcon, productIcon, storeIcon } from '../assets/icons';
 import AddButton from '../components/AddButton';
 import CategoryItem from '../components/CategoryItem';
 import Loading from '../components/Loading';
+import ProfileLink from '../components/ProfileLink';
 import Reload from '../components/Reload';
 import { CATEGORIES, FETCH_STATUSES, getCategoryFetchStatusAction } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
@@ -65,13 +66,12 @@ export default function Category({ appType }) {
                       { category.products_count && t('_product.product__Count', { count : parseInt(category.products_count) }) }
                     </div>
                   </div>
-                  {
-                    appType === AdminApp.TYPE && 
-                    <Link to={`/category/${category.id}/update`} className="btn-color-primary rounded p-1 flex gap-1">
-                      <Icon path={editIcon} className="w-5 h-5" />
-                      <span className="sr-onlyj flex-grow">{ t('_extra.Edit') }</span>
-                    </Link>
-                  }
+                  <ul>
+                    {
+                      appType === AdminApp.TYPE && 
+                      <ProfileLink href={`/category/${category.id}/update`} icon={editIcon} title="_extra.Edit" />
+                    }
+                  </ul>
                 </div>
 
                 <div>

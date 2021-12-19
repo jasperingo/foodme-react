@@ -1,8 +1,8 @@
 
 import React, { useEffect } from 'react';
-import { Link, Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useAppContext } from '../../context/AppContext';
+import { useAppContext } from '../context/AppContext';
 import { 
   FETCH_STATUSES, 
   STORE, 
@@ -11,21 +11,21 @@ import {
   getProductsListFetchStatusAction, 
   getReviewsListFetchStatusAction, 
   getPromotionsListFetchStatusAction 
-} from '../../context/AppActions';
-import { useListRender, useDataRender, useHasMoreToFetchViaScroll } from '../../context/AppHooks';
-import Tab from '../../components/Tab';
-import Loading from '../../components/Loading';
-import ProductItem from '../../components/ProductItem';
-import Reload from '../../components/Reload';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import ReviewItem from '../../components/ReviewItem';
-import Rater from '../../components/Rater';
-import ReviewSummary from '../../components/ReviewSummary';
-import { useTranslation } from 'react-i18next';
-import PromotionItem from '../../components/PromotionItem';
+} from '../context/AppActions';
+import { useListRender, useDataRender, useHasMoreToFetchViaScroll } from '../context/AppHooks';
+import Tab from '../components/Tab';
+import Loading from '../components/Loading';
+import ProductItem from '../components/ProductItem';
+import Reload from '../components/Reload';
+import EmptyList from '../components/EmptyList';
+import FetchMoreButton from '../components/FetchMoreButton';
+import ReviewItem from '../components/ReviewItem';
+import Rater from '../components/Rater';
+import ReviewSummary from '../components/ReviewSummary';
+import PromotionItem from '../components/PromotionItem';
 import { 
   categoryIcon, 
+  editIcon, 
   emailIcon, 
   filterIcon, 
   locationIcon, 
@@ -34,12 +34,15 @@ import {
   productIcon, 
   promotionIcon, 
   reviewIcon 
-} from '../../assets/icons';
+} from '../assets/icons';
 import Icon from '@mdi/react';
-import StoreApi from '../../api/StoreApi';
-import ProductApi from '../../api/ProductApi';
-import ReviewApi from '../../api/ReviewApi';
-import PromotionApi from '../../api/PromotionApi';
+import StoreApi from '../api/StoreApi';
+import ProductApi from '../api/ProductApi';
+import ReviewApi from '../api/ReviewApi';
+import PromotionApi from '../api/PromotionApi';
+import ProfileDetails from '../components/ProfileDetails';
+import ProfileHeader from '../components/ProfileHeader';
+import AdminApp from '../apps/AdminApp';
 
 const PROFILE_NAV_LINKS = [
   { title : '_product.Products', href: '' },
@@ -251,65 +254,67 @@ function StoreProductsList({ categories }) {
 }
 
 
+function StoreProfile({ appType, store: { photo, name, id, phone_number, email, category, sub_category, rating, address: {state, city, street } } }) {
 
-function StoreProfileItem({ icon, data }) {
+  const links = [
+    {
+      href: `/messages/${id}`,
+      title: '_message.Message',
+      icon: messageIcon
+    }
+  ]
+
+  if (appType === AdminApp.TYPE) {
+    links.push({
+      href: `/store/${id}/update`,
+      title: '_extra.Edit',
+      icon: editIcon
+    });
+  }
+
   return (
-    <li className="inline-flex">
-      <div className="bg-color-gray text-color flex items-center px-2 py-1 rounded mr-2 mb-2">
-        <Icon path={icon} className="inline-block w-5 h-5 " />
-        <span className="inline-block ml-1 text-sm">{ data }</span>
-      </div>
-    </li>
-  );
-}
+    <div>
+      <div className="container-x">
 
-function StoreProfile({ store: { photo, name, id, phone_number, email, category, sub_category, rating, address: {state, city, street } } }) {
-
-  const { t } = useTranslation();
-
-  return (
-    <>
-
-      <div className="flex items-center my-4">
-        <img 
-          src={ `/photos/${photo}` } 
-          alt={ name } 
-          className="w-10 h-10 md:w-16 md:h-16 border rounded-full" 
+        <ProfileHeader 
+          photo={`/photos/store/${photo}`} 
+          name={name} 
+          links={links} 
           />
-        <h4 className="flex-grow font-bold ml-2 md:text-xl">{ name }</h4> 
-        <div>
-          <Link 
-            to={`/messages/${id}`} 
-            title={ t('_message.Message_store') }
-            className="btn-color-primary rounded-full p-2 block"
-            >
-            <span className="sr-only">{ t('_message.Message_store') }</span>
-            <Icon path={messageIcon} className="w-4 h-4" />
-          </Link>
-        </div>
+
+        <ProfileDetails 
+          details={[
+            {
+              icon: locationIcon,
+              data: `${street}, ${city}, ${state}`
+            },
+            {
+              icon: phoneIcon,
+              data: phone_number
+            },
+            {
+              icon: emailIcon,
+              data: email
+            },
+            {
+              icon: categoryIcon,
+              data: `${category}, ${sub_category}`
+            },
+            {
+              icon: reviewIcon,
+              data: rating
+            }
+          ]}
+          />
+
+        <Tab items={PROFILE_NAV_LINKS} keyPrefix="store-tab" />
+
       </div>
-
-      <ul className="pt-3">
-
-        <StoreProfileItem icon={locationIcon} data={ `${street}, ${city}, ${state}` } />
-
-        <StoreProfileItem icon={phoneIcon} data={ phone_number } />
-
-        <StoreProfileItem icon={emailIcon} data={ email } />
-
-        <StoreProfileItem icon={categoryIcon} data={ `${category}, ${sub_category}` } />
-
-        <StoreProfileItem icon={reviewIcon} data={ rating } />
-
-      </ul>
-
-      <Tab items={PROFILE_NAV_LINKS} keyPrefix="store-tab" />
-
-    </>
+    </div>
   );
 }
 
-export default function Store() {
+export default function Store({ appType }) {
 
   const ID = parseInt(useParams().ID);
 
@@ -338,20 +343,15 @@ export default function Store() {
 
   return (
     <section>
-
-      <div>
-        <div className="container-x">
-          { 
-            useDataRender(
-              store, 
-              storeFetchStatus,
-              ()=> <StoreProfile store={store} />,
-              ()=> <Loading />, 
-              ()=> <Reload action={refetchStore} />,
-            )
-          }
-        </div>
-      </div>
+      { 
+        useDataRender(
+          store, 
+          storeFetchStatus,
+          ()=> <StoreProfile store={store} appType={appType} />,
+          ()=> <Loading />, 
+          ()=> <Reload action={refetchStore} />,
+        )
+      }
 
       {
         store && 
@@ -361,7 +361,6 @@ export default function Store() {
           <Route path={match.url} render={()=> <StoreProductsList categories={store.categories} />} />
         </Switch>
       }
-      
     </section>
   );
 }

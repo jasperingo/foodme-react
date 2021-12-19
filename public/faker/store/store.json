@@ -7,7 +7,7 @@
     "email": "johngreen@gmail.com",
     "phone_number": "08037848934",
     "api_token": "jwt-token",
-    "photo": "store.jpeg",
+    "photo": "store1.webp",
     "rating" : 3.9,
     "categories" : [
       {

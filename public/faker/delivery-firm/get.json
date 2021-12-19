@@ -1,0 +1,11 @@
+{
+  "data": {
+    "id" : 2,
+    "name": "Flatway logistics",
+    "email": "flatway@gmail.com",
+    "phone_number": "08037848900",
+    "api_token": "jwt-token",
+    "photo": "default.jpeg",
+    "rating" : 4.6
+  }
+}

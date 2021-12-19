@@ -1,6 +1,7 @@
 
-import { DELIVERY_FIRM } from "../AppActions";
+import { DELIVERY_FIRM, FETCH_STATUSES } from "../AppActions";
 import { useListFetchStatus } from "../AppHooks";
+import { initialDeliveryFirmState } from "../AppInitialStates";
 
 export default function DeliveryFirmsReducer(state, action) {
   
@@ -25,7 +26,7 @@ export default function DeliveryFirmsReducer(state, action) {
         action.payload.deliveryFirms.length
       );
       
-      const cus = state.deliveryFirms.deliveryFirms.filter(i=> i !== null);
+      const delv = state.deliveryFirms.deliveryFirms.filter(i=> i !== null);
       
       return {
         ...state,
@@ -33,7 +34,28 @@ export default function DeliveryFirmsReducer(state, action) {
           deliveryFirmsFetchStatus: status,
           deliveryFirmsPage: state.deliveryFirms.deliveryFirmsPage+1,
           deliveryFirmsNumberOfPages: action.payload.deliveryFirmsNumberOfPages,
-          deliveryFirms: [...cus, ...action.payload.deliveryFirms, null],
+          deliveryFirms: [...delv, ...action.payload.deliveryFirms, null],
+        }
+      };
+
+    case DELIVERY_FIRM.UNFETCH:
+      return initialDeliveryFirmState;
+      
+    case DELIVERY_FIRM.FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        deliveryFirm: {
+          ...state.deliveryFirm,
+          deliveryFirmFetchStatus: action.payload
+        }
+      };
+    
+    case DELIVERY_FIRM.FETCHED:
+      return {
+        ...state,
+        deliveryFirm: {
+          deliveryFirm: action.payload, 
+          deliveryFirmFetchStatus: FETCH_STATUSES.DONE,
         }
       };
 

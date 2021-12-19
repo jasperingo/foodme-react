@@ -1,20 +1,28 @@
 
-import Icon from '@mdi/react';
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Link, Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
+import AddressApi from '../../api/AddressApi';
 import OrderApi from '../../api/OrderApi';
 import UserApi from '../../api/UserApi';
 import AdminApp from '../../apps/AdminApp';
-import { editIcon, orderIcon } from '../../assets/icons';
+import { dateIcon, editIcon, emailIcon, orderIcon, phoneIcon } from '../../assets/icons';
+import AddressItem from '../../components/AddressItem';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import Loading from '../../components/Loading';
 import OrderItem from '../../components/OrderItem';
+import ProfileDetails from '../../components/ProfileDetails';
+import ProfileHeader from '../../components/ProfileHeader';
 import Reload from '../../components/Reload';
 import Tab from '../../components/Tab';
-import { CUSTOMER, FETCH_STATUSES, getCustomerFetchStatusAction, getOrdersListFetchStatusAction } from '../../context/AppActions';
+import { 
+  CUSTOMER, 
+  FETCH_STATUSES, 
+  getAddressesListFetchStatusAction, 
+  getCustomerFetchStatusAction, 
+  getOrdersListFetchStatusAction 
+} from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 import { useDataRender, useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
 
@@ -25,10 +33,45 @@ const TAB_LINKS = [
 
 function Addresses() {
   
-  
+  const { 
+    user: { user }, 
+    customers: {
+      customer: {
+        customer
+      },
+      addresses: {
+        addresses,
+        addressesFetchStatus
+      }
+    }, 
+    customersDispatch 
+  } = useAppContext();
+
+  useEffect(()=> {
+    if (addressesFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new AddressApi(user.api_token);
+      api.getListByCustomer(customer.id, customersDispatch);
+    }
+  }, [user, customer, addressesFetchStatus, customersDispatch]);
+
+  function refetchAddresses() {
+    if (addressesFetchStatus !== FETCH_STATUSES.LOADING) 
+      customersDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+
   return (
     <div>
-      Addresses...
+      <ul className="list-2-x">
+        { 
+          useListRender(
+            addresses, 
+            addressesFetchStatus,
+            (item, i)=> <AddressItem key={`address-${i}`} address={item} />,
+            (k)=> <li key={k}> <Loading /> </li>, 
+            (k)=> <li key={k}> <Reload action={refetchAddresses} /> </li>,
+          )
+        }
+      </ul>
     </div>
   );
 }
@@ -88,19 +131,7 @@ function Orders() {
   );
 }
 
-function CustomerData({ title, body }) {
-  const { t } = useTranslation();
-  return (
-    <div className="mb-4 flex gap-2 md:border md:rounded md:px-2 md:mb-2">
-      <dt className="text-color-primary">{ t(title) }</dt>
-      <dd className="font-bold">{ body }</dd>
-    </div>
-  );
-}
-
 export default function Customer() {
-
-  const { t } = useTranslation();
 
   const match = useRouteMatch();
 
@@ -139,27 +170,43 @@ export default function Customer() {
             customer, 
             customerFetchStatus,
             ()=> (
-              <>
-                <div className="pt-4 flex items-center gap-2 justify-between">
-                  <img src={`/photos/customer/${customer.photo}`} alt="user" width="50" height="50" className="w-20 h-20 rounded-full" />
-                  <Link to={`/customer/${customer.id}/update`} className="flex gap-1 justify-center btn-color-primary px-2 py-1 rounded">
-                    <Icon path={editIcon} className="w-5 h-5" />
-                    <span>{ t('_extra.Edit') }</span>
-                  </Link>
-                </div>
-                <dl className="pt-4 md:flex gap-2">
-                  <CustomerData title="_user.First_name" body={customer.first_name} />
-                  <CustomerData title="_user.Last_name" body={customer.last_name} />
-                  <CustomerData title="_user.Email" body={customer.email} />
-                  <CustomerData title="_user.Phone_number" body={customer.phone_number} />
-                  <CustomerData title="_user.Registration_date" body={customer.created_at} />
-                </dl>
+              <div>
+                <ProfileHeader
+                  photo={`/photos/customer/${customer.photo}`}
+                  name={`${customer.first_name} ${customer.last_name}`}
+                  links={[
+                    {
+                      href: `/customer/${customer.id}/update`,
+                      title: '_extra.Edit',
+                      icon: editIcon
+                    }
+                  ]}
+                  />
+
+                <ProfileDetails 
+                  details={[
+                    {
+                      icon: phoneIcon,
+                      data: customer.phone_number
+                    },
+                    {
+                      icon: emailIcon,
+                      data: customer.email
+                    },
+                    {
+                      icon: dateIcon,
+                      data: customer.created_at
+                    }
+                  ]}
+                  />
+
                 <Tab items={TAB_LINKS} />
+
                 <Switch>
                   <Route path={`${match.url}/addresses`} render={()=> <Addresses />} />
                   <Route path={match.url} render={()=> <Orders />} />
                 </Switch>
-              </>
+              </div>
             ),
             (k)=> <div className="container-x"> <Loading /> </div>, 
             (k)=> <div className="container-x"> <Reload action={refetchCustomer} /> </div>,

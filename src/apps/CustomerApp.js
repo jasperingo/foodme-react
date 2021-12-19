@@ -14,7 +14,7 @@ import Categories from '../pages/Customer/Categories';
 import Search from '../pages/Customer/Search';
 import SearchHistory from '../pages/SearchHistory';
 import Register from '../pages/Customer/Register';
-import Store from '../pages/Customer/Store';
+import Store from '../pages/Store';
 import Product from '../pages/Customer/Product';
 import Messages from '../pages/Customer/Messages';
 import Promotion from '../pages/Customer/Promotion';

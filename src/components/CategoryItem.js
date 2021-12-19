@@ -18,10 +18,10 @@ export default function CategoryItem({ category, index, sub }) {
 
   return (
     <li className="mb-2">
-      <div className="flex items-center">
+      <div className={`flex items-center bg-color py-2 rounded md:px-2 md:items-start md:py-3 md:shadow hover:bg-color-gray-h ${iconColor}`}>
         <Link 
           to={fullPath} 
-          className={ `flex flex-grow gap-2 bg-color py-2 rounded md:py-3 md:shadow md:block md:text-center hover:bg-color-gray-h ${iconColor}` }
+          className="flex flex-grow gap-2 md:block md:text-center"
           >
           <img src={`/photos/category/${category.photo}`} alt={category.name} width="100" height="100" className="w-14 h-14 block mx-auto rounded" />
           <div className="flex-grow">
