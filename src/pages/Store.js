@@ -10,7 +10,9 @@ import {
   getStoreFetchStatusAction, 
   getProductsListFetchStatusAction, 
   getReviewsListFetchStatusAction, 
-  getPromotionsListFetchStatusAction 
+  getPromotionsListFetchStatusAction, 
+  getOrdersListFetchStatusAction,
+  getTransactionsListFetchStatusAction
 } from '../context/AppActions';
 import { useListRender, useDataRender, useHasMoreToFetchViaScroll } from '../context/AppHooks';
 import Tab from '../components/Tab';
@@ -30,10 +32,12 @@ import {
   filterIcon, 
   locationIcon, 
   messageIcon, 
+  orderIcon, 
   phoneIcon, 
   productIcon, 
   promotionIcon, 
-  reviewIcon 
+  reviewIcon, 
+  transactionIcon
 } from '../assets/icons';
 import Icon from '@mdi/react';
 import StoreApi from '../api/StoreApi';
@@ -43,12 +47,134 @@ import PromotionApi from '../api/PromotionApi';
 import ProfileDetails from '../components/ProfileDetails';
 import ProfileHeader from '../components/ProfileHeader';
 import AdminApp from '../apps/AdminApp';
+import OrderItem from '../components/OrderItem';
+import OrderApi from '../api/OrderApi';
+import TransactionItem from '../components/TransactionItem';
+import TransactionApi from '../api/TransactionApi';
 
 const PROFILE_NAV_LINKS = [
   { title : '_product.Products', href: '' },
   { title : '_extra.Reviews', href: '/reviews' },
-  { title : '_store.Promotions', href: '/promotions' }
+  { title : '_store.Promotions', href: '/promotions' },
+  { title : '_order.Orders', href: '/orders' },
+  { title : '_transaction.Transactions', href: '/transactions' }
 ];
+
+function Transactions() {
+  
+  const { ID } = useParams();
+
+  const { 
+    user: { user }, 
+    stores: {
+      transactions: {
+        transactions,
+        transactionsFetchStatus,
+        transactionsPage,
+        transactionsNumberOfPages
+      }
+    }, 
+    storesDispatch 
+  } = useAppContext();
+
+  useEffect(()=>{
+    if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new TransactionApi(user.api_token);
+      api.getListByStore(ID, transactionsPage, storesDispatch);
+    }
+  });
+
+  function refetchTransactions() {
+    if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
+      storesDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+
+  return (
+    <div>
+      <div className="container-x">
+        <InfiniteScroll
+          dataLength={transactions.length}
+          next={refetchTransactions}
+          hasMore={useHasMoreToFetchViaScroll(transactionsPage, transactionsNumberOfPages, transactionsFetchStatus)}
+          >
+          <ul className="list-2-x">
+            { 
+              useListRender(
+                transactions, 
+                transactionsFetchStatus,
+                (item, i)=> <TransactionItem key={`transaction-${i}`} transaction={item} />, 
+                (k)=> <li key={k}> <Loading /> </li>, 
+                (k)=> <li key={k}> <Reload action={refetchTransactions} /> </li>,
+                (k)=> <li key={k}> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>, 
+                (k)=> <li key={k}> <FetchMoreButton action={refetchTransactions} /> </li>,
+              )
+            }
+          </ul>
+        </InfiniteScroll>
+      </div>
+    </div>
+  );
+}
+
+function Orders() {
+
+  const { ID } = useParams();
+  
+  const { 
+    user: { user }, 
+    stores: {
+      orders: {
+        orders,
+        ordersStatus,
+        ordersFetchStatus,
+        ordersPage,
+        ordersNumberOfPages
+      }
+    }, 
+    storesDispatch 
+  } = useAppContext();
+
+  useEffect(()=>{
+    
+    if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new OrderApi(user.api_token);
+      api.getListByStore(ID, storesDispatch);
+    }
+
+  }, [ID, user, ordersFetchStatus, ordersStatus, storesDispatch]);
+
+  function refetchOrders() {
+    if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
+      storesDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING));
+  }
+
+  return (
+    <div>
+       <div className="container-x">
+          
+        <InfiniteScroll
+          dataLength={orders.length}
+          next={refetchOrders}
+          hasMore={useHasMoreToFetchViaScroll(ordersPage, ordersNumberOfPages, ordersFetchStatus)}
+          >
+          <ul className="list-2-x">
+            { 
+              useListRender(
+                orders, 
+                ordersFetchStatus,
+                (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/order/${item.id}`} appType={AdminApp.TYPE} />, 
+                (k)=> <li key={k}> <Loading /> </li>, 
+                (k)=> <li key={k}> <Reload action={refetchOrders} /> </li>,
+                (k)=> <li key={k}> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>, 
+                (k)=> <li key={k}> <FetchMoreButton action={refetchOrders} /> </li>,
+              )
+            }
+          </ul>
+        </InfiniteScroll>
+      </div>
+    </div>
+  );
+}
 
 function StorePromotionsList() {
 
@@ -307,7 +433,10 @@ function StoreProfile({ appType, store: { photo, name, id, phone_number, email, 
           ]}
           />
 
-        <Tab items={PROFILE_NAV_LINKS} keyPrefix="store-tab" />
+        <Tab 
+          items={PROFILE_NAV_LINKS.filter(i=> (i.href !== '/orders' && i.href !== '/transactions') || ((i.href === '/orders' || i.href === '/transactions') && appType === AdminApp.TYPE))} 
+          keyPrefix="store-tab" 
+          />
 
       </div>
     </div>
@@ -356,6 +485,8 @@ export default function Store({ appType }) {
       {
         store && 
         <Switch>
+          { appType === AdminApp.TYPE && <Route path={`${match.url}/transactions`} render={()=> <Transactions />} /> }
+          { appType === AdminApp.TYPE && <Route path={`${match.url}/orders`} render={()=> <Orders />} /> }
           <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList ratings={store.rating} />} />
           <Route path={`${match.url}/promotions`} render={()=> <StorePromotionsList />} />
           <Route path={match.url} render={()=> <StoreProductsList categories={store.categories} />} />

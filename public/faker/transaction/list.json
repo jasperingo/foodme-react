@@ -1,0 +1,33 @@
+{
+  "total_pages": 8,
+  "data": [
+    {
+      "amount": 2000, 
+      "reference_code": "LKJSKODJIOICJD",
+      "type": "payment", 
+      "created_at": "20 Nov 2021", 
+      "status": "approved"
+    },
+    {
+      "amount": 800.34, 
+      "reference_code": "OIJDFIOJSIOFDSJ",
+      "type": "refund", 
+      "created_at": "10 Nov 2021", 
+      "status": "approved"
+    },
+    {
+      "amount": 4000.34, 
+      "reference_code": "IOJFIUFDUIHD",
+      "type": "payment", 
+      "created_at": "1 Nov 2021", 
+      "status": "failed"
+    },
+    {
+      "amount": 8300.34,
+      "reference_code": "HAIODFIHDIUA", 
+      "type": "payment", 
+      "created_at": "28 Oct 2021", 
+      "status": "pending"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 
-import { TRANSACTION } from "../AppActions";
+import { FETCH_STATUSES, TRANSACTION } from "../AppActions";
 import { useListFetchStatus } from "../AppHooks";
+import { initialTransactionsState } from "../AppInitialStates";
 
 
 export default function TransactionsReducer (state, action) {
@@ -8,6 +9,27 @@ export default function TransactionsReducer (state, action) {
   const fetchUpdater = useListFetchStatus();
   
   switch (action.type) {  
+
+    case TRANSACTION.UNFETCH: 
+      return initialTransactionsState;
+    
+    case TRANSACTION.FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        transaction: {
+          ...state.transaction,
+          transactionFetchStatus: action.payload
+        }
+      };
+    
+    case TRANSACTION.FETCHED :
+      return {
+        ...state,
+        transaction: {
+          transaction: action.payload, 
+          transactionFetchStatus: FETCH_STATUSES.DONE,
+        }
+      };
 
     case TRANSACTION.LIST_FETCH_STATUS_CHANGED :
       return {

@@ -33,6 +33,7 @@ import DeliveryFirmAdd from '../pages/Admin/DeliveryFirmAdd';
 import Category from '../pages/Category';
 import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
 import SubCategoryAdd from '../pages/Admin/SubCategoryAdd';
+import Transaction from '../pages/Admin/Transaction';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -94,6 +95,7 @@ export default function AdminApp() {
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} />
           <Route path="/search/history" render={()=> authMiddleware() || <SearchHistory />} />

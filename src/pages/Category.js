@@ -1,15 +1,15 @@
 
-import Icon from '@mdi/react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import CategoryApi from '../api/CategoryApi';
 import AdminApp from '../apps/AdminApp';
-import { editIcon, productIcon, storeIcon } from '../assets/icons';
+import { categoryIcon, editIcon, productIcon, storeIcon } from '../assets/icons';
 import AddButton from '../components/AddButton';
 import CategoryItem from '../components/CategoryItem';
 import Loading from '../components/Loading';
-import ProfileLink from '../components/ProfileLink';
+import ProfileDetails from '../components/ProfileDetails';
+import ProfileHeader from '../components/ProfileHeader';
 import Reload from '../components/Reload';
 import { CATEGORIES, FETCH_STATUSES, getCategoryFetchStatusAction } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
@@ -54,28 +54,32 @@ export default function Category({ appType }) {
             categoryFetchStatus,
             ()=> (
               <>
-                <div className="flex my-4 gap-2 items-center">
-                  <img src={`/photos/category/${category.photo}`} alt="category" width="200" height="200" className="w-14 h-14 rounded" />
-                  <div className="flex-grow">
-                    <div className="flex gap-2 items-center">
-                      <h3 className="font-bold text-xl">{ category.name }</h3>
-                      <Icon path={(category.type === 'product') ? productIcon : storeIcon} className="w-6 h-6" />
-                    </div>
-                    <div className="text-sm text-color-gray">
-                      { category.stores_count && t('_store.store__Count', { count : parseInt(category.stores_count) }) }
-                      { category.products_count && t('_product.product__Count', { count : parseInt(category.products_count) }) }
-                    </div>
-                  </div>
-                  <ul>
+                <ProfileHeader 
+                  photo={`/photos/category/${category.photo}`}
+                  name={category.name}
+                  links={appType === AdminApp.TYPE && [
                     {
-                      appType === AdminApp.TYPE && 
-                      <ProfileLink href={`/category/${category.id}/update`} icon={editIcon} title="_extra.Edit" />
+                      href: `/category/${category.id}/update`,
+                      title: '_extra.Edit',
+                      icon: editIcon
                     }
-                  </ul>
-                </div>
+                  ]}
+                  />
+                
+                <ProfileDetails
+                  details={[
+                    {
+                      icon: (category.type === 'product') ? productIcon : storeIcon,
+                      data: (category.type === 'product') ? t('_product.product__Count', { count : parseInt(category.products_count) }) : t('_store.store__Count', { count : parseInt(category.stores_count) })
+                    },
+                    {
+                      icon: categoryIcon,
+                      data: t('_category.sub_category__Count', { count: category.sub_categories.length })
+                    }
+                  ]}
+                  />
 
                 <div>
-                  <h4 className="font-bold text-lg text-color-gray mb-1">{ t('_category.sub_category__Count', { count: category.sub_categories.length }) }</h4>
                   {
                     appType === AdminApp.TYPE && <AddButton text="_category.Add_sub_category" href={`/sub-category/add?category=${category.id}`} />
                   }

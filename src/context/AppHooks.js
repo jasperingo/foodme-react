@@ -117,6 +117,9 @@ export function useHeader2Title() {
 
   if (path === '/account/transactions')
     return '_transaction.Transactions';
+
+  if (/transaction\/[0-9A-Z]+/.test(path))
+    return '_transaction.Transaction';
   
   if (path === '/account/favorites')
     return '_extra.Favorites';
@@ -225,6 +228,44 @@ export function useOrderStatus(status) {
 
   return [theStatus, statusColor];
 }
+
+export function useTransactionStatus(status) {
+
+  let theStatus, statusColor;
+
+  switch(status) {
+    case 'processing':
+      theStatus = '_order.Processing';
+      statusColor = 'bg-purple-500';
+      break;
+    case 'failed':
+      theStatus = '_extra.Failed';
+      statusColor = 'bg-red-500';
+      break;
+    case 'approved':
+      theStatus = '_extra.Approved';
+      statusColor = 'bg-green-500';
+      break;
+    default: 
+      theStatus = '_order.Pending';
+      statusColor = 'bg-gray-500';
+  }
+  
+  return [theStatus, statusColor];
+}
+
+export function useTransactionType(type) {
+ 
+  switch(type) {
+
+    case 'refund':
+      return '_transaction.Refund';
+
+    default:
+      return '_transaction.Payment';
+  }
+}
+
 
 export function useHasMoreToFetchViaScroll(page, numberOfPages, status, scrollCount=5) {
   return page%scrollCount !== 0 && 

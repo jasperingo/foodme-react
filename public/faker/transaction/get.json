@@ -1,0 +1,29 @@
+{
+  "data": {
+    "amount": 2000, 
+    "reference_code": "LKJSKODJIOICJD",
+    "type": "payment", 
+    "created_at": "20 Nov 2021", 
+    "status": "approved",
+    "customer": {
+      "id": 3,
+      "first_name": "Ghost",
+      "last_name": "Ring",
+      "photo": "default.jpg"
+    },
+    "store": {
+      "id": 20,
+      "name": "High Taste",
+      "photo": "default.jpeg"
+    },
+    "delivery_firm": {
+      "id": 69,
+      "name": "Low routes",
+      "photo": "default.jpeg"
+    },
+    "order": {
+      "id": 11,
+      "number": "OIIDUEW993"
+    }
+  }
+}

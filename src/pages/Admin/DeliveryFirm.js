@@ -1,17 +1,55 @@
 
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 import DeliveryFirmApi from '../../api/DeliveryFirmApi';
-import { editIcon } from '../../assets/icons';
+import { editIcon, emailIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
 import Loading from '../../components/Loading';
-//import ProfileDetails from '../../components/ProfileDetails';
+import ProfileDetails from '../../components/ProfileDetails';
 import ProfileHeader from '../../components/ProfileHeader';
 import Reload from '../../components/Reload';
+import Tab from '../../components/Tab';
 import { DELIVERY_FIRM, FETCH_STATUSES, getDeliveryFirmsListFetchStatusAction } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 import { useDataRender } from '../../context/AppHooks';
 
+const NAV_LINKS = [
+  { title : '_delivery.Routes', href: '' },
+  { title : '_extra.Reviews', href: '/reviews' },
+  { title : '_order.Orders', href: '/orders' },
+  { title : '_transaction.Transactions', href: '/transactions' }
+];
+
+function Transactions() {
+  
+  return (
+    <div>Transactions...</div>
+  )
+}
+
+function Orders() {
+  
+  return (
+    <div>Orders...</div>
+  )
+}
+
+function Reviews() {
+  
+  return (
+    <div>Reviews...</div>
+  )
+}
+
+function Routes() {
+  
+  return (
+    <div>Routes...</div>
+  )
+}
+
 export default function DeliveryFirm() {
+
+  const match = useRouteMatch();
 
   const dID = parseInt(useParams().ID);
 
@@ -54,6 +92,11 @@ export default function DeliveryFirm() {
                   name={deliveryFirm.name}
                   links={[
                     {
+                      href: `/messages/${deliveryFirm.id}`,
+                      title: '_message.Message',
+                      icon: messageIcon
+                    },
+                    {
                       href: `/delivery-firm/${deliveryFirm.id}/update`,
                       title: '_extra.Edit',
                       icon: editIcon
@@ -61,22 +104,32 @@ export default function DeliveryFirm() {
                   ]}
                   />
 
-                {/* <ProfileDetails 
+                <ProfileDetails 
                   details={[
                     {
                       icon: phoneIcon,
-                      data: customer.phone_number
+                      data: deliveryFirm.phone_number
                     },
                     {
                       icon: emailIcon,
-                      data: customer.email
+                      data: deliveryFirm.email
                     },
                     {
-                      icon: dateIcon,
-                      data: customer.created_at
+                      icon: reviewIcon,
+                      data: deliveryFirm.rating
                     }
                   ]}
-                  /> */}
+                  />
+                
+                <Tab items={NAV_LINKS} keyPrefix="delivery-firm-tab" />
+
+                <Switch>
+                  <Route path={`${match.url}/transactions`} render={()=> <Transactions />} />
+                  <Route path={`${match.url}/orders`} render={()=> <Orders />} />
+                  <Route path={`${match.url}/reviews`} render={()=> <Reviews />} />
+                  <Route path={match.url} render={()=> <Routes />} />
+                </Switch>
+
               </div>
             ),
             (k)=> <div className="container-x"> <Loading /> </div>, 
@@ -85,5 +138,5 @@ export default function DeliveryFirm() {
         }
       </div>
     </section>
-  )
+  );
 }

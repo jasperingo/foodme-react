@@ -1,4 +1,4 @@
-import { ADDRESS, CUSTOMER, FETCH_STATUSES, ORDER } from "../AppActions";
+import { ADDRESS, CUSTOMER, FETCH_STATUSES, ORDER, PRODUCT, TRANSACTION } from "../AppActions";
 import { useListFetchStatus } from "../AppHooks";
 import { initialCustomerState } from "../AppInitialStates";
 
@@ -103,6 +103,64 @@ export default function CustomersReducer (state, action) {
         addresses: {
           addresses: action.payload, 
           addressesFetchStatus: FETCH_STATUSES.DONE,
+        }
+      };
+
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        products: {
+          ...state.products,
+          productsFetchStatus: action.payload
+        }
+      };
+    
+    case PRODUCT.LIST_FETCHED :
+      let status2 = fetchUpdater(
+        state.products.productsPage,
+        action.payload.productsNumberOfPages,
+        state.products.products.length,
+        action.payload.products.length
+      );
+      
+      const prod = state.products.products.filter(i=> i !== null);
+
+      return {
+        ...state,
+        products: {
+          productsFetchStatus: status2,
+          productsPage: state.products.productsPage+1,
+          productsNumberOfPages: action.payload.productsNumberOfPages,
+          products: [...prod, ...action.payload.products, null],
+        }
+      };
+
+    case TRANSACTION.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        transactions: {
+          ...state.transactions,
+          transactionsFetchStatus: action.payload
+        }
+      };
+    
+    case TRANSACTION.LIST_FETCHED :
+      let status3 = fetchUpdater(
+        state.transactions.transactionsPage, 
+        action.payload.transactionsNumberOfPages, 
+        state.transactions.transactions.length, 
+        action.payload.transactions.length
+      );
+      
+      const trans = state.transactions.transactions.filter(i=> i !== null);
+
+      return {
+        ...state,
+        transactions: {
+          transactionsFetchStatus: status3,
+          transactionsPage: state.transactions.transactionsPage+1,
+          transactionsNumberOfPages: action.payload.transactionsNumberOfPages,
+          transactions: [...trans, ...action.payload.transactions, null],
         }
       };
 

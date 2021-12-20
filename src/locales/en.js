@@ -128,6 +128,8 @@ export const TRANSLATIONS_EN = {
     Amount: 'Amount',
     Percent: 'Percent',
     Status: 'Status',
+    View: 'View',
+    Date: 'Date',
 
     Approved: 'Approved',
     Failed: 'Failed',
@@ -238,6 +240,7 @@ export const TRANSLATIONS_EN = {
     In_transit: 'In transit',
     Delivered: 'Delivered',
     Returned: 'Returned',
+    Order: 'Order',
     Orders: 'Orders',
     Add_order: 'Add order',
     Ordered_by: 'Ordered by',
@@ -255,6 +258,7 @@ export const TRANSLATIONS_EN = {
   },
 
   _transaction: {
+    Transaction: 'Transaction',
     Transactions: 'Transactions',
     Wallet: 'Wallet',
     Withdraw: 'Withdraw',
@@ -267,6 +271,7 @@ export const TRANSLATIONS_EN = {
     Bank_name: 'Bank name',
     Account_number: 'Account number',
     Account_type: 'Account type',
+    Reference_code: 'Reference code',
     Withdrawal_account: 'Withdrawal account',
     Change_withdrawal_account: 'Change withdrawal account'
   },

@@ -96,6 +96,10 @@
     @apply py-2 md:grid md:grid-cols-2 md:gap-4;
   }
 
+  .list-3-x {
+    @apply py-2 md:grid md:grid-cols-3 md:gap-4;
+  }
+
   .category-list {
     @apply md:grid md:grid-cols-3 md:gap-4;
   }

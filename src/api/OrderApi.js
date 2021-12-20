@@ -44,4 +44,24 @@ export default class OrderApi extends API {
     }
   }
 
+  async getListByStore(id, dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `order/list.json?id=${id}`,
+        'GET'
+      );
+      
+      dispatch({
+        type: ORDER.LIST_FETCHED,
+        payload: {
+          orders: data.data,
+          ordersNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
 }

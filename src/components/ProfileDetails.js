@@ -14,7 +14,7 @@ function Detail({ icon, data }) {
   );
 }
 
-export default function ProfileDetails({ details }) {
+export default function ProfileDetails({ details = [] }) {
 
   return (
     <ul className="py-2">

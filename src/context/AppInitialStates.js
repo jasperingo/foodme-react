@@ -80,9 +80,22 @@ export const initialCustomerState = {
     ordersNumberOfPages: 0,
     ordersFetchStatus: FETCH_STATUSES.LOADING,
   },
+  products: {
+    products: [null],
+    productsPage: 0,
+    productsCategory: 0,
+    productsNumberOfPages: 0,
+    productsFetchStatus: FETCH_STATUSES.LOADING
+  },
   addresses: {
     addresses: [null],
     addressesFetchStatus: FETCH_STATUSES.LOADING
+  },
+  transactions: {
+    transactions: [null],
+    transactionsPage: 0,
+    transactionsNumberOfPages: 0,
+    transactionsFetchStatus: FETCH_STATUSES.LOADING
   },
 };
 
@@ -115,7 +128,20 @@ export const initialStoreState = {
     promotionsPage: 0,
     promotionsNumberOfPages: 0,
     promotionsFetchStatus: FETCH_STATUSES.LOADING
-  }
+  },
+  orders: {
+    orders: [null],
+    ordersPage: 0,
+    ordersStatus: 'pending',
+    ordersNumberOfPages: 0,
+    ordersFetchStatus: FETCH_STATUSES.LOADING,
+  },
+  transactions: {
+    transactions: [null],
+    transactionsPage: 0,
+    transactionsNumberOfPages: 0,
+    transactionsFetchStatus: FETCH_STATUSES.LOADING
+  },
 };
 
 export const initialProductsState = {
@@ -226,6 +252,10 @@ export const initialPromotionsState = {
 
 
 export const initialTransactionsState = {
+  transaction: {
+    transaction: null,
+    transactionFetchStatus: FETCH_STATUSES.LOADING
+  },
   transactions: {
     transactions: [null],
     transactionsPage: 0,

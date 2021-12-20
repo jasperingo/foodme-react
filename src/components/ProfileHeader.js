@@ -4,13 +4,13 @@ import ProfileLink from './ProfileLink';
 
 export default function ProfileHeader({ photo, name, links=[] }) {
   return (
-    <div className="flex items-center my-4">
+    <div className="flex items-center my-4 gap-2">
       <img 
         src={ photo } 
         alt={ name } 
         className="w-10 h-10 md:w-16 md:h-16 border rounded-full" 
         />
-      <h4 className="flex-grow font-bold ml-2 md:text-xl">{ name }</h4> 
+      <h3 className="flex-grow font-bold md:text-xl">{ name }</h3> 
       <ul className="flex gap-2">
         {
           links.map((item, i)=> (
@@ -18,6 +18,6 @@ export default function ProfileHeader({ photo, name, links=[] }) {
           ))
         }
       </ul>
-  </div>
+    </div>
   );
 }

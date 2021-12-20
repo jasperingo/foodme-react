@@ -1,5 +1,5 @@
 
-import { STORE, PRODUCT, REVIEW, FETCH_STATUSES, PROMOTION } from "../AppActions";
+import { STORE, PRODUCT, REVIEW, FETCH_STATUSES, PROMOTION, ORDER, TRANSACTION } from "../AppActions";
 import { useListFetchStatus } from "../AppHooks";
 import { initialStoreState } from "../AppInitialStates";
 
@@ -157,6 +157,65 @@ export default function StoreReducer (state, action) {
           promotions: [...prom, ...action.payload.promotions, null],
         }
       }; 
+    
+    case ORDER.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        orders: {
+          ...state.orders,
+          ordersFetchStatus: action.payload,
+        }
+      };
+    
+    case ORDER.LIST_FETCHED :
+      let status4 = fetchUpdater(
+        state.orders.ordersPage, 
+        action.payload.ordersNumberOfPages, 
+        state.orders.orders.length, 
+        action.payload.orders.length
+      );
+      
+      const ord = state.orders.orders.filter(i=> i !== null);
+      
+      return {
+        ...state,
+        orders: {
+          ordersFetchStatus: status4,
+          ordersPage: state.orders.ordersPage+1,
+          ordersStatus: state.orders.ordersStatus,
+          ordersNumberOfPages: action.payload.ordersNumberOfPages,
+          orders: [...ord, ...action.payload.orders, null],
+        }
+      };
+
+    case TRANSACTION.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        transactions: {
+          ...state.transactions,
+          transactionsFetchStatus: action.payload
+        }
+      };
+    
+    case TRANSACTION.LIST_FETCHED :
+      let status5 = fetchUpdater(
+        state.transactions.transactionsPage, 
+        action.payload.transactionsNumberOfPages, 
+        state.transactions.transactions.length, 
+        action.payload.transactions.length
+      );
+      
+      const trans = state.transactions.transactions.filter(i=> i !== null);
+
+      return {
+        ...state,
+        transactions: {
+          transactionsFetchStatus: status5,
+          transactionsPage: state.transactions.transactionsPage+1,
+          transactionsNumberOfPages: action.payload.transactionsNumberOfPages,
+          transactions: [...trans, ...action.payload.transactions, null],
+        }
+      };
     
     default:
       return state;

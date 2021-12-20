@@ -48,7 +48,7 @@ export default function Customers() {
           next={refetchCustomers}
           hasMore={useHasMoreToFetchViaScroll(customersPage, customersNumberOfPages, customersFetchStatus)}
           >
-          <ul className="list-2-x">
+          <ul className="list-3-x">
             { 
               useListRender(
                 customers, 

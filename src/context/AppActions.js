@@ -255,6 +255,11 @@ export const TRANSACTION = {
   LIST_FETCH_STATUS_CHANGED: 'TRANSACTIONS_FETCH_STATUS_CHANGED',
 };
 
+export const getTransactionFetchStatusAction = (payload) => ({
+  type: TRANSACTION.FETCH_STATUS_CHANGED,
+  payload
+});
+
 export const getTransactionsListFetchStatusAction = (payload) => ({
   type: TRANSACTION.LIST_FETCH_STATUS_CHANGED,
   payload

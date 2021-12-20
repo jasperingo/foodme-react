@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import TransactionApi from '../../api/TransactionApi';
+import AdminApp from '../../apps/AdminApp';
 import { transactionIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
@@ -14,14 +15,18 @@ import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHook
 
 export default function Transactions() {
 
-  const { user: { user }, transactions: {
+  const { 
+    user: { user }, 
     transactions: {
-      transactions,
-      transactionsFetchStatus,
-      transactionsPage,
-      transactionsNumberOfPages
-    }
-  }, transactionsDispatch } = useAppContext();
+      transactions: {
+        transactions,
+        transactionsFetchStatus,
+        transactionsPage,
+        transactionsNumberOfPages
+      }
+    }, 
+    transactionsDispatch 
+  } = useAppContext();
 
   useEffect(()=>{
     if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
@@ -34,8 +39,7 @@ export default function Transactions() {
     if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
       transactionsDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
-
-
+  
   return (
     <section>
       <div className="container-x">
@@ -49,7 +53,7 @@ export default function Transactions() {
               useListRender(
                 transactions, 
                 transactionsFetchStatus,
-                (item, i)=> <TransactionItem key={`transaction-${i}`} transaction={item} />, 
+                (item, i)=> <TransactionItem key={`transaction-${i}`} transaction={item} appType={AdminApp.TYPE} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchTransactions} /> </li>,
                 (k)=> <li key={k}> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>, 
