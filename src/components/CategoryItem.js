@@ -3,10 +3,11 @@ import Icon from '@mdi/react';
 import React from 'react'
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import AdminApp from '../apps/AdminApp';
 import { editIcon } from '../assets/icons';
 import { useCategoryColor } from '../context/AppHooks';
 
-export default function CategoryItem({ category, index, sub }) {
+export default function CategoryItem({ category, index, sub, appType }) {
 
   const { t } = useTranslation();
 
@@ -33,7 +34,7 @@ export default function CategoryItem({ category, index, sub }) {
           </div>
         </Link>
         {
-          sub && 
+          sub && appType === AdminApp.TYPE && 
           <Link to={`/sub-category/${category.id}/update`} className="btn-color-primary rounded p-1">
             <span className="sr-only">{ t('_extra.Edit') }</span>
             <Icon path={editIcon} className="w-5 h-5" />

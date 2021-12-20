@@ -16,7 +16,7 @@ import AccountMenu from '../pages/Store/AccountMenu';
 import Cart from '../pages/Store/Cart';
 import LogIn from '../pages/Store/LogIn';
 import Messages from '../pages/Store/Messages';
-import Order from '../pages/Store/Order';
+import Order from '../pages/Order';
 import Orders from '../pages/Store/Orders';
 import Product from '../pages/Store/Product';
 import ProductAdd from '../pages/Store/ProductAdd';

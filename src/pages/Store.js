@@ -125,7 +125,6 @@ function Orders() {
     stores: {
       orders: {
         orders,
-        ordersStatus,
         ordersFetchStatus,
         ordersPage,
         ordersNumberOfPages
@@ -134,14 +133,12 @@ function Orders() {
     storesDispatch 
   } = useAppContext();
 
-  useEffect(()=>{
-    
+  useEffect(()=> {
     if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
       const api = new OrderApi(user.api_token);
-      api.getListByStore(ID, storesDispatch);
+      api.getListByStore(ID, ordersPage, storesDispatch);
     }
-
-  }, [ID, user, ordersFetchStatus, ordersStatus, storesDispatch]);
+  });
 
   function refetchOrders() {
     if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 

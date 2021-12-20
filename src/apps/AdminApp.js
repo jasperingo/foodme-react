@@ -16,7 +16,7 @@ import Transactions from '../pages/Admin/Transactions';
 import DeliveryFirm from '../pages/Admin/DeliveryFirm';
 import Store from '../pages/Store';
 import Customer from '../pages/Admin/Customer';
-import Order from '../pages/Admin/Order';
+import Order from '../pages/Order';
 import Search from '../pages/Admin/Search';
 import SearchHistory from '../pages/Admin/SearchHistory';
 import useGuest from '../middlewares/useGuest';
@@ -33,7 +33,7 @@ import DeliveryFirmAdd from '../pages/Admin/DeliveryFirmAdd';
 import Category from '../pages/Category';
 import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
 import SubCategoryAdd from '../pages/Admin/SubCategoryAdd';
-import Transaction from '../pages/Admin/Transaction';
+import Transaction from '../pages/Transaction';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },

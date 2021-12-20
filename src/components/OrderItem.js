@@ -9,6 +9,16 @@ import StoreApp from '../apps/StoreApp';
 import { storeIcon, userIcon } from '../assets/icons';
 import { useMoneyFormat, useOrderStatus } from '../context/AppHooks';
 
+function User({ name, icon, appType }) {
+  
+  return(
+    <div className="font-bold text-lg flex items-center gap-1">
+      { appType === AdminApp.TYPE && <Icon path={icon} className="w-5 h-5" /> }
+      <span>{ name }</span>
+    </div> 
+  );
+}
+
 export default function OrderItem({ href, appType = CustomerApp.TYPE, order: { store_name, customer_name, total, status, created_at } }) {
 
   const { t } = useTranslation();
@@ -19,16 +29,10 @@ export default function OrderItem({ href, appType = CustomerApp.TYPE, order: { s
     <li>
       <Link to={href} className="block py-2 mb-2 rounded hover:bg-color-gray-h lg:px-2 lg:shadow">
         { 
-          (appType === CustomerApp.TYPE || appType === AdminApp.TYPE) && <div className="font-bold text-xl flex items-center gap-1">
-            { appType === AdminApp.TYPE && <Icon path={storeIcon} className="w-6 h-6" /> }
-            <span>{ store_name }</span>
-          </div> 
+          (appType === CustomerApp.TYPE || appType === AdminApp.TYPE) && <User name={store_name} icon={storeIcon} appType={appType} />
         }
         { 
-          (appType === StoreApp.TYPE || appType === AdminApp.TYPE) && <div className="font-bold text-xl flex items-center gap-1">
-            { appType === AdminApp.TYPE && <Icon path={userIcon} className="w-6 h-6" /> }
-            <span>{ customer_name }</span>
-          </div> 
+          (appType === StoreApp.TYPE || appType === AdminApp.TYPE) && <User name={customer_name} icon={userIcon} appType={appType} />
         }
         <div>{ useMoneyFormat(total) }</div>
         <div className="flex flex-wrap">

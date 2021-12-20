@@ -7,7 +7,7 @@ function DLItem({ title, body}) {
   const { t } = useTranslation();
 
   return (
-    <div className="mb-2 md:border md:p-2 md:rounded">
+    <div className="mb-2 border p-2 rounded">
       <dt className="text-color-primary">{ t(title) }</dt>
       <dd className="font-bold">{ body }</dd>
     </div>
@@ -17,7 +17,7 @@ function DLItem({ title, body}) {
 export default function ProfileDetailsText({ details = [] }) {
 
   return (
-    <dl className="py-2 md:flex md:flex-wrap md:gap-2">
+    <dl className="py-2 flex flex-wrap gap-2">
       {
         details.map((item, index)=> (
           <DLItem key={`profile-${index}`} title={item.title} body={item.body} />

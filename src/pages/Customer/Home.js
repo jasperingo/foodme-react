@@ -55,7 +55,7 @@ function CategoryItem({ category, index }) {
         >
         <img src={`/photos/category/${category.photo}`} alt={category.name} width="100" height="100" className="w-10 h-10 block mx-auto rounded" />        
         <div className="flex flex-grow gap-1 justify-center items-center lg:justify-start">
-          <div className="text-sm break-all">{ category.name }</div>
+          <div className="text-sm truncate overflow-ellipsis">{ category.name }</div>
           <Icon path={iconType} className='w-4 h-4' />
         </div>
       </Link>
@@ -131,7 +131,7 @@ export default function Home() {
 
           <div className="bg-color-gray lg:rounded lg:my-2 lg:w-60">
             <div className="container-x border pt-2 pb-4 border-transparent">
-              <h2 className="font-bold my-2">{ t('_extra.Categories') }</h2>
+              <h2 className="font-bold my-2">{ t('_category.Categories') }</h2>
               <ul className="grid gap-4 grid-cols-3 lg:block">
                 { 
                   useListRender(

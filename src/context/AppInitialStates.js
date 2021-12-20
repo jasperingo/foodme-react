@@ -44,6 +44,29 @@ export const initialHomeState = {
   },
 };
 
+export const initialDashboardState = {
+  statistics: {
+    statistics: null,
+    statisticsFetchStatus: FETCH_STATUSES.LOADING
+  },
+  stores: {
+    stores: [null],
+    storesFetchStatus: FETCH_STATUSES.LOADING,
+  },
+  customers: {
+    customers: [null],
+    customersFetchStatus: FETCH_STATUSES.LOADING
+  },
+  orders: {
+    orders: [null],
+    ordersFetchStatus: FETCH_STATUSES.LOADING,
+  },
+  deliveryFirms: {
+    deliveryFirms: [null],
+    deliveryFirmsFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
+
 export const initialCategoriesState = {
   category: {
     category: null,

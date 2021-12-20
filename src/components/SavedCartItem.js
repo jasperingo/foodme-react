@@ -4,11 +4,11 @@ import React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
+import SavedCartApi from "../api/SavedCartApi";
 import { cartIcon, copyIcon, deleteIcon } from "../assets/icons";
-import { CART } from "../context/AppActions";
-import { API_URL, useAppContext } from "../context/AppContext";
-import AlertDialog from "./AlertDialog";
-import Loading from "./Loading";
+import { CART, SAVED_CART } from "../context/AppActions";
+import { useAppContext } from "../context/AppContext";
+import AlertDialog, { LOADING_DIALOG } from "./AlertDialog";
 import Reload from "./Reload";
 
 export default function SavedCartItem({ cart: { code, name, number_of_items } }) {
@@ -17,71 +17,109 @@ export default function SavedCartItem({ cart: { code, name, number_of_items } })
 
   const history = useHistory()
 
-  const { cartDispatch } = useAppContext();
+  const { 
+    user: { user },
+    cartDispatch,
+    savedCartsDispatch
+  } = useAppContext();
 
   const [dialog, setDialog] = useState(null);
 
-  async function fetchSavedCart() {
-    
-    try {
-      let response = await fetch(`${API_URL}saved-cart.json?code=${code}`);
-
-      if (!response.ok)
-        throw new Error(response.status);
-      
-      let data = await response.json();
-      
-      cartDispatch({
-        type: CART.DUMPED,
-        payload: data.data
-      });
-
-      history.push('/cart');
-
-    } catch (err) {
-      
-      setDialog({
-        body: {
-          layout() {
-            return <Reload action={openCart} />
-          }
-        },
-        negativeButton: {
-          text: '_extra.Cancel',
-          action() {
-            setDialog(null);
-          }
-        }
-      });
-
-    }
-  }
+  const api = new SavedCartApi(user.api_token);
 
   function copyCode() {
-    alert(code);
-  }
-
-  function openCart() {
     
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code);
+    } else {
+      const input = document.createElement('input');
+      input.value = code;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+    }
+
     setDialog({
-      body: {
-        layout() {
-          return <Loading />
-        }
-      },
-      negativeButton: {
-        text: '_extra.Cancel',
+      body: '_extra.Code_copied',
+      positiveButton: {
+        text: '_extra.Done',
         action() {
           setDialog(null);
         }
       }
     });
+  }
 
-    fetchSavedCart();
+  function openCart() {
+    setDialog(LOADING_DIALOG);
+    api.get(code)
+      .then((res)=> {
+        cartDispatch({
+          type: CART.DUMPED,
+          payload: res.data
+        });
+        history.push('/cart');
+      })
+      .catch(()=> {
+        setDialog({
+          body: {
+            layout() {
+              return <Reload action={openCart} />
+            }
+          },
+          negativeButton: {
+            text: '_extra.Cancel',
+            action() {
+              setDialog(null);
+            }
+          }
+        });
+      });
   }
   
+  function confirmDeleteCart() {
+    
+    setDialog({
+      body: '_cart._confirm_saved_cart_delete',
+      positiveButton: {
+        text: '_extra.Yes',
+        action() {
+          deleteCart();
+        }
+      },
+      negativeButton: {
+        text: '_extra.No',
+        action() {
+          setDialog(null);
+        }
+      }
+    });
+  }
+
   function deleteCart() {
-    alert('Deleting cart...');
+    
+    setDialog(LOADING_DIALOG);
+
+    api.delete(code)
+      .then(()=> {
+        setDialog(null);
+        savedCartsDispatch({
+          type: SAVED_CART.DELETED,
+          payload: code
+        });
+      })
+      .catch(()=> {
+        setDialog({
+          body: '_errors.Something_went_wrong',
+          negativeButton: {
+            text: '_extra.Cancel',
+            action() {
+              setDialog(null);
+            }
+          }
+        });
+      });
   }
 
   return (
@@ -99,7 +137,7 @@ export default function SavedCartItem({ cart: { code, name, number_of_items } })
             <Icon path={copyIcon} className="w-6 h-6" />
             <span className="sr-only">{ t('_cart.Copy_code') }</span>
           </button>
-          <button className="flex gap-2 btn-color-red p-2 rounded" onClick={deleteCart}>
+          <button className="flex gap-2 btn-color-red p-2 rounded" onClick={confirmDeleteCart}>
             <Icon path={deleteIcon} className="w-6 h-6" />
             <span className="sr-only">{ t('_extra.Delete') }</span>
           </button>

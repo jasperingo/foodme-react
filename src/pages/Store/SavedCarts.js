@@ -1,71 +1,43 @@
 
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import SavedCartApi from '../../api/SavedCartApi';
 import { cartIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import SavedCartItem from '../../components/SavedCartItem';
-import { FETCH_STATUSES, SAVED_CART } from '../../context/AppActions';
-import { API_URL, useAppContext } from '../../context/AppContext';
+import { FETCH_STATUSES, getSavedCartsListFetchStatusAction } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
 import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
-
-const getListFetchStatusAction = (payload) => ({
-  type: SAVED_CART.LIST_FETCH_STATUS_CHANGED,
-  payload
-});
-
 
 export default function SavedCarts() {
 
-  const { savedCarts: {
+  const { 
+    user: { user },
     savedCarts: {
-      savedCarts,
-      savedCartsPage,
-      savedCartsNumberOfPages,
-      savedCartsFetchStatus,
-    }
-  }, savedCartsDispatch } = useAppContext();
+      savedCarts: {
+        savedCarts,
+        savedCartsPage,
+        savedCartsNumberOfPages,
+        savedCartsFetchStatus,
+      }
+    }, 
+    savedCartsDispatch
+  } = useAppContext();
 
   useEffect(()=>{
-
-    async function fetchSavedCarts() {
-
-      if (savedCartsFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}saved-carts.json`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-        
-        savedCartsDispatch({
-          type: SAVED_CART.LIST_FETCHED,
-          payload: {
-            savedCarts: data.data,
-            savedCartsNumberOfPages: data.total_pages
-          }
-        });
-
-      } catch (err) {
-        savedCartsDispatch(getListFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (savedCartsFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new SavedCartApi(user.api_token);
+      api.getListByStore(user.id, savedCartsPage, savedCartsDispatch);
     }
-
-    fetchSavedCarts();
   });
 
   function refetchSavedCarts() {
-    if (savedCartsFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-    
-    savedCartsDispatch(getListFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (savedCartsFetchStatus !== FETCH_STATUSES.LOADING) 
+      savedCartsDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
-
 
   return (
     <section className="flex-grow">

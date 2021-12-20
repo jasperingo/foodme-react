@@ -4,7 +4,7 @@ import API from './API';
 
 export default class TransactionApi extends API {
 
-  async getByAdmin(id, dispatch) {
+  async get(id, dispatch) {
     try {
       const data = await this.apiFetch(
         `transaction/get.json?id=${id}`,

@@ -85,4 +85,24 @@ export default class StoreApi extends API {
     }
   }
 
+  async getListByRecent(dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `store/stores.json`,
+        'GET'
+      );
+      
+      dispatch({
+        type: STORE.LIST_FETCHED,
+        payload: {
+          stores: data.data,
+          storesNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
 }

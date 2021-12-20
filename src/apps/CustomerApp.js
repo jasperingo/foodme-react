@@ -26,10 +26,19 @@ import useGuest from '../middlewares/useGuest';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 import Category from '../pages/Category';
+import Transaction from '../pages/Transaction';
+import Profile from '../pages/Customer/Profile';
+import Addresses from '../pages/Customer/Addresses';
+import Address from '../pages/Customer/Address';
+import Favorites from '../pages/Customer/Favorites';
+import SavedCarts from '../pages/Customer/SavedCarts';
+import Order from '../pages/Order';
+import Orders from '../pages/Customer/Orders';
+import Transactions from '../pages/Customer/Transactions';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
-  { title : '_extra.Categories', icon: categoryIcon, href: '/categories' },
+  { title : '_category.Categories', icon: categoryIcon, href: '/categories' },
   { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0 },
   { title : '_user.Account', icon: userIcon, href: '/account' }
 ];
@@ -60,6 +69,15 @@ export default function CustomerApp() {
         />
       <main className="pb-52">
         <Switch>
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
+          <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
+          <Route path="/favorites" render={()=> authMiddleware() || <Favorites />} />
+          <Route path="/address/:ID" render={()=> authMiddleware() || <Address />} />
+          <Route path="/addresses" render={()=> authMiddleware() || <Addresses />} />
+          <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/store/:sID/promotion/:pID" render={()=> <Promotion />} />
           <Route path="/store/:sID/product/:pID" render={()=> <Product />} />
           <Route path="/store/:ID" render={()=> <Store />} />
@@ -73,7 +91,7 @@ export default function CustomerApp() {
           <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
           <Route path="/search/history" render={()=> <SearchHistory />} />
           <Route path="/search" render={()=> <Search />} />
-          <Route path="/account" render={()=> authMiddleware() || <AccountMenu authMiddleware={authMiddleware} />} />
+          <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/cart" render={()=> <Cart />} />
           <Route path="/category/:ID" render={()=> <Category />} />

@@ -130,9 +130,15 @@ export const TRANSLATIONS_EN = {
     Status: 'Status',
     View: 'View',
     Date: 'Date',
+    Items: 'Items',
+    Track: 'Track',
+    Code_copied: 'Code copied',
 
     Approved: 'Approved',
+    Process: 'Process',
     Failed: 'Failed',
+    Accept: 'Accept',
+    Decline: 'Decline'
   },
 
   _search: {
@@ -204,6 +210,7 @@ export const TRANSLATIONS_EN = {
     Check_out: 'Check out',
     Remove_cart_item: 'Remove cart item',
     _confirm_item_removal: 'Are you sure you want to remove this item?',
+    _confirm_saved_cart_delete: 'Are you sure you want to delete this cart?',
   },
 
   _review: {
@@ -244,6 +251,7 @@ export const TRANSLATIONS_EN = {
     Orders: 'Orders',
     Add_order: 'Add order',
     Ordered_by: 'Ordered by',
+    Delivered_by: 'Delivered by',
     Ordered_from: 'Ordered from',
     Order_details: 'Order details',
     Order_items: 'Order items',

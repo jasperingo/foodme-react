@@ -31,6 +31,16 @@ export default function Category({ appType }) {
     categoriesDispatch
   } = useAppContext();
 
+  const topLinks = [];
+
+  if (category !== null && appType === AdminApp.TYPE) {
+    topLinks.push({
+      href: `/category/${category.id}/update`,
+      title: '_extra.Edit',
+      icon: editIcon
+    });
+  }
+
   useEffect(()=> {
     if (category !== null && cID !== category.id) {
       categoriesDispatch({ type: CATEGORIES.UNFETCH });
@@ -57,13 +67,7 @@ export default function Category({ appType }) {
                 <ProfileHeader 
                   photo={`/photos/category/${category.photo}`}
                   name={category.name}
-                  links={appType === AdminApp.TYPE && [
-                    {
-                      href: `/category/${category.id}/update`,
-                      title: '_extra.Edit',
-                      icon: editIcon
-                    }
-                  ]}
+                  links={topLinks}
                   />
                 
                 <ProfileDetails
@@ -85,7 +89,7 @@ export default function Category({ appType }) {
                   }
                   <ul className="category-list">
                     {
-                      category.sub_categories.map((item, i)=> <CategoryItem key={`sub-category-${item.id}`} category={item} index={i} sub={true} />)
+                      category.sub_categories.map((item, i)=> <CategoryItem key={`sub-category-${item.id}`} category={item} index={i} sub={true} appType={appType} />)
                     }
                   </ul>
                 </div>

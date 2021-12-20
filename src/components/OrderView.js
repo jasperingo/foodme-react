@@ -1,136 +1,107 @@
 
-import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import CustomerApp from '../apps/CustomerApp';
-import StoreApp from '../apps/StoreApp';
-import { deliveryIcon, storeIcon, userIcon } from '../assets/icons';
+import AdminApp from '../apps/AdminApp';
 import { useDateFormat, useMoneyFormat, useOrderStatus } from '../context/AppHooks';
+import H4Heading from './H4Heading';
 import OrderItemItem from './OrderItemItem';
+import ProfileDetailsText from './ProfileDetailsText';
+import ProfileHeaderText from './ProfileHeaderText';
+import UserDescList from './UserDescList';
 
 export default function OrderView({ order, appType }) {
 
   const { t } = useTranslation();
 
-  const [theStatus, statusColor] = useOrderStatus(order.status);
+  const [theStatus] = useOrderStatus(order.status);
+
+  const usersLinks = [];
+
+  if (order.customer) {
+    usersLinks.push({
+      href: appType === AdminApp.TYPE ? `/customer/${order.customer.id}` : `/messages/${order.customer.id}`,
+      photo: `/photos/customer/${order.customer.photo}`,
+      name: `${order.customer.first_name} ${order.customer.last_name}`,
+      title: '_order.Ordered_by'
+    });
+  }
+
+  if (order.store) {
+    usersLinks.push({
+      href: appType === AdminApp.TYPE ? `/customer/${order.store.id}` : `/messages/${order.store.id}`,
+      photo: `/photos/store/${order.store.photo}`,
+      name: order.store.name,
+      title: '_order.Ordered_from'
+    });
+  }
+
+  if (order.delivery_firm) {
+    usersLinks.push({
+      href: appType === AdminApp.TYPE ? `/delivery-firm/${order.delivery_firm.id}` : `/messages/${order.delivery_firm.id}`,
+      photo: `/photos/delivery-firm/${order.delivery_firm.photo}`,
+      name: order.delivery_firm.name,
+      title: '_order.Delivered_by'
+    });
+  }
 
   return (
     <>
-      <div className="py-4 border-b">
+      <div className="py-2 border-b">
         <div className="container-x">
-          
-          <div className="flex gap-2 flex-wrap">
-            <h3 className="text-3xl font-bold mb-1 flex-grow">#{ order.number }</h3>
-            <div className={`${statusColor} inline-block py-1 px-2 rounded mb-1`}>{ t(theStatus) }</div>
-          </div>
 
-          <div className="mb-1">{ t('_order.item__Num', { count: order.number_of_items }) }</div>
+          <ProfileHeaderText
+            text={`#${order.number}`}
+            />
 
-          <div className="text-color-primary font-bold mb-1">
-            <span>{ t('_extra.Total') }: </span> 
-            <span>{ useMoneyFormat(order.total) }</span>
-          </div>
+          <ProfileDetailsText
+            details={[
+              {
+                title: '_extra.Status',
+                body: t(theStatus)
+              },
+              {
+                title: '_extra.Items',
+                body: t('_order.item__Num', { count: order.number_of_items })
+              },
+              {
+                title: '_extra.Total',
+                body: useMoneyFormat(order.total)
+              },
+              {
+                title: '_order.Items_total',
+                body: useMoneyFormat(order.items_total)
+              },
+              {
+                title: '_delivery.Delivery_fee',
+                body: useMoneyFormat(order.delivery_fee)
+              },
+              {
+                title: '_delivery.Delivery_fee',
+                body: useMoneyFormat(order.delivery_fee)
+              },
+              {
+                title: '_delivery.Delivery_method',
+                body: order.delivery_method
+              },
+              {
+                title: '_delivery.Delivery_address',
+                body: `${order.delivery_address.street}, ${order.delivery_address.city}, ${order.delivery_address.state}`
+              },
+              {
+                title: '_order.Placed_on',
+                body: useDateFormat(order.created_at)
+              }
+            ]}
+            />
 
-          <div>
-            <span>{ t('_order.Placed_on') }: </span>
-            <span>{ useDateFormat(order.created_at) }</span>
-          </div>
-
-          {
-            appType === CustomerApp.TYPE && 
-            <div className="my-2">
-              <div className="text-sm font-bold">{ t('_order.Ordered_from') }</div>
-              <Link to={`/store/${order.store.id}`} className="flex gap-1 items-center">
-                <Icon path={storeIcon} className="text-color-primary w-8 h-8" />
-                <div>{ order.store.name }</div>
-              </Link>
-            </div>
-          }
-
-          {
-            appType === StoreApp.TYPE && 
-            <div className="my-2">
-              <div className="text-sm font-bold">{ t('_order.Ordered_by') }</div>
-              <Link to={`/messages/${order.customer.id}`} className="flex gap-1 items-center">
-                <Icon path={userIcon} className="text-color-primary w-8 h-8" />
-                <div>{ order.customer.first_name } { order.customer.last_name }</div>
-              </Link>
-            </div>
-          }
-
-          <div className="flex gap-2">
-            { appType === CustomerApp.TYPE && <button className="btn-color-primary p-2 rounded my-2">{ t('_order.Reorder') }</button> }
-            <button className="btn-color-primary p-2 rounded my-2">{ t('_order.Track_order') }</button>
-          </div>
+          <UserDescList users={usersLinks} />
 
         </div>
       </div>
-
-      <div className="py-4 border-b">
-        <div className="container-x lg:flex lg:gap-4">
-          <div className="lg:w-1/2">
-            <h4 className="font-bold py-2 text-color-primary">{ t('_order.Payment_information') }</h4>
-            <dl>
-              <div className="mb-2">
-                <dt className="text-sm font-bold">{ t('_transaction.Payment_method') }</dt>
-                <dd>{ order.payment_method }</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-bold">{ t('_transaction.Payment_details') }</dt>
-                <dd>
-                  <ul>
-                    <li>
-                      <span>{ t('_order.Items_total') }: </span>
-                      <span>{ useMoneyFormat(order.items_total) }</span>
-                    </li>
-                    <li>
-                      <span>{ t('_delivery.Delivery_fee') }: </span>
-                      <span>{ useMoneyFormat(order.delivery_fee) }</span>
-                    </li>
-                    <li>
-                      <span>{ t('_discount.Discount_amount') }: </span>
-                      <span>{ useMoneyFormat(order.discount_amount) }</span>
-                    </li>
-                    <li>
-                      <span>{ t('_extra.Total') }: </span>
-                      <span>{ useMoneyFormat(order.total) }</span>
-                    </li>
-                  </ul>
-                </dd>
-              </div>
-            </dl>
-          </div> 
-
-          <div className="lg:w-1/2">
-            <h4 className="font-bold py-2 text-color-primary">{ t('_order.Delivery_information') }</h4>
-            <dl>
-              <div className="mb-2">
-                <dt className="text-sm font-bold">{ t('_delivery.Delivery_method') }</dt>
-                <dd>{ order.delivery_method }</dd>
-              </div>
-              <div className="mb-2">
-                <dt className="text-sm font-bold">{ t('_delivery.Delivery_company') }</dt>
-                <dd>
-                  <div className="flex gap-1 items-center">
-                    <Icon path={deliveryIcon} className="text-color-primary w-8 h-8" />
-                    <div>{ order.delivery_agent.name }</div>
-                  </div>
-                </dd>
-              </div>
-              <div>
-                <dt className="text-sm font-bold">{ t('_delivery.Delivery_address') }</dt>
-                <dd>{ order.delivery_address }</dd>
-              </div>
-            </dl>
-          </div>
-        </div>
-      </div>
-    
-
-      <div className="py-4 border-b">
+      
+      <div className="py-2 border-b">
         <div className="container-x">
-          <h4 className="font-bold py-2 text-color-gray">{ t('_order.Order_items') }</h4>
+          <H4Heading color="text-color-gray" text={ t('_order.Order_items') } />
           <ul className="list-2-x">
             {
               order.items.map((item, i)=> <OrderItemItem key={`order-item-${item.id}`} item={item} />)

@@ -1,0 +1,10 @@
+{
+  "data": {
+    "customers_number": 308,
+    "stores_number": 20,
+    "delivery_firms_number": 11,
+    "orders_number": 562,
+    "categories_number": 24,
+    "earnings_total": 309430.34
+  }
+}

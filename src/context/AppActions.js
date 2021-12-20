@@ -43,6 +43,17 @@ export const getUserAddressFetchStatusAction = (payload) => ({
   payload
 });
 
+export const STATISTICS = {
+  UNFETCH: 'STATISTICS_UNFETCH',
+  FETCHED: 'STATISTICS_FETCHED',
+  FETCH_STATUS_CHANGED: 'STATISTICS_FETCH_STATUS_CHANGED'
+};
+
+export const getStatisticsFetchStatusAction = (payload) => ({
+  type: STATISTICS.FETCH_STATUS_CHANGED,
+  payload
+});
+
 export const ADDRESS = {
   FETCHED: 'ADDRESS_FETCHED',
   UNFETCHED: 'ADDRESS_UNFETCHED',
@@ -216,6 +227,11 @@ export const ORDER = {
   LIST_STATUS_FILTER_CHANGED: 'ORDERS_STATUS_FILTER_CHANGED',
 };
 
+export const getOrderFetchStatusAction = (payload) => ({
+  type: ORDER.FETCH_STATUS_CHANGED,
+  payload
+});
+
 export const getOrdersListFetchStatusAction = (payload) => ({
   type: ORDER.LIST_FETCH_STATUS_CHANGED,
   payload
@@ -245,7 +261,18 @@ export const SAVED_CART = {
   FETCH_STATUS_CHANGED: 'SAVED_CART_FETCH_STATUS_CHANGED',
   LIST_FETCHED: 'SAVED_CARTS_FETCHED',
   LIST_FETCH_STATUS_CHANGED: 'SAVED_CARTS_FETCH_STATUS_CHANGED',
+  DELETED: 'SAVED_CART_DELETED'
 };
+
+export const getSavedCartFetchStatusAction = (payload) => ({
+  type: SAVED_CART.FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getSavedCartsListFetchStatusAction = (payload) => ({
+  type: SAVED_CART.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
 
 export const TRANSACTION = {
   UNFETCH: 'TRANSACTION_UNFETCH',

@@ -98,5 +98,25 @@ export default class UserApi extends API {
     }
   }
 
+  async getListByRecent(dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `customer/list.json`,
+        'GET'
+      );
+      
+      dispatch({
+        type: CUSTOMER.LIST_FETCHED,
+        payload: {
+          customers: data.data,
+          customersNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
 }
 

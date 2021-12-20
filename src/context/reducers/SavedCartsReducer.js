@@ -29,7 +29,7 @@ export default function SavedCartsReducer (state, action) {
         action.payload.savedCarts.length
       );
       
-      state.savedCarts.savedCarts.pop();
+      const carts = state.savedCarts.savedCarts.filter(i=> i !== null);
 
       return {
         ...state,
@@ -37,7 +37,7 @@ export default function SavedCartsReducer (state, action) {
           savedCartsFetchStatus: status,
           savedCartsPage: state.savedCarts.savedCartsPage+1,
           savedCartsNumberOfPages: action.payload.savedCartsNumberOfPages,
-          savedCarts: [...state.savedCarts.savedCarts, ...action.payload.savedCarts, null],
+          savedCarts: [...carts, ...action.payload.savedCarts, null],
         }
       };
 
@@ -59,7 +59,18 @@ export default function SavedCartsReducer (state, action) {
         }
       };
     
+    case SAVED_CART.DELETED:
+     
+      const carts1 = state.savedCarts.savedCarts.filter(i=>  i !== null && i.code !== action.payload);
 
+      return {
+        ...state,
+        savedCarts: {
+          ...state.savedCarts,
+          savedCarts: [...carts1, null],
+        }
+      };
+    
     default:
       return state;
   }

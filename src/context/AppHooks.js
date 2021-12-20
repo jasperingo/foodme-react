@@ -94,46 +94,46 @@ export function useHeader2Title() {
   if (['/search', '/search/history', '/search/customers', '/search/stores', '/search/products', '/search/orders', '/search/delivery-firms'].includes(path))
     return '_search.Search';
 
-  if (path === '/account/promotions')
+  if (path === '/promotions')
     return '_discount.Promotions';
 
-  if (path === '/account/promotion/add')
+  if (path === '/promotion/add')
     return '_discount.Add_promotion';
 
   if (path === '/product/add')
     return '_product.Add_product';
 
-  if (path === '/account/address/add')
+  if (path === '/address/add')
     return '_user.Add_address';
 
-  if (path === '/account/addresses')
+  if (path === '/addresses')
     return '_user.Addresses';
 
-  if (/account\/address\/[0-9]+/.test(path))
+  if (/address\/[0-9]+/.test(path))
     return '_user.Edit_address';
   
-  if (path === '/account/wallet')
+  if (path === '/wallet')
     return '_transaction.Wallet';
 
-  if (path === '/account/transactions')
+  if (path === '/transactions')
     return '_transaction.Transactions';
 
   if (/transaction\/[0-9A-Z]+/.test(path))
     return '_transaction.Transaction';
   
-  if (path === '/account/favorites')
+  if (path === '/favorites')
     return '_extra.Favorites';
 
-  if (path === '/account/reviews')
+  if (path === '/reviews')
     return '_review.Reviews';
 
-  if (path === '/account/saved-carts')
+  if (path === '/saved-carts')
     return '_cart.Saved_carts';
 
-  if (path === '/account/profile')
+  if (path === '/profile')
     return '_user.Profile';
   
-  if (path === '/account/orders')
+  if (path === '/orders')
     return '_order.Orders';
 
   if (/customer\/[0-9]+\/update/.test(path))

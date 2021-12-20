@@ -14,7 +14,8 @@ import {
   initialUserState,
   initialReviewsState,
   initialCustomerState,
-  initialDeliveryFirmState
+  initialDeliveryFirmState,
+  initialDashboardState
 } from './AppInitialStates';
 import UserReducer from './reducers/UserReducer';
 import HomeReducer from './reducers/HomeReducer';
@@ -30,6 +31,7 @@ import TransactionsReducer from "./reducers/TransactionsReducer";
 import ReviewsReducer from "./reducers/ReviewsReducer";
 import CustomersReducer from "./reducers/CustomersReducer";
 import DeliveryFirmsReducer from "./reducers/DeliveryFirmsReducer";
+import DashboardReducer from "./reducers/DashboardReducer";
 
 export const API_URL = '/faker/';
 
@@ -44,6 +46,8 @@ export const AppProvider = ({ children }) => {
   const [customerState, customersDispatch] = useReducer(CustomersReducer, initialCustomerState);
   
   const [homeState, homeDispatch] = useReducer(HomeReducer, initialHomeState);
+
+  const [dashboardState, dashboardDispatch] = useReducer(DashboardReducer, initialDashboardState);
 
   const [categoriesState, categoriesDispatch] = useReducer(CategoriesReducer, initialCategoriesState);
 
@@ -74,6 +78,8 @@ export const AppProvider = ({ children }) => {
         userDispatch,
         home: homeState, 
         homeDispatch,
+        dashboard: dashboardState, 
+        dashboardDispatch,
         customers: customerState, 
         customersDispatch,
         categories: categoriesState, 

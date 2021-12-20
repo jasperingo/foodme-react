@@ -27,7 +27,7 @@ export default function UserAccount() {
   return (
     <section>
       <div className="container-x">
-        <div className="max-w-lg mx-auto md:shadow md:my-6 md:py-2 md:px-4 md:rounded">
+        <div className="account-menu">
           <AccountMenuTop photo="admin.jpeg" name="Mr. Richard Gates" />
           <AccountMenuList items={MENU_ITEMS} />
           <AppSwitch />

@@ -1,8 +1,8 @@
 
 import React, { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { ORDER, FETCH_STATUSES } from '../../context/AppActions';
-import { API_URL, useAppContext } from '../../context/AppContext';
+import { FETCH_STATUSES, getOrdersListFetchStatusAction } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
 import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
@@ -10,59 +10,33 @@ import Loading from '../../components/Loading';
 import OrderItem from '../../components/OrderItem';
 import Reload from '../../components/Reload';
 import { orderIcon } from '../../assets/icons';
-
-const getFetchStatusAction = (payload) => ({
-  type: ORDER.LIST_FETCH_STATUS_CHANGED,
-  payload
-});
+import OrderApi from '../../api/OrderApi';
 
 export default function Orders() {
 
-  const { orders: {
+  const { 
+    user: { user },
     orders: {
-      orders,
-      ordersFetchStatus,
-      ordersPage,
-      ordersNumberOfPages
-    }
-  }, ordersDispatch } = useAppContext();
-
+      orders: {
+        orders,
+        ordersFetchStatus,
+        ordersPage,
+        ordersNumberOfPages
+      }
+    }, 
+    ordersDispatch 
+  } = useAppContext();
 
   useEffect(()=>{
-
-    async function fetchOrders() {
-      if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-        return;
-      
-      try {
-        let response = await fetch(`${API_URL}orders.json`);
-
-        if (!response.ok)
-          throw new Error(response.status);
-        
-        let data = await response.json();
-        
-        ordersDispatch({
-          type: ORDER.LIST_FETCHED,
-          payload: {
-            orders: data.data,
-            ordersNumberOfPages: data.total_pages
-          }
-        });
-
-      } catch (err) {
-        ordersDispatch(getFetchStatusAction(FETCH_STATUSES.ERROR));
-      }
+    if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
+      const api = new OrderApi(user.api_token);
+      api.getListByCustomer(user.id, ordersPage, ordersDispatch);
     }
-
-    fetchOrders();
   });
 
   function refetchOrders() {
-    if (ordersFetchStatus === FETCH_STATUSES.LOADING) 
-      return;
-    
-    ordersDispatch(getFetchStatusAction(FETCH_STATUSES.LOADING));
+    if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
+      ordersDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (

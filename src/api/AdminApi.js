@@ -1,3 +1,4 @@
+import { FETCH_STATUSES, getStatisticsFetchStatusAction, STATISTICS } from "../context/AppActions";
 import API from "./API";
 
 export default class AdminApi extends API {
@@ -44,6 +45,23 @@ export default class AdminApi extends API {
     );
   
     return data.data;
+  }
+
+  async getStatistics(dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `admin/stats.json`,
+        'GET'
+      );
+      
+      dispatch({
+        type: STATISTICS.FETCHED,
+        payload: data.data
+      });
+
+    } catch (err) {
+      dispatch(getStatisticsFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
   }
   
 }
