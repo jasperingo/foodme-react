@@ -1,0 +1,28 @@
+{
+  "total_pages": 8,
+  "data": [
+    {
+      "id": 7,
+      "locations": [
+        "Ihiagwa, Owerri",
+        "World bank, Owerri"
+      ],
+      "min_price": 200.00,
+      "max_price": 750.00
+    },
+    {
+      "id": 7,
+      "locations": [ "Aba" ],
+      "min_price": 500.00,
+      "max_price": 1200.00
+    },
+    {
+      "id": 7,
+      "locations": [
+        "Control, Owerri",
+        "Port Harcourt road, Owerri"
+      ],
+      "min_price": 200.00
+    }
+  ]
+}

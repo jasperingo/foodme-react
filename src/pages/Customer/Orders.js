@@ -52,7 +52,7 @@ export default function Orders() {
               useListRender(
                 orders, 
                 ordersFetchStatus,
-                (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/account/order/${item.id}`} />, 
+                (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/order/${item.id}`} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchOrders} /> </li>,
                 (k)=> <li key={k}> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>, 

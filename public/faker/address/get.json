@@ -5,6 +5,6 @@
     "street": "30 Jones street", 
     "city": "Owerri-ihiagwa", 
     "state": "Imo",
-    "is_default": true
+    "default_address": true
   }
 }

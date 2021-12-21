@@ -60,12 +60,8 @@ export default function CartItem({ cartItem }) {
             className="w-20 h-20 border rounded block md:w-32 md:h-32" 
             />
           <div className="flex-grow pl-2">
-            <h4 className="mb-1">{ cartItem.product.title }</h4>
+            <div className="mb-1">{ cartItem.product.title }</div>
             <div className="font-bold mb-1">{ useMoneyFormat(cartItem.amount) }</div>
-            <div className="text-sm text-blue-500">
-              <span>{ t('_delivery.Delivery_fee') }: </span>
-              <span className="">{ useMoneyFormat(cartItem.delivery_fee) }</span>
-            </div>
           </div>
         </div>
         <div className="flex gap-2 py-2 lg:px-10 lg:gap-10">

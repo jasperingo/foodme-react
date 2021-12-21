@@ -1,12 +1,8 @@
 
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import AppSwitch from '../../AppSwitch';
 import { adminIcon, categoryIcon, deliveryIcon, storeIcon, userIcon } from '../../assets/icons';
-import AccountMenuList from '../../components/AccountMenuList';
-import AccountMenuTop from '../../components/AccountMenuTop';
+import AccountMenuView from '../../components/AccountMenuView';
 import { useAppContext } from '../../context/AppContext';
-
 
 const MENU_ITEMS = [
   { text: '_user.Profile', icon: adminIcon, href: '/profile'},
@@ -16,22 +12,14 @@ const MENU_ITEMS = [
   { text: '_category.Categories', icon: categoryIcon, href: '/categories' }
 ];
 
-export default function UserAccount() {
+export default function AccountMenu() {
 
-  const { customer } = useAppContext();
-
-  if (customer === 10) {
-    return (<Redirect to="/" />)
-  }
+  const { user: { user } } = useAppContext();
 
   return (
     <section>
       <div className="container-x">
-        <div className="account-menu">
-          <AccountMenuTop photo="admin.jpeg" name="Mr. Richard Gates" />
-          <AccountMenuList items={MENU_ITEMS} />
-          <AppSwitch />
-        </div>
+        <AccountMenuView photo={`/photos/admin/${user.photo}`} name={`${user.first_name} ${user.last_name}`} items={MENU_ITEMS} />
       </div>
     </section>
   );

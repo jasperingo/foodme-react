@@ -20,6 +20,7 @@ import ResetPassword from '../pages/ResetPassword';
 import ForgotPassword from '../pages/ForgotPassword';
 //import useAuth from '../middlewares/useAuth';
 import useGuest from '../middlewares/useGuest';
+import TheRoute from '../pages/Delivery/TheRoute';
 
 
 const HEADER_NAV_LINKS = [
@@ -63,6 +64,7 @@ export default function DeliveryApp() {
           <Route path="/account" render={()=> <AccountMenu />} />
           <Route path="/messages" render={()=> <Messages />} />
           <Route path="/orders" render={()=> <Orders />} />
+          <Route path="/route/:ID" render={()=> <TheRoute />} />
           <Route path="/routes" render={()=> <TheRoutes />} />
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword url="forgot-password.json" />} />
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword url="forgot-password.json" />} />

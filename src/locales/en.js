@@ -58,6 +58,7 @@ export const TRANSLATIONS_EN = {
     Addresses: 'Addresses',
     Add_address: 'Add address',
     Edit_address: 'Edit address',
+    Delete_address: 'Delete address',
     Default_address: 'Default address',
     Log_in: 'Log in',
     Log_out: 'Log out',
@@ -100,6 +101,8 @@ export const TRANSLATIONS_EN = {
     Sub_title: 'Sub title',
     Description: 'Description',
     Quantity: 'Quantity',
+    Weight: 'Weight',
+    Weight__kg: 'Weight (kg)',
     Price: 'Price',
     Reviews: 'Reviews',
     Edit: 'Edit',
@@ -112,11 +115,14 @@ export const TRANSLATIONS_EN = {
     Yes: 'Yes',
     No: 'No',
     By: 'By',
+    From: 'From',
+    To: 'To',
+    Within: 'Within',
     View_all: 'View all',
     Load_more: 'Load more',
     Favorites: 'Favorites',
     Save: 'Save',
-    Make_default: 'Make default',
+    Not_default: 'Not default',
     for: 'for',
     Start: 'Start',
     End: 'End',
@@ -133,6 +139,8 @@ export const TRANSLATIONS_EN = {
     Items: 'Items',
     Track: 'Track',
     Code_copied: 'Code copied',
+    Copied: 'Copied',
+    Refresh: 'Refresh',
 
     Approved: 'Approved',
     Process: 'Process',
@@ -206,6 +214,7 @@ export const TRANSLATIONS_EN = {
     Open_cart: 'Open cart',
     Copy_code: 'Copy code',
     Saved_carts: 'Saved carts',
+    Cart_saved: 'Cart saved',
     Enter_cart_code: 'Enter cart code',
     Check_out: 'Check out',
     Remove_cart_item: 'Remove cart item',
@@ -234,6 +243,7 @@ export const TRANSLATIONS_EN = {
     Delivery_company: 'Delivery company',
     Delivery_address: 'Delivery address',
     Become_a_courier_partner: 'Become a courier partner',
+    Route: 'Route',
     Routes: 'Routes',
     Add_route: 'Add route',
   },
@@ -249,6 +259,7 @@ export const TRANSLATIONS_EN = {
     Returned: 'Returned',
     Order: 'Order',
     Orders: 'Orders',
+    Order_note: 'Order note',
     Add_order: 'Add order',
     Ordered_by: 'Ordered by',
     Delivered_by: 'Delivered by',
@@ -281,7 +292,8 @@ export const TRANSLATIONS_EN = {
     Account_type: 'Account type',
     Reference_code: 'Reference code',
     Withdrawal_account: 'Withdrawal account',
-    Change_withdrawal_account: 'Change withdrawal account'
+    Change_withdrawal_account: 'Change withdrawal account',
+    Your_withdrawal_is_being_processed: 'Your withdrawal is being processed'
   },
 
   _message: {
@@ -300,6 +312,7 @@ export const TRANSLATIONS_EN = {
     No_review: 'No review',
     No_transaction: 'No transaction',
     No_promotion: 'No promotion',
+    No_address: 'No address',
     No_saved_cart: 'No saved cart',
     No_store_category: 'No store category',
     No_product_category: 'No product category',
@@ -314,7 +327,10 @@ export const TRANSLATIONS_EN = {
     This_field_is_invalid: 'This field is invalid',
     Email_already_exists: 'Email already exists',
     Password_must_be_a_minimium_of_5_characters: 'Password must be a minimium of 6 characters',
-    _Minimium_withdrawal: 'Can\'t withdraw 1000 and below'
+    _Minimium_withdrawal: 'Can\'t withdraw 1000 and below',
+    _Maximium_withdrawal: 'Can\'t withdraw more than your balance',
+    Cart_could_not_be_saved: 'Cart could not be saved',
+    Your_withdrawal_could_not_be_processed: 'Your withdrawal could not be processed'
   },
 
 };

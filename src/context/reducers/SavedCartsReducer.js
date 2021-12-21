@@ -68,6 +68,7 @@ export default function SavedCartsReducer (state, action) {
         savedCarts: {
           ...state.savedCarts,
           savedCarts: [...carts1, null],
+          savedCartsFetchStatus: carts1.length === 0 ? FETCH_STATUSES.LOADING : state.savedCarts.savedCartsFetchStatus
         }
       };
     

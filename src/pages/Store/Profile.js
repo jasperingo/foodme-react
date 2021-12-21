@@ -8,7 +8,7 @@ import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
 import FormSelect from '../../components/FormSelect';
 import PhotoChooser from '../../components/PhotoChooser';
-import UpdateAddressForm from '../../components/UpdateAddressForm';
+import AddressForm from '../../components/AddressForm';
 import UpdatePassword from '../../components/UpdatePassword';
 import UpdateWithdrawalAccountForm from '../../components/UpdateWithdrawalAccountForm';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
@@ -170,7 +170,7 @@ export default function Profile() {
 
           <PhotoChooser 
             api={api}
-            src={`/photos/${user.photo}`} 
+            src={`/photos/store/${user.photo}`} 
             text="_extra.Edit_photo" 
             status={photoFetchStatus}
             onSuccess={onPhotoSuccess}
@@ -222,7 +222,7 @@ export default function Profile() {
 
         </form>
 
-        <UpdateAddressForm address={user.address} />
+        <AddressForm address={user.address} />
 
         <UpdateWithdrawalAccountForm 
           url="success.json"

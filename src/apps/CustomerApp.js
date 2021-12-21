@@ -29,12 +29,13 @@ import Category from '../pages/Category';
 import Transaction from '../pages/Transaction';
 import Profile from '../pages/Customer/Profile';
 import Addresses from '../pages/Customer/Addresses';
-import Address from '../pages/Customer/Address';
+import AddressUpdate from '../pages/Customer/AddressUpdate';
 import Favorites from '../pages/Customer/Favorites';
 import SavedCarts from '../pages/Customer/SavedCarts';
 import Order from '../pages/Order';
 import Orders from '../pages/Customer/Orders';
 import Transactions from '../pages/Customer/Transactions';
+import AddressAdd from '../pages/Customer/AddressAdd';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -75,11 +76,12 @@ export default function CustomerApp() {
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
           <Route path="/favorites" render={()=> authMiddleware() || <Favorites />} />
-          <Route path="/address/:ID" render={()=> authMiddleware() || <Address />} />
+          <Route path="/address/add" render={()=> authMiddleware() || <AddressAdd />} />
+          <Route path="/address/:ID" render={()=> authMiddleware() || <AddressUpdate />} />
           <Route path="/addresses" render={()=> authMiddleware() || <Addresses />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/store/:sID/promotion/:pID" render={()=> <Promotion />} />
-          <Route path="/store/:sID/product/:pID" render={()=> <Product />} />
+          <Route path="/product/:pID" render={()=> <Product />} />
           <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 

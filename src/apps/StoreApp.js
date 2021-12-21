@@ -26,6 +26,15 @@ import Register from '../pages/Store/Register';
 import Search from '../pages/Store/Search';
 import SearchHistory from '../pages/Store/SearchHistory';
 import TermsOfService from '../pages/TermsOfService';
+import Reviews from '../pages/Store/Reviews';
+import PromotionUpdate from '../pages/Store/PromotionUpdate';
+import PromotionAdd from '../pages/Store/PromotionAdd';
+import Promotion from '../pages/Store/Promotion';
+import Promotions from '../pages/Store/Promotions';
+import SavedCarts from '../pages/Customer/SavedCarts';
+import Wallet from '../pages/Store/Wallet';
+import Profile from '../pages/Store/Profile';
+import Transaction from '../pages/Transaction';
 
 
 const HEADER_NAV_LINKS = [
@@ -64,11 +73,20 @@ export default function StoreApp() {
         />
       <main className="pb-52">
         <Switch>
+          <Route path="/reviews" render={()=> authMiddleware() || <Reviews />} />
+          <Route path="/promotion/:ID/update" render={()=> authMiddleware() || <PromotionUpdate />} />
+          <Route path="/promotion/add" render={()=> authMiddleware() || <PromotionAdd />} />
+          <Route path="/promotion/:ID" render={()=> authMiddleware() || <Promotion />} />
+          <Route path="/promotions" render={()=> authMiddleware() || <Promotions />} />
+          <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
+          <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
+          <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/search/history" render={()=> authMiddleware() || <SearchHistory />} />
           <Route path="/search" render={()=> authMiddleware() || <Search />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
-          <Route path="/account" render={()=> authMiddleware() || <AccountMenu authMiddleware={authMiddleware} />} />
+          <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />

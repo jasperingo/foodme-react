@@ -1,5 +1,5 @@
 
-import { FETCH_STATUSES, TRANSACTION } from "../AppActions";
+import { FETCH_STATUSES, TRANSACTION, WALLET } from "../AppActions";
 import { useListFetchStatus } from "../AppHooks";
 import { initialTransactionsState } from "../AppInitialStates";
 
@@ -57,6 +57,24 @@ export default function TransactionsReducer (state, action) {
           transactionsPage: state.transactions.transactionsPage+1,
           transactionsNumberOfPages: action.payload.transactionsNumberOfPages,
           transactions: [...trans, ...action.payload.transactions, null],
+        }
+      };
+
+    case WALLET.FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        wallet: {
+          ...state.wallet,
+          walletFetchStatus: action.payload
+        }
+      };
+    
+    case WALLET.FETCHED:
+      return {
+        ...state,
+        wallet: {
+          wallet: action.payload.amount, 
+          walletFetchStatus: FETCH_STATUSES.DONE,
         }
       };
     

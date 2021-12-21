@@ -28,6 +28,8 @@ export default function ProductForm({ type, product }) {
   const priceInput = useRef(null);
 
   const unitInput = useRef(null);
+
+  const weightInput = useRef(null);
   
   const descriptionInput = useRef(null);
 
@@ -50,6 +52,8 @@ export default function ProductForm({ type, product }) {
   const [priceError, setPriceError] = useState('');
 
   const [unitError, setUnitError] = useState('');
+
+  const [weightError, setWeightError] = useState('');
 
   const [descriptionError, setDescriptionError] = useState('');
 
@@ -120,6 +124,13 @@ export default function ProductForm({ type, product }) {
     } else {
       setUnitError('');
     }
+
+    if (!weightInput.current.validity.valid) {
+      error = true;
+      setWeightError('_errors.This_field_is_required');
+    } else {
+      setWeightError('');
+    }
     
     if (!descriptionInput.current.validity.valid) {
       error = true;
@@ -166,6 +177,7 @@ export default function ProductForm({ type, product }) {
         quantity: quantityInput.current.value,
         price: priceInput.current.value,
         unit: unitInput.current.value,
+        weight: weightInput.current.value,
         description: descriptionInput.current.value,
       };
       
@@ -255,7 +267,7 @@ export default function ProductForm({ type, product }) {
         ref={ categoryInput }
         error={ categoryError }
         ID="category-input" 
-        label="_extra.Category" 
+        label="_category.Category" 
         required={true}
         value={product.category}
         options={[
@@ -267,7 +279,7 @@ export default function ProductForm({ type, product }) {
         ref={ subCategoryInput }
         error={ subCategoryError }
         ID="sub-category-input" 
-        label="_extra.Sub_category" 
+        label="_category.Sub_category" 
         required={true}
         value={product.sub_category}
         options={[
@@ -308,6 +320,17 @@ export default function ProductForm({ type, product }) {
         options={[
           'Plate'
         ]}
+        />
+
+      <FormField 
+        ref={ weightInput }
+        error={ weightError }
+        ID="weight-input" 
+        label="_extra.Weight__kg" 
+        type="number" 
+        required={true}
+        value={product.weight}
+        min={0}
         />
 
       <FormTextArea 

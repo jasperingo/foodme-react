@@ -27,9 +27,9 @@ export default function Promotions() {
   useEffect(()=> {
     if (promotionsFetchStatus === FETCH_STATUSES.LOADING) {
       const api = new PromotionApi(user.api_token);
-      api.getListByStore(0, promotionsDispatch);
+      api.getListByStore(0, promotionsPage, promotionsDispatch);
     }
-  }, [user, promotionsFetchStatus, promotionsDispatch]);
+  });
 
   function refetchPromotions() {
     if (promotionsFetchStatus !== FETCH_STATUSES.LOADING) 
@@ -53,7 +53,7 @@ export default function Promotions() {
               useListRender(
                 promotions, 
                 promotionsFetchStatus,
-                (item, i)=> <PromotionItem key={`promotion-${i}`} promotion={item} href={`/account/promotion/${item.id}`} />, 
+                (item, i)=> <PromotionItem key={`promotion-${i}`} promotion={item} href={`/promotion/${item.id}`} />, 
                 (k)=> <li key={k}> <Loading /> </li>, 
                 (k)=> <li key={k}> <Reload action={refetchPromotions} /> </li>,
                 (k)=> <li key={k}> <EmptyList text="_empty.No_review" icon={promotionIcon} /> </li>, 

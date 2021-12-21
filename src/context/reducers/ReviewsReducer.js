@@ -25,7 +25,7 @@ export default function ReviewsReducer (state, action) {
         action.payload.reviews.length
       );
       
-      state.reviews.reviews.pop();
+      const rev = state.reviews.reviews.filter(i=> i !== null);
 
       return {
         ...state,
@@ -33,7 +33,7 @@ export default function ReviewsReducer (state, action) {
           reviewsFetchStatus: status,
           reviewsPage: state.reviews.reviewsPage+1,
           reviewsNumberOfPages: action.payload.reviewsNumberOfPages,
-          reviews: [...state.reviews.reviews, ...action.payload.reviews, null],
+          reviews: [...action.payload.reviews, ...rev, null],
         }
       };
     

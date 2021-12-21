@@ -15,7 +15,9 @@ import {
   initialReviewsState,
   initialCustomerState,
   initialDeliveryFirmState,
-  initialDashboardState
+  initialDashboardState,
+  initialAddressesState,
+  initialRoutesState
 } from './AppInitialStates';
 import UserReducer from './reducers/UserReducer';
 import HomeReducer from './reducers/HomeReducer';
@@ -32,6 +34,8 @@ import ReviewsReducer from "./reducers/ReviewsReducer";
 import CustomersReducer from "./reducers/CustomersReducer";
 import DeliveryFirmsReducer from "./reducers/DeliveryFirmsReducer";
 import DashboardReducer from "./reducers/DashboardReducer";
+import AddressesReducer from "./reducers/AddressesReducer";
+import RoutesReducer from "./reducers/RoutesReducer";
 
 export const API_URL = '/faker/';
 
@@ -44,6 +48,8 @@ export const AppProvider = ({ children }) => {
   const [userState, userDispatch] = useReducer(UserReducer, initialUserState);
 
   const [customerState, customersDispatch] = useReducer(CustomersReducer, initialCustomerState);
+
+  const [addressesState, addressesDispatch] = useReducer(AddressesReducer, initialAddressesState);
   
   const [homeState, homeDispatch] = useReducer(HomeReducer, initialHomeState);
 
@@ -69,6 +75,8 @@ export const AppProvider = ({ children }) => {
 
   const [reviewsState, reviewsDispatch] = useReducer(ReviewsReducer, initialReviewsState);
 
+  const [routesState, routesDispatch] = useReducer(RoutesReducer, initialRoutesState);
+
   const [deliveryFirmsState, deliveryFirmsDispatch] = useReducer(DeliveryFirmsReducer, initialDeliveryFirmState);
 
 
@@ -76,6 +84,8 @@ export const AppProvider = ({ children }) => {
     <AppContext.Provider value={{
         user: userState,
         userDispatch,
+        addresses: addressesState, 
+        addressesDispatch,
         home: homeState, 
         homeDispatch,
         dashboard: dashboardState, 
@@ -102,6 +112,8 @@ export const AppProvider = ({ children }) => {
         promotionsDispatch,
         reviews: reviewsState,
         reviewsDispatch,
+        routes: routesState, 
+        routesDispatch,
         deliveryFirms: deliveryFirmsState, 
         deliveryFirmsDispatch
       }}

@@ -1,15 +1,13 @@
 
 import React from 'react';
-import { Redirect, Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
+import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import { deliveryIcon, reviewIcon, userIcon, walletIcon } from '../../assets/icons';
 import { useAppContext } from '../../context/AppContext';
-import AppSwitch from '../../AppSwitch';
-import AccountMenuList from '../../components/AccountMenuList';
-import AccountMenuTop from '../../components/AccountMenuTop';
 import DualPaneIntro from '../../components/DualPaneIntro';
 import Wallet from './Wallet';
 import Reviews from './Reviews';
 import Profile from './Profile';
+import AccountMenuView from '../../components/AccountMenuView';
 
 const MENU_ITEMS = [
   { text: '_user.Profile', icon: userIcon, href: '/account/profile'},
@@ -21,26 +19,13 @@ export default function UserAccount() {
 
   const match = useRouteMatch();
 
-  const location = useLocation();
-
-  const { customer } = useAppContext();
-
-  if (customer === 10) {
-    return (<Redirect to="/" />)
-  }
+  const { user: { user } } = useAppContext();
 
   return (
     <section>
       <div className="container-x">
-        
-        <div className="lg:flex lg:gap-5">
-          <div className={`${location.pathname !== '/account' && 'hidden'} lg:block`}>
-            <AccountMenuTop photo="delivery.jpeg" name="Freshways Logistics" />
-            
-            <AccountMenuList items={MENU_ITEMS} />
-            
-            <AppSwitch />
-          </div>
+
+        <AccountMenuView photo={`/photos/delivery-firm/${user.photo}`} name={user.name} items={MENU_ITEMS} />
 
           <Switch>
             <Route path={`${match.url}/reviews`} render={()=> <Reviews />} />
@@ -51,7 +36,7 @@ export default function UserAccount() {
               render={()=> <DualPaneIntro icon={deliveryIcon} text="_user.Manage_your_account" />} 
               />
           </Switch>
-        </div>
+        
 
       </div>
     </section>

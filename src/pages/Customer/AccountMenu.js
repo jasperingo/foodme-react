@@ -1,9 +1,7 @@
 
 import React from 'react';
-import AppSwitch from '../../AppSwitch';
 import { cartIcon, favoritedIcon, locationIcon, orderIcon, transactionIcon, userIcon } from '../../assets/icons';
-import AccountMenuList from '../../components/AccountMenuList';
-import AccountMenuTop from '../../components/AccountMenuTop';
+import AccountMenuView from '../../components/AccountMenuView';
 import { useAppContext } from '../../context/AppContext';
 
 const MENU_ITEMS = [
@@ -22,11 +20,7 @@ export default function AccountMenu() {
   return (
     <section>
       <div className="container-x">
-        <div className="account-menu">
-          <AccountMenuTop photo={user.photo} name={`${user.first_name} ${user.last_name}`} />
-          <AccountMenuList items={MENU_ITEMS} />
-          <AppSwitch />
-        </div>
+        <AccountMenuView photo={`/photos/customer/${user.photo}`} name={`${user.first_name} ${user.last_name}`} items={MENU_ITEMS} />
       </div>
     </section>
   );

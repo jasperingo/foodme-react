@@ -3,18 +3,10 @@ import { FETCH_STATUSES } from './AppActions';
 
 export const initialUserState = {
   user: null,
-  userFetchStatus: FETCH_STATUSES.PENDING,
-  addresses: {
-    addresses: [null],
-    addressesFetchStatus: FETCH_STATUSES.LOADING
-  },
-  address: {
-    address: null,
-    addressFetchStatus: FETCH_STATUSES.LOADING
-  },
+  userFetchStatus: FETCH_STATUSES.PENDING
 };
 
-export const initialAddressState = {
+export const initialAddressesState = {
   addresses: {
     addresses: [null],
     addressesFetchStatus: FETCH_STATUSES.LOADING
@@ -275,6 +267,10 @@ export const initialPromotionsState = {
 
 
 export const initialTransactionsState = {
+  wallet: {
+    wallet: null,
+    walletFetchStatus: FETCH_STATUSES.LOADING
+  },
   transaction: {
     transaction: null,
     transactionFetchStatus: FETCH_STATUSES.LOADING
@@ -296,5 +292,12 @@ export const initialReviewsState = {
   },
 };
 
-
+export const initialRoutesState = {
+  routes: {
+    routes: [null],
+    routesPage: 0,
+    routesNumberOfPages: 0,
+    routesFetchStatus: FETCH_STATUSES.LOADING
+  },
+};
 

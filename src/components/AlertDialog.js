@@ -34,7 +34,7 @@ function DialogButton({ btn, negative }) {
   return (
     <button 
       onClick={btn.action}
-      className={`flex-grow py-2 hover:bg-color-gray-h ${negative && 'border-r text-red-500'}`}
+      className={`flex-grow py-2 border-t hover:bg-color-gray-h ${negative && 'border-r text-red-500'}`}
       >
       { t(btn.text) }
     </button>
@@ -48,7 +48,7 @@ function AlertLayout({ dialog }) {
   return (
     <>
       <div className="p-4">{ dialog.body.layout ? dialog.body.layout() : t(dialog.body) }</div>
-      <div className="flex border-t">
+      <div className="flex">
         { dialog.negativeButton && <DialogButton btn={dialog.negativeButton} negative={true} /> }
         { dialog.positiveButton && <DialogButton btn={dialog.positiveButton} negative={false} /> }
       </div>

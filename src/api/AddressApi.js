@@ -1,11 +1,9 @@
 
 import { 
-  USER_ADDRESS,
   FETCH_STATUSES, 
-  getUserAddressFetchStatusAction, 
-  getUserAddressListFetchStatusAction,
   getAddressesListFetchStatusAction,
-  ADDRESS
+  ADDRESS,
+  getAddressFetchStatusAction
 } from "../context/AppActions";
 import API from "./API";
 
@@ -14,9 +12,9 @@ export default class AddressApi extends API {
   async add(formData) {
 
     const data = await this.apiFetch(
-      'customer/address.json',
-      'GET', //PUT,
-      //JSON.stringify(formData)
+      'address/get.json',
+      'GET', //POST,
+      JSON.stringify(formData)
     );
   
     return data.data;
@@ -25,49 +23,42 @@ export default class AddressApi extends API {
   async update(id, formData) {
 
     const data = await this.apiFetch(
-      `customer/address.json?id=${id}`,
+      `/address/get.json?id=${id}`,
       'GET', //PUT,
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
   
     return data.data;
   }
 
-  async get(id, userDispatch) {
-  
-    try {
+  async delete(id) {
 
-      const data = await this.apiFetch(
-        `customer/address.json?=${id}`,
-        'GET'
-      );
+    const data = await this.apiFetch(
+      `address/get.json?id=${id}`,
+      'GET', //DELETE,
+    );
   
-      userDispatch({
-        type: USER_ADDRESS.FETCHED,
-        payload: data.data
-      });
-      
-    } catch (err) {
-      userDispatch(getUserAddressFetchStatusAction(FETCH_STATUSES.ERROR));
-    }
+    return data.data;
   }
 
-  async getList(userDispatch) {
+  async getByCustomer(id, dispatch) {
   
     try {
-      
+
       const data = await this.apiFetch(
-        'customer/addresses.json',
+        `address/get.json?=${id}`,
         'GET'
       );
+
+      data.data.id = id;
   
-      userDispatch({
-        type: USER_ADDRESS.LIST_FETCHED,
+      dispatch({
+        type: ADDRESS.FETCHED,
         payload: data.data
       });
       
     } catch (err) {
-      userDispatch(getUserAddressListFetchStatusAction(FETCH_STATUSES.ERROR));
+      dispatch(getAddressFetchStatusAction(FETCH_STATUSES.ERROR));
     }
   }
 

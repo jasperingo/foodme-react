@@ -41,7 +41,8 @@ import {
   mdiViewDashboard,
   mdiChevronLeft,
   mdiChevronRight,
-
+  mdiSync,
+  mdiArrowUpDownBold,
 
 
 } from '@mdi/js';
@@ -87,4 +88,6 @@ export const emailIcon = mdiEmail;
 export const phoneIcon = mdiPhone;
 export const nextIcon = mdiChevronRight;
 export const prevIcon = mdiChevronLeft;
+export const refreshIcon = mdiSync;
+export const upDownIcon = mdiArrowUpDownBold;
 

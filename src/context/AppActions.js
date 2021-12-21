@@ -57,6 +57,7 @@ export const getStatisticsFetchStatusAction = (payload) => ({
 export const ADDRESS = {
   FETCHED: 'ADDRESS_FETCHED',
   UNFETCHED: 'ADDRESS_UNFETCHED',
+  DELETED: 'ADDRESS_DELETED',
   FETCH_STATUS_CHANGED: 'ADDRESS_FETCH_STATUS_CHANGED',
   LIST_FETCHED: 'ADDRESSES_LIST_FETCHED',
   LIST_FETCH_STATUS_CHANGED: 'ADDRESSES_LIST_FETCH_STATUS_CHANGED',
@@ -289,6 +290,35 @@ export const getTransactionFetchStatusAction = (payload) => ({
 
 export const getTransactionsListFetchStatusAction = (payload) => ({
   type: TRANSACTION.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const WALLET = {
+  UNFETCH: 'WALLET_UNFETCH',
+  FETCHED: 'WALLET_FETCHED',
+  FETCH_STATUS_CHANGED: 'WALLET_FETCH_STATUS_CHANGED',
+};
+
+export const getWalletFetchStatusAction = (payload) => ({
+  type: WALLET.FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const ROUTE = {
+  UNFETCH: 'ROUTE_UNFETCH',
+  FETCHED: 'ROUTE_FETCHED',
+  FETCH_STATUS_CHANGED: 'ROUTE_FETCH_STATUS_CHANGED',
+  LIST_FETCHED: 'ROUTES_FETCHED',
+  LIST_FETCH_STATUS_CHANGED: 'ROUTES_FETCH_STATUS_CHANGED',
+};
+
+export const getRouteFetchStatusAction = (payload) => ({
+  type: ROUTE.FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getRoutesListFetchStatusAction = (payload) => ({
+  type: ROUTE.LIST_FETCH_STATUS_CHANGED,
   payload
 });
 

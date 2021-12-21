@@ -8,6 +8,7 @@ import SavedCartApi from "../api/SavedCartApi";
 import { cartIcon, copyIcon, deleteIcon } from "../assets/icons";
 import { CART, SAVED_CART } from "../context/AppActions";
 import { useAppContext } from "../context/AppContext";
+import { useCopyText } from "../context/AppHooks";
 import AlertDialog, { LOADING_DIALOG } from "./AlertDialog";
 import Reload from "./Reload";
 
@@ -27,18 +28,11 @@ export default function SavedCartItem({ cart: { code, name, number_of_items } })
 
   const api = new SavedCartApi(user.api_token);
 
+  const copy = useCopyText();
+
   function copyCode() {
-    
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(code);
-    } else {
-      const input = document.createElement('input');
-      input.value = code;
-      document.body.appendChild(input);
-      input.select();
-      document.execCommand('copy');
-      document.body.removeChild(input);
-    }
+
+    copy(code);
 
     setDialog({
       body: '_extra.Code_copied',

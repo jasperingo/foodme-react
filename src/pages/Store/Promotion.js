@@ -14,12 +14,15 @@ export default function Promotion() {
 
   const ID = parseInt(useParams().ID);
 
-  const { promotions: {
-    promotion: {
-      promotion,
-      promotionFetchStatus
-    }
-  }, promotionsDispatch } = useAppContext();
+  const { 
+    promotions: {
+      promotion: {
+        promotion,
+        promotionFetchStatus
+      }
+    }, 
+    promotionsDispatch 
+  } = useAppContext();
 
   useEffect(()=>{
 
@@ -38,7 +41,7 @@ export default function Promotion() {
   }
 
   return (
-    <section className="flex-grow">
+    <section>
       { 
         useDataRender(
           promotion, 

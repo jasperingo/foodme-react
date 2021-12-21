@@ -2,45 +2,42 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import AddressApi from '../../api/AddressApi';
+import CustomerApp from '../../apps/CustomerApp';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import UpdateAddressForm from '../../components/UpdateAddressForm';
-import { FETCH_STATUSES, getUserAddressFetchStatusAction, USER_ADDRESS } from '../../context/AppActions';
+import AddressForm from '../../components/AddressForm';
+import { ADDRESS, FETCH_STATUSES, getAddressFetchStatusAction } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 import { useDataRender } from '../../context/AppHooks';
+import AddressDeleteForm from '../../components/AddressDeleteForm';
 
-export default function Address() {
+export default function AddressUpdate() {
 
-  const idParam = useParams().ID;
+  const ID = parseInt(useParams().ID);
 
-  const ID  = idParam === 'add' ? 0 : parseInt(idParam);
-
-  const { user: {
-    user, 
-    address: {
-      address,
-      addressFetchStatus,
-    }
-  }, userDispatch } = useAppContext();
+  const { 
+    user: { user },
+    addresses: {
+      address: {
+        address,
+        addressFetchStatus,
+      }
+    }, 
+    addressesDispatch 
+  } = useAppContext();
 
   useEffect(()=> {
-    
     if (address !== null && address.id !== ID) {
-      userDispatch({ type: USER_ADDRESS.UNFETCHED });
+      addressesDispatch({ type: ADDRESS.UNFETCHED });
     } else if (ID !== 0 && addressFetchStatus === FETCH_STATUSES.LOADING) {
       const api = new AddressApi(user.api_token);
-      api.get(ID, userDispatch);
-    } else if (addressFetchStatus === FETCH_STATUSES.LOADING) {
-      userDispatch({
-        type: USER_ADDRESS.FETCHED,
-        payload: { id: 0, title: '', street: '', city: '', state: '' }
-      });
+      api.getByCustomer(ID, addressesDispatch);
     }
   });
   
   function refetchAddress() {
     if (addressFetchStatus !== FETCH_STATUSES.LOADING) 
-      userDispatch(getUserAddressFetchStatusAction(FETCH_STATUSES.LOADING));
+      addressesDispatch(getAddressFetchStatusAction(FETCH_STATUSES.LOADING));
   }
 
   return (
@@ -50,7 +47,12 @@ export default function Address() {
           useDataRender(
             address, 
             addressFetchStatus,
-            ()=> <UpdateAddressForm address={address} hasTitle={true} />,
+            ()=> (
+              <div>
+                <AddressForm address={address} appType={CustomerApp.TYPE} />
+                <AddressDeleteForm address={address} />
+              </div>
+            ),
             ()=> <Loading />, 
             ()=> <Reload action={refetchAddress} />,
           )

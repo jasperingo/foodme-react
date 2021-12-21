@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { storeIcon } from '../assets/icons';
 import { useMoneyFormat } from '../context/AppHooks';
 
-export default function ProductItem({ prod, href = `/store/${prod.store.id}/product/${prod.id}`, layout = ProductItem.LAYOUT_LIST_GRID }) {
+export default function ProductItem({ prod, href = `/product/${prod.id}`, layout = ProductItem.LAYOUT_LIST_GRID }) {
 
   let layoutStyle, layoutImgStyle, layoutBodyStyle;
 

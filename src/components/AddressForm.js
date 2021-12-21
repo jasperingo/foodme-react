@@ -9,8 +9,9 @@ import FormButton from './FormButton';
 import FormField from './FormField';
 import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
+import CustomerApp from '../apps/CustomerApp';
 
-export default function UpdateAddressForm({ address, hasTitle }) {
+export default function UpdateAddressForm({ address, appType }) {
 
   const { user: { user }, userDispatch } = useAppContext();
 
@@ -21,6 +22,8 @@ export default function UpdateAddressForm({ address, hasTitle }) {
   const cityInput = useRef(null);
 
   const stateInput = useRef(null);
+
+  const defaultInput = useRef(null);
 
   const [dialog, setDialog] = useState(null);
 
@@ -36,6 +39,8 @@ export default function UpdateAddressForm({ address, hasTitle }) {
 
   const [stateError, setStateError] = useState('');
 
+  const [defaultError, setDefaultError] = useState('');
+
   const [postFetchStatus, setPostFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
 
@@ -50,7 +55,7 @@ export default function UpdateAddressForm({ address, hasTitle }) {
 
     setPostFetchStatus(FETCH_STATUSES.PENDING);
 
-    if (hasTitle && !titleInput.current.validity.valid) {
+    if (appType === CustomerApp.TYPE && !titleInput.current.validity.valid) {
       error = true;
       setTitleError('_errors.This_field_is_required');
     } else {
@@ -77,6 +82,13 @@ export default function UpdateAddressForm({ address, hasTitle }) {
     } else {
       setStateError('');
     }
+
+    if (appType === CustomerApp.TYPE && !defaultInput.current.validity.valid) {
+      error = true;
+      setDefaultError('_errors.This_field_is_required');
+    } else {
+      setDefaultError('');
+    }
     
     if (!error) {
       setFormError('');
@@ -92,10 +104,11 @@ export default function UpdateAddressForm({ address, hasTitle }) {
       const api = new AddressApi(user.api_token);
 
       const form = {
-        title: hasTitle ? titleInput.current.value : undefined,
+        title: appType === CustomerApp.TYPE ? titleInput.current.value : undefined,
         street: streetInput.current.value,
         city: cityInput.current.value,
-        state: stateInput.current.value
+        state: stateInput.current.value,
+        default: appType === CustomerApp.TYPE ? defaultInput.current.value : undefined
       }
 
       const request = address.id === 0 ? api.add(form) : api.update(address.id, form);
@@ -125,7 +138,7 @@ export default function UpdateAddressForm({ address, hasTitle }) {
       setDialog(null);
     }
 
-  }, [hasTitle, address, user, postFetchStatus, dialog, userDispatch]);
+  }, [appType, address, user, postFetchStatus, dialog, userDispatch]);
 
   return (
     <form method="POST" action="" className="form-1-x" onSubmit={onFormSubmit} noValidate>
@@ -138,14 +151,16 @@ export default function UpdateAddressForm({ address, hasTitle }) {
           /> 
       }
 
-      { hasTitle && <FormField 
-        ref={titleInput}
-        error={titleError}
-        ID="address-title-input" 
-        label="_extra.Title" 
-        value={ address.title } 
-        required={true}
-        />
+      { 
+        appType === CustomerApp.TYPE && 
+        <FormField 
+          ref={titleInput}
+          error={titleError}
+          ID="address-title-input" 
+          label="_extra.Title" 
+          value={ address.title } 
+          required={true}
+          />
       }
 
       <FormField 
@@ -179,11 +194,26 @@ export default function UpdateAddressForm({ address, hasTitle }) {
           'Rivers'
         ]}
         />
+      { 
+        appType === CustomerApp.TYPE &&
+        <FormSelect
+          ref={defaultInput}
+          error={defaultError}
+          ID="address-default-input" 
+          label="_user.Default_address" 
+          value={ address.default_address } 
+          required={true}
+          options={[
+            'Yes',
+            'No',
+          ]}
+          />
+      }
 
       <FormButton text="_user.Save_address" />
-      
+
       { dialog && <AlertDialog dialog={dialog} /> }
 
     </form>
-  )
+  );
 }

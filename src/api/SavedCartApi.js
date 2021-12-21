@@ -3,6 +3,17 @@ import { FETCH_STATUSES, getSavedCartsListFetchStatusAction, SAVED_CART } from "
 import API from "./API";
 
 export default class SavedCartApi extends API {
+
+  async add(formData) {
+    
+    const data = await this.apiFetch(
+      'saved-cart/add.json',
+      'GET', //'DELETE',
+      JSON.stringify(formData)
+    );
+
+    return data;
+  }
   
   async delete(id) {
     

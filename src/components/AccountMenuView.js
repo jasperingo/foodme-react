@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useCategoryColor } from '../context/AppHooks';
 import Icon from '@mdi/react';
+import AppSwitch from '../AppSwitch';
 
 function MenuItem({ icon, text, href, index }) {
 
@@ -24,7 +25,7 @@ function MenuItem({ icon, text, href, index }) {
   );
 }
 
-export default function AccountMenuList({ items }) {
+function AccountMenuList({ items }) {
 
   const { t } = useTranslation();
 
@@ -47,3 +48,29 @@ export default function AccountMenuList({ items }) {
     </ul>
   );
 }
+
+function AccountMenuTop({ photo, name }) {
+  return (
+    <div className="py-5">
+      <img 
+        alt={name} 
+        width="100" 
+        height="100" 
+        src={photo}
+        className="w-20 h-20 rounded-full mx-auto my-2 border"
+        />
+      <div className="text-center font-bold text-lg">{ name }</div>
+    </div>
+  );
+}
+
+export default function AccountMenuView({ photo, name, items }) {
+  return (
+    <div className="max-w-lg mx-auto md:shadow md:my-6 md:py-2 md:px-4 md:rounded">
+      <AccountMenuTop photo={photo} name={name} />
+      <AccountMenuList items={items} />
+      <AppSwitch />
+    </div>
+  );
+}
+

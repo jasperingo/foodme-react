@@ -26,9 +26,9 @@ export default function Reviews() {
   useEffect(()=>{
     if (reviewsFetchStatus === FETCH_STATUSES.LOADING) {
       const api = new ReviewApi(user.api_token);
-      api.getListByStore(0, reviewsDispatch);
+      api.getListByStore(0, reviewsPage, reviewsDispatch);
     }
-  }, [user, reviewsFetchStatus, reviewsDispatch]);
+  });
 
   function refetchReviews() {
     if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 

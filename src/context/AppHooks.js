@@ -30,6 +30,21 @@ export function useCartCounter() {
   return cartItems.length-1 < 100 ? cartItems.length-1 : '99+';
 }
 
+export function useCopyText() {
+  return (text)=> {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const input = document.createElement('input');
+      input.value = text;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+    }
+  }
+}
+
 export function useHeader2Title() {
 
   const path = useLocation().pathname;
@@ -135,6 +150,9 @@ export function useHeader2Title() {
   
   if (path === '/orders')
     return '_order.Orders';
+
+  if (/route\/[0-9]+/.test(path))
+    return '_delivery.Route';
 
   if (/customer\/[0-9]+\/update/.test(path))
     return '_user.Edit_customer';

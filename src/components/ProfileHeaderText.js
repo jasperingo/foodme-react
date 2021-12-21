@@ -15,7 +15,7 @@ export default function ProfileHeaderText({ text, buttons=[] }) {
   return (
     <div className="my-4 md:flex md:items-center">
       <h3 className="flex-grow font-bold text-3xl">{ text }</h3> 
-      <ul className="flex gap-2 mt-2">
+      <ul className="flex flex-wrap gap-2 mt-2">
         {
           buttons.map((item, i)=> (
             <Button 

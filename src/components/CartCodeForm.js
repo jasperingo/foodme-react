@@ -11,7 +11,6 @@ export default function CartCodeForm() {
   const { t } = useTranslation();
 
   const { 
-    //user: { user },
     cartDispatch
   } = useAppContext();
 
@@ -19,7 +18,7 @@ export default function CartCodeForm() {
 
   const [dialog, setDialog] = useState(null);
 
-  const api = new SavedCartApi(); //(user.api_token);
+  const api = new SavedCartApi();
 
   function onFormSubmit(e) {
     e.preventDefault();
@@ -63,5 +62,5 @@ export default function CartCodeForm() {
       </form>
       { dialog && <AlertDialog dialog={dialog} /> }
     </div>
-  )
+  );
 }

@@ -1,8 +1,26 @@
 
-import { FETCH_STATUSES, getTransactionFetchStatusAction, getTransactionsListFetchStatusAction, TRANSACTION } from '../context/AppActions';
+import { 
+  FETCH_STATUSES, 
+  getTransactionFetchStatusAction, 
+  getTransactionsListFetchStatusAction, 
+  getWalletFetchStatusAction, 
+  TRANSACTION, 
+  WALLET 
+} from '../context/AppActions';
 import API from './API';
 
 export default class TransactionApi extends API {
+  
+  async withdraw(form) {
+    
+    const data = await this.apiFetch(
+      `transaction/withdraw.json`,
+      'GET', //POST,
+      JSON.stringify(form)
+    );
+    
+    return data;
+  }
 
   async get(id, dispatch) {
     try {
@@ -20,6 +38,23 @@ export default class TransactionApi extends API {
 
     } catch (err) {
       dispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
+  async getWallet(id, dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `transaction/wallet.json?id=${id}`,
+        'GET'
+      );
+      
+      dispatch({
+        type: WALLET.FETCHED,
+        payload: data.data
+      });
+
+    } catch (err) {
+      dispatch(getWalletFetchStatusAction(FETCH_STATUSES.ERROR));
     }
   }
 
