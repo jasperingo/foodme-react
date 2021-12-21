@@ -1,16 +1,12 @@
 
 import React, { useEffect, useRef, useState } from 'react';
-import UserApi from '../api/UserApi';
 import { FETCH_STATUSES } from '../context/AppActions';
-import { useAppContext } from '../context/AppContext';
 import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 import FormButton from './FormButton';
 import FormField from './FormField';
 import FormMessage from './FormMessage';
 
-export default function UpdatePassword({ url }) {
-
-  const { user: { user } } = useAppContext();
+export default function PasswordUpdateForm({ api }) {
 
   const newPasswordInput = useRef(null);
 
@@ -70,13 +66,12 @@ export default function UpdatePassword({ url }) {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
 
-      const api = new UserApi(user.api_token);
       api.updatePassword({
         current_password: currentPasswordInput.current.value,
         new_password: newPasswordInput.current.value,
       }).then(res=> {
         
-        setFormSuccess(res.msg);
+        setFormSuccess(res.message);
         setFetchStatus(FETCH_STATUSES.DONE);
   
       }).catch(err=> {
@@ -95,7 +90,7 @@ export default function UpdatePassword({ url }) {
       setDialog(null);
     }
 
-  }, [url, user, fetchStatus, dialog]);
+  }, [api, fetchStatus, dialog]);
 
   useEffect(()=> {
     if (formSuccess) {

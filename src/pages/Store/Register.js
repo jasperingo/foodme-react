@@ -11,14 +11,14 @@ import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
 import FormSelect from '../../components/FormSelect';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
+import { ADDRESS, FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
 export default function Register({ guestMiddleware }) {
 
   const { t } = useTranslation();
 
-  const { userDispatch } = useAppContext();
+  const { userDispatch, addressesDispatch } = useAppContext();
 
   const nameInput = useRef(null);
 
@@ -113,7 +113,8 @@ export default function Register({ guestMiddleware }) {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {
-        userDispatch({ type: USER.AUTHED, payload: res });
+        userDispatch({ type: USER.AUTHED, payload: res.data });
+        addressesDispatch({ type: ADDRESS.FETCHED, payload: res.data.address });
       }).catch(err=> {
 
         setFetchStatus(FETCH_STATUSES.ERROR);
@@ -133,7 +134,7 @@ export default function Register({ guestMiddleware }) {
       setDialog(null);
     }
 
-  }, [formError, fetchStatus, dialog, userDispatch]);
+  }, [formError, fetchStatus, dialog, userDispatch, addressesDispatch]);
 
 
   return guestMiddleware() || (

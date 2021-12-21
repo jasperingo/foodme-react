@@ -17,7 +17,7 @@ export default class AddressApi extends API {
       JSON.stringify(formData)
     );
   
-    return data.data;
+    return data;
   }
 
   async update(id, formData) {
@@ -28,7 +28,7 @@ export default class AddressApi extends API {
       JSON.stringify(formData)
     );
   
-    return data.data;
+    return data;
   }
 
   async delete(id) {

@@ -1,8 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
-import UserApi from '../api/UserApi';
-import { FETCH_STATUSES } from '../context/AppActions';
+import { FETCH_STATUSES, USER } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
 import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 import FormButton from './FormButton';
@@ -10,9 +9,9 @@ import FormField from './FormField';
 import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 
-export default function UpdateWithdrawalAccountForm({ url, account }) {
-  
-  const { user: { user }, userDispatch } = useAppContext();
+export default function UpdateWithdrawalAccountForm({ api, account }) {
+
+  const { userDispatch } = useAppContext();
 
   const nameInput = useRef(null);
 
@@ -76,17 +75,16 @@ export default function UpdateWithdrawalAccountForm({ url, account }) {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
 
-      const api = new UserApi(user.api_token);
-      api.updatePassword({
+      api.updateWithdrawalAccount({
         bank_name: nameInput.current.value,
         acount_number: numberInput.current.value,
         acount_type: typeInput.current.value,
       }).then(res=> {
         
-        setFormSuccess(res.msg);
+        setFormSuccess(res.message);
         setFetchStatus(FETCH_STATUSES.DONE);
-        //userDispatch(/*TODO*/);
-  
+        userDispatch({ type: USER.WITHDRAWAL_ACCOUNT_UPDATED, payload : res.data });
+        
       }).catch(err=> {
   
         setFetchStatus(FETCH_STATUSES.ERROR);
@@ -103,7 +101,7 @@ export default function UpdateWithdrawalAccountForm({ url, account }) {
       setDialog(null);
     }
 
-  }, [url, user, fetchStatus, dialog, userDispatch]);
+  }, [api, fetchStatus, dialog, userDispatch]);
 
 
   return (

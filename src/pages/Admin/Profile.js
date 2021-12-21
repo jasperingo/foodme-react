@@ -5,7 +5,7 @@ import FormButton from '../../components/FormButton';
 import FormMessage from '../../components/FormMessage';
 import FormField from '../../components/FormField';
 import PhotoChooser from '../../components/PhotoChooser';
-import UpdatePassword from '../../components/UpdatePassword';
+import UpdatePassword from '../../components/PasswordUpdateForm';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 import AdminApi from '../../api/AdminApi';

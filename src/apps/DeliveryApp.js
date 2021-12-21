@@ -18,17 +18,20 @@ import Search from '../pages/Delivery/Search';
 import Messages from '../pages/Delivery/Messages';
 import ResetPassword from '../pages/ResetPassword';
 import ForgotPassword from '../pages/ForgotPassword';
-//import useAuth from '../middlewares/useAuth';
+import useAuth from '../middlewares/useAuth';
 import useGuest from '../middlewares/useGuest';
 import TheRoute from '../pages/Delivery/TheRoute';
-
+import Order from '../pages/Order';
+import Reviews from '../pages/Delivery/Reviews';
+import Wallet from '../pages/Delivery/Wallet';
+import Profile from '../pages/Delivery/Profile';
+import Transaction from '../pages/Transaction';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
   { href: '/register', exclude: true },
   { title : '_delivery.Routes', icon: routeIcon, href: '/routes' },
   { title : '_order.Orders', icon: orderIcon, href: '/orders', hrefs: [
-      '/orders/processing', 
       '/orders/delivered', 
       '/orders/in-transit', 
     ]
@@ -43,7 +46,7 @@ const HEADER_TOP_NAV_LINKS = [
 
 export default function DeliveryApp() {
 
-  //const authMiddleware = useAuth('/login');
+  const authMiddleware = useAuth('/');
 
   const guestMiddleware = useGuest('/account');
 
@@ -55,21 +58,26 @@ export default function DeliveryApp() {
         />
       <main className="pb-52">
         <Switch>
-          <Route path="/search/history" render={()=> <SearchHistory />} />
-          <Route path="/search" render={()=> <Search />} />
-          <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
-          <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
-          <Route path="/contact-us" render={()=> <ContactUs />} />
-          <Route path="/about-us" render={()=> <AboutUs />} /> 
-          <Route path="/account" render={()=> <AccountMenu />} />
-          <Route path="/messages" render={()=> <Messages />} />
-          <Route path="/orders" render={()=> <Orders />} />
-          <Route path="/route/:ID" render={()=> <TheRoute />} />
-          <Route path="/routes" render={()=> <TheRoutes />} />
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword url="forgot-password.json" />} />
-          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword url="forgot-password.json" />} />
-          <Route path="/register" render={()=> <Register />} />
-          <Route path="/" render={()=> <LogIn />} />
+          <Route path="/reviews" render={()=> authMiddleware() || <Reviews />} />
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
+          <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
+          <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
+          <Route path="/search/history" render={()=> authMiddleware() || <SearchHistory />} />
+          <Route path="/search" render={()=> authMiddleware() || <Search />} />
+          <Route path="/terms-of-service" render={()=> authMiddleware() || <TermsOfService />} /> 
+          <Route path="/privacy-policy" render={()=> authMiddleware() || <PrivacyPolicy />} /> 
+          <Route path="/contact-us" render={()=> authMiddleware() || <ContactUs />} />
+          <Route path="/about-us" render={()=> authMiddleware() || <AboutUs />} /> 
+          <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/route/:ID" render={()=> authMiddleware() || <TheRoute />} />
+          <Route path="/routes" render={()=> authMiddleware() || <TheRoutes />} />
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />
+          <Route path="/register" render={()=>  guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} />
+          <Route path="/" render={()=>  guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>
       <Footer />

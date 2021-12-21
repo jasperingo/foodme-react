@@ -7,12 +7,12 @@ export default class UserApi extends API {
   async auth(formData) {
 
     const data = await this.apiFetch(
-      'post/auth-customer.json',
+      'customer/get.json',
       'GET', //'POST',
       JSON.stringify(formData)
     );
     
-    return data.data;
+    return data;
   }
 
   async forgotPassword(formData) {
@@ -23,40 +23,40 @@ export default class UserApi extends API {
       JSON.stringify(formData)
     );
   
-    return data.data;
+    return data;
   }
 
   async update(id, formData) {
   
     const data = await this.apiFetch(
-      `customer/post.json?id=${id}`,
+      `customer/get.json?id=${id}`,
       'GET', //'PUT',
       JSON.stringify(formData)
     );
   
-    return data.data;
+    return data;
   }
 
   async updatePhoto(id, formData) {
 
     const data = await this.apiFetch(
-      `customer/post.json?id=${id}`, 
+      `customer/get.json?id=${id}`, 
       'GET', //'PUT',
       formData
     );
   
-    return data.data;
+    return data;
   }
 
-  async updatePassword(formData) {
+  async updatePassword(id, formData) {
 
     const data = await this.apiFetch(
-      'success.json',
-      'GET', //'POST',
-      //JSON.stringify(formData)
+      `customer/get.json?id=${id}`,
+      'GET', //'PUT',
+      JSON.stringify(formData)
     );
   
-    return data.data;
+    return data;
   }
 
   async get(id, dispatch) {

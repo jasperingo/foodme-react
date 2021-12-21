@@ -1,4 +1,5 @@
 {
+  "message": "Update successful",
   "data": {
     "id" : 2,
     "name": "Flatway logistics",
@@ -6,6 +7,16 @@
     "phone_number": "08037848900",
     "api_token": "jwt-token",
     "photo": "default.jpeg",
-    "rating" : 4.6
+    "rating" : 4.6,
+    "account": {
+      "bank_name": "Zenith bank",
+      "account_number": "0309849494",
+      "account_type": "Savings"
+    },
+    "address": {
+      "street": "2 Glory street",
+      "city": "Owerri",
+      "state": "Imo state"
+    }
   }
 }

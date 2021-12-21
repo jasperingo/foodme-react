@@ -118,5 +118,25 @@ export default class TransactionApi extends API {
     }
   }
 
+  async getListByDeliveryFirm(id, page, dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `transaction/list.json?id=${id}&page=${page}`,
+        'GET'
+      );
+      
+      dispatch({
+        type: TRANSACTION.LIST_FETCHED,
+        payload: {
+          transactions: data.data,
+          transactionsNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
 }
 

@@ -11,13 +11,13 @@
       "max_price": 750.00
     },
     {
-      "id": 7,
+      "id": 23,
       "locations": [ "Aba" ],
       "min_price": 500.00,
       "max_price": 1200.00
     },
     {
-      "id": 7,
+      "id": 5,
       "locations": [
         "Control, Owerri",
         "Port Harcourt road, Owerri"

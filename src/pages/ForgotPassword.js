@@ -9,7 +9,7 @@ import { FETCH_STATUSES } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
 import UserApi from '../api/UserApi';
 
-export default function ForgotPassword({ url }) {
+export default function ForgotPassword() {
 
   const { userDispatch } = useAppContext();
 
@@ -47,12 +47,12 @@ export default function ForgotPassword({ url }) {
       api.forgotPassword({
         email: emailInput.current.value,
       }).then(res=> {
-        setFormSuccess(res.msg);
+        setFormSuccess(res.message);
         setFetchStatus(FETCH_STATUSES.DONE);
       }).catch(err=> {
         setFetchStatus(FETCH_STATUSES.ERROR);
         if (err.errors) {
-          setFormError(err.errors.msg);
+          setFormError(err.errors.message);
         } else {
           setFormError('_errors.Something_went_wrong');
         }
@@ -62,7 +62,7 @@ export default function ForgotPassword({ url }) {
       setDialog(null);
     }
 
-  }, [url, fetchStatus, userDispatch, dialog]);
+  }, [fetchStatus, userDispatch, dialog]);
 
   return (
     <section>

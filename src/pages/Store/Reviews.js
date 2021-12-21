@@ -14,14 +14,18 @@ import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHook
 
 export default function Reviews() {
 
-  const { user: { user }, reviews: {
+  const { 
+    user: { user }, 
     reviews: {
-      reviews,
-      reviewsPage,
-      reviewsNumberOfPages,
-      reviewsFetchStatus,
-    }
-  }, reviewsDispatch} = useAppContext();
+      reviews: {
+        reviews,
+        reviewsPage,
+        reviewsNumberOfPages,
+        reviewsFetchStatus,
+      }
+    }, 
+    reviewsDispatch 
+  } = useAppContext();
 
   useEffect(()=>{
     if (reviewsFetchStatus === FETCH_STATUSES.LOADING) {

@@ -16,7 +16,7 @@ import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHook
 export default function TheRoutes() {
 
   const {
-    //user: { user },
+    user: { user },
     routes: {
       routes: {
         routes,
@@ -30,8 +30,8 @@ export default function TheRoutes() {
 
   useEffect(()=> {
     if (routesFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new RouteApi(); //(user.api_token);
-      api.getList(0, routesPage, routesDispatch);
+      const api = new RouteApi(user.api_token);
+      api.getList(user.id, routesPage, routesDispatch);
     }
   });
 
@@ -39,7 +39,6 @@ export default function TheRoutes() {
     if (routesFetchStatus !== FETCH_STATUSES.LOADING) 
       routesDispatch(getRoutesListFetchStatusAction(FETCH_STATUSES.LOADING));
   }
-
 
   return (
     <section>
@@ -52,7 +51,7 @@ export default function TheRoutes() {
           next={refetchRoutes}
           hasMore={useHasMoreToFetchViaScroll(routesPage, routesNumberOfPages, routesFetchStatus)}
           >
-          <ul className="list-x">
+          <ul className="list-2-x">
             { 
               useListRender(
                 routes, 

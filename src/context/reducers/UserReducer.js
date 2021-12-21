@@ -1,6 +1,8 @@
 
 import { FETCH_STATUSES, USER } from "../AppActions";
 
+//TODO: add update withdrawal address case;
+
 export default function UserReducer (state, action) {
   
   switch (action.type) { 

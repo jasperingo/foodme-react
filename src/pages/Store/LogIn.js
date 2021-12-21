@@ -9,14 +9,14 @@ import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
+import { ADDRESS, FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
 export default function LogIn({ guestMiddleware }) {
 
   const { t } = useTranslation();
 
-  const { userDispatch } = useAppContext();
+  const { userDispatch, addressesDispatch } = useAppContext();
 
   const emailInput = useRef(null);
 
@@ -51,7 +51,8 @@ export default function LogIn({ guestMiddleware }) {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {
-        userDispatch({ type: USER.AUTHED, payload: res });
+        userDispatch({ type: USER.AUTHED, payload: res.data });
+        addressesDispatch({ type: ADDRESS.FETCHED, payload: res.data.address });
       }).catch(err=> {
 
         setFetchStatus(FETCH_STATUSES.ERROR);
@@ -67,7 +68,7 @@ export default function LogIn({ guestMiddleware }) {
       setDialog(null);
     }
 
-  }, [fetchStatus, userDispatch, dialog]);
+  }, [fetchStatus, dialog, userDispatch, addressesDispatch]);
 
   
   return guestMiddleware() || (

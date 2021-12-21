@@ -9,8 +9,8 @@ import FormMessage from '../../components/FormMessage';
 import FormSelect from '../../components/FormSelect';
 import PhotoChooser from '../../components/PhotoChooser';
 import AddressForm from '../../components/AddressForm';
-import UpdatePassword from '../../components/UpdatePassword';
-import UpdateWithdrawalAccountForm from '../../components/UpdateWithdrawalAccountForm';
+import UpdatePassword from '../../components/PasswordUpdateForm';
+import UpdateWithdrawalAccountForm from '../../components/WithdrawalAccountUpdateForm';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
@@ -224,12 +224,9 @@ export default function Profile() {
 
         <AddressForm address={user.address} />
 
-        <UpdateWithdrawalAccountForm 
-          url="success.json"
-          account={ user.account }
-          />
+        <UpdateWithdrawalAccountForm api={api} account={ user.account } />
 
-        <UpdatePassword url="success.json" />
+        <UpdatePassword api={api} />
 
       </div>
 

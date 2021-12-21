@@ -42,7 +42,7 @@ import {
   mdiChevronLeft,
   mdiChevronRight,
   mdiSync,
-  mdiArrowUpDownBold,
+  mdiArrowLeftRightBold,
 
 
 } from '@mdi/js';
@@ -89,5 +89,5 @@ export const phoneIcon = mdiPhone;
 export const nextIcon = mdiChevronRight;
 export const prevIcon = mdiChevronLeft;
 export const refreshIcon = mdiSync;
-export const upDownIcon = mdiArrowUpDownBold;
+export const leftRightIcon = mdiArrowLeftRightBold;
 

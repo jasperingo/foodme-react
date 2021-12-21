@@ -50,7 +50,7 @@ export default function LogIn({ guestMiddleware }) {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {
-        userDispatch({ type: USER.AUTHED, payload: res });
+        userDispatch({ type: USER.AUTHED, payload: res.data });
       }).catch(err=> {
 
         setFetchStatus(FETCH_STATUSES.ERROR);

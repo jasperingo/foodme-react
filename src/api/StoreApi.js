@@ -9,10 +9,10 @@ export default class StoreApi extends API {
     const data = await this.apiFetch(
       'store/store.json',
       'GET', //'POST',
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
     
-    return data.data;
+    return data;
   }
 
   async update(formData) {
@@ -20,10 +20,43 @@ export default class StoreApi extends API {
     const data = await this.apiFetch(
       'store/store.json',
       'GET', //'PUT',
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
   
-    return data.data;
+    return data;
+  }
+
+  async updatePhoto(id, formData) {
+
+    const data = await this.apiFetch(
+      `store/store.json?id=${id}`, 
+      'GET', //'PUT',
+      formData
+    );
+  
+    return data;
+  }
+
+  async updatePassword(id, formData) {
+
+    const data = await this.apiFetch(
+      `store/store.json?id=${id}`,
+      'GET', //'PUT',
+      JSON.stringify(formData)
+    );
+  
+    return data;
+  }
+
+  async updateWithdrawalAccount(id, formData) {
+
+    const data = await this.apiFetch(
+      `store/store.json?id=${id}`,
+      'GET', //'PUT',
+      JSON.stringify(formData)
+    );
+  
+    return data;
   }
 
   async get(id, dispatch) {

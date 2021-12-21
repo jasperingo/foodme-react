@@ -9,7 +9,7 @@ import FormTopTip from '../components/FormTopTip';
 import { FETCH_STATUSES } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
 
-export default function ResetPassword({ url }) {
+export default function ResetPassword() {
 
   const { userDispatch } = useAppContext();
 
@@ -51,7 +51,7 @@ export default function ResetPassword({ url }) {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {
-        setFormSuccess(res.msg);
+        setFormSuccess(res.message);
         setFetchStatus(FETCH_STATUSES.DONE);
       }).catch(err=> {
         setFetchStatus(FETCH_STATUSES.ERROR);
@@ -65,7 +65,7 @@ export default function ResetPassword({ url }) {
       setDialog(null);
     }
 
-  }, [url, fetchStatus, userDispatch, dialog]);
+  }, [fetchStatus, userDispatch, dialog]);
 
   return (
     <section>

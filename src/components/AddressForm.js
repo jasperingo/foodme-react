@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
 import AddressApi from '../api/AddressApi';
-import { FETCH_STATUSES, USER_ADDRESS } from '../context/AppActions';
+import { ADDRESS, FETCH_STATUSES } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
 import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 import FormButton from './FormButton';
@@ -11,9 +11,9 @@ import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 import CustomerApp from '../apps/CustomerApp';
 
-export default function UpdateAddressForm({ address, appType }) {
+export default function AddressForm({ address, appType }) {
 
-  const { user: { user }, userDispatch } = useAppContext();
+  const { user: { user }, addressesDispatch } = useAppContext();
 
   const titleInput = useRef(null);
 
@@ -114,10 +114,13 @@ export default function UpdateAddressForm({ address, appType }) {
       const request = address.id === 0 ? api.add(form) : api.update(address.id, form);
 
       request.then(res=> {
-        
-        setFormSuccess(res.msg);
+
+        setFormSuccess(res.message);
         setPostFetchStatus(FETCH_STATUSES.DONE);
-        userDispatch({ type: USER_ADDRESS.FETCHED, payload: res });
+        addressesDispatch({
+          type: ADDRESS.FETCHED,
+          payload: res.data
+        });
 
       }).catch(err=> {
 
@@ -138,7 +141,7 @@ export default function UpdateAddressForm({ address, appType }) {
       setDialog(null);
     }
 
-  }, [appType, address, user, postFetchStatus, dialog, userDispatch]);
+  }, [appType, address, user, postFetchStatus, dialog, addressesDispatch]);
 
   return (
     <form method="POST" action="" className="form-1-x" onSubmit={onFormSubmit} noValidate>

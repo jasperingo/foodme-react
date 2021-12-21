@@ -9,6 +9,61 @@ import API from "./API";
 
 export default class DeliveryFirmApi extends API {
 
+  async auth(formData) {
+
+    const data = await this.apiFetch(
+      'delivery-firm/get.json',
+      'GET', //'POST',
+      JSON.stringify(formData)
+    );
+    
+    return data;
+  }
+
+  async update(id, formData) {
+  
+    const data = await this.apiFetch(
+      `delivery-firm/get.json?id=${id}`,
+      'GET', //'PUT',
+      JSON.stringify(formData)
+    );
+  
+    return data;
+  }
+
+  async updatePhoto(id, formData) {
+
+    const data = await this.apiFetch(
+      `delivery-firm/get.json?id=${id}`, 
+      'GET', //'PUT',
+      formData
+    );
+  
+    return data;
+  }
+
+  async updatePassword(id, formData) {
+
+    const data = await this.apiFetch(
+      `delivery-firm/get.json?id=${id}`,
+      'GET', //'PUT',
+      JSON.stringify(formData)
+    );
+  
+    return data;
+  }
+
+  async updateWithdrawalAccount(id, formData) {
+
+    const data = await this.apiFetch(
+      `delivery-firm/get.json?id=${id}`,
+      'GET', //'PUT',
+      JSON.stringify(formData)
+    );
+  
+    return data;
+  }
+
   async get(id, dispatch) {
     try {
       const data = await this.apiFetch(

@@ -5,7 +5,7 @@ import FormButton from '../../components/FormButton';
 import FormMessage from '../../components/FormMessage';
 import FormField from '../../components/FormField';
 import PhotoChooser from '../../components/PhotoChooser';
-import UpdatePassword from '../../components/UpdatePassword';
+import UpdatePassword from '../../components/PasswordUpdateForm';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 import UserApi from '../../api/UserApi';
@@ -94,8 +94,8 @@ export default function Profile() {
     setPhotoFetchStatus(FETCH_STATUSES.DONE);
 
     if (res !== null) {
-      setFormSuccess(res.msg);
-      userDispatch({ type: USER.UPDATED, payload: res });
+      setFormSuccess(res.message);
+      userDispatch({ type: USER.UPDATED, payload: res.data });
     }
   }
 
@@ -121,9 +121,9 @@ export default function Profile() {
         phone_number: phoneInput.current.value
       }).then(res=> {
         
-        setFormSuccess(res.msg);
+        setFormSuccess(res.message);
         setFetchStatus(FETCH_STATUSES.DONE);
-        userDispatch({ type: USER.UPDATED, payload: res });
+        userDispatch({ type: USER.UPDATED, payload: res.data });
 
       }).catch(err=> {
 
@@ -216,7 +216,7 @@ export default function Profile() {
 
         </form>
 
-        <UpdatePassword url="success.json" />
+        <UpdatePassword api={api} />
 
       </div>
 
