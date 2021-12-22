@@ -1,8 +1,7 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useRef } from 'react/cjs/react.development';
 import DeliveryFirmApi from '../../api/DeliveryFirmApi';
 import { deliveryIcon } from '../../assets/icons';
 import { LOADING_DIALOG } from '../../components/AlertDialog';
