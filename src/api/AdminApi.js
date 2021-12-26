@@ -6,9 +6,9 @@ export default class AdminApi extends API {
   async auth(formData) {
 
     const data = await this.apiFetch(
-      'post/auth-customer.json',
+      'customer/get.json',
       'GET', //'POST',
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
     
     return data.data;
@@ -17,9 +17,9 @@ export default class AdminApi extends API {
   async update(formData) {
   
     const data = await this.apiFetch(
-      'post/auth-customer.json',
+      'customer/get.json',
       'GET', //'PUT',
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
   
     return data.data;
@@ -28,7 +28,7 @@ export default class AdminApi extends API {
   async updatePhoto(formData) {
 
     const data = await this.apiFetch(
-      'post/auth-customer.json', 
+      'customer/get.json', 
       'GET', //'PUT',
       formData
     );
@@ -39,9 +39,9 @@ export default class AdminApi extends API {
   async updatePassword(formData) {
 
     const data = await this.apiFetch(
-      'success.json',
+      'customer/get.json',
       'GET', //'POST',
-      //JSON.stringify(formData)
+      JSON.stringify(formData)
     );
   
     return data.data;

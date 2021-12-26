@@ -20,6 +20,27 @@
       "type": "store",
       "stores_count": 12,
       "photo": "store-cat.jpg"
+    },
+    {
+      "id": 10,
+      "name": "Fast food",
+      "type": "store",
+      "stores_count": 3,
+      "photo": "store-cat.jpg"
+    },
+    {
+      "id": 21,
+      "name": "Snacks",
+      "type": "store",
+      "stores_count": 8,
+      "photo": "store-cat.jpg"
+    },
+    {
+      "id": 170,
+      "name": "Smoke accessories",
+      "type": "store",
+      "stores_count": 4,
+      "photo": "store-cat.jpg"
     }
   ]
 }

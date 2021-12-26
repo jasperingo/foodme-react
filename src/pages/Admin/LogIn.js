@@ -49,7 +49,7 @@ export default function LogIn({ guestMiddleware }) {
       }).then(res=> {
         userDispatch({ type: USER.AUTHED, payload: res });
       }).catch(err=> {
-
+        
         setFetchStatus(FETCH_STATUSES.ERROR);
 
         if (err.errors) {

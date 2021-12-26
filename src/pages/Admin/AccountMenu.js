@@ -19,7 +19,7 @@ export default function AccountMenu() {
   return (
     <section>
       <div className="container-x">
-        <AccountMenuView photo={`/photos/admin/${user.photo}`} name={`${user.first_name} ${user.last_name}`} items={MENU_ITEMS} />
+        <AccountMenuView photo={`/photos/customer/${user.photo}`} name={`${user.first_name} ${user.last_name}`} items={MENU_ITEMS} />
       </div>
     </section>
   );
