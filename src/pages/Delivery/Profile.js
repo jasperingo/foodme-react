@@ -16,11 +16,6 @@ export default function Profile() {
 
   const { 
     user: { user }, 
-    addresses: {
-      address: {
-        address
-      }
-    },
     userDispatch 
   } = useAppContext();
 
@@ -205,7 +200,7 @@ export default function Profile() {
 
         </form>
 
-        <AddressForm address={address} />
+        <AddressForm address={user.address} />
 
         <UpdateWithdrawalAccountForm api={api} account={ user.account } />
 

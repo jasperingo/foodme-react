@@ -1,5 +1,6 @@
 
 import { FETCH_STATUSES, USER } from "../AppActions";
+import { initialUserState } from "../AppInitialStates";
 
 //TODO: add update withdrawal address case;
 
@@ -7,8 +8,13 @@ export default function UserReducer (state, action) {
   
   switch (action.type) { 
 
+    case USER.UNAUTHED:
+      localStorage.removeItem('auth');
+      return initialUserState;
+
     case USER.AUTHED:
     case USER.UPDATED:
+      localStorage.setItem('auth', JSON.stringify(action.payload));
       return {
         ...state,
         user: action.payload,

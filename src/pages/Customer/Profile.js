@@ -167,7 +167,8 @@ export default function Profile() {
 
           <PhotoChooser 
             api={api}
-            src={`/photos/${user.photo}`} 
+            alt={user.first_name}
+            src={`/photos/customer/${user.photo}`} 
             text="_extra.Edit_photo" 
             status={photoFetchStatus}
             onSuccess={onPhotoSuccess}

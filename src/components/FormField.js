@@ -27,7 +27,7 @@ const FormField = forwardRef(function ({ ID, label, type, error, value = '', req
         defaultValue={ value }
         placeholder={ `${t(label)} ${!required ? `(${t('_extra.optional')})` : ''}` }
         type={ type === 'password' && visible ? 'text' : (type || 'text') }
-        className={ `inline-block w-full border bg-color focus:outline-none rounded font-bold ${borderColor} ${padding}` } 
+        className={ `inline-block w-full border bg-color focus:outline-none rounded ${borderColor} ${padding}` } 
         required={ required }
         minLength={ minLength }
         maxLength={ maxLength }

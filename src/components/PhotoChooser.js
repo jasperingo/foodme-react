@@ -8,7 +8,7 @@ import { minusIcon } from '../assets/icons';
 import { FETCH_STATUSES } from '../context/AppActions';
 import AlertDialog, { LOADING_TEXT_DIALOG } from './AlertDialog';
 
-export default function PhotoChooser({ api, apiID, src, text = '_extra.Add_photo', status, required, onSuccess, onError }) {
+export default function PhotoChooser({ api, apiID, src, alt, text = '_extra.Add_photo', status, required, onSuccess, onError }) {
 
   const { t } = useTranslation();
 
@@ -72,7 +72,7 @@ export default function PhotoChooser({ api, apiID, src, text = '_extra.Add_photo
             <span className="sr-only">{ t('_extra.Remove_photo') }</span>
           </button> 
         }
-        <img src={photo} alt="product" width="100" height="100" className="w-32 h-32 rounded-full mx-auto border" />
+        <img src={photo} alt={alt} width="100" height="100" className="w-32 h-32 rounded-full mx-auto border" />
       </div>
       <div className="relative">
         <input ref={ photoInput } id="photo-input" type="file" className="p-2 w-full" accept="image/*" required={required} onChange={photoChoosen} />

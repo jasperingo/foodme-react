@@ -34,6 +34,7 @@ import Category from '../pages/Category';
 import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
 import SubCategoryAdd from '../pages/Admin/SubCategoryAdd';
 import Transaction from '../pages/Transaction';
+import Footer from '../components/Footer';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -103,6 +104,7 @@ export default function AdminApp() {
           <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>
+      <Footer />
     </>
   );
 }

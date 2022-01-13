@@ -134,6 +134,26 @@ export default class ProductApi extends API {
     }
   }
 
+  async getListBySearchQuery(query, dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `product/list.json?q=${query}`,
+        'GET'
+      );
+      
+      dispatch({
+        type: PRODUCT.LIST_FETCHED,
+        payload: {
+          products: data.data,
+          productsNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
 }
 
 

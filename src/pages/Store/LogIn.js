@@ -9,7 +9,7 @@ import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
-import { ADDRESS, FETCH_STATUSES, USER } from '../../context/AppActions';
+import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
 export default function LogIn({ guestMiddleware }) {
@@ -52,7 +52,6 @@ export default function LogIn({ guestMiddleware }) {
         confirm_password: passwordInput.current.value
       }).then(res=> {
         userDispatch({ type: USER.AUTHED, payload: res.data });
-        addressesDispatch({ type: ADDRESS.FETCHED, payload: res.data.address });
       }).catch(err=> {
 
         setFetchStatus(FETCH_STATUSES.ERROR);

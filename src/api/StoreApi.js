@@ -137,5 +137,25 @@ export default class StoreApi extends API {
       dispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR));
     }
   }
+  
+  async getListBySearchQuery(query, dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `store/stores.json?q=${query}`,
+        'GET'
+      );
+      
+      dispatch({
+        type: STORE.LIST_FETCHED,
+        payload: {
+          stores: data.data,
+          storesNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
 
 }

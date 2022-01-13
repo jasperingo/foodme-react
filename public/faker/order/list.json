@@ -3,40 +3,35 @@
   "data": [
     {
       "id": 1,
-      "customer_name": "John Doe",
-      "store_name": "Favour Stores",
+      "number": "033992838",
       "total": 300,
       "status": "delivered",
       "created_at": "12 June 2021"
     },
     {
       "id": 2,
-      "customer_name": "Frank Ikechukwu",
-      "store_name": "Robin foods",
+      "number": "03392838",
       "total": 5900.89,
       "status": "in-transit",
       "created_at": "15 June 2021"
     },
     {
       "id": 3,
-      "customer_name": "Israel Anthill",
-      "store_name": "Mr Ben Ice",
+      "number": "09283938",
       "total": 2400.77,
       "status": "delivered",
       "created_at": "22 June 2021"
     },
     {
       "id": 4,
-      "customer_name": "Rita Max",
-      "store_name": "Black rose mini mart",
+      "number": "09283938",
       "total": 19000.23,
       "status": "cancelled",
       "created_at": "25 June 2021"
     },
     {
       "id": 5,
-      "customer_name": "Gift Rex",
-      "store_name": "Bulls On grills",
+      "number": "0923494",
       "total": 33000.12,
       "status": "pending",
       "created_at": "29 June 2021"

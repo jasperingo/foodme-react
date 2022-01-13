@@ -47,6 +47,7 @@ export const TRANSLATIONS_EN = {
   _user: {
     Join_us: 'Join us',
     Welcome_back: 'Welcome back',
+    Admin: 'Admin',
     Account: 'Account',
     Customer: 'Customer',
     Customers: 'Customers',
@@ -67,6 +68,7 @@ export const TRANSLATIONS_EN = {
     Reset_password: 'Reset password',
     Or_login_with: 'Or login with',
     Manage_your_account: 'Manage your account',
+    _log_out_confirm_message: 'Are you sure you want to log out?',
     _forgot_password_instruction: 'To reset your password, enter your email address',
     _reset_password_instruction: 'Enter your new password, use a password you will not forget',
     Name: 'Name',

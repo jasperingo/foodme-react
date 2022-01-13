@@ -15,7 +15,7 @@ const FormSelect = forwardRef(function ({ ID, label, error, value = '', options 
         ref={ ref }
         id={ ID }
         defaultValue={ value }
-        className={ `inline-block w-full border bg-color focus:outline-none rounded font-bold p-2 ${borderColor}` } 
+        className={ `inline-block w-full border bg-color focus:outline-none rounded p-2 ${borderColor}` } 
         required={ required }
         >
         <option disabled value="">{ `${t(label)} ${!required ? `(${t('_extra.optional')})` : ''}` }</option>

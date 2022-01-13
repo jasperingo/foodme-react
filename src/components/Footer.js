@@ -15,6 +15,16 @@ function FooterLink({ text, href }) {
   );
 }
 
+function FooterAnchor({ text, href }) {
+  const { t } = useTranslation();
+
+  return (
+    <li className="mb-3">
+      <a href={href} className="hover:underline">{ t(text) }</a>
+    </li>
+  );
+}
+
 export default function Footer() {
 
   return (
@@ -23,8 +33,10 @@ export default function Footer() {
         <ul className="flex flex-wrap gap-1 justify-around">
           <FooterLink text="_user.Register" href="/register" />
           <FooterLink text="_user.Log_in" href="/login" />
-          <FooterLink text="_store.Become_a_store_partner" href="/" />
-          <FooterLink text="_delivery.Become_a_courier_partner" href="/" />
+          <FooterAnchor text="_store.Become_a_store_partner" href="/?app=1" />
+          <FooterAnchor text="_delivery.Become_a_courier_partner" href="/?app=2" />
+          <FooterAnchor text="_user.Admin" href="/?app=3" />
+          <FooterAnchor text="_user.Customer" href="/?app=0" />
           <FooterLink text="_extra.About_us" href="/about-us" />
           <FooterLink text="_extra.Contact_us" href="/contact-us" />
           <FooterLink text="_extra.Privacy_policy" href="/privacy-policy" />

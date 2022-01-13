@@ -15,6 +15,7 @@ export const getFormRequestFailedAction = (type) => ({
 
 export const USER = {
   AUTHED: 'AUTHED',
+  UNAUTHED: 'UNAUTHED',
   AUTH_FAILED: 'AUTH_FAILED',
   UPDATED: 'UPDATED',
   UPDATE_FAILED: 'UPDATE_FAILED',

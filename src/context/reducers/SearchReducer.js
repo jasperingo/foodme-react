@@ -1,10 +1,13 @@
 
-import { STORE, FETCH_STATUSES, PRODUCT, SEARCH } from "../AppActions";
+import { STORE, PRODUCT, SEARCH } from "../AppActions";
+import { useListFetchStatus } from "../AppHooks";
 import { initialSearchState } from "../AppInitialStates";
 
 let status;
 
 export default function SearchReducer (state, action) {
+
+  const fetchUpdater = useListFetchStatus();
   
   switch (action.type) {  
 
@@ -21,7 +24,7 @@ export default function SearchReducer (state, action) {
         }
       };
 
-    case STORE.FETCH_STATUS_CHANGED :
+    case STORE.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         stores: {
@@ -30,27 +33,27 @@ export default function SearchReducer (state, action) {
         }
       };
     
-    case STORE.FETCHED :
-      status = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
+    case STORE.LIST_FETCHED :
+      status = fetchUpdater(
+        state.stores.storesPage, 
+        action.payload.storesNumberOfPages, 
+        state.stores.stores.length, 
+        action.payload.stores.length
+      );
       
-      if ((state.stores.storesPage+1) < action.payload.storesNumberOfPages) {
-        status = FETCH_STATUSES.MORE;
-      } else if (state.stores.stores.length === 1 && action.payload.stores.length < 1) 
-        status = FETCH_STATUSES.EMPTY;
-
-      state.stores.stores.pop();
-
+      const st = state.stores.stores.filter(i=> i !== null);
+      
       return {
         ...state,
         stores: {
-          stores: [...state.stores.stores, ...action.payload.stores, null],
           storesFetchStatus: status,
           storesPage: state.stores.storesPage+1,
-          storesNumberOfPages: action.payload.storesNumberOfPages
+          storesNumberOfPages: action.payload.storesNumberOfPages,
+          stores: [...st, ...action.payload.stores, null],
         }
       };
 
-    case PRODUCT.FETCH_STATUS_CHANGED :
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         products: {
@@ -59,15 +62,15 @@ export default function SearchReducer (state, action) {
         }
       };
     
-    case PRODUCT.FETCHED :
-      status = FETCH_STATUSES.DONE; // useFetchStatusOnSuccess();
-      
-      if ((state.products.productsPage+1) < action.payload.productsNumberOfPages) {
-        status = FETCH_STATUSES.MORE;
-      } else if (state.products.products.length === 1 && action.payload.products.length < 1) 
-        status = FETCH_STATUSES.EMPTY;
-      
-      state.products.products.pop();
+    case PRODUCT.LIST_FETCHED :
+      status = fetchUpdater(
+        state.products.productsPage, 
+        action.payload.productsNumberOfPages, 
+        state.products.products.length, 
+        action.payload.products.length
+      );
+
+      const prods = state.products.products.filter(i=> i !== null);
 
       return {
         ...state,
@@ -76,7 +79,7 @@ export default function SearchReducer (state, action) {
           productsPage: state.products.productsPage+1,
           productsCategory: state.products.productsCategory,
           productsNumberOfPages: action.payload.productsNumberOfPages,
-          products: [...state.products.products, ...action.payload.products, null],
+          products: [...prods, ...action.payload.products, null],
         }
       };
 

@@ -12,7 +12,6 @@ import ContactUs from '../pages/ContactUs';
 import TermsOfService from '../pages/TermsOfService';
 import Categories from '../pages/Customer/Categories';
 import Search from '../pages/Customer/Search';
-import SearchHistory from '../pages/SearchHistory';
 import Register from '../pages/Customer/Register';
 import Store from '../pages/Store';
 import Product from '../pages/Customer/Product';
@@ -53,7 +52,7 @@ const HEADER_TOP_NAV_LINKS = [
       /store\/[0-9]+\/product\/[0-9]+/*/
     ] 
   },
-  { title : '_search.Search', icon: searchIcon, href: '/search/history', pages: [] }
+  { title : '_search.Search', icon: searchIcon, href: '/search', pages: [] }
 ];
 
 export default function CustomerApp() {
@@ -65,6 +64,7 @@ export default function CustomerApp() {
   return (
     <>
       <Header 
+        searchURL='/search/stores'
         navLinks={HEADER_NAV_LINKS}
         topNavLinks={HEADER_TOP_NAV_LINKS}
         />
@@ -91,7 +91,6 @@ export default function CustomerApp() {
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} />
           <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
-          <Route path="/search/history" render={()=> <SearchHistory />} />
           <Route path="/search" render={()=> <Search />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />

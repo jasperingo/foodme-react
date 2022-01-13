@@ -24,7 +24,6 @@ import Products from '../pages/Store/Products';
 import ProductUpdate from '../pages/Store/ProductUpdate';
 import Register from '../pages/Store/Register';
 import Search from '../pages/Store/Search';
-import SearchHistory from '../pages/Store/SearchHistory';
 import TermsOfService from '../pages/TermsOfService';
 import Reviews from '../pages/Store/Reviews';
 import PromotionUpdate from '../pages/Store/PromotionUpdate';
@@ -56,7 +55,7 @@ const HEADER_NAV_LINKS = [
 
 const HEADER_TOP_NAV_LINKS = [
   { title : '_cart.Cart', icon: cartIcon, href: '/cart', useCounter: useCartCounter, pages: [] },
-  { title : '_search.Search', icon: searchIcon, href: '/search/history', pages: [] }
+  { title : '_search.Search', icon: searchIcon, href: '/search', pages: [] }
 ];
 
 export default function StoreApp() {
@@ -68,6 +67,7 @@ export default function StoreApp() {
   return (
     <>
       <Header 
+        searchURL='/search/products'
         navLinks={HEADER_NAV_LINKS}
         topNavLinks={HEADER_TOP_NAV_LINKS}
         />
@@ -82,7 +82,6 @@ export default function StoreApp() {
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
-          <Route path="/search/history" render={()=> authMiddleware() || <SearchHistory />} />
           <Route path="/search" render={()=> authMiddleware() || <Search />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
