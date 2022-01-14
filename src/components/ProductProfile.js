@@ -88,7 +88,7 @@ function ProductProfileView({ product, appType }) {
             { 
               appType === StoreApp.TYPE && <Link to={`/product/${product.id}/update`} className="inline-block btn-color-primary p-1 rounded-md">
                 <span className="sr-only">{ t('_product.Edit_product') }</span>
-                <Icon path={editIcon} className="w-8 h-8" />
+                <Icon path={editIcon} className="w-7 h-7" />
               </Link>
             }
           </div>

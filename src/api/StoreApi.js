@@ -48,17 +48,6 @@ export default class StoreApi extends API {
     return data;
   }
 
-  async updateWithdrawalAccount(id, formData) {
-
-    const data = await this.apiFetch(
-      `store/store.json?id=${id}`,
-      'GET', //'PUT',
-      JSON.stringify(formData)
-    );
-  
-    return data;
-  }
-
   async get(id, dispatch) {
     try {
       const data = await this.apiFetch(

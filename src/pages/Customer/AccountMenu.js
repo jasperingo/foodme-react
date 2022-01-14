@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { cartIcon, favoritedIcon, locationIcon, orderIcon, transactionIcon, userIcon } from '../../assets/icons';
+import { cartIcon, favoritedIcon, locationIcon, orderIcon, passwordIcon, transactionIcon, userIcon } from '../../assets/icons';
 import AccountMenuView from '../../components/AccountMenuView';
 import { useAppContext } from '../../context/AppContext';
 
@@ -11,6 +11,7 @@ const MENU_ITEMS = [
   { text: '_cart.Saved_carts', icon: cartIcon, href: '/saved-carts'},
   { text: '_user.Addresses', icon: locationIcon, href: '/addresses'},
   { text: '_transaction.Transactions', icon: transactionIcon, href: '/transactions'},
+  { text: '_user.Password', icon: passwordIcon, href: '/settings/password'},
 ];
 
 export default function AccountMenu() {

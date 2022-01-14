@@ -41,7 +41,7 @@ export default function AddressUpdate() {
   }
 
   return (
-    <section className="flex-grow">
+    <section>
       <div className="container-x">
         { 
           useDataRender(

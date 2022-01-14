@@ -130,7 +130,7 @@ export default function PasswordUpdateForm({ api }) {
         minLength={6}
         />
 
-      <FormButton text="_user.Change_password" />
+      <FormButton text="_extra.Submit" />
 
       { dialog && <AlertDialog dialog={dialog} /> }
 

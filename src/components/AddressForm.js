@@ -213,10 +213,11 @@ export default function AddressForm({ address, appType }) {
           />
       }
 
-      <FormButton text="_user.Save_address" />
+      <FormButton text="_extra.Submit" />
 
       { dialog && <AlertDialog dialog={dialog} /> }
 
     </form>
   );
 }
+

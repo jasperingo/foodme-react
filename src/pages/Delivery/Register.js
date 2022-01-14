@@ -9,8 +9,9 @@ import AuthFormHeader from '../../components/AuthFormHeader';
 import FormButton from '../../components/FormButton';
 import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
-import { ADDRESS, FETCH_STATUSES, USER } from '../../context/AppActions';
+import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
+import User from '../../models/User';
 
 export default function Register({ guestMiddleware }) {
 
@@ -99,8 +100,8 @@ export default function Register({ guestMiddleware }) {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {
+        res.data.TYPE = User.TYPE_DELIVERY_FIRM;
         userDispatch({ type: USER.AUTHED, payload: res.data });
-        addressesDispatch({ type: ADDRESS.FETCHED, payload: res.data.address });
       }).catch(err=> {
 
         setFetchStatus(FETCH_STATUSES.ERROR);

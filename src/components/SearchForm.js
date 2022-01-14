@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { useURLQuery } from '../context/AppHooks';
 
-export default function SearchForm({ url='/search' }) {
+export default function SearchForm() {
 
   const history = useHistory();
 
@@ -17,7 +17,7 @@ export default function SearchForm({ url='/search' }) {
   function onSearchSubmitted(e) {
     e.preventDefault();
     if (q === '') return;
-    history.push(`${url}?q=${q}`)
+    history.push(`/search/stores?q=${q}`)
   }
 
   function updateInputOnRoute() {

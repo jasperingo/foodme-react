@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route } from "react-router-dom";
-import { cartIcon, messageIcon, orderIcon, productIcon, searchIcon, storeIcon } from '../assets/icons';
+import { cartIcon, messageIcon, orderIcon, productIcon, promotionIcon, storeIcon } from '../assets/icons';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import { useCartCounter } from '../context/AppHooks';
@@ -23,7 +23,6 @@ import ProductAdd from '../pages/Store/ProductAdd';
 import Products from '../pages/Store/Products';
 import ProductUpdate from '../pages/Store/ProductUpdate';
 import Register from '../pages/Store/Register';
-import Search from '../pages/Store/Search';
 import TermsOfService from '../pages/TermsOfService';
 import Reviews from '../pages/Store/Reviews';
 import PromotionUpdate from '../pages/Store/PromotionUpdate';
@@ -34,6 +33,11 @@ import SavedCarts from '../pages/Customer/SavedCarts';
 import Wallet from '../pages/Store/Wallet';
 import Profile from '../pages/Store/Profile';
 import Transaction from '../pages/Transaction';
+import { useAppContext } from '../context/AppContext';
+import { USER } from '../context/AppActions';
+import PasswordUpdate from '../pages/PasswordUpdate';
+import AddressAdd from '../pages/AddressAdd';
+import WithdrawalAccountUpdate from '../pages/WithdrawalAccountUpdate';
 
 
 const HEADER_NAV_LINKS = [
@@ -49,25 +53,33 @@ const HEADER_NAV_LINKS = [
       '/orders/returned'
     ]
   },
-  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0 },
+  { title: '_discount.Discounts', icon: promotionIcon, href: '/promotions' },
   { title : '_user.Account', icon: storeIcon, href: '/account' }
 ];
 
 const HEADER_TOP_NAV_LINKS = [
-  { title : '_cart.Cart', icon: cartIcon, href: '/cart', useCounter: useCartCounter, pages: [] },
-  { title : '_search.Search', icon: searchIcon, href: '/search', pages: [] }
+  { title : '_cart.Cart', icon: cartIcon, href: '/cart', useCounter: useCartCounter },
+  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0 }
 ];
 
 export default function StoreApp() {
+
+  const { user: { user }, userDispatch } = useAppContext();
 
   const authMiddleware = useAuth('/');
 
   const guestMiddleware = useGuest('/account');
 
+  useEffect(()=> {
+    const auth = localStorage.getItem('store-auth');
+    if (auth !== null && user === null) {
+      userDispatch({ type: USER.AUTHED, payload: JSON.parse(auth) });
+    }
+  });
+
   return (
     <>
       <Header 
-        searchURL='/search/products'
         navLinks={HEADER_NAV_LINKS}
         topNavLinks={HEADER_TOP_NAV_LINKS}
         />
@@ -81,8 +93,10 @@ export default function StoreApp() {
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
+          <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
+          <Route path="/settings/address" render={()=> authMiddleware() || <AddressAdd />} />
+          <Route path="/settings/withdrawal-account" render={()=> authMiddleware() || <WithdrawalAccountUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
-          <Route path="/search" render={()=> authMiddleware() || <Search />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />

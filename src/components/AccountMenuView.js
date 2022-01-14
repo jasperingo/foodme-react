@@ -70,7 +70,7 @@ function AccountMenuList({ items }) {
             />
         ))
       }
-      <li className="col-span-3 mt-5">
+      <li className="col-span-3 mt-5 mb-2">
         <button className="w-full bg-color-gray py-2 rounded" onClick={confirmLogOut}>{ t('_user.Log_out') }</button>
       </li>
       { dialog && <AlertDialog dialog={dialog} /> }
@@ -80,7 +80,7 @@ function AccountMenuList({ items }) {
 
 function AccountMenuTop({ photo, name }) {
   return (
-    <div className="py-5">
+    <div className="py-2">
       <img 
         alt={name} 
         width="100" 

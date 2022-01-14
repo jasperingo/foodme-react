@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route } from "react-router-dom";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -34,7 +34,10 @@ import SavedCarts from '../pages/Customer/SavedCarts';
 import Order from '../pages/Order';
 import Orders from '../pages/Customer/Orders';
 import Transactions from '../pages/Customer/Transactions';
-import AddressAdd from '../pages/Customer/AddressAdd';
+import AddressAdd from '../pages/AddressAdd';
+import PasswordUpdate from '../pages/PasswordUpdate';
+import { useAppContext } from '../context/AppContext';
+import { USER } from '../context/AppActions';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -44,27 +47,29 @@ const HEADER_NAV_LINKS = [
 ];
 
 const HEADER_TOP_NAV_LINKS = [
-  { title : '_cart.Cart', icon: cartIcon, href: '/cart', useCounter: useCartCounter,
-    pages: [
-      /*/store\/[0-9]+\/products/,
-      /store\/[0-9]+\/reviews/,
-      /store\/[0-9]+\/promotions/,
-      /store\/[0-9]+\/product\/[0-9]+/*/
-    ] 
-  },
-  { title : '_search.Search', icon: searchIcon, href: '/search', pages: [] }
+  { title : '_cart.Cart', icon: cartIcon, href: '/cart', useCounter: useCartCounter },
+  { title : '_search.Search', icon: searchIcon, href: '/search' }
 ];
 
 export default function CustomerApp() {
+  
+  const { user: { user }, userDispatch } = useAppContext();
 
   const authMiddleware = useAuth('/login');
 
   const guestMiddleware = useGuest('/account');
+
+  useEffect(()=> {
+    const auth = localStorage.getItem('customer-auth');
+    if (auth !== null && user === null) {
+      userDispatch({ type: USER.AUTHED, payload: JSON.parse(auth) });
+    }
+  });
   
   return (
     <>
       <Header 
-        searchURL='/search/stores'
+        searchable={true}
         navLinks={HEADER_NAV_LINKS}
         topNavLinks={HEADER_TOP_NAV_LINKS}
         />
@@ -79,6 +84,7 @@ export default function CustomerApp() {
           <Route path="/address/add" render={()=> authMiddleware() || <AddressAdd />} />
           <Route path="/address/:ID" render={()=> authMiddleware() || <AddressUpdate />} />
           <Route path="/addresses" render={()=> authMiddleware() || <Addresses />} />
+          <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/store/:sID/promotion/:pID" render={()=> <Promotion />} />
           <Route path="/product/:pID" render={()=> <Product />} />

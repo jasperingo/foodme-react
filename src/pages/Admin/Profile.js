@@ -109,9 +109,9 @@ export default function Profile() {
         email: emailInput.current.value,
       }).then(res=> {
         
-        setFormSuccess(res.msg);
+        setFormSuccess(res.message);
         setFetchStatus(FETCH_STATUSES.DONE);
-        userDispatch({ type: USER.UPDATED, payload: res });
+        userDispatch({ type: USER.UPDATED, payload: res.data });
 
       }).catch(err=> {
 

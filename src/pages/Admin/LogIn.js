@@ -9,6 +9,7 @@ import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
+import User from '../../models/User';
 
 export default function LogIn({ guestMiddleware }) {
 
@@ -47,7 +48,8 @@ export default function LogIn({ guestMiddleware }) {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {
-        userDispatch({ type: USER.AUTHED, payload: res });
+        res.data.TYPE = User.TYPE_ADMINISTRATOR;
+        userDispatch({ type: USER.AUTHED, payload: res.data });
       }).catch(err=> {
         
         setFetchStatus(FETCH_STATUSES.ERROR);

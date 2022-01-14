@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { adminIcon, dashboardIcon, messageIcon, orderIcon, searchIcon, transactionIcon } from '../assets/icons';
+import { adminIcon, dashboardIcon, messageIcon, orderIcon, transactionIcon } from '../assets/icons';
 import Header from '../components/Header';
 import AccountMenu from '../pages/Admin/AccountMenu';
 import Customers from '../pages/Admin/Customers';
@@ -17,8 +17,6 @@ import DeliveryFirm from '../pages/Admin/DeliveryFirm';
 import Store from '../pages/Store';
 import Customer from '../pages/Admin/Customer';
 import Order from '../pages/Order';
-import Search from '../pages/Admin/Search';
-import SearchHistory from '../pages/Admin/SearchHistory';
 import useGuest from '../middlewares/useGuest';
 import useAuth from '../middlewares/useAuth';
 import Categories from '../pages/Admin/Categories';
@@ -35,6 +33,9 @@ import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
 import SubCategoryAdd from '../pages/Admin/SubCategoryAdd';
 import Transaction from '../pages/Transaction';
 import Footer from '../components/Footer';
+import { useAppContext } from '../context/AppContext';
+import { USER } from '../context/AppActions';
+import PasswordUpdate from '../pages/PasswordUpdate';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -54,15 +55,24 @@ const HEADER_NAV_LINKS = [
 ];
 
 const HEADER_TOP_NAV_LINKS = [
-  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0, pages: [] },
-  { title : '_search.Search', icon: searchIcon, href: '/search/history', pages: [] }
+  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0 },
 ];
 
 export default function AdminApp() {
 
+  const { user: { user }, userDispatch } = useAppContext();
+
   const authMiddleware = useAuth('/');
 
   const guestMiddleware = useGuest('/account');
+  
+  useEffect(()=> {
+    const auth = localStorage.getItem('admin-auth');
+    if (auth !== null && user === null) {
+      userDispatch({ type: USER.AUTHED, payload: JSON.parse(auth) });
+    }
+  });
+  
 
   return (
     <>
@@ -91,6 +101,7 @@ export default function AdminApp() {
           <Route path="/customer/add" render={()=> authMiddleware() || <CustomerAdd />} />
           <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer />} />
           <Route path="/customers" render={()=> authMiddleware() || <Customers />} />
+          <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
@@ -99,8 +110,6 @@ export default function AdminApp() {
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} />
-          <Route path="/search/history" render={()=> authMiddleware() || <SearchHistory />} />
-          <Route path="/search" render={()=> authMiddleware() || <Search />} />
           <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>

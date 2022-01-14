@@ -10,6 +10,7 @@ import FormMessage from '../../components/FormMessage';
 import SocialLoginList from '../../components/SocialLoginList';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
+import User from '../../models/User';
 
 export default function LogIn({ guestMiddleware }) {
 
@@ -39,7 +40,7 @@ export default function LogIn({ guestMiddleware }) {
       setDialog(LOADING_DIALOG);
     }
   }
-
+  
   useEffect(()=> {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
@@ -50,6 +51,7 @@ export default function LogIn({ guestMiddleware }) {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {
+        res.data.TYPE = User.TYPE_CUSTOMER;
         userDispatch({ type: USER.AUTHED, payload: res.data });
       }).catch(err=> {
 

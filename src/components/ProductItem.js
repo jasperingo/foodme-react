@@ -12,17 +12,17 @@ export default function ProductItem({ prod, href = `/product/${prod.id}`, layout
   switch(layout) {
     case ProductItem.LAYOUT_LIST:
       layoutStyle = 'flex gap-2 md:p-2 md:shadow';
-      layoutImgStyle = 'w-24 h-32';
+      layoutImgStyle = 'w-24 h-24';
       layoutBodyStyle = 'pb-2';
       break;
     case ProductItem.LAYOUT_GRID:
       layoutStyle = 'block shadow';
-      layoutImgStyle = 'w-full h-40';
+      layoutImgStyle = 'w-full h-52';
       layoutBodyStyle = 'p-2';
       break;
     default:
       layoutStyle = 'flex gap-2 md:block md:shadow';
-      layoutImgStyle = 'w-24 h-32 md:w-full md:h-40';
+      layoutImgStyle = 'w-24 h-24 md:w-full md:h-52';
       layoutBodyStyle = 'pb-2 md:p-2';
   }
 
@@ -40,7 +40,6 @@ export default function ProductItem({ prod, href = `/product/${prod.id}`, layout
         />
       <div className={`flex-grow ${layoutBodyStyle}`}>
         <div className="mb-1">{ prod.title }</div>
-        <div className="text-color-gray text-sm mb-1">{ prod.sub_title }</div>
         <div className="font-bold mb-1">{ useMoneyFormat(prod.price) }</div>
         <div className="flex gap-1 items-start text-color-primary text-sm py-1 w-full">
           <Icon path={storeIcon} className="w-5 h-5" />

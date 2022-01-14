@@ -8,9 +8,6 @@ import FormField from '../../components/FormField';
 import FormMessage from '../../components/FormMessage';
 import FormSelect from '../../components/FormSelect';
 import PhotoChooser from '../../components/PhotoChooser';
-import AddressForm from '../../components/AddressForm';
-import UpdatePassword from '../../components/PasswordUpdateForm';
-import UpdateWithdrawalAccountForm from '../../components/WithdrawalAccountUpdateForm';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 
@@ -221,13 +218,7 @@ export default function Profile() {
           <FormButton text="_user.Update_profile" />
 
         </form>
-
-        <AddressForm address={user.address} />
-
-        <UpdateWithdrawalAccountForm api={api} account={ user.account } />
-
-        <UpdatePassword api={api} />
-
+        
       </div>
 
       { dialog && <AlertDialog dialog={dialog} /> }

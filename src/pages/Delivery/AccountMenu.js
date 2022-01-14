@@ -1,13 +1,15 @@
 
 import React from 'react';
-import { reviewIcon, userIcon, walletIcon } from '../../assets/icons';
+import { bankAccountIcon, locationIcon, passwordIcon, reviewIcon, userIcon } from '../../assets/icons';
 import { useAppContext } from '../../context/AppContext';
 import AccountMenuView from '../../components/AccountMenuView';
 
 const MENU_ITEMS = [
   { text: '_user.Profile', icon: userIcon, href: '/profile'},
-  { text: '_transaction.Wallet', icon: walletIcon, href: '/wallet'},
   { text: '_review.Reviews', icon: reviewIcon, href: '/reviews'},
+  { text: '_user.Address', icon: locationIcon, href: '/settings/address'},
+  { text: '_transaction.Bank_account', icon: bankAccountIcon, href: '/settings/withdrawal-account'},
+  { text: '_user.Password', icon: passwordIcon, href: '/settings/password'},
 ];
 
 export default function AccountMenu() {

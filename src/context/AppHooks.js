@@ -72,6 +72,15 @@ export function useHeader2Title() {
 
   if (path === '/terms-of-service')
     return '_extra.Terms_of_service';
+
+  if (path === '/settings/password')
+    return '_user.Password';
+
+  if (path === '/settings/withdrawal-account')
+    return '_transaction.Bank_account';
+
+  if (path === '/settings/address')
+    return '_user.Address';
   
   if (path === '/profile')
     return '_user.Profile';

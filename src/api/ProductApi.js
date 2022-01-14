@@ -154,6 +154,26 @@ export default class ProductApi extends API {
     }
   }
 
+  async getListByStoreAndSearchQuery(query, id, dispatch) {
+    try {
+      const data = await this.apiFetch(
+        `product/list.json?store=${id}&q=${query}`,
+        'GET'
+      );
+      
+      dispatch({
+        type: PRODUCT.LIST_FETCHED,
+        payload: {
+          products: data.data,
+          productsNumberOfPages: data.total_pages
+        }
+      });
+
+    } catch (err) {
+      dispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+    }
+  }
+
 }
 
 

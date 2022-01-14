@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { adminIcon, categoryIcon, deliveryIcon, storeIcon, userIcon } from '../../assets/icons';
+import { adminIcon, categoryIcon, deliveryIcon, passwordIcon, storeIcon, userIcon } from '../../assets/icons';
 import AccountMenuView from '../../components/AccountMenuView';
 import { useAppContext } from '../../context/AppContext';
 
@@ -9,7 +9,8 @@ const MENU_ITEMS = [
   { text: '_user.Customers', icon: userIcon, href: '/customers'},
   { text: '_store.Stores', icon: storeIcon, href: '/stores'},
   { text: '_delivery.Delivery_firms', icon: deliveryIcon, href: '/delivery-firms'},
-  { text: '_category.Categories', icon: categoryIcon, href: '/categories' }
+  { text: '_category.Categories', icon: categoryIcon, href: '/categories' },
+  { text: '_user.Password', icon: passwordIcon, href: '/settings/password'},
 ];
 
 export default function AccountMenu() {

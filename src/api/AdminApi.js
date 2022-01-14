@@ -11,7 +11,7 @@ export default class AdminApi extends API {
       JSON.stringify(formData)
     );
     
-    return data.data;
+    return data;
   }
 
   async update(formData) {
@@ -22,7 +22,7 @@ export default class AdminApi extends API {
       JSON.stringify(formData)
     );
   
-    return data.data;
+    return data;
   }
 
   async updatePhoto(formData) {
@@ -33,7 +33,7 @@ export default class AdminApi extends API {
       formData
     );
   
-    return data.data;
+    return data;
   }
 
   async updatePassword(formData) {
@@ -44,7 +44,7 @@ export default class AdminApi extends API {
       JSON.stringify(formData)
     );
   
-    return data.data;
+    return data;
   }
 
   async getStatistics(dispatch) {

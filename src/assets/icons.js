@@ -43,6 +43,8 @@ import {
   mdiChevronRight,
   mdiSync,
   mdiArrowLeftRightBold,
+  mdiKey,
+  mdiBank,
 
 
 } from '@mdi/js';
@@ -90,4 +92,7 @@ export const nextIcon = mdiChevronRight;
 export const prevIcon = mdiChevronLeft;
 export const refreshIcon = mdiSync;
 export const leftRightIcon = mdiArrowLeftRightBold;
+export const passwordIcon = mdiKey;
+export const bankAccountIcon = mdiBank;
+
 

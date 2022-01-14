@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { routeIcon, orderIcon, messageIcon, deliveryIcon, searchIcon } from '../assets/icons';
+import { routeIcon, orderIcon, messageIcon, deliveryIcon, walletIcon } from '../assets/icons';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import AboutUs from '../pages/AboutUs';
@@ -13,8 +13,6 @@ import TermsOfService from '../pages/TermsOfService';
 import Orders from '../pages/Delivery/Orders';
 import LogIn from '../pages/Delivery/LogIn';
 import Register from '../pages/Delivery/Register';
-import SearchHistory from '../pages/Delivery/SearchHistory';
-import Search from '../pages/Delivery/Search';
 import Messages from '../pages/Delivery/Messages';
 import ResetPassword from '../pages/ResetPassword';
 import ForgotPassword from '../pages/ForgotPassword';
@@ -26,6 +24,11 @@ import Reviews from '../pages/Delivery/Reviews';
 import Wallet from '../pages/Delivery/Wallet';
 import Profile from '../pages/Delivery/Profile';
 import Transaction from '../pages/Transaction';
+import { useAppContext } from '../context/AppContext';
+import { USER } from '../context/AppActions';
+import PasswordUpdate from '../pages/PasswordUpdate';
+import AddressAdd from '../pages/AddressAdd';
+import WithdrawalAccountUpdate from '../pages/WithdrawalAccountUpdate';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -36,19 +39,29 @@ const HEADER_NAV_LINKS = [
       '/orders/in-transit', 
     ]
   },
-  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0 },
+  { title: '_transaction.Wallet', icon: walletIcon, href: '/wallet' },
   { title : '_user.Account', icon: deliveryIcon, href: '/account' }
 ];
 
 const HEADER_TOP_NAV_LINKS = [
-  { title : '_search.Search', icon: searchIcon, href: '/search/history', pages: [] }
+  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0 }
 ];
 
 export default function DeliveryApp() {
 
+  const { user: { user }, userDispatch } = useAppContext();
+
   const authMiddleware = useAuth('/');
 
   const guestMiddleware = useGuest('/account');
+
+  useEffect(()=> {
+    const auth = localStorage.getItem('delivery-auth');
+    if (auth !== null && user === null) {
+      userDispatch({ type: USER.AUTHED, payload: JSON.parse(auth) });
+    }
+  });
+  
 
   return (
     <>
@@ -61,9 +74,10 @@ export default function DeliveryApp() {
           <Route path="/reviews" render={()=> authMiddleware() || <Reviews />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
+          <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
+          <Route path="/settings/address" render={()=> authMiddleware() || <AddressAdd />} />
+          <Route path="/settings/withdrawal-account" render={()=> authMiddleware() || <WithdrawalAccountUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
-          <Route path="/search/history" render={()=> authMiddleware() || <SearchHistory />} />
-          <Route path="/search" render={()=> authMiddleware() || <Search />} />
           <Route path="/terms-of-service" render={()=> authMiddleware() || <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> authMiddleware() || <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> authMiddleware() || <ContactUs />} />

@@ -1,17 +1,19 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useState } from 'react';
+import WithdrawalAccountApi from '../api/WithdrawalAccountApi';
 import { FETCH_STATUSES, USER } from '../context/AppActions';
 import { useAppContext } from '../context/AppContext';
+import User from '../models/User';
 import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 import FormButton from './FormButton';
 import FormField from './FormField';
 import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 
-export default function UpdateWithdrawalAccountForm({ api, account }) {
+export default function UpdateWithdrawalAccountForm() {
 
-  const { userDispatch } = useAppContext();
+  const { user: { user }, userDispatch } = useAppContext();
 
   const nameInput = useRef(null);
 
@@ -75,11 +77,19 @@ export default function UpdateWithdrawalAccountForm({ api, account }) {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
 
-      api.updateWithdrawalAccount({
+      const api = new WithdrawalAccountApi(user.api_token);
+
+      const form = {
         bank_name: nameInput.current.value,
         acount_number: numberInput.current.value,
         acount_type: typeInput.current.value,
-      }).then(res=> {
+      };
+
+      const response = user.TYPE === User.TYPE_STORE ? 
+        api.updateStoreWithdrawalAccount(user.id, form) : 
+        api.updateDeliveryFirmWithdrawalAccount(user.id, form);
+      
+      response.then(res=> {
         
         setFormSuccess(res.message);
         setFetchStatus(FETCH_STATUSES.DONE);
@@ -101,7 +111,7 @@ export default function UpdateWithdrawalAccountForm({ api, account }) {
       setDialog(null);
     }
 
-  }, [api, fetchStatus, dialog, userDispatch]);
+  }, [user, fetchStatus, dialog, userDispatch]);
 
 
   return (
@@ -121,7 +131,7 @@ export default function UpdateWithdrawalAccountForm({ api, account }) {
         ID="bank-name-input" 
         label="_transaction.Bank_name" 
         required={true}
-        value={ account.bank_name }
+        value={ user.withdrawal_account.bank_name }
         />
       
       <FormField 
@@ -133,7 +143,7 @@ export default function UpdateWithdrawalAccountForm({ api, account }) {
         required={true}
         minLength={11}
         maxLength={11}
-        value={ account.account_number }
+        value={ user.withdrawal_account.account_number }
         />
 
       <FormSelect 
@@ -142,17 +152,18 @@ export default function UpdateWithdrawalAccountForm({ api, account }) {
         ID="bank-account-type-input" 
         label="_transaction.Account_type" 
         required={true}
-        value={ account.account_type }
+        value={ user.withdrawal_account.account_type }
         options={[
           'Savings',
           'Current'
         ]}
         />
 
-      <FormButton text="_transaction.Change_withdrawal_account" />
+      <FormButton text="_extra.Submit" />
 
       { dialog && <AlertDialog dialog={dialog} /> }
 
     </form>
   );
 }
+

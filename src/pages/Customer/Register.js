@@ -10,6 +10,7 @@ import SocialLoginList from '../../components/SocialLoginList';
 import { FETCH_STATUSES, USER } from '../../context/AppActions';
 import { useAppContext } from '../../context/AppContext';
 import UserApi from '../../api/UserApi';
+import User from '../../models/User';
 
 export default function Register({ guestMiddleware }) {
 
@@ -99,6 +100,7 @@ export default function Register({ guestMiddleware }) {
         password: passwordInput.current.value,
         confirm_password: passwordInput.current.value
       }).then(res=> {
+        res.data.TYPE = User.TYPE_CUSTOMER;
         userDispatch({ type: USER.AUTHED, payload: res.data });
       }).catch(err=> {
 

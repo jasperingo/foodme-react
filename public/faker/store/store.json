@@ -32,7 +32,7 @@
         "products_count": 4
       }
     ],
-    "account": {
+    "withdrawal_account": {
       "bank_name": "Eco bank",
       "account_number": "0309849494",
       "account_type": "Current"

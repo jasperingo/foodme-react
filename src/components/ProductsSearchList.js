@@ -11,7 +11,7 @@ import Loading from './Loading';
 import ProductItem from './ProductItem';
 import Reload from './Reload';
 
-export default function ProductsSearchList({ api, queryParam }) {
+export default function ProductsSearchList({ api, queryParam, storeId=0 }) {
 
   const { 
     search: {
@@ -27,9 +27,12 @@ export default function ProductsSearchList({ api, queryParam }) {
 
   useEffect(()=> {
     if (productsFetchStatus === FETCH_STATUSES.LOADING) {
-      api.getListBySearchQuery(queryParam, searchDispatch);
+      if (storeId === 0)
+        api.getListBySearchQuery(queryParam, searchDispatch);
+      else 
+        api.getListByStoreAndSearchQuery(queryParam, storeId, searchDispatch);
     }
-  }, [api, queryParam, productsFetchStatus, searchDispatch]);
+  }, [api, queryParam, storeId, productsFetchStatus, searchDispatch]);
 
   function refetchProducts() {
     if (productsFetchStatus !== FETCH_STATUSES.LOADING) 

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { cartIcon, reviewIcon, userIcon, walletIcon, promotionIcon } from '../../assets/icons';
+import { bankAccountIcon, cartIcon, locationIcon, passwordIcon, reviewIcon, userIcon, walletIcon } from '../../assets/icons';
 import AccountMenuView from '../../components/AccountMenuView';
 import { useAppContext } from '../../context/AppContext';
 
@@ -8,8 +8,10 @@ const MENU_ITEMS = [
   { text: '_user.Profile', icon: userIcon, href: '/profile'},
   { text: '_transaction.Wallet', icon: walletIcon, href: '/wallet'},
   { text: '_cart.Saved_carts', icon: cartIcon, href: '/saved-carts'},
-  { text: '_discount.Promotion', icon: promotionIcon, href: '/promotions'},
   { text: '_review.Reviews', icon: reviewIcon, href: '/reviews'},
+  { text: '_user.Address', icon: locationIcon, href: '/settings/address'},
+  { text: '_transaction.Bank_account', icon: bankAccountIcon, href: '/settings/withdrawal-account'},
+  { text: '_user.Password', icon: passwordIcon, href: '/settings/password'},
 ];
 
 export default function AccountMenu() {
