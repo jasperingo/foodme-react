@@ -4,8 +4,21 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from "react-router-dom";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { AppProvider } from "./context/AppContext";
+import { useAppContextValues } from './hooks/contextHook';
+import AppContext from './context/AppContext';
 import './assets/index.css';
+
+
+function AppProvider({ children }) {
+
+  const context = useAppContextValues();
+
+  return (
+    <AppContext.Provider value={context}>
+      { children }
+    </AppContext.Provider>
+  );
+}
 
 ReactDOM.render(
   <React.StrictMode>

@@ -15,7 +15,7 @@ function CartCounter({ useCounter }) {
   );
 }
 
-function NavItem({ title, icon, href, useCounter }) {
+function NavItem({ title, icon, href, useCounter, top=false }) {
 
   return (
     <li className="flex-1 text-center">
@@ -27,24 +27,8 @@ function NavItem({ title, icon, href, useCounter }) {
         >
         <Icon path={icon} className="w-7 h-7 inline-block" />
         { useCounter && <CartCounter useCounter={useCounter} /> }
-        <span className="block">{ title }</span>
+        <span className={top ? 'sr-only lg:not-sr-only' : 'block'}>{ title }</span>
       </NavLink>
-    </li>
-  );
-}
-
-function NavTopListItem({ title, icon, href, useCounter }) {
-
-  return (
-    <li className="flex-1 text-center">
-      <Link 
-        to={href}
-        className="text-color-gray bg-color text-sm relative hover:bg-color-gray-h block p-2 lg:px-4 lg:flex lg:items-center lg:justify-center"
-        >
-        <Icon path={icon} className="w-7 h-7 inline-block" />
-        { useCounter && <CartCounter useCounter={useCounter} /> }
-        <span className="sr-only lg:not-sr-only">{ title }</span>
-      </Link>
     </li>
   );
 }
@@ -66,7 +50,9 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
   return (
     <header className="bg-color dark:bg-color-d py-4 border-b lg:block">
       <div className="container-x">
+
         <div className="flex items-center flex-wrap gap-2 lg:gap-5">
+
           <h1 className={`text-2xl font-bold text-yellow-500 flex-grow lg:flex-grow-0 lg:block ${!showHeader && 'hidden'}`}>
             <Link to="/">{ t('app_name') }</Link>
           </h1>
@@ -83,14 +69,8 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
               { t(useHeader2Title()) }
             </h2>
           </div>
-          
-          { searchable && 
-            <div className={`${(showHeader || !onSearchPage()) && 'hidden'} flex-grow lg:block`}>
-              <SearchForm /> 
-            </div>
-          }
 
-          <nav className={`flex items-center ${searchable === true ? 'lg:w-full': 'lg:flex-grow'}`}>
+          <nav className={`flex items-center lg:flex-grow`}>
 
             <ul className={`flex fixed left-0 bottom-0 w-full border-t lg:static lg:w-auto lg:border-0 lg:flex lg:flex-grow z-10 ${(!showHeader && 'hidden')}`}>
               {
@@ -102,7 +82,6 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
                     title={t(item.title)}  
                     icon={item.icon} 
                     href={item.href} 
-                    searchable={searchable}
                     useCounter={item.useCounter}
                     />
                 ))
@@ -112,19 +91,25 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
             <ul className={`${onSearchPage() && 'hidden'} flex lg:flex lg:flex-grow`}>
               {
                 topNavLinks.map((item, i)=> (
-                  <NavTopListItem 
+                  <NavItem 
                     key={i}
                     href={item.href} 
                     icon={item.icon} 
-                    searchable={searchable}
                     useCounter={item.useCounter} 
                     title={ t(item.title) } 
+                    top={true}
                     />
                 ))
               }
             </ul>
 
           </nav>
+
+          { searchable && 
+            <div className={`${(showHeader || !onSearchPage()) && 'hidden'} flex-grow lg:block`}>
+              <SearchForm /> 
+            </div>
+          }
         </div>
       </div>
     </header>

@@ -328,6 +328,7 @@ export const TRANSLATIONS_EN = {
   },
 
   _errors: {
+    No_netowrk_connection: 'Check your internet connection',
     Something_went_wrong: 'Something went wrong',
     Credentials_are_incorrect: 'Credentials are incorrect',
     This_field_is_required: 'This field is required',

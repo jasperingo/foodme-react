@@ -1,0 +1,21 @@
+
+export const CUSTOMER = {
+  AUTHED: 'CUSTOMER_AUTHED',
+  UNAUTHED: 'CUSTOMER_UNAUTHED',
+  UNFETCH: 'CUSTOMER_UNFETCH',
+  FETCHED: 'CUSTOMER_FETCHED',
+  FETCH_STATUS_CHANGED: 'CUSTOMER_FETCH_STATUS_CHANGED',
+  LIST_FETCHED: 'CUSTOMERS_FETCHED',
+  LIST_FETCH_STATUS_CHANGED: 'CUSTOMERS_FETCH_STATUS_CHANGED',
+};
+
+export const getCustomerFetchStatusAction = (payload) => ({
+  type: CUSTOMER.FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getCustomersListFetchStatusAction = (payload) => ({
+  type: CUSTOMER.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+

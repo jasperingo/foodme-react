@@ -4,9 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useCategoryColor } from '../context/AppHooks';
 import Icon from '@mdi/react';
-import { useAppContext } from '../context/AppContext';
-import { USER } from '../context/AppActions';
-import AlertDialog from './AlertDialog';
+import AlertDialog from './dialog/AlertDialog';
 
 function MenuItem({ icon, text, href, index }) {
 
@@ -27,11 +25,9 @@ function MenuItem({ icon, text, href, index }) {
   );
 }
 
-function AccountMenuList({ items }) {
+function AccountMenuList({ items, onLogout }) {
 
   const { t } = useTranslation();
-
-  const { userDispatch } = useAppContext();
 
   const [dialog, setDialog] = useState(null);
 
@@ -41,7 +37,7 @@ function AccountMenuList({ items }) {
       positiveButton: {
         text: '_extra.Yes',
         action() {
-          logOut();
+          onLogout();
         }
       },
       negativeButton: {
@@ -51,10 +47,6 @@ function AccountMenuList({ items }) {
         }
       }
     });
-  }
-
-  function logOut() {
-    userDispatch({ type: USER.UNAUTHED });
   }
   
   return (
@@ -93,11 +85,11 @@ function AccountMenuTop({ photo, name }) {
   );
 }
 
-export default function AccountMenuView({ photo, name, items }) {
+export default function AccountMenuView({ photo, name, items, onLogOut }) {
   return (
     <div className="max-w-lg mx-auto md:shadow md:my-6 md:py-2 md:px-4 md:rounded">
       <AccountMenuTop photo={photo} name={name} />
-      <AccountMenuList items={items} />
+      <AccountMenuList items={items} onLogout={onLogOut} />
     </div>
   );
 }

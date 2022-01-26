@@ -24,7 +24,7 @@
     font-family: ubuntu;
   }
 
-  h1 {
+  h1, .splash-title {
     font-family: lobster;
   }
 

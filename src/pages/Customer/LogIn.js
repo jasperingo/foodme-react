@@ -1,75 +1,34 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import UserApi from '../../api/UserApi';
-import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
-import FormButton from '../../components/FormButton';
-import FormField from '../../components/FormField';
-import FormMessage from '../../components/FormMessage';
+import LoadingDialog from '../../components/dialog/LoadingDialog';
+import FormButton from '../../components/form/FormButton';
+import FormField from '../../components/form/FormField';
+import FormMessage from '../../components/form/FormMessage';
 import SocialLoginList from '../../components/SocialLoginList';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import User from '../../models/User';
+import { useCustomerLogin } from '../../hooks/customerHook';
 
 export default function LogIn({ guestMiddleware }) {
 
   const { t } = useTranslation();
 
-  const { userDispatch } = useAppContext();
-
   const emailInput = useRef(null);
 
   const passwordInput = useRef(null);
 
-  const [dialog, setDialog] = useState(null);
-
-  const [formError, setFormError] = useState('');
-
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
+  const [onSubmit, dialog, formError] = useCustomerLogin();
   
   function onLoginSubmit(e) {
     e.preventDefault();
-
-    if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
-      setFormError('_errors.Credentials_are_incorrect');
-    } else {
-      setFormError('');
-      setFetchStatus(FETCH_STATUSES.LOADING);
-      setDialog(LOADING_DIALOG);
-    }
+    onSubmit(
+      emailInput.current.value,
+      passwordInput.current.value,
+      emailInput.current.validity,
+      passwordInput.current.validity,
+    );
   }
-  
-  useEffect(()=> {
 
-    if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-      const api = new UserApi();
-      api.auth({
-        email: emailInput.current.value,
-        password: passwordInput.current.value,
-        confirm_password: passwordInput.current.value
-      }).then(res=> {
-        res.data.TYPE = User.TYPE_CUSTOMER;
-        userDispatch({ type: USER.AUTHED, payload: res.data });
-      }).catch(err=> {
-
-        setFetchStatus(FETCH_STATUSES.ERROR);
-
-        if (err.errors) {
-          setFormError(err.errors.msg);
-        } else {
-          setFormError('_errors.Something_went_wrong');
-        }
-      });
-
-    } else if (dialog !== null) {
-      setDialog(null);
-    }
-
-  }, [fetchStatus, userDispatch, dialog]);
-  
   return guestMiddleware() || (
     <section>
 
@@ -113,7 +72,7 @@ export default function LogIn({ guestMiddleware }) {
 
       </div>
 
-      { dialog && <AlertDialog dialog={dialog} /> }
+      { dialog && <LoadingDialog /> }
 
     </section>
   );

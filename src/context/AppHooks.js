@@ -1,7 +1,7 @@
 
 import { useLocation } from "react-router-dom";
-import { FETCH_STATUSES } from './AppActions';
-import { useAppContext } from "./AppContext";
+import { FETCH_STATUSES } from '../repositories/Fetch';
+import { useAppContext } from "../hooks/contextHook";
 
 export function useURLQuery() {
   return new URLSearchParams(useLocation().search);
@@ -16,8 +16,8 @@ export function useDateFormat(date) {
 }
 
 export function useUserAuthed() {
-  const { user: { user } } = useAppContext();
-  return user !== null && user.api_token !== undefined;
+  //const { user: { user } } = useAppContext();
+  return false; //user !== null && user.api_token !== undefined;
 }
 
 export function useAuthHTTPHeader() {
@@ -26,8 +26,8 @@ export function useAuthHTTPHeader() {
 }
 
 export function useCartCounter() {
-  const { cart: {cartItems} } = useAppContext();
-  return cartItems.length-1 < 100 ? cartItems.length-1 : '99+';
+  //const { cart: {cartItems} } = useAppContext();
+  return 0; //cartItems.length-1 < 100 ? cartItems.length-1 : '99+';
 }
 
 export function useCopyText() {

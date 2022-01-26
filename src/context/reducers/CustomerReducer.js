@@ -1,14 +1,51 @@
-import { ADDRESS, CUSTOMER, FETCH_STATUSES, ORDER, PRODUCT, TRANSACTION } from "../AppActions";
-import { useListFetchStatus } from "../AppHooks";
-import { initialCustomerState } from "../AppInitialStates";
+//import { useListFetchStatus } from "../AppHooks";
+//import { initialCustomerState } from "../AppInitialStates";
 
-export default function CustomersReducer (state, action) {
+import { CUSTOMER } from "../actions/customerActions";
+import customerState from "../states/customerState";
 
-  const fetchUpdater = useListFetchStatus();
+export default function CustomerReducer (state, action) {
+
+  //const fetchUpdater = useListFetchStatus();
   
-  switch (action.type) {  
+  switch (action.type) {
+
+    case CUSTOMER.UNAUTHED:
+      return {
+        ...state,
+        customer: customerState.customer
+      };
+
+    case CUSTOMER.AUTHED:
+      return {
+        ...state,
+        customer: {
+          customer: action.payload.customer,
+          customerToken: action.payload.token,
+          customerFetchStatus: action.payload.fetchStatus
+        }
+      };
+
+    case CUSTOMER.FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        customer: {
+          customer: state.customer.customer,
+          customerFetchStatus: action.payload
+        }
+      };
     
-    case CUSTOMER.LIST_FETCH_STATUS_CHANGED :
+    case CUSTOMER.FETCHED :
+      return {
+        ...state,
+        customer: {
+          customer: action.payload.customer, 
+          customerFetchStatus: action.payload.fetchStatus,
+        }
+      };
+
+    
+    /*case CUSTOMER.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
         customers: {
@@ -40,24 +77,7 @@ export default function CustomersReducer (state, action) {
     case CUSTOMER.UNFETCH:
       return initialCustomerState;
       
-    case CUSTOMER.FETCH_STATUS_CHANGED :
-      return {
-        ...state,
-        customer: {
-          customer: state.customer.customer,
-          customerFetchStatus: action.payload
-        }
-      };
     
-    case CUSTOMER.FETCHED :
-      return {
-        ...state,
-        customer: {
-          customer: action.payload, 
-          customerFetchStatus: FETCH_STATUSES.DONE,
-        }
-      };
-
       case ORDER.LIST_FETCH_STATUS_CHANGED :
         return {
           ...state,
@@ -162,7 +182,7 @@ export default function CustomersReducer (state, action) {
           transactionsNumberOfPages: action.payload.transactionsNumberOfPages,
           transactions: [...trans, ...action.payload.transactions, null],
         }
-      };
+      };*/
 
     default:
       return state;

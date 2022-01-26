@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useAppContext } from '../../context/AppContext';
 import { 
   FETCH_STATUSES, 
   getCategoriesListFetchStatusAction, 
@@ -22,6 +21,7 @@ import CarouselX from '../../components/CarouselX';
 import CategoryApi from '../../api/CategoryApi';
 import StoreApi from '../../api/StoreApi';
 import ProductApi from '../../api/ProductApi';
+import { useAppContext } from '../../hooks/contextHook';
 
 const CAROUSEL_IMGS = [
   {

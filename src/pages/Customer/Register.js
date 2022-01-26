@@ -1,22 +1,17 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
-import FormButton from '../../components/FormButton';
-import FormMessage from '../../components/FormMessage';
-import FormField from '../../components/FormField';
+import LoadingDialog from '../../components/dialog/LoadingDialog';
+import FormButton from '../../components/form/FormButton';
+import FormMessage from '../../components/form/FormMessage';
+import FormField from '../../components/form/FormField';
 import SocialLoginList from '../../components/SocialLoginList';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import UserApi from '../../api/UserApi';
-import User from '../../models/User';
+import { useCustomerCreate } from '../../hooks/customerHook';
 
 export default function Register({ guestMiddleware }) {
 
   const { t } = useTranslation();
-
-  const { userDispatch } = useAppContext();
 
   const firstNameInput = useRef(null);
 
@@ -24,104 +19,27 @@ export default function Register({ guestMiddleware }) {
 
   const emailInput = useRef(null);
 
+  const phoneInput = useRef(null);
+
   const passwordInput = useRef(null);
 
-  const [dialog, setDialog] = useState(null);
-
-  const [formError, setFormError] = useState('');
-
-  const [firstNameError, setFirstNameError] = useState('');
-
-  const [lastNameError, setLastNameError] = useState('');
-
-  const [emailError, setEmailError] = useState('');
-
-  const [passwordError, setPasswordError] = useState('');
-  
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
+  const [onSubmit, dialog, formError, firstNameError, lastNameError, emailError, phoneError, passwordError] = useCustomerCreate();
 
   function onRegisterSubmit(e) {
     e.preventDefault();
-
-    let error = false;
-
-    setFormError('');
-    
-    if (!firstNameInput.current.validity.valid) {
-      error = true;
-      setFirstNameError('_errors.This_field_is_required');
-    } else {
-      setFirstNameError('');
-    }
-
-    if (!lastNameInput.current.validity.valid) {
-      error = true;
-      setLastNameError('_errors.This_field_is_required');
-    } else {
-      setLastNameError('');
-    }
-
-    if (!emailInput.current.validity.valid) {
-      error = true;
-      setEmailError('_errors.This_field_is_required');
-    } else {
-      setEmailError('');
-    }
-
-    if (!passwordInput.current.validity.valid) {
-
-      error = true;
-      
-      if (passwordInput.current.validity.tooShort) 
-        setPasswordError('_errors.Password_must_be_a_minimium_of_5_characters');
-      else 
-        setPasswordError('_errors.This_field_is_required');
-
-    } else {
-      setPasswordError('');
-    }
-    
-    if (!error) {
-      setFetchStatus(FETCH_STATUSES.LOADING);
-      setDialog(LOADING_DIALOG);
-    }
+    onSubmit(
+      firstNameInput.current.value,
+      lastNameInput.current.value,
+      emailInput.current.value,
+      phoneInput.current.value,
+      passwordInput.current.value,
+      firstNameInput.current.validity,
+      lastNameInput.current.validity,
+      emailInput.current.validity,
+      phoneInput.current.validity,
+      passwordInput.current.validity,
+    );
   }
-  
-  useEffect(()=> {
-
-    if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-      const api = new UserApi();
-      api.auth({
-        first_name: firstNameInput.current.value,
-        last_name: lastNameInput.current.value,
-        email: emailInput.current.value,
-        password: passwordInput.current.value,
-        confirm_password: passwordInput.current.value
-      }).then(res=> {
-        res.data.TYPE = User.TYPE_CUSTOMER;
-        userDispatch({ type: USER.AUTHED, payload: res.data });
-      }).catch(err=> {
-
-        setFetchStatus(FETCH_STATUSES.ERROR);
-
-        if (err.errors) {
-          setFirstNameError(err.errors.first_name);
-          setLastNameError(err.errors.last_name);
-          setEmailError(err.errors.email);
-          setPasswordError(err.errors.password);
-        } else {
-          setFormError('_errors.Something_went_wrong');
-        }
-      });
-
-    } else if (dialog !== null) {
-      setDialog(null);
-    }
-
-  }, [formError, fetchStatus, dialog, userDispatch]);
-
   
   return guestMiddleware() || (
     <section>
@@ -157,6 +75,17 @@ export default function Register({ guestMiddleware }) {
             required={true}
             />
 
+          <FormField
+            ref={phoneInput}
+            error={phoneError}
+            ID="phone-input" 
+            label="_user.Phone_number" 
+            type="tel"
+            maxLength="11"
+            minLength="11"
+            required={true}
+            />
+
           <FormField 
             ref={passwordInput}
             error={passwordError}
@@ -185,7 +114,7 @@ export default function Register({ guestMiddleware }) {
         
       </div>
 
-      { dialog && <AlertDialog dialog={dialog} /> }
+      { dialog && <LoadingDialog /> }
       
     </section>
   );

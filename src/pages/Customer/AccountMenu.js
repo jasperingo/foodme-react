@@ -2,7 +2,8 @@
 import React from 'react';
 import { cartIcon, favoritedIcon, locationIcon, orderIcon, passwordIcon, transactionIcon, userIcon } from '../../assets/icons';
 import AccountMenuView from '../../components/AccountMenuView';
-import { useAppContext } from '../../context/AppContext';
+import { useAppContext } from '../../hooks/contextHook';
+import { useCustomerLogOut } from '../../hooks/customerHook';
 
 const MENU_ITEMS = [
   { text: '_user.Profile', icon: userIcon, href: '/profile'},
@@ -16,12 +17,27 @@ const MENU_ITEMS = [
 
 export default function AccountMenu() {
 
-  const { user: { user } } = useAppContext();
+  const { 
+    customer: { 
+      customer: {
+        customer: {
+          customer
+        }
+      } 
+    } 
+  } = useAppContext();
+
+  const onLogOut = useCustomerLogOut();
 
   return (
     <section>
       <div className="container-x">
-        <AccountMenuView photo={`/photos/customer/${user.photo}`} name={`${user.first_name} ${user.last_name}`} items={MENU_ITEMS} />
+        <AccountMenuView 
+          onLogOut={onLogOut}
+          photo={customer.user.photo.href} 
+          name={customer.user.name} 
+          items={MENU_ITEMS} 
+          />
       </div>
     </section>
   );

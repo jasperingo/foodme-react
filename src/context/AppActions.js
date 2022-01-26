@@ -1,13 +1,4 @@
 
-export const FETCH_STATUSES = {
-  PENDING: 'PENDING',
-  LOADING: 'LOADING',
-  ERROR: 'ERROR',
-  EMPTY: 'EMPTY',
-  MORE: 'MORE',
-  DONE: 'DONE',
-};
-
 export const getFormRequestFailedAction = (type) => ({
   type,
   payload: { form: '_errors.Something_went_wrong' }
