@@ -9,7 +9,7 @@ import { backIcon } from '../assets/icons';
 
 function CartCounter({ useCounter }) {
   return (
-    <span className="-ml-2 -mt-1 text-xs absolute bg-red-500 text-white px-1 rounded-full lg:-ml-10 lg:-mt-5">
+    <span className="-ml-2 -mt-1 text-xs absolute bg-red-500 text-white px-1 rounded-full">
       { useCounter() }
     </span>
   );
@@ -22,11 +22,13 @@ function NavItem({ title, icon, href, useCounter, top=false }) {
       <NavLink 
         exact 
         to={ href }
-        className="block py-2 px-4 text-sm text-color-gray bg-color relative lg:flex lg:items-center lg:justify-center hover:bg-color-gray-h"
+        className="block py-2 px-4 text-sm text-color-gray bg-color hover:bg-color-gray-h lg:flex lg:items-center lg:justify-center lg:gap-1"
         activeClassName="text-color-primary"
         >
-        <Icon path={icon} className="w-7 h-7 inline-block" />
-        { useCounter && <CartCounter useCounter={useCounter} /> }
+        <div className="relative">
+          <Icon path={icon} className="w-7 h-7 inline-block" />
+          { useCounter && <CartCounter useCounter={useCounter} /> }
+        </div>
         <span className={top ? 'sr-only lg:not-sr-only' : 'block'}>{ title }</span>
       </NavLink>
     </li>

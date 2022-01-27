@@ -26,7 +26,7 @@ export default function CustomerReducer (state, action) {
         }
       };
 
-    case CUSTOMER.FETCH_STATUS_CHANGED :
+    case CUSTOMER.FETCH_STATUS_CHANGED:
       return {
         ...state,
         customer: {
@@ -35,10 +35,11 @@ export default function CustomerReducer (state, action) {
         }
       };
     
-    case CUSTOMER.FETCHED :
+    case CUSTOMER.FETCHED:
       return {
         ...state,
         customer: {
+          ...state.customer,
           customer: action.payload.customer, 
           customerFetchStatus: action.payload.fetchStatus,
         }

@@ -23,7 +23,7 @@ import AccountMenu from '../pages/Customer/AccountMenu';
 // import ResetPassword from '../pages/ResetPassword';
 // import Category from '../pages/Category';
 // import Transaction from '../pages/Transaction';
-// import Profile from '../pages/Customer/Profile';
+import Profile from '../pages/Customer/Profile';
 // import Addresses from '../pages/Customer/Addresses';
 // import AddressUpdate from '../pages/Customer/AddressUpdate';
 // import Favorites from '../pages/Customer/Favorites';
@@ -32,7 +32,7 @@ import AccountMenu from '../pages/Customer/AccountMenu';
 // import Orders from '../pages/Customer/Orders';
 // import Transactions from '../pages/Customer/Transactions';
 // import AddressAdd from '../pages/AddressAdd';
-// import PasswordUpdate from '../pages/PasswordUpdate';
+import PasswordUpdate from '../pages/Customer/PasswordUpdate';
 
 import { useCartCounter } from '../context/AppHooks';
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
@@ -101,7 +101,6 @@ export default function CustomerApp() {
           <Route path="/address/:ID" render={()=> authMiddleware() || <AddressUpdate />} />
           <Route path="/addresses" render={()=> authMiddleware() || <Addresses />} />
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
-          <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/store/:sID/promotion/:pID" render={()=> <Promotion />} />
           <Route path="/product/:pID" render={()=> <Product />} />
           <Route path="/store/:ID" render={()=> <Store />} />
@@ -111,6 +110,8 @@ export default function CustomerApp() {
           <Route path="/about-us" render={()=> <AboutUs />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} /> */}
+          <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
+          <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
           <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />

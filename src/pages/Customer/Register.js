@@ -48,7 +48,7 @@ export default function Register({ guestMiddleware }) {
 
         <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x" noValidate>
 
-          { formError && <FormMessage text={formError} /> }
+          <FormMessage error={formError} />
 
           <FormField 
             ref={firstNameInput}

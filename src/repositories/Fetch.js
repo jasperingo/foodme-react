@@ -15,7 +15,7 @@ export default class Fetch {
   static API_URL = 'https://shoppa-app-api.herokuapp.com/api/';
 
   static FILE_CONTENT_TYPE = 'multipart/form-data';
-
+  
   constructor( apiToken = null, contentType = 'application/json' ) {
     this.apiToken = apiToken;
     this.contentType = contentType;
@@ -23,10 +23,13 @@ export default class Fetch {
  
   async apiFetch(url, method, body = undefined) {
 
-    const headers = { 
-      'Content-Type': this.contentType,
+    const headers = {
       'X-Requested-With': 'XMLHttpRequest',
     };
+
+    if (this.contentType !== null) {
+      headers['Content-Type'] = this.contentType;
+    }
 
     if (this.apiToken !== null) {
       headers['Authorization'] = `Bearer ${this.apiToken}`;

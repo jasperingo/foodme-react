@@ -20,6 +20,30 @@ export default class CustomerRepository extends Fetch {
     );
   }
 
+  update(id, formData) {
+    return this.apiFetch(
+      `customer/${id}/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
+  updatePhoto(id, formData) {
+    return this.apiFetch(
+      `customer/${id}/photo/update`, 
+      'PUT',
+      formData
+    );
+  }
+
+  updatePassword(id, formData) {
+    return this.apiFetch(
+      `customer/${id}/password/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `customer/${id}`,
@@ -38,16 +62,6 @@ export default class CustomerRepository extends Fetch {
   //   return data;
   // }
 
-  // async update(id, formData) {
-  
-  //   const data = await this.apiFetch(
-  //     `customer/get.json?id=${id}`,
-  //     'GET', //'PUT',
-  //     JSON.stringify(formData)
-  //   );
-  
-  //   return data;
-  // }
 
   // async updatePhoto(id, formData) {
 

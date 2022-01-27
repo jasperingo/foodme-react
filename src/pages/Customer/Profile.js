@@ -1,17 +1,13 @@
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
-import FormButton from '../../components/FormButton';
-import FormMessage from '../../components/FormMessage';
-import FormField from '../../components/FormField';
-import PhotoChooser from '../../components/PhotoChooser';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import UserApi from '../../api/UserApi';
+import React, { useRef } from 'react';
+import LoadingDialog from '../../components/dialog/LoadingDialog';
+import FormButton from '../../components/form/FormButton';
+import FormMessage from '../../components/form/FormMessage';
+import FormField from '../../components/form/FormField';
+import { useCustomerUpdate } from '../../hooks/customerHook';
+import FormPhotoField from '../../components/form/FormPhotoField';
 
 export default function Profile() {
-
-  const { user: { user }, userDispatch } = useAppContext();
 
   const firstNameInput = useRef(null);
 
@@ -21,132 +17,34 @@ export default function Profile() {
 
   const phoneInput = useRef(null);
   
-  const [dialog, setDialog] = useState(null);
+  const [
+    onSubmit,
+    onPhotoChoose,
+    photoUploaded,
+    customer,
+    dialog, 
+    formError, 
+    formSuccess, 
+    firstNameError, 
+    lastNameError, 
+    emailError, 
+    phoneError,
 
-  const [formError, setFormError] = useState('');
+  ] = useCustomerUpdate();
 
-  const [formSuccess, setFormSuccess] = useState('');
-
-  const [firstNameError, setFirstNameError] = useState('');
-
-  const [lastNameError, setLastNameError] = useState('');
-
-  const [emailError, setEmailError] = useState('');
-
-  const [phoneError, setPhoneError] = useState('');
-
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
-  const [photoFetchStatus, setPhotoFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
-  const api = useMemo(() => new UserApi(user.api_token), [user]);
-  
-  function updateProfile(e) {
+  function onUpdateSubmit(e) {
     e.preventDefault();
-
-    let error = false;
-
-    setFormError('');
-
-    setFormSuccess('');
-
-    setFetchStatus(FETCH_STATUSES.PENDING);
-
-    setPhotoFetchStatus(FETCH_STATUSES.PENDING);
-    
-    if (!firstNameInput.current.validity.valid) {
-      error = true;
-      setFirstNameError('_errors.This_field_is_required');
-    } else {
-      setFirstNameError('');
-    }
-
-    if (!lastNameInput.current.validity.valid) {
-      error = true;
-      setLastNameError('_errors.This_field_is_required');
-    } else {
-      setLastNameError('');
-    }
-
-    if (!emailInput.current.validity.valid) {
-      error = true;
-      setEmailError('_errors.This_field_is_required');
-    } else {
-      setEmailError('');
-    }
-
-    if (!phoneInput.current.validity.valid) {
-      error = true;
-      setPhoneError('_errors.This_field_is_required');
-    } else {
-      setPhoneError('');
-    }
-    
-    if (!error) {
-      setFetchStatus(FETCH_STATUSES.LOADING);
-      setDialog(LOADING_DIALOG);
-    }
+    onSubmit(
+      firstNameInput.current.value,
+      lastNameInput.current.value,
+      emailInput.current.value,
+      phoneInput.current.value,
+      firstNameInput.current.validity,
+      lastNameInput.current.validity,
+      emailInput.current.validity,
+      phoneInput.current.validity
+    );
   }
-
-  function onPhotoSuccess(res) {
-
-    setPhotoFetchStatus(FETCH_STATUSES.DONE);
-
-    if (res !== null) {
-      setFormSuccess(res.message);
-      userDispatch({ type: USER.UPDATED, payload: res.data });
-    }
-  }
-
-  function onPhotoError(err) {
-    
-    setFetchStatus(FETCH_STATUSES.ERROR);
-
-    if (err.errors) {
-      setFormError(err.errors.form);
-    } else {
-      setFormSuccess('_errors.Something_went_wrong');
-    }
-  }
-
-  useEffect(()=> {
-
-    if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-      api.update({
-        first_name: firstNameInput.current.value,
-        last_name: lastNameInput.current.value,
-        email: emailInput.current.value,
-        phone_number: phoneInput.current.value
-      }).then(res=> {
-        
-        setFormSuccess(res.message);
-        setFetchStatus(FETCH_STATUSES.DONE);
-        userDispatch({ type: USER.UPDATED, payload: res.data });
-
-      }).catch(err=> {
-
-        setFetchStatus(FETCH_STATUSES.ERROR);
-
-        if (err.errors) {
-          setFormError(err.errors.form);
-          setFirstNameError(err.errors.first_name);
-          setLastNameError(err.errors.last_name);
-          setEmailError(err.errors.email);
-          setPhoneError(err.errors.phone_number);
-        } else {
-          setFormError('_errors.Something_went_wrong');
-        }
-
-      });
-
-    } else if (fetchStatus === FETCH_STATUSES.DONE && photoFetchStatus === FETCH_STATUSES.PENDING) {
-      setPhotoFetchStatus(FETCH_STATUSES.LOADING);
-    } else if (dialog !== null) {
-      setDialog(null);
-    }
-
-  }, [user, api, fetchStatus, photoFetchStatus, dialog, userDispatch]);
 
 
   return (
@@ -154,24 +52,19 @@ export default function Profile() {
       
       <div className="container-x">
 
-        <form method="POST" action="" className="form-1-x" onSubmit={updateProfile} noValidate>
+        <form method="POST" action="" className="form-1-x" onSubmit={onUpdateSubmit} noValidate>
 
-          { 
-            (formError || formSuccess) && 
-            <FormMessage 
-              text={formSuccess ? formSuccess : formError} 
-              type={formSuccess ? FormMessage.TYPE_SUCCESS : FormMessage.TYPE_ERROR} 
-              /> 
-          }
+          <FormMessage 
+            error={formError} 
+            success={formSuccess} 
+            /> 
 
-          <PhotoChooser 
-            api={api}
-            alt={user.first_name}
-            src={`/photos/customer/${user.photo}`} 
+          <FormPhotoField 
+            alt={customer.user.name} 
+            src={customer.user.photo.href} 
             text="_extra.Edit_photo" 
-            status={photoFetchStatus}
-            onSuccess={onPhotoSuccess}
-            onError={onPhotoError}
+            onChoose={onPhotoChoose}
+            uploaded={photoUploaded}
             />
 
           <FormField 
@@ -180,7 +73,7 @@ export default function Profile() {
             ID="fn-input" 
             label="_user.First_name" 
             required={true}
-            value={ user.first_name }
+            value={ customer.first_name }
             />
 
           <FormField 
@@ -189,7 +82,7 @@ export default function Profile() {
             ID="ln-input" 
             label="_user.Last_name" 
             required={true}
-            value={ user.last_name }
+            value={ customer.last_name }
             />
 
           <FormField 
@@ -199,7 +92,7 @@ export default function Profile() {
             label="_user.Email" 
             type="email" 
             required={true}
-            value={ user.email }
+            value={ customer.user.email }
             />
 
           <FormField
@@ -208,8 +101,10 @@ export default function Profile() {
             ID="phone-input" 
             label="_user.Phone_number" 
             type="tel"
-            value={ user.phone_number }
-            required={false}
+            maxLength="11"
+            minLength="11"
+            required={true}
+            value={ customer.user.phone_number }
             />
 
           <FormButton text="_user.Update_profile" />
@@ -218,7 +113,7 @@ export default function Profile() {
 
       </div>
 
-      { dialog && <AlertDialog dialog={dialog} /> }
+      { dialog && <LoadingDialog dialog={dialog} /> }
 
     </section>
   );

@@ -36,7 +36,7 @@ export default function LogIn({ guestMiddleware }) {
 
         <form method="POST" action="" onSubmit={onLoginSubmit} className="form-1-x" noValidate>
 
-          { formError && <FormMessage text={formError} /> }
+          <FormMessage error={formError} />
 
           <FormField 
             ref={emailInput} 
