@@ -1,11 +1,28 @@
 
 import Icon from '@mdi/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { storeIcon } from '../assets/icons';
-import { useMoneyFormat } from '../context/AppHooks';
+import { storeIcon } from '../../assets/icons';
+import { useMoneyFormat } from '../../context/AppHooks';
 
-export default function ProductItem({ prod, href = `/product/${prod.id}`, layout = ProductItem.LAYOUT_LIST_GRID }) {
+export default function ProductItem(
+  { 
+    product: {
+      id, 
+      photo,
+      title,
+      store,
+      product_variants: [ variant ]
+    }, 
+    href = `/product/${id}`, 
+    layout = ProductItem.LAYOUT_LIST_GRID 
+  }
+) {
+
+  const { t } = useTranslation();
+
+  const priceView = useMoneyFormat(variant?.price || 0);
 
   let layoutStyle, layoutImgStyle, layoutBodyStyle;
 
@@ -34,16 +51,20 @@ export default function ProductItem({ prod, href = `/product/${prod.id}`, layout
       <img 
         width="200"
         height="200"
-        alt={prod.title} 
-        src={`/photos/products/${prod.photo}`} 
+        alt={title} 
+        src={photo.href} 
         className={`${layoutImgStyle} border rounded block`}
         />
       <div className={`flex-grow ${layoutBodyStyle}`}>
-        <div className="mb-1">{ prod.title }</div>
-        <div className="font-bold mb-1">{ useMoneyFormat(prod.price) }</div>
+        <div className="mb-1">{ title }</div>
+        {
+          variant?.price ?
+          priceView :
+          <div className="italic mb-1 text-red-500">{ t('_extra.No_price') }</div>
+        }
         <div className="flex gap-1 items-start text-color-primary text-sm py-1 w-full">
           <Icon path={storeIcon} className="w-5 h-5" />
-          <div>{ prod.store.name }</div>
+          <div>{ store.user.name }</div>
         </div>
       </div>
     </Link>

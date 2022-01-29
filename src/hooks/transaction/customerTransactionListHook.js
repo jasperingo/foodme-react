@@ -6,7 +6,7 @@ import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
 
-export function useTransactionList() {
+export function useCustomerTransactionList() {
 
   const { 
     transaction: { 

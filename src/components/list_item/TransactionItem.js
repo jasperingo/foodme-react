@@ -14,7 +14,7 @@ export default function TransactionItem({ transaction: { id, amount, reference, 
   return (
     <li>
       <Link to={`/transaction/${id}`} className="block mb-4 py-2 rounded md:px-2 md:shadow hover:bg-color-gray-h">
-        <div className="text-2xl font-bold mb-1">{ useMoneyFormat(amount) }</div>
+        <div className="text-xl font-bold mb-1">{ useMoneyFormat(amount) }</div>
         <div className="flex flex-wrap items-center mb-2">
           <div className="bg-color-gray rounded-full px-2">#{ reference }</div>
           <div className="flex-grow text-right">{ t(useTransactionType(type)) }</div>

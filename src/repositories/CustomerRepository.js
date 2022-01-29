@@ -66,6 +66,13 @@ export default class CustomerRepository extends Fetch {
     );
   }
 
+  getOrdersList(id, page) {
+    return this.apiFetch(
+      `customer/${id}/order/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
   getTransactionsList(id, page) {
     return this.apiFetch(
       `customer/${id}/transaction/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,

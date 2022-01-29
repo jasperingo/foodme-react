@@ -1,27 +1,20 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { 
-  FETCH_STATUSES, 
-  getCategoriesListFetchStatusAction, 
-  getProductsListFetchStatusAction, 
-  getStoresListFetchStatusAction 
-} from '../../context/AppActions';
-import { useCategoryColor, useListRender } from '../../context/AppHooks';
 import Reload from '../../components/Reload';
 import Loading from '../../components/Loading';
-import StoreItem from '../../components/StoreItem';
 import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import ProductItem from '../../components/ProductItem';
-import Icon from '@mdi/react';
-import { productIcon, storeIcon } from '../../assets/icons';
+import StoreItem from '../../components/list_item/StoreItem';
+import ProductItem from '../../components/list_item/ProductItem';
+import CategoryItem from '../../components/list_item/CategoryItem';
 import CarouselX from '../../components/CarouselX';
-import CategoryApi from '../../api/CategoryApi';
-import StoreApi from '../../api/StoreApi';
-import ProductApi from '../../api/ProductApi';
-import { useAppContext } from '../../hooks/contextHook';
+import SingleList from '../../components/list/SingleList';
+import { categoryIcon, productIcon, storeIcon } from '../../assets/icons';
+import { useHomeCategoryList } from '../../hooks/home/homeCategoryListHook';
+import { useHomeStoreList } from '../../hooks/home/homeStoreListHook';
+import { useHomeProductList } from '../../hooks/home/homeProductListHook';
+import { useRenderListFooter } from '../../hooks/viewHook';
+import { FETCH_STATUSES } from '../../repositories/Fetch';
 
 const CAROUSEL_IMGS = [
   {
@@ -41,82 +34,127 @@ const CAROUSEL_IMGS = [
   }
 ];
 
-function CategoryItem({ category, index }) {
+// function CategoryItem({ category, index }) {
 
-  const iconColor = useCategoryColor(index);
+//   const iconColor = useCategoryColor(index);
 
-  const iconType = category.type === 'product' ? productIcon : storeIcon;
+//   const iconType = category.type === 'product' ? productIcon : storeIcon;
+
+//   return (
+//     <li className="lg:mb-2">
+//       <Link 
+//         to={`/category/${category.id}`} 
+//         className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-2`}
+//         >
+//         <img src={`/photos/category/${category.photo}`} alt={category.name} width="100" height="100" className="w-10 h-10 block mx-auto rounded" />        
+//         <div className="flex flex-grow gap-1 justify-center items-center lg:justify-start">
+//           <div className="text-sm truncate overflow-ellipsis">{ category.name }</div>
+//           <Icon path={iconType} className='w-4 h-4' />
+//         </div>
+//       </Link>
+//     </li>
+//   );
+// }
+
+
+function Categories({ categories, categoriesFetchStatus, refetch }) {
+
+  const { t } = useTranslation();
 
   return (
-    <li className="lg:mb-2">
-      <Link 
-        to={`/category/${category.id}`} 
-        className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-2`}
-        >
-        <img src={`/photos/category/${category.photo}`} alt={category.name} width="100" height="100" className="w-10 h-10 block mx-auto rounded" />        
-        <div className="flex flex-grow gap-1 justify-center items-center lg:justify-start">
-          <div className="text-sm truncate overflow-ellipsis">{ category.name }</div>
-          <Icon path={iconType} className='w-4 h-4' />
-        </div>
-      </Link>
-    </li>
+    <div className="bg-color-gray lg:my-2">
+      <div className="container-x border pt-2 pb-4 border-transparent">
+        <h2 className="font-bold my-2">{ t('_category.Categories') }</h2>
+        <SingleList
+          data={categories}
+          className="grid gap-4 grid-cols-3"
+          renderDataItem={(item, i)=> (
+            <CategoryItem 
+              key={`category-${item.id}`} 
+              index={i}
+              category={item} 
+              grid={true}
+              />
+          )}
+          footer={useRenderListFooter(
+            categoriesFetchStatus,
+            ()=> <li key="categories-footer" className="col-span-3"> <Loading /> </li>, 
+            ()=> <li key="categories-footer" className="col-span-3"> <Reload action={refetch} /> </li>,
+            ()=> <li key="categories-footer" className="col-span-3"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
+          )}
+          />
+      </div>
+    </div>
+  );
+}
+
+function Stores({ stores, storesFetchStatus, refetch }) {
+
+  const { t } = useTranslation();
+
+  return (
+    <div className="container-x py-2">
+      <h2 className="font-bold my-2">{ t('_store.Stores') }</h2>
+      <SingleList
+          data={stores}
+          className="list-x"
+          renderDataItem={(item)=> (
+            <li key={`store-${item.id}`}> <StoreItem store={item} /> </li>
+          )}
+          footer={useRenderListFooter(
+            storesFetchStatus,
+            ()=> <li key="stores-footer"> <Loading /> </li>, 
+            ()=> <li key="stores-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="stores-footer"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>
+          )}
+          />
+    </div>
+  );
+}
+
+function Products({ products, productsFetchStatus, refetch }) {
+  
+  const { t } = useTranslation();
+
+  return (
+    <div className="container-x py-2">
+      <h2 className="font-bold my-2">{ t('_product.Products') }</h2>
+      <SingleList
+          data={products}
+          className="list-x"
+          renderDataItem={(item)=> (
+            <li key={`product-${item.id}`}> <ProductItem product={item} /> </li>
+          )}
+          footer={useRenderListFooter(
+            productsFetchStatus,
+            ()=> <li key="products-footer"> <Loading /> </li>, 
+            ()=> <li key="products-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="products-footer"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>
+          )}
+          />
+    </div>
   );
 }
 
 export default function Home() {
 
-  const { t } = useTranslation();
+  const [
+    categories, 
+    categoriesFetchStatus, 
+    refetchCategories
+  ] = useHomeCategoryList();
 
-  const { home: {
-    categories: {
-      categories,
-      categoriesFetchStatus
-    },
-    stores: {
-      stores,
-      storesFetchStatus
-    },
-    products: {
-      products,
-      productsFetchStatus
-    }
-  }, homeDispatch } = useAppContext();
-  
-  useEffect(()=> {
-    if (categoriesFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new CategoryApi();
-      api.getListByRecommended(homeDispatch);
-    }
-  }, [categoriesFetchStatus, homeDispatch]);
+  const [
+    stores, 
+    storesFetchStatus, 
+    refetchStores
+  ] = useHomeStoreList(categoriesFetchStatus === FETCH_STATUSES.DONE);
 
-  function refetchCategories() {
-    if (categoriesFetchStatus !== FETCH_STATUSES.LOADING) 
-      homeDispatch(getCategoriesListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
-  
-  useEffect(()=> {
-    if (storesFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new StoreApi();
-      api.getListByRecommended(homeDispatch);
-    }
-  }, [storesFetchStatus, homeDispatch]);
-
-  function refetchStores() {
-    if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
-      homeDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
-
-  useEffect(()=> {
-    if (productsFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new ProductApi();
-      api.getListByRecommended(homeDispatch);
-    }
-  }, [productsFetchStatus, homeDispatch]);
-
-  function refetchProducts() {
-    if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-      homeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    products, 
+    productsFetchStatus,
+    refetchProducts
+  ] = useHomeProductList(storesFetchStatus === FETCH_STATUSES.DONE);
 
   return (
     <section>
@@ -125,72 +163,30 @@ export default function Home() {
         <CarouselX items={CAROUSEL_IMGS} />
       </div>
 
-      <div className="lg:container mx-auto">
+      <Categories 
+        categories={categories}
+        categoriesFetchStatus={categoriesFetchStatus}
+        refetch={refetchCategories}
+        />
 
-        <div className="lg:flex lg:items-start lg:gap-2">
+      {
+        categoriesFetchStatus === FETCH_STATUSES.DONE &&
+        <Stores 
+          stores={stores}
+          storesFetchStatus={storesFetchStatus}
+          refetch={refetchStores}
+          />
+      }
 
-          <div className="bg-color-gray lg:rounded lg:my-2 lg:w-60">
-            <div className="container-x border pt-2 pb-4 border-transparent">
-              <h2 className="font-bold my-2">{ t('_category.Categories') }</h2>
-              <ul className="grid gap-4 grid-cols-3 lg:block">
-                { 
-                  useListRender(
-                    categories, 
-                    categoriesFetchStatus,
-                    (item, i)=> (
-                      <CategoryItem 
-                        key={`category-${i}`} 
-                        index={i}
-                        category={item} 
-                        />
-                    ),
-                    (k)=> <li key={k} className="col-span-3"> <Loading /> </li>, 
-                    (k)=> <li key={k} className="col-span-3"> <Reload action={refetchCategories} /> </li>,
-                  )
-                }
-              </ul>
-            </div>
-          </div>
+      {
+        storesFetchStatus === FETCH_STATUSES.DONE &&
+        <Products 
+          products={products}
+          productsFetchStatus={productsFetchStatus}
+          refetch={refetchProducts}
+          />
+      }
 
-          <div className="flex-grow">
-            <div className="container-x py-2">
-              <h2 className="font-bold my-2">{ t('_store.Stores_on_Dailyneeds') }</h2>
-              <ul className="list-x">
-                { 
-                  useListRender(
-                    stores, 
-                    storesFetchStatus,
-                    (item, i)=> <li key={`store-${i}`}> <StoreItem store={item} /> </li>, 
-                    (k)=> <li key={k}> <Loading /> </li>, 
-                    (k)=> <li key={k}> <Reload action={refetchStores} /> </li>,
-                    (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>, 
-                    (k)=> <li key={k}> <FetchMoreButton action={refetchStores} /> </li>,
-                  )
-                }
-              </ul>
-            </div>
-
-            <div className="container-x py-2">
-              <h2 className="font-bold my-2">{ t('_product.Products_on_Dailyneeds') }</h2>
-              <ul className="list-x">
-                { 
-                  useListRender(
-                    products, 
-                    productsFetchStatus,
-                    (item, i)=> <li key={`store-${i}`}> <ProductItem prod={item} /> </li>, 
-                    (k)=> <li key={k}> <Loading /> </li>, 
-                    (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-                    (k)=> <li key={k}> <EmptyList text="_empty.No_store" icon={productIcon} /> </li>, 
-                    (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
-                  )
-                }
-              </ul>
-            </div>
-          </div>
-
-
-        </div>
-      </div>
     </section>
   );
 }

@@ -1,0 +1,27 @@
+
+export const PRODUCT = {
+  UNFETCH: 'PRODUCT_UNFETCH',
+  FETCHED: 'PRODUCT_FETCHED',
+  FETCH_STATUS_CHANGED: 'PRODUCT_FETCH_STATUS_CHANGED',
+  FILTER_CHANGED: 'PRODUCT_FILTER_CHANGED',
+  LIST_FETCHED: 'PRODUCTS_FETCHED',
+  LIST_FETCH_STATUS_CHANGED: 'PRODUCTS_FETCH_STATUS_CHANGED',
+  RELATED_LIST_FETCHED: 'RELATED_PRODUCTS_FETCHED',
+  RELATED_LIST_FETCH_STATUS_CHANGED: 'RELATED_PRODUCTS_FETCH_STATUS_CHANGED',
+};
+
+export const getProductFetchStatusAction = (payload) => ({
+  type: PRODUCT.FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getProductsListFetchStatusAction = (payload) => ({
+  type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+
+export const getRelatedProductsListFetchStatusAction = (payload) => ({
+  type: PRODUCT.RELATED_LIST_FETCH_STATUS_CHANGED,
+  payload
+});
+

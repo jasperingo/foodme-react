@@ -1,88 +1,48 @@
-
-import { CATEGORIES, FETCH_STATUSES, PRODUCT, STORE } from "../AppActions";
-import { useListFetchStatus } from "../AppHooks";
-
+import { CATEGORY } from "../actions/categoryActions";
+import { PRODUCT } from "../actions/productActions";
+import { STORE } from "../actions/storeActions";
 
 export default function HomeReducer (state, action) {
-
-  const fetchUpdater = useListFetchStatus();
   
   switch (action.type) {  
     
-    case CATEGORIES.LIST_FETCH_STATUS_CHANGED :
+    case CATEGORY.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        categories: {
-          ...state.categories,
-          categoriesFetchStatus: action.payload
-        }
+        categoriesFetchStatus: action.payload
       };
     
-    case CATEGORIES.LIST_FETCHED :
+    case CATEGORY.LIST_FETCHED:
       return {
         ...state,
-        categories: {
-          categories: action.payload, 
-          categoriesFetchStatus: FETCH_STATUSES.DONE,
-        }
+        categories: action.payload.list, 
+        categoriesFetchStatus: action.payload.fetchStatus,
       };
     
-    case STORE.LIST_FETCH_STATUS_CHANGED :
+    case STORE.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        stores: {
-          ...state.stores,
-          storesFetchStatus: action.payload
-        }
+        storesFetchStatus: action.payload
       };
     
-    case STORE.LIST_FETCHED :
-      let status = fetchUpdater(
-        state.stores.storesPage, 
-        action.payload.storesNumberOfPages,
-        state.stores.stores.length,  
-        action.payload.stores.length
-      );
-
-      const st = state.stores.stores.filter(i=> i !== null);
-
+    case STORE.LIST_FETCHED:
       return {
         ...state,
-        stores: {
-          storesFetchStatus: status,
-          storesPage: state.stores.storesPage+1,
-          storesNumberOfPages: action.payload.storesNumberOfPages,
-          stores: [...st, ...action.payload.stores, null],
-        }
+        stores: action.payload.list,
+        storesFetchStatus: action.payload.fetchStatus,
       };
 
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        products: {
-          ...state.products,
-          productsFetchStatus: action.payload
-        }
+        productsFetchStatus: action.payload
       };
     
-    case PRODUCT.LIST_FETCHED :
-      let status2 = fetchUpdater(
-        state.products.productsPage, 
-        action.payload.productsNumberOfPages,
-        state.products.products.length,  
-        action.payload.products.length
-      );
-
-      const prod = state.products.products.filter(i=> i !== null);
-
+    case PRODUCT.LIST_FETCHED:
       return {
         ...state,
-        products: {
-          productsFetchStatus: status2,
-          productsPage: state.products.productsPage+1,
-          productsNumberOfPages: action.payload.productsNumberOfPages,
-          products: [...prod, ...action.payload.products, null],
-        }
+        products: action.payload.list,
+        productsFetchStatus: action.payload.fetchStatus,
       };
 
     default:

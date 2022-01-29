@@ -4,7 +4,7 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Splash from '../pages/Splash';
-//import Home from '../pages/Customer/Home';
+import Home from '../pages/Customer/Home';
 import LogIn from '../pages/Customer/LogIn';
 import Register from '../pages/Customer/Register';
 // import Cart from '../pages/Customer/Cart';
@@ -12,7 +12,8 @@ import AccountMenu from '../pages/Customer/AccountMenu';
 // import AboutUs from '../pages/AboutUs';
 // import ContactUs from '../pages/ContactUs';
 // import TermsOfService from '../pages/TermsOfService';
-// import Categories from '../pages/Customer/Categories';
+import Category from '../pages/Category';
+import Categories from '../pages/Customer/Categories';
 // import Search from '../pages/Customer/Search';
 // import Store from '../pages/Store';
 // import Product from '../pages/Customer/Product';
@@ -21,15 +22,14 @@ import AccountMenu from '../pages/Customer/AccountMenu';
 // import PrivacyPolicy from '../pages/PrivacyPolicy';
 // import ForgotPassword from '../pages/ForgotPassword';
 // import ResetPassword from '../pages/ResetPassword';
-// import Category from '../pages/Category';
 import Profile from '../pages/Customer/Profile';
 import Addresses from '../pages/Customer/Addresses';
 import AddressAdd from '../pages/Customer/AddressAdd';
 import AddressUpdate from '../pages/Customer/AddressUpdate';
 // import Favorites from '../pages/Customer/Favorites';
 // import SavedCarts from '../pages/Customer/SavedCarts';
-// import Order from '../pages/Order';
-// import Orders from '../pages/Customer/Orders';
+import Order from '../pages/Order';
+import Orders from '../pages/Customer/Orders';
 import Transactions from '../pages/Customer/Transactions';
 import Transaction from '../pages/Customer/Transaction';
 import PasswordUpdate from '../pages/Customer/PasswordUpdate';
@@ -92,9 +92,7 @@ export default function CustomerApp() {
         />
       <main className="pb-52">
         <Switch>
-          {/* <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
-          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
-          <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          {/*
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
           <Route path="/favorites" render={()=> authMiddleware() || <Favorites />} />
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
@@ -109,6 +107,8 @@ export default function CustomerApp() {
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} /> */}
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/address/add" render={()=> authMiddleware() || <AddressAdd />} />
           <Route path="/address/:ID" render={()=> authMiddleware() || <AddressUpdate />} />
           <Route path="/addresses" render={()=> authMiddleware() || <Addresses />} />
@@ -120,10 +120,10 @@ export default function CustomerApp() {
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           {/* <Route path="/search" render={()=> <Search />} /> 
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
-          <Route path="/cart" render={()=> <Cart />} />
-          <Route path="/category/:ID" render={()=> <Category />} />
+          <Route path="/cart" render={()=> <Cart />} /> */}
+          <Route path="/category/:ID" render={()=> <Category />} /> 
           <Route path="/categories" render={()=> <Categories />} />
-          <Route path="/" render={()=> <Home />} /> */}
+          <Route path="/" render={()=> <Home />} />
         </Switch>
       </main>
       <Footer />

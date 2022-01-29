@@ -1,100 +1,83 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import CategoryApi from '../../api/CategoryApi';
-import CategoryItem from '../../components/CategoryItem';
+import { categoryIcon } from '../../assets/icons';
+import EmptyList from '../../components/EmptyList';
+import SingleList from '../../components/list/SingleList';
+import CategoryItem from '../../components/list_item/CategoryItem';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import { FETCH_STATUSES, getCategoriesProductFetchStatusAction, getCategoriesStoreFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useListRender } from '../../context/AppHooks';
+import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
+import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
+import { useRenderListFooter } from '../../hooks/viewHook';
+import { FETCH_STATUSES } from '../../repositories/Fetch';
 
-export default function Categories() {
+
+function List({ headerText, categories, categoriesFetchStatus, refetch }) {
 
   const { t } = useTranslation();
 
-  const { 
-    categories: {
-      products: {
-        products,
-        productsFetchStatus
-      },
-      stores: {
-        stores,
-        storesFetchStatus
-      }
-    }, 
-    categoriesDispatch
-  } = useAppContext();
+  return (
+    <div className="py-2">
+      <h2 className="font-bold my-2">{ t(headerText) }</h2>
+      <SingleList
+        data={categories}
+        className="category-list"
+        renderDataItem={(item, i)=> (
+          <CategoryItem 
+            key={`category-${item.id}`} 
+            index={i}
+            category={item} 
+            grid={false}
+            />
+        )}
+        footer={useRenderListFooter(
+          categoriesFetchStatus,
+          ()=> <li key="categories-footer" className="col-span-3"> <Loading /> </li>, 
+          ()=> <li key="categories-footer" className="col-span-3"> <Reload action={refetch} /> </li>,
+          ()=> <li key="categories-footer" className="col-span-3"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
+        )}
+        />
+    </div>
+  );
+}
 
-  useEffect(()=> {
-    const api = new CategoryApi();
 
-    if (storesFetchStatus === FETCH_STATUSES.LOADING) {
-      api.getListByStore(categoriesDispatch);
-    }
+export default function Categories() {
 
-    if (productsFetchStatus === FETCH_STATUSES.LOADING) {
-      api.getListByProduct(categoriesDispatch);
-    }
-  }, [storesFetchStatus, productsFetchStatus, categoriesDispatch]);
+  const [
+    stores, 
+    storesFetchStatus, 
+    refetchStores
+  ] = useStoreCategoryList();
 
-  function refetchStores() {
-    if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
-      categoriesDispatch(getCategoriesStoreFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
-
-  function refetchProducts() {
-    if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-      categoriesDispatch(getCategoriesProductFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    products, 
+    productsFetchStatus, 
+    refetchProducts
+  ] = useProductCategoryList(storesFetchStatus === FETCH_STATUSES.DONE);
 
   return (
     <section>
       
       <div className="container-x">
+        
+        <List 
+          headerText="_store.Store_categories"
+          categories={stores}
+          categoriesFetchStatus={storesFetchStatus}
+          refetch={refetchStores}
+          />
 
-        <div className="py-2">
-          <h2 className="font-bold my-2">{ t('_store.Store_categories') }</h2>
-          <ul className="category-list">
-            { 
-              useListRender(
-                stores, 
-                storesFetchStatus,
-                (item, i)=> (
-                  <CategoryItem 
-                    key={`store-category-${i}`} 
-                    index={i}
-                    category={item} 
-                    />
-                ),
-                (k)=> <li key={k} className="col-span-3"> <Loading /> </li>, 
-                (k)=> <li key={k} className="col-span-3"> <Reload action={refetchStores} /> </li>,
-              )
-            }
-          </ul>
-        </div>
-
-        <div className="py-2">
-          <h2 className="font-bold my-2">{ t('_product.Product_categories') }</h2>
-          <ul className="category-list">
-            { 
-              useListRender(
-                products, 
-                productsFetchStatus,
-                (item, i)=> (
-                  <CategoryItem 
-                    key={`product-category-${i}`} 
-                    index={i}
-                    category={item} 
-                    />
-                ),
-                (k)=> <li key={k} className="col-span-3"> <Loading /> </li>, 
-                (k)=> <li key={k} className="col-span-3"> <Reload action={refetchProducts} /> </li>,
-              )
-            }
-          </ul>
-        </div>
+        {
+          storesFetchStatus === FETCH_STATUSES.DONE && 
+          <List 
+            headerText="_product.Product_categories"
+            categories={products}
+            categoriesFetchStatus={productsFetchStatus}
+            refetch={refetchProducts}
+            />
+        }
 
       </div>
 

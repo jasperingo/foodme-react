@@ -1,20 +1,18 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
-import OrderApi from '../api/OrderApi';
-import AdminApp from '../apps/AdminApp';
-import StoreApp from '../apps/StoreApp';
+import Forbidden from '../components/Forbidden';
 import H4Heading from '../components/H4Heading';
 import Loading from '../components/Loading';
-import OrderItemItem from '../components/OrderItemItem';
-import ProfileDetailsText from '../components/ProfileDetailsText';
-import ProfileHeaderText from '../components/ProfileHeaderText';
+import NotFound from '../components/NotFound';
+import OrderItemItem from '../components/list_item/OrderItemItem';
+import ProfileDetailsText from '../components/profile/ProfileDetailsText';
+import ProfileHeaderText from '../components/profile/ProfileHeaderText';
 import Reload from '../components/Reload';
 import UserDescList from '../components/UserDescList';
-import { FETCH_STATUSES, getOrderFetchStatusAction, ORDER } from '../context/AppActions';
-import { useAppContext } from '../context/AppContext';
-import { useDataRender, useDateFormat, useMoneyFormat, useOrderStatus } from '../context/AppHooks';
+import { useOrderFetch } from '../hooks/order/orderFetchHook';
+import { useOrderStatus } from '../hooks/order/orderViewHook';
+import { useDateFormat, useMoneyFormat, useRenderOnDataFetched } from '../hooks/viewHook';
 
 
 function Profile({ order, appType }) {
@@ -23,37 +21,28 @@ function Profile({ order, appType }) {
 
   const [theStatus] = useOrderStatus(order.status);
 
-  const usersLinks = [];
-
-  if (order.customer) {
-    usersLinks.push({
-      href: appType === AdminApp.TYPE ? `/customer/${order.customer.id}` : `/messages/${order.customer.id}`,
-      photo: `/photos/customer/${order.customer.photo}`,
-      name: `${order.customer.first_name} ${order.customer.last_name}`,
+  const usersLinks = [
+    {
+      href: appType === 1 ? `/customer/${order.customer.id}` : `/messages/${order.customer.id}`,
+      photo: order.customer.user.photo.href,
+      name: `${order.customer.user.name}`,
       title: '_order.Ordered_by'
-    });
-  }
-
-  if (order.store) {
-    usersLinks.push({
-      href: appType === AdminApp.TYPE ? `/customer/${order.store.id}` : `/messages/${order.store.id}`,
-      photo: `/photos/store/${order.store.photo}`,
-      name: order.store.name,
+    },
+    {
+      href: `/store/${order.store.id}`,
+      photo: order.store.user.photo.href,
+      name: order.store.user.name,
       title: '_order.Ordered_from'
-    });
-  }
+    }
+  ];
 
   if (order.delivery_firm) {
     usersLinks.push({
-      href: appType === AdminApp.TYPE ? `/delivery-firm/${order.delivery_firm.id}` : `/messages/${order.delivery_firm.id}`,
-      photo: `/photos/delivery-firm/${order.delivery_firm.photo}`,
-      name: order.delivery_firm.name,
+      href: `/delivery-firm/${order.delivery_firm.id}`,
+      photo: order.delivery_firm.user.photo.href,
+      name: order.delivery_firm.user.name,
       title: '_order.Delivered_by'
     });
-  }
-
-  function onTrackClicked() {
-    console.log('Tracking...')
   }
 
   function onCancelClicked() {
@@ -80,11 +69,6 @@ function Profile({ order, appType }) {
           <ProfileHeaderText
             text={`#${order.number}`}
             buttons={[
-              {
-                text: '_extra.Track',
-                color: 'btn-color-primary',
-                action: onTrackClicked
-              },
               {
                 text: '_order.Reorder',
                 color: 'btn-color-primary',
@@ -119,29 +103,29 @@ function Profile({ order, appType }) {
                 body: t(theStatus)
               },
               {
-                title: '_extra.Items',
-                body: t('_order.item__Num', { count: order.number_of_items })
+                title: '_extra.sub_total',
+                body: useMoneyFormat(order.sub_total)
+              },
+              {
+                title: '_extra.Delivery_total',
+                body: useMoneyFormat(order.delivery_total)
+              },
+              {
+                title: '_extra.Discount_total',
+                body: useMoneyFormat(order.discount_total)
               },
               {
                 title: '_extra.Total',
                 body: useMoneyFormat(order.total)
               },
               {
-                title: '_order.Items_total',
-                body: useMoneyFormat(order.items_total)
-              },
-              {
-                title: '_delivery.Delivery_fee',
-                body: useMoneyFormat(order.delivery_fee)
-              },
-              {
                 title: '_delivery.Delivery_method',
                 body: order.delivery_method
               },
-              {
-                title: '_delivery.Delivery_address',
-                body: `${order.delivery_address.street}, ${order.delivery_address.city}, ${order.delivery_address.state}`
-              }
+              // {
+              //   title: '_delivery.Delivery_address',
+              //   body: `${order.delivery_address.street}, ${order.delivery_address.city}, ${order.delivery_address.state}`
+              // }
             ]}
             />
 
@@ -155,7 +139,7 @@ function Profile({ order, appType }) {
           <H4Heading color="text-color-gray" text={ t('_order.Order_items') } />
           <ul className="list-3-x">
             {
-              order.items.map((item, i)=> <OrderItemItem key={`order-item-${item.id}`} item={item} />)
+              order.order_items.map((item)=> <OrderItemItem key={`order-item-${item.id}`} item={item} />)
             }
           </ul>
         </div>
@@ -166,42 +150,51 @@ function Profile({ order, appType }) {
 
 export default function Order() {
 
-  const ID = parseInt(useParams().ID);
+  const [
+    order, 
+    orderFetchStatus, 
+    refetch
+  ] = useOrderFetch();
 
-  const { 
-    user: { user },
-    orders: {
-      order: {
-        order,
-        orderFetchStatus
-      }
-    }, 
-    ordersDispatch 
-  } = useAppContext();
+  
 
-  useEffect(()=> {
-    if (order !== null && ID !== order.id) {
-      ordersDispatch({ type: ORDER.UNFETCH });
-    } else if (orderFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new OrderApi(user.api_token);
-      api.get(ID, ordersDispatch);
-    }
-  }, [ID, user, order, orderFetchStatus, ordersDispatch]);
+  // const ID = parseInt(useParams().ID);
 
-  function refetchOrder() {
-    if (orderFetchStatus !== FETCH_STATUSES.LOADING) 
-      ordersDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  // const { 
+  //   user: { user },
+  //   orders: {
+  //     order: {
+  //       order,
+  //       orderFetchStatus
+  //     }
+  //   }, 
+  //   ordersDispatch 
+  // } = useAppContext();
+
+  // useEffect(()=> {
+  //   if (order !== null && ID !== order.id) {
+  //     ordersDispatch({ type: ORDER.UNFETCH });
+  //   } else if (orderFetchStatus === FETCH_STATUSES.LOADING) {
+  //     const api = new OrderApi(user.api_token);
+  //     api.get(ID, ordersDispatch);
+  //   }
+  // }, [ID, user, order, orderFetchStatus, ordersDispatch]);
+
+  // function refetchOrder() {
+  //   if (orderFetchStatus !== FETCH_STATUSES.LOADING) 
+  //     ordersDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING));
+  // }
 
   return (
     <section>
-      { 
-        useDataRender(
-          order, 
+      {
+        useRenderOnDataFetched(
           orderFetchStatus,
-          ()=> <Profile order={order} appType={StoreApp.TYPE} />,
-          ()=> <div className="container-x"> <Loading /> </div>, 
-          ()=> <div className="container-x"> <Reload action={refetchOrder} /> </div>,
+          ()=> <Profile order={order} />,
+          ()=> <div className="container-x"> <Loading /> </div>,
+          ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
+          ()=> <div className="container-x"> <NotFound /> </div>,
+          ()=> <div className="container-x"> <Forbidden /> </div>,
         )
       }
     </section>

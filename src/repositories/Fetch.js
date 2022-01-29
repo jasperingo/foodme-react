@@ -18,6 +18,8 @@ export default class Fetch {
   static FILE_CONTENT_TYPE = 'multipart/form-data';
 
   static PAGE_LIMIT = 2;
+
+  static PAGE_LIMIT_BIG = 5;
   
   constructor( apiToken = null, contentType = 'application/json' ) {
     this.apiToken = apiToken;

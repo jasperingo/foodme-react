@@ -10,14 +10,14 @@ export default function ScrollList({ data, hasMore, nextPage, refreshPage, class
       dataLength={data.length}
       next={nextPage}
       hasMore={hasMore}
-      pullDownToRefresh={true}
+      pullDownToRefresh={refreshPage !== undefined}
       pullDownToRefreshContent={<RefreshPull />}
       releaseToRefreshContent={<RefreshRelease />}
       pullDownToRefreshThreshold={50}
       refreshFunction={refreshPage}
       >
       <ul className={className}>
-        { data.map(item=> renderDataItem(item)) }
+        { data.map((item, i)=> renderDataItem(item, i)) }
         { footer }
       </ul>
     </InfiniteScroll>

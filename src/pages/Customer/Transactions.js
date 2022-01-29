@@ -7,7 +7,7 @@ import ScrollList from '../../components/list/ScrollList';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import TransactionItem from '../../components/list_item/TransactionItem';
-import { useTransactionList } from '../../hooks/transaction/customerTransactionListHook';
+import { useCustomerTransactionList } from '../../hooks/transaction/customerTransactionListHook';
 import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 
 
@@ -20,7 +20,7 @@ export default function Transactions() {
     transactionsNumberOfPages, 
     refetch,
     refresh
-  ] = useTransactionList();
+  ] = useCustomerTransactionList();
 
   return (
     <section>
@@ -37,10 +37,10 @@ export default function Transactions() {
           )}
           footer={useRenderListFooter(
             transactionsFetchStatus,
-            ()=> <li key="addresses-footer"> <Loading /> </li>, 
-            ()=> <li key="addresses-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="addresses-footer" className="col-span-2"> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>,
-            ()=> <li key="addresses-footer"> <FetchMoreButton action={refetch} /> </li>
+            ()=> <li key="transactions-footer"> <Loading /> </li>, 
+            ()=> <li key="transactions-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="transactions-footer" className="col-span-2"> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>,
+            ()=> <li key="transactions-footer"> <FetchMoreButton action={refetch} /> </li>
           )}
           />
 

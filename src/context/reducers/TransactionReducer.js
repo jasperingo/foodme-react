@@ -23,8 +23,8 @@ export default function TransactionReducer (state, action) {
     case TRANSACTION.LIST_FETCHED :
       return {
         ...state,
-        transactionsFetchStatus: action.payload.fetchStatus,
         transactionsPage: state.transactionsPage+1,
+        transactionsFetchStatus: action.payload.fetchStatus,
         transactionsNumberOfPages: action.payload.numberOfPages,
         transactions: [...state.transactions, ...action.payload.list],
       };
