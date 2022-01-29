@@ -7,6 +7,7 @@ export const FETCH_STATUSES = {
   MORE: 'MORE',
   NOT_FOUND: 'NOT_FOUND',
   FORBIDDEN: 'FORBIDDEN',
+  UNAUTHORIZED: 'UNAUTHORIZED',
   DONE: 'DONE'
 };
 
@@ -15,6 +16,8 @@ export default class Fetch {
   static API_URL = 'https://shoppa-app-api.herokuapp.com/api/';
 
   static FILE_CONTENT_TYPE = 'multipart/form-data';
+
+  static PAGE_LIMIT = 2;
   
   constructor( apiToken = null, contentType = 'application/json' ) {
     this.apiToken = apiToken;

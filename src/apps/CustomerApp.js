@@ -22,17 +22,18 @@ import AccountMenu from '../pages/Customer/AccountMenu';
 // import ForgotPassword from '../pages/ForgotPassword';
 // import ResetPassword from '../pages/ResetPassword';
 // import Category from '../pages/Category';
-// import Transaction from '../pages/Transaction';
 import Profile from '../pages/Customer/Profile';
-// import Addresses from '../pages/Customer/Addresses';
-// import AddressUpdate from '../pages/Customer/AddressUpdate';
+import Addresses from '../pages/Customer/Addresses';
+import AddressAdd from '../pages/Customer/AddressAdd';
+import AddressUpdate from '../pages/Customer/AddressUpdate';
 // import Favorites from '../pages/Customer/Favorites';
 // import SavedCarts from '../pages/Customer/SavedCarts';
 // import Order from '../pages/Order';
 // import Orders from '../pages/Customer/Orders';
-// import Transactions from '../pages/Customer/Transactions';
-// import AddressAdd from '../pages/AddressAdd';
+import Transactions from '../pages/Customer/Transactions';
+import Transaction from '../pages/Customer/Transaction';
 import PasswordUpdate from '../pages/Customer/PasswordUpdate';
+import WithdrawalAccountUpdate from '../pages/Customer/WithdrawalAccountUpdate';
 
 import { useCartCounter } from '../context/AppHooks';
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
@@ -92,14 +93,10 @@ export default function CustomerApp() {
       <main className="pb-52">
         <Switch>
           {/* <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
-          <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
           <Route path="/favorites" render={()=> authMiddleware() || <Favorites />} />
-          <Route path="/address/add" render={()=> authMiddleware() || <AddressAdd />} />
-          <Route path="/address/:ID" render={()=> authMiddleware() || <AddressUpdate />} />
-          <Route path="/addresses" render={()=> authMiddleware() || <Addresses />} />
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/store/:sID/promotion/:pID" render={()=> <Promotion />} />
           <Route path="/product/:pID" render={()=> <Product />} />
@@ -108,8 +105,14 @@ export default function CustomerApp() {
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} /> */}
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
+          <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
+          <Route path="/address/add" render={()=> authMiddleware() || <AddressAdd />} />
+          <Route path="/address/:ID" render={()=> authMiddleware() || <AddressUpdate />} />
+          <Route path="/addresses" render={()=> authMiddleware() || <Addresses />} />
+          <Route path="/settings/withdrawal-account" render={()=> authMiddleware() || <WithdrawalAccountUpdate />} />
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
@@ -127,7 +130,4 @@ export default function CustomerApp() {
     </>
   );
 }
-
-
-CustomerApp.TYPE = 'customer';
 

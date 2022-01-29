@@ -1,19 +1,29 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Forbidden from '../components/Forbidden';
-import Loading from '../components/Loading';
-import NotFound from '../components/NotFound';
-import ProfileDetailsText from '../components/ProfileDetailsText';
-import ProfileHeaderText from '../components/ProfileHeaderText';
-import Reload from '../components/Reload';
-import UserDescList from '../components/UserDescList';
-import { useTransactionFetch } from '../hooks/transaction/transactionFetchHook';
-import { useTransactionStatus, useTransactionType } from '../hooks/transaction/transactionViewHook';
-import { useDateFormat, useMoneyFormat, useRenderOnDataFetched } from '../hooks/viewHook';
+import { useTransactionStatus, useTransactionType } from '../../hooks/transaction/transactionViewHook';
+import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
+import ProfileDetailsText from './ProfileDetailsText';
+import ProfileHeaderText from './ProfileHeaderText';
+import UserDescList from '../UserDescList';
 
-
-function Profile({ transaction: { id, application, reference, status, type, amount, created_at, user, order } }) {
+export default function TransactionProfile(
+  { 
+    canCancel, 
+    canProcessAndDecline, 
+    transaction: { 
+      id, 
+      application, 
+      reference, 
+      status, 
+      type, 
+      amount, 
+      created_at, 
+      user, 
+      order 
+    } 
+  }
+) {
 
   const { t } = useTranslation();
 
@@ -31,28 +41,37 @@ function Profile({ transaction: { id, application, reference, status, type, amou
     console.log('Decline...')
   }
 
+  const btns = [];
+
+  if (canCancel) {
+    btns.push({
+      text: '_extra.Cancel',
+      color: 'btn-color-red',
+      action: onCancelClicked
+    });
+  }
+
+  if (canProcessAndDecline) {
+    btns.push(
+      {
+        text: '_extra.Process',
+        color: 'btn-color-primary',
+        action: onProcessClicked
+      },
+      {
+        text: '_extra.Decline',
+        color: 'btn-color-red',
+        action: onDeclineClicked
+      }
+    )
+  }
+
   return (
     <div>
 
       <ProfileHeaderText
         text={useMoneyFormat(amount)}
-        buttons={[
-          {
-            text: '_extra.Process',
-            color: 'btn-color-primary',
-            action: onProcessClicked
-          },
-          {
-            text: '_extra.Cancel',
-            color: 'btn-color-red',
-            action: onCancelClicked
-          },
-          {
-            text: '_extra.Decline',
-            color: 'btn-color-red',
-            action: onDeclineClicked
-          }
-        ]}
+        buttons={btns}
         />
 
       <ProfileDetailsText
@@ -104,31 +123,5 @@ function Profile({ transaction: { id, application, reference, status, type, amou
         ]} 
         />
     </div>
-  );
-}
-
-export default function Transaction() {
-
-  const [
-    transaction, 
-    transactionFetchStatus, 
-    refetch
-  ] = useTransactionFetch();
-
-  return (
-    <section>
-      <div className="container-x">
-        {
-          useRenderOnDataFetched(
-            transactionFetchStatus,
-            ()=> <Profile transaction={transaction} />,
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
-          )
-        }
-      </div>
-    </section>
   );
 }

@@ -13,7 +13,7 @@ function Button({ text, color, action }) {
 
 export default function ProfileHeaderText({ text, buttons=[] }) {
   return (
-    <div className="my-4 md:flex md:items-center">
+    <div className="my-4 flex items-center flex-wrap gap-2">
       <h3 className="flex-grow font-bold text-3xl">{ text }</h3> 
       <ul className="flex flex-wrap gap-2 mt-2">
         {

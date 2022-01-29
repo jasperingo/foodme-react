@@ -1,63 +1,45 @@
 
-import React, { useEffect } from 'react';
-import AddressApi from '../../api/AddressApi';
-import CustomerApp from '../../apps/CustomerApp';
+import React from 'react';
 import { locationIcon } from '../../assets/icons';
 import AddButton from '../../components/AddButton';
-import AddressItem from '../../components/AddressItem';
+import AddressItem from '../../components/list_item/AddressItem';
 import EmptyList from '../../components/EmptyList';
+import SingleList from '../../components/list/SingleList';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import { FETCH_STATUSES, getAddressesListFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useListRender } from '../../context/AppHooks';
+import { useAddressList } from '../../hooks/address/addressListHook';
+import { useRenderListFooter } from '../../hooks/viewHook';
 
 export default function Addresses() {
 
-  const { 
-    user: { user },
-    addresses: {
-      addresses: {
-        addresses,
-        addressesFetchStatus,
-      }
-    }, 
-    addressesDispatch 
-  } = useAppContext();
-
-  useEffect(()=> {
-
-    if (addressesFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new AddressApi(user.api_token);
-      api.getListByCustomer(user.id, addressesDispatch);
-    }
-
-  });
-
-  function refetchAddresses() {
-    if (addressesFetchStatus !== FETCH_STATUSES.LOADING) 
-      addressesDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    addresses,
+    addressesFetchStatus,
+    refetch,
+    refresh
+  ] = useAddressList();
 
   return (
-    <section className="flex-grow">
+    <section>
       
       <div className="container-x">
 
         <AddButton text="_user.Add_address" href="/address/add" />
-        
-        <ul className="list-2-x">
-          { 
-            useListRender(
-              addresses, 
-              addressesFetchStatus,
-              (item, i)=> <AddressItem key={`addresses-${i}`} address={item} appType={CustomerApp.TYPE} />,
-              (k)=> <li key={k}> <Loading /> </li>, 
-              (k)=> <li key={k}> <Reload action={refetchAddresses} /> </li>,
-              (k)=> <li key={k} className="col-span-2"> <EmptyList text="_empty.No_address" icon={locationIcon} /> </li> 
-            )
-          }
-        </ul>
+
+        <SingleList
+          data={addresses}
+          className="list-2-x"
+          refreshPage={refresh}
+          renderDataItem={(item)=> (
+            <AddressItem key={`addresses-${item.id}`} address={item} canEdit={true} />
+          )}
+          footer={useRenderListFooter(
+            addressesFetchStatus,
+            ()=> <li key="addresses-footer"> <Loading /> </li>, 
+            ()=> <li key="addresses-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="addresses-footer" className="col-span-2"> <EmptyList text="_empty.No_address" icon={locationIcon} /> </li>
+          )}
+          />
 
       </div>
 

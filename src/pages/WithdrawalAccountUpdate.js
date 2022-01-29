@@ -1,6 +1,6 @@
 
 import React from 'react';
-import UpdateWithdrawalAccountForm from '../components/WithdrawalAccountUpdateForm';
+import UpdateWithdrawalAccountForm from '../components/form/WithdrawalAccountUpdateForm';
 import { useAppContext } from '../context/AppContext';
 
 export default function WithdrawalAccountUpdate() {
