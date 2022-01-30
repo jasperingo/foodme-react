@@ -15,7 +15,7 @@ import AccountMenu from '../pages/Customer/AccountMenu';
 import Category from '../pages/Category';
 import Categories from '../pages/Customer/Categories';
 // import Search from '../pages/Customer/Search';
-// import Store from '../pages/Store';
+import Store from '../pages/Store';
 // import Product from '../pages/Customer/Product';
 // import Messages from '../pages/Customer/Messages';
 // import Promotion from '../pages/Customer/Promotion';
@@ -98,7 +98,6 @@ export default function CustomerApp() {
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/store/:sID/promotion/:pID" render={()=> <Promotion />} />
           <Route path="/product/:pID" render={()=> <Product />} />
-          <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
@@ -121,6 +120,7 @@ export default function CustomerApp() {
           {/* <Route path="/search" render={()=> <Search />} /> 
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/cart" render={()=> <Cart />} /> */}
+          <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/category/:ID" render={()=> <Category />} /> 
           <Route path="/categories" render={()=> <Categories />} />
           <Route path="/" render={()=> <Home />} />

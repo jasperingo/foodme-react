@@ -6,6 +6,7 @@ import CategoryReducer from "../context/reducers/CategoryReducer";
 import CustomerReducer from "../context/reducers/CustomerReducer";
 import HomeReducer from "../context/reducers/HomeReducer";
 import OrderReducer from "../context/reducers/OrderReducer";
+import StoreReducer from "../context/reducers/StoreReducer";
 import TransactionReducer from "../context/reducers/TransactionReducer";
 import addressState from "../context/states/addressState";
 import bankState from "../context/states/bankState";
@@ -13,6 +14,7 @@ import categoryState from "../context/states/categoryState";
 import customerState from "../context/states/customerState";
 import homeState from "../context/states/homeState";
 import orderState from "../context/states/orderState";
+import storeState from "../context/states/storeState";
 import transactionState from "../context/states/transactionState";
 
 
@@ -31,6 +33,8 @@ export function useAppContextValues() {
   const [transaction, transactionDispatch] = useReducer(TransactionReducer, transactionState);
 
   const [order, orderDispatch] = useReducer(OrderReducer, orderState);
+
+  const [store, storeDispatch] = useReducer(StoreReducer, storeState);
 
 
   return {
@@ -69,6 +73,13 @@ export function useAppContextValues() {
       order, 
       orderDispatch
     },
+
+    store: {
+      store, 
+      storeDispatch
+    },
+
+    
 
   }
 }

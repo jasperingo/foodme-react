@@ -49,8 +49,11 @@ export function useCustomerTransactionList() {
   useEffect(
     ()=> {
       if (transactionsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+
         transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR));
+
       } else if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
+        
         const api = new CustomerRepository(customerToken);
         api.getTransactionsList(customer.id, transactionsPage)
         .then(res=> {
