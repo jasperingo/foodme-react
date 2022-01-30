@@ -38,9 +38,16 @@ export function useAddressFetch() {
   useEffect(
     ()=> {
 
-      if (addressFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (address !== null && address.id !== Number(ID)) {
+        
+        addressDispatch({ type: ADDRESS.UNFETCHED });
+
+    } else if (addressFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+
         addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.ERROR));
+
       } else if (addressFetchStatus === FETCH_STATUSES.LOADING) {
+
         const api = new AddressRepository(customerToken);
         api.get(ID)
         .then(res=> {
@@ -66,14 +73,6 @@ export function useAddressFetch() {
         });
       }
     }
-  );
-
-  useEffect(
-    ()=> {
-      if (address !== null && address.id === Number(ID)) return;
-      addressDispatch({ type: ADDRESS.UNFETCHED });
-    },
-    [ID, address, addressDispatch]
   );
 
   return [address, addressFetchStatus, refetch];

@@ -32,12 +32,20 @@ export function useCategoryFetch() {
   
   useEffect(
     ()=> {
-      
-      if (categoryFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (category !== null && category.id !== Number(ID)) {
+
+        categoryDispatch({ type: CATEGORY.UNFETCHED });
+
+      } else if (categoryFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+
         categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR));
+
       } else if (categoryFetchStatus === FETCH_STATUSES.LOADING) {
+
         const theCategory = products.concat(stores).find(c=> c.id === Number(ID));
+
         if (theCategory !== undefined) {
+
           categoryDispatch({
             type: CATEGORY.FETCHED, 
             payload: {
@@ -45,7 +53,9 @@ export function useCategoryFetch() {
               fetchStatus: FETCH_STATUSES.DONE 
             }
           });
+
         } else {
+
           const api = new CategoryRepository();
           api.get(ID)
           .then(res=> {
@@ -70,14 +80,6 @@ export function useCategoryFetch() {
         }
       }
     }
-  );
-
-  useEffect(
-    ()=> {
-      if (category !== null && category.id === Number(ID)) return;
-      categoryDispatch({ type: CATEGORY.UNFETCHED });
-    },
-    [ID, category, categoryDispatch]
   );
 
   return [category, categoryFetchStatus, refetch];

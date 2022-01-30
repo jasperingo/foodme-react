@@ -38,9 +38,16 @@ export function useTransactionFetch() {
   useEffect(
     ()=> {
 
-      if (transactionFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (transaction !== null && transaction.id !== Number(ID)) {
+        
+        transactionDispatch({ type: TRANSACTION.UNFETCHED });
+
+      } else if (transactionFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+
         transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR));
+
       } else if (transactionFetchStatus === FETCH_STATUSES.LOADING) {
+
         const api = new TransactionRepository(customerToken);
         api.get(ID)
         .then(res=> {
@@ -66,14 +73,6 @@ export function useTransactionFetch() {
         });
       }
     }
-  );
-
-  useEffect(
-    ()=> {
-      if (transaction !== null && transaction.id === Number(ID)) return;
-      transactionDispatch({ type: TRANSACTION.UNFETCHED });
-    },
-    [ID, transaction, transactionDispatch]
   );
 
   return [transaction, transactionFetchStatus, refetch];

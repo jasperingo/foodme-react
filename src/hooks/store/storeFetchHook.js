@@ -6,12 +6,6 @@ import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 
-
-
-// function shouldUnfetch(status) {
-//   return status === FETCH_STATUSES.NOT_FOUND || status === FETCH_STATUSES.FORBIDDEN || status === FETCH_STATUSES.ERROR;
-// }
-
 export function useStoreFetch() {
 
   const { ID } = useParams();
@@ -44,7 +38,7 @@ export function useStoreFetch() {
   useEffect(
     ()=> {
 
-      if ((store !== null && store.id !== Number(ID))) {
+      if (store !== null && store.id !== Number(ID)) {
         
         storeDispatch({ type: STORE.UNFETCHED });
 
@@ -80,14 +74,6 @@ export function useStoreFetch() {
       }
     }
   );
-
-  // useEffect(
-  //   ()=> {
-  //     if (store !== null && store.id === Number(ID)) return;
-  //       storeDispatch({ type: STORE.UNFETCHED });
-  //   },
-  //   [ID, store, storeDispatch]
-  // );
 
   return [store, storeFetchStatus, refetch];
 }

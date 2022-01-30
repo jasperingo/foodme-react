@@ -38,9 +38,16 @@ export function useOrderFetch() {
   useEffect(
     ()=> {
 
-      if (orderFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (order !== null && order.id !== Number(ID)) {
+
+        orderDispatch({ type: ORDER.UNFETCHED });
+
+      } else if (orderFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+
         orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR));
+
       } else if (orderFetchStatus === FETCH_STATUSES.LOADING) {
+
         const api = new OrderRepository(customerToken);
         api.get(ID)
         .then(res=> {
@@ -67,15 +74,7 @@ export function useOrderFetch() {
       }
     }
   );
-
-  useEffect(
-    ()=> {
-      if (order !== null && order.id === Number(ID)) return;
-        orderDispatch({ type: ORDER.UNFETCHED });
-    },
-    [ID, order, orderDispatch]
-  );
-
+  
   return [order, orderFetchStatus, refetch];
 }
 
