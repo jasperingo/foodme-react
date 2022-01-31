@@ -6,6 +6,9 @@ import CategoryReducer from "../context/reducers/CategoryReducer";
 import CustomerReducer from "../context/reducers/CustomerReducer";
 import HomeReducer from "../context/reducers/HomeReducer";
 import OrderReducer from "../context/reducers/OrderReducer";
+import ProductReducer from "../context/reducers/ProductReducer";
+import SavedCartReducer from "../context/reducers/SavedCartReducer";
+import SearchReducer from "../context/reducers/SearchReducer";
 import StoreReducer from "../context/reducers/StoreReducer";
 import TransactionReducer from "../context/reducers/TransactionReducer";
 import addressState from "../context/states/addressState";
@@ -14,6 +17,9 @@ import categoryState from "../context/states/categoryState";
 import customerState from "../context/states/customerState";
 import homeState from "../context/states/homeState";
 import orderState from "../context/states/orderState";
+import productState from "../context/states/productState";
+import savedCartState from "../context/states/savedCartState";
+import searchState from "../context/states/searchState";
 import storeState from "../context/states/storeState";
 import transactionState from "../context/states/transactionState";
 
@@ -23,6 +29,8 @@ export function useAppContextValues() {
   const [customer, customerDispatch] = useReducer(CustomerReducer, customerState);
 
   const [home, homeDispatch] = useReducer(HomeReducer, homeState);
+
+  const [search, searchDispatch] = useReducer(SearchReducer, searchState);
 
   const [category, categoryDispatch] = useReducer(CategoryReducer, categoryState);
   
@@ -35,6 +43,10 @@ export function useAppContextValues() {
   const [order, orderDispatch] = useReducer(OrderReducer, orderState);
 
   const [store, storeDispatch] = useReducer(StoreReducer, storeState);
+
+  const [product, productDispatch] = useReducer(ProductReducer, productState);
+
+  const [savedCart, savedCartDispatch] = useReducer(SavedCartReducer, savedCartState);
 
 
   return {
@@ -52,6 +64,11 @@ export function useAppContextValues() {
     home: {
       home, 
       homeDispatch
+    },
+
+    search: {
+      search, 
+      searchDispatch
     },
 
     bank: {
@@ -79,7 +96,15 @@ export function useAppContextValues() {
       storeDispatch
     },
 
-    
+    product: {
+      product, 
+      productDispatch
+    },
+
+    savedCart: {
+      savedCart, 
+      savedCartDispatch
+    },
 
   }
 }

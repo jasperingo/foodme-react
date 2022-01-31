@@ -1,5 +1,10 @@
 import moment from 'moment';
+import { useLocation } from 'react-router-dom';
 import { FETCH_STATUSES } from "../repositories/Fetch";
+
+export function useURLQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
 export function useMoneyFormat(amount) {
   return <>&#8358; {amount.toFixed(2)}</>;
@@ -21,7 +26,7 @@ export function useDateFormat(date, type) {
 }
 
 export function useHasMoreToFetchViaScroll(page, numberOfPages, status, scrollCount=5) {
-  return page % scrollCount !== 0 && page < numberOfPages && status !== FETCH_STATUSES.ERROR;
+  return page % scrollCount !== 0 && page <= numberOfPages && status !== FETCH_STATUSES.ERROR;
 }
 
 export function useUpdateListFetchStatus() {

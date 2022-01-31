@@ -6,11 +6,23 @@ import Loading from '../../components/Loading';
 import OrderItem from '../../components/list_item/OrderItem';
 import Reload from '../../components/Reload';
 import { orderIcon } from '../../assets/icons';
-import { useCustomerOrderList } from '../../hooks/order/customerOrderListHook';
+import { useOrderList } from '../../hooks/order/orderListHook';
 import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 import ScrollList from '../../components/list/ScrollList';
+import { useAppContext } from '../../hooks/contextHook';
 
 export default function Orders() {
+
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customer,
+          customerToken
+        }
+      } 
+    } 
+  } = useAppContext();
 
   const [
     orders, 
@@ -19,8 +31,8 @@ export default function Orders() {
     ordersNumberOfPages, 
     refetch,
     refresh
-  ] = useCustomerOrderList();
-
+  ] = useOrderList(customer.id, customerToken);
+  
   return (
     <section>
       <div className="container-x">

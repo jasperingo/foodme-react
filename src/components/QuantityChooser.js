@@ -16,9 +16,9 @@ function QuantityChangeButton({ text, icon, negative, onButtonClicked }) {
   );
 }
 
-export default function QuantityChooser({ quantity, unit, onQuantityChanged }) {
+export default function QuantityChooser({ quantity, onQuantityChanged }) {
   return (
-    <div className="flex gap-2 items-center flex-grow">
+    <div className="flex gap-2 items-center">
       <QuantityChangeButton
         negative={true}
         icon={minusIcon} 
@@ -32,7 +32,6 @@ export default function QuantityChooser({ quantity, unit, onQuantityChanged }) {
         text="_product.Increase_quantity"  
         onButtonClicked={onQuantityChanged}
         />
-      <div>{ unit }</div>
     </div>
   );
 }

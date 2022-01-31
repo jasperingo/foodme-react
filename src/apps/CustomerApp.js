@@ -7,18 +7,17 @@ import Splash from '../pages/Splash';
 import Home from '../pages/Customer/Home';
 import LogIn from '../pages/Customer/LogIn';
 import Register from '../pages/Customer/Register';
-// import Cart from '../pages/Customer/Cart';
+import Cart from '../pages/Customer/Cart';
 import AccountMenu from '../pages/Customer/AccountMenu';
 // import AboutUs from '../pages/AboutUs';
 // import ContactUs from '../pages/ContactUs';
 // import TermsOfService from '../pages/TermsOfService';
 import Category from '../pages/Category';
-import Categories from '../pages/Customer/Categories';
-// import Search from '../pages/Customer/Search';
-import Store from '../pages/Store';
-// import Product from '../pages/Customer/Product';
-// import Messages from '../pages/Customer/Messages';
-// import Promotion from '../pages/Customer/Promotion';
+import Categories from '../pages/Categories';
+import Search from '../pages/Customer/Search';
+import Store from '../pages/Customer/Store';
+import Product from '../pages/Customer/Product';
+import Messages from '../pages/Customer/Messages';
 // import PrivacyPolicy from '../pages/PrivacyPolicy';
 // import ForgotPassword from '../pages/ForgotPassword';
 // import ResetPassword from '../pages/ResetPassword';
@@ -26,9 +25,9 @@ import Profile from '../pages/Customer/Profile';
 import Addresses from '../pages/Customer/Addresses';
 import AddressAdd from '../pages/Customer/AddressAdd';
 import AddressUpdate from '../pages/Customer/AddressUpdate';
-// import Favorites from '../pages/Customer/Favorites';
-// import SavedCarts from '../pages/Customer/SavedCarts';
-import Order from '../pages/Order';
+import Favorites from '../pages/Customer/Favorites';
+import SavedCarts from '../pages/Customer/SavedCarts';
+import Order from '../pages/Customer/Order';
 import Orders from '../pages/Customer/Orders';
 import Transactions from '../pages/Customer/Transactions';
 import Transaction from '../pages/Customer/Transaction';
@@ -40,6 +39,8 @@ import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } f
 import { useAuthCustomerFetch } from '../hooks/customerHook';
 import { FETCH_STATUSES } from '../repositories/Fetch';
 import { useAppContext } from '../hooks/contextHook';
+import ProductReviews from '../pages/Customer/ProductReviews';
+import Discount from '../pages/Customer/Discount';
 
 
 const HEADER_NAV_LINKS = [
@@ -93,11 +94,6 @@ export default function CustomerApp() {
       <main className="pb-52">
         <Switch>
           {/*
-          <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
-          <Route path="/favorites" render={()=> authMiddleware() || <Favorites />} />
-          <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
-          <Route path="/store/:sID/promotion/:pID" render={()=> <Promotion />} />
-          <Route path="/product/:pID" render={()=> <Product />} />
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
@@ -108,20 +104,25 @@ export default function CustomerApp() {
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
+          <Route path="/favorites" render={()=> authMiddleware() || <Favorites />} />
           <Route path="/address/add" render={()=> authMiddleware() || <AddressAdd />} />
           <Route path="/address/:ID" render={()=> authMiddleware() || <AddressUpdate />} />
           <Route path="/addresses" render={()=> authMiddleware() || <Addresses />} />
           <Route path="/settings/withdrawal-account" render={()=> authMiddleware() || <WithdrawalAccountUpdate />} />
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
           <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
-          <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
-          {/* <Route path="/search" render={()=> <Search />} /> 
-          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
-          <Route path="/cart" render={()=> <Cart />} /> */}
+          <Route path="/cart" render={()=> <Cart />} />
+          <Route path="/search" render={()=> <Search />} /> 
+          <Route path="/discount/:ID" render={()=> <Discount />} />
+          <Route path="/product/:ID/reviews" render={()=> <ProductReviews />} />
+          <Route path="/product/:ID" render={()=> <Product />} />
           <Route path="/store/:ID" render={()=> <Store />} />
-          <Route path="/category/:ID" render={()=> <Category />} /> 
+          <Route path="/category/:ID" render={()=> <Category isAdmin={false} />} /> 
           <Route path="/categories" render={()=> <Categories />} />
           <Route path="/" render={()=> <Home />} />
         </Switch>

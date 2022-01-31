@@ -1,4 +1,6 @@
+import { DISCOUNT } from "../actions/discountActions";
 import { PRODUCT } from "../actions/productActions";
+import { REVIEW } from "../actions/reviewActions";
 import { STORE } from "../actions/storeActions";
 import storeState from "../states/storeState";
 
@@ -9,21 +11,25 @@ export default function StoreReducer (state, action) {
 
     case STORE.UNFETCHED: 
       return {
-        ...state,
-        store: storeState.store,
-        storeFetchStatus: storeState.storeFetchStatus
+        ...storeState,
+        stores: state.stores,
+        storesPage: state.storesPage,
+        storesNumberOfPages: state.storesNumberOfPages,
+        storesFetchStatus: state.storesPage
       };
     
     case STORE.FETCH_STATUS_CHANGED:
       return {
         ...state,
-        storeFetchStatus: action.payload
+        storeID: action.payload.id,
+        storeFetchStatus: action.payload.fetchStatus
       };
     
     case STORE.FETCHED:
       return {
         ...state,
         store: action.payload.store, 
+        storeID: action.payload.store.id,
         storeFetchStatus: action.payload.fetchStatus
       };
 
@@ -72,63 +78,36 @@ export default function StoreReducer (state, action) {
       };
     
 
-    // case REVIEW.LIST_FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     reviews: {
-    //       ...state.reviews,
-    //       reviewsFetchStatus: action.payload
-    //     }
-    //   };
+    case REVIEW.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        reviewsFetchStatus: action.payload
+      };
 
-    // case REVIEW.LIST_FETCHED:
-    //   let status2 = fetchUpdater(
-    //     state.reviews.reviewsPage,
-    //     action.payload.reviewsNumberOfPages,
-    //     state.reviews.reviews.length,
-    //     action.payload.reviews.length
-    //   );
-        
-    //   const rev = state.reviews.reviews.filter(i=> i !== null);
+    case REVIEW.LIST_FETCHED:
+      return {
+        ...state,
+        reviewsPage: state.reviewsPage+1,
+        reviewsFetchStatus: action.payload.fetchStatus,
+        reviewsNumberOfPages: action.payload.numberOfPages,
+        reviews: [...state.reviews, ...action.payload.list],
+      };
+      
 
-    //   return {
-    //     ...state,
-    //     reviews: {
-    //       reviewsFetchStatus: status2,
-    //       reviewsPage: state.reviews.reviewsPage+1,
-    //       reviewsNumberOfPages: action.payload.reviewsNumberOfPages,
-    //       reviews: [...rev, ...action.payload.reviews, null],
-    //     }
-    //   }; 
+    case DISCOUNT.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        discountsFetchStatus: action.payload
+      };
 
-    // case PROMOTION.LIST_FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     promotions: {
-    //       ...state.promotions,
-    //       promotionsFetchStatus: action.payload
-    //     }
-    //   };
-
-    // case PROMOTION.LIST_FETCHED:
-    //   let status3 = fetchUpdater(
-    //     state.promotions.promotionsPage,
-    //     action.payload.promotionsNumberOfPages,
-    //     state.promotions.promotions.length,
-    //     action.payload.promotions.length
-    //   );
-        
-    //   const prom = state.promotions.promotions.filter(i=> i !== null);
-
-    //   return {
-    //     ...state,
-    //     promotions: {
-    //       promotionsFetchStatus: status3,
-    //       promotionsPage: state.promotions.promotionsPage+1,
-    //       promotionsNumberOfPages: action.payload.promotionsNumberOfPages,
-    //       promotions: [...prom, ...action.payload.promotions, null],
-    //     }
-    //   }; 
+    case DISCOUNT.LIST_FETCHED:
+      return {
+        ...state,
+        discountsPage: state.discountsPage+1,
+        discountsFetchStatus: action.payload.fetchStatus,
+        discountsNumberOfPages: action.payload.numberOfPages,
+        discounts: [...state.discounts, ...action.payload.list],
+      };
     
     // case ORDER.LIST_FETCH_STATUS_CHANGED :
     //   return {

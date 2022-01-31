@@ -6,6 +6,7 @@ const addressState = {
   addressesFetchStatus: FETCH_STATUSES.LOADING,
   
   address: null,
+  addressID: null,
   addressFetchStatus: FETCH_STATUSES.LOADING,
 
   locations: [],

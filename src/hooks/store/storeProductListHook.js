@@ -7,7 +7,7 @@ import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
 
-export function useStoreProductList() {
+export function useStoreProductList(userToken) {
 
   const { 
     store: { 
@@ -19,14 +19,7 @@ export function useStoreProductList() {
         productsPage,
         productsNumberOfPages,
       } 
-    },
-    customer: {
-      customer: {
-        customer: {
-          customerToken
-        }
-      } 
-    } 
+    }
   } = useAppContext();
 
   const listStatusUpdater = useUpdateListFetchStatus();
@@ -47,7 +40,7 @@ export function useStoreProductList() {
 
       } else if (productsFetchStatus === FETCH_STATUSES.LOADING) {
         
-        const api = new StoreRepository(customerToken);
+        const api = new StoreRepository(userToken);
         api.getProductsList(store.id, productsPage)
         .then(res=> {
           
@@ -78,7 +71,7 @@ export function useStoreProductList() {
         });
       }
     },
-    [store.id, products, productsPage, productsFetchStatus, customerToken, storeDispatch, listStatusUpdater]
+    [store.id, products, productsPage, productsFetchStatus, userToken, storeDispatch, listStatusUpdater]
   );
 
   return [products, productsFetchStatus, productsPage, productsNumberOfPages, refetch];

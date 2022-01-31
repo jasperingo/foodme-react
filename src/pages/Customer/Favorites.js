@@ -1,68 +1,64 @@
 
-import React, { useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import ProductApi from '../../api/ProductApi';
-import { productIcon } from '../../assets/icons';
+import React from 'react';
+import { favoritedIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
+import Forbidden from '../../components/Forbidden';
+import ScrollList from '../../components/list/ScrollList';
+import ProductItem from '../../components/list_item/ProductItem';
 import Loading from '../../components/Loading';
-import ProductItem from '../../components/ProductItem';
+import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
-import { FETCH_STATUSES, getProductsListFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
+import { useAppContext } from '../../hooks/contextHook';
+import { useFavoriteList } from '../../hooks/favorite/favoriteListHook';
+import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 
 
 export default function Favorites() {
 
-  const { 
-    user: { user },
-    products: {
-      products: {
-        products,
-        productsFetchStatus,
-        productsPage,
-        productsNumberOfPages
-      }
-    }, 
-    productsDispatch 
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customer,
+          customerToken
+        }
+      } 
+    } 
   } = useAppContext();
 
-  useEffect(()=> {
-    if (productsFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new ProductApi(user.api_token);
-      api.getListByCustomer(0, productsPage, productsDispatch);
-    }
-  });
-
-  function refetchProducts() {
-    if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-      productsDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    products, 
+    productsFetchStatus, 
+    productsPage, 
+    productsNumberOfPages, 
+    refetch,
+    refresh
+  ] = useFavoriteList(customer.id, customerToken);
 
   return (
-    <section className="flex-grow">
+    <section>
       <div className="container-x">
         
-        <InfiniteScroll 
-          dataLength={products.length}
-          next={refetchProducts}
+        <ScrollList
+          data={products}
+          nextPage={refetch}
+          refreshPage={refresh}
           hasMore={useHasMoreToFetchViaScroll(productsPage, productsNumberOfPages, productsFetchStatus)}
-          >
-          <ul className="list-x">
-            { 
-              useListRender(
-                products, 
-                productsFetchStatus,
-                (item, i)=> <li key={`prod-${i}`}> <ProductItem prod={item} /> </li>, 
-                (k)=> <li key={k}> <Loading /> </li>, 
-                (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>, 
-                (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
-              )
-            }
-          </ul>
-        </InfiniteScroll>
+          className="list-x"
+          renderDataItem={(item)=> (
+            <li key={`favorite-${item.id}`}> <ProductItem product={item.product} /> </li>
+          )}
+          footer={useRenderListFooter(
+            productsFetchStatus,
+            ()=> <li key="favorite-footer"> <Loading /> </li>, 
+            ()=> <li key="favorite-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="favorite-footer"> <EmptyList text="_empty.No_favorite" icon={favoritedIcon} /> </li>,
+            ()=> <li key="favorite-footer"> <FetchMoreButton action={refetch} /> </li>,
+            ()=> <li key="favorite-footer"> <NotFound /> </li>,
+            ()=> <li key="favorite-footer"> <Forbidden /> </li>,
+          )}
+          />
 
       </div>
     </section>

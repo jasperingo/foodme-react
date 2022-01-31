@@ -42,30 +42,23 @@ export default function AddressReducer (state, action) {
       return {
         ...state,
         address: addressState.address,
+        addressID: addressState.addressID,
         addressFetchStatus: addressState.addressFetchStatus,
       };
 
     case ADDRESS.FETCH_STATUS_CHANGED: 
       return {
         ...state,
-        addressFetchStatus: action.payload
+        addressID: action.payload.id,
+        addressFetchStatus: action.payload.fetchStatus
       };
 
     case ADDRESS.FETCHED:
       return {
         ...state,
         address: action.payload.address, 
+        addressID: action.payload.address.id, 
         addressFetchStatus: action.payload.fetchStatus
-      };
-
-    case ADDRESS.DELETED:
-      
-      const addrs = state.addresses.filter(i=>  i !== null && i.id !== action.payload);
-
-      return {
-        ...state,
-        addresses: [...addrs],
-        addressesFetchStatus: addrs.length === 0 ? action.payload.fetchStatusEmpty : state.addressesFetchStatus,
       };
     
     default:

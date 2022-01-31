@@ -4,7 +4,7 @@ import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import Icon from '@mdi/react';
 import { useHeader2Title } from '../context/AppHooks';
-import SearchForm from './SearchForm';
+import SearchForm from './form/SearchForm';
 import { backIcon } from '../assets/icons';
 
 function CartCounter({ useCounter }) {

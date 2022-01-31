@@ -6,7 +6,7 @@ import OrderRepository from "../../repositories/OrderRepository";
 import { useAppContext } from "../contextHook";
 
 
-export function useOrderFetch() {
+export function useOrderFetch(userToken) {
 
   const { ID } = useParams();
 
@@ -15,40 +15,34 @@ export function useOrderFetch() {
       orderDispatch,
       order: {
         order,
+        orderID,
         orderFetchStatus
       } 
-    },
-    customer: {
-      customer: {
-        customer: {
-          customerToken
-        }
-      } 
-    } 
+    }
   } = useAppContext();
 
   const refetch = useCallback(
     ()=> {
       if (orderFetchStatus !== FETCH_STATUSES.LOADING && orderFetchStatus !== FETCH_STATUSES.DONE)
-        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING));
+        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
     },
-    [orderFetchStatus, orderDispatch]
+    [ID, orderFetchStatus, orderDispatch]
   );
   
   useEffect(
     ()=> {
 
-      if (order !== null && order.id !== Number(ID)) {
+      if (orderID !== null && orderID !== Number(ID)) {
 
         orderDispatch({ type: ORDER.UNFETCHED });
 
       } else if (orderFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR));
+        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
 
       } else if (orderFetchStatus === FETCH_STATUSES.LOADING) {
 
-        const api = new OrderRepository(customerToken);
+        const api = new OrderRepository(userToken);
         api.get(ID)
         .then(res=> {
           
@@ -61,15 +55,15 @@ export function useOrderFetch() {
               }
             });
           } else if (res.status === 404) {
-            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.NOT_FOUND));
+            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
           } else if (res.status === 403) {
-            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.FORBIDDEN));
+            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID)));
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR));
+          orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
         });
       }
     }

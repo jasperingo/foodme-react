@@ -1,77 +1,136 @@
 
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useAppContext } from '../../context/AppContext';
-import { 
-  FETCH_STATUSES, 
-  getProductFetchStatusAction, 
-  getRelatedProductsListFetchStatusAction, 
-  PRODUCT 
-} from '../../context/AppActions';
-import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
-import StoreItem from '../../components/StoreItem';
-import Reload from '../../components/Reload';
+import React from 'react';
+import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import ProductItem from '../../components/ProductItem';
-import ProductProfile from '../../components/ProductProfile';
-import CustomerApp from '../../apps/CustomerApp';
+import NotFound from '../../components/NotFound';
+import ProductProfile from '../../components/profile/ProductProfile';
+import Reload from '../../components/Reload';
+import { useAppContext } from '../../hooks/contextHook';
+import { useProductFetch } from '../../hooks/product/productFetchHook';
+import { useHasMoreToFetchViaScroll, useRenderListFooter, useRenderOnDataFetched } from '../../hooks/viewHook';
 import H4Heading from '../../components/H4Heading';
-import ProductReviewsList from '../../components/ProductReviewsList';
-import { productIcon } from '../../assets/icons';
-import ProductApi from '../../api/ProductApi';
+import SingleList from '../../components/list/SingleList';
+import EmptyList from '../../components/EmptyList';
+import ReviewItem from '../../components/list_item/ReviewItem';
+import { reviewIcon } from '../../assets/icons';
+import { useProductReviewList } from '../../hooks/product/productReviewListHook';
+import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
+import { FETCH_STATUSES } from '../../repositories/Fetch';
+import { useProductRelatedList } from '../../hooks/product/productRelatedHook';
+import ScrollList from '../../components/list/ScrollList';
+import FetchMoreButton from '../../components/FetchMoreButton';
+import ProductItem from '../../components/list_item/ProductItem';
 
-function RelatedProductsList() {
 
-  const pID = parseInt(useParams().pID);
+function RelatedList() {
 
-  const { products: {
-    related: {
-      related,
-      relatedFetchStatus,
-      relatedPage, 
-      relatedNumberOfPages
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
     }
-  }, productsDispatch } = useAppContext();
+  } = useAppContext();
 
-  useEffect(()=> {
-    if (relatedFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new ProductApi();
-      api.getListByRelated(pID, relatedPage, productsDispatch);
-    }
-  }, [pID, relatedFetchStatus, relatedPage, productsDispatch]);
-
-  function refetchRelated() {
-    if (relatedFetchStatus !== FETCH_STATUSES.LOADING) 
-      productsDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    related, 
+    relatedFetchStatus, 
+    relatedPage, 
+    relatedNumberOfPages, 
+    refetch
+  ] = useProductRelatedList(customerToken);
 
   return (
     <div className="container-x py-4">
-      <H4Heading text="_product.Related_products" />
-      <div>
-        <InfiniteScroll
-          dataLength={related.length}
-          next={refetchRelated}
-          hasMore={useHasMoreToFetchViaScroll(relatedPage, relatedNumberOfPages, relatedFetchStatus)}
-          >
-          <ul className="py-2 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-            { 
-              useListRender(
-                related, 
-                relatedFetchStatus,
-                (item, i)=> <li key={`related-prod-${i}`} > <ProductItem prod={item} layout={ProductItem.LAYOUT_GRID} /> </li>, 
-                (k)=> <li key={k}> <Loading /> </li>, 
-                (k)=> <li key={k}> <Reload action={refetchRelated} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>, 
-                (k)=> <li key={k}> <FetchMoreButton action={refetchRelated} /> </li>,
-              )
-            }
-          </ul>
-        </InfiniteScroll>
-      </div> 
+
+      {
+        relatedFetchStatus !== FETCH_STATUSES.EMPTY && 
+        <H4Heading text="_product.Related_products" />
+      }
+
+      <ScrollList
+        data={related}
+        nextPage={refetch}
+        hasMore={useHasMoreToFetchViaScroll(relatedPage, relatedNumberOfPages, relatedFetchStatus)}
+        className="py-2 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5"
+        renderDataItem={(item)=> (
+          <li key={`product-${item.id}`}> <ProductItem product={item} layout={ProductItem.LAYOUT_GRID} /> </li>
+        )}
+        footer={useRenderListFooter(
+          relatedFetchStatus,
+          ()=> <li key="product-footer"> <Loading /> </li>, 
+          ()=> <li key="product-footer"> <Reload action={refetch} /> </li>,
+          ()=> null,
+          ()=> <li key="product-footer"> <FetchMoreButton action={refetch} /> </li>,
+          ()=> <li key="product-footer"> <NotFound /> </li>,
+          ()=> <li key="product-footer"> <Forbidden /> </li>,
+        )}
+        />
+
+    </div>
+  );
+}
+
+
+function ReviewList() {
+
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    },
+    product: {
+      product: {
+        product
+      } 
+    }
+  } = useAppContext();
+
+  const [
+    reviews, 
+    reviewsFetchStatus, 
+    , 
+    , 
+    refetch
+  ] = useProductReviewList(customerToken);
+
+  function onNewReview(rating, description) {
+    console.log(rating, description);
+  }
+
+  
+  return (
+    <div className="my-2 container-x">
+      <H4Heading text="_review.Reviews" href={`/product/${product.id}/reviews`} />
+
+      <ReviewRaterAndSummary 
+        summary={product.review_summary}
+        onReviewSubmit={onNewReview}
+        title="_review.Rate_this_product"
+        review={customerToken === null || product.reviews?.length === 0 ? null : product.reviews[0]}
+        />
+
+      <SingleList
+        data={reviews}
+        className="list-2-x"
+        renderDataItem={(item)=> (
+          <li key={`review-${item.id}`}> <ReviewItem review={item} /> </li>
+        )}
+        footer={useRenderListFooter(
+          reviewsFetchStatus,
+          ()=> <li key="review-footer"> <Loading /> </li>, 
+          ()=> <li key="review-footer"> <Reload action={refetch} /> </li>,
+          ()=> <li key="review-footer" className="col-span-2"> <EmptyList text="_empty.No_review" icon={reviewIcon} /> </li>,
+          ()=> null,
+          ()=> <li key="review-footer"> <NotFound /> </li>,
+          ()=> <li key="review-footer"> <Forbidden /> </li>,
+        )}
+        />
     </div>
   );
 }
@@ -79,57 +138,55 @@ function RelatedProductsList() {
 
 export default function Product() {
 
-  const pID = parseInt(useParams().pID);
-
-  const { products: {
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    },
     product: {
-      product,
-      productFetchStatus
+      product: {
+        reviewsFetchStatus
+      } 
     }
-  }, productsDispatch } = useAppContext();
+  } = useAppContext();
+
+  const [
+    product, 
+    productFetchStatus, 
+    refetch
+  ] = useProductFetch(customerToken);
+
   
-  useEffect(()=> {
-    if (product !== null && pID !== product.id) {
-      productsDispatch({ type: PRODUCT.UNFETCH });
-    } else if (productFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new ProductApi();
-      api.get(pID, productsDispatch);
-    }
-  }, [pID, product, productFetchStatus, productsDispatch]);
-
-  function refetchProduct() {
-    if (productFetchStatus !== FETCH_STATUSES.LOADING) 
-      productsDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
-
   return (
     <section>
+      {
+        useRenderOnDataFetched(
+          productFetchStatus,
+          ()=> <ProductProfile product={product} isCustomer={true} customerToken={customerToken} />,
+          ()=> <div className="container-x"> <Loading /> </div>,
+          ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
+          ()=> <div className="container-x"> <NotFound /> </div>,
+          ()=> <div className="container-x"> <Forbidden /> </div>,
+        )
+      }
 
-      <div className="md:container mx-auto">
+      { 
+        product && 
+        <ReviewList />
+      }
 
-        <ProductProfile 
-          product={product} 
-          productFetchStatus={productFetchStatus} 
-          appType={CustomerApp.TYPE} 
-          refetchProduct={refetchProduct} 
-          />
-
-        <div className="md:flex md:items-start md:gap-4 md:py-4">
-          { 
-            product && 
-            <div className="container-x md:w-1/6">
-              <H4Heading text="_store.Store" />
-              <StoreItem store={ product.store } />   
-            </div>
-          }
-
-          { product && <ProductReviewsList pID={pID} appType={CustomerApp.TYPE} /> }
-        </div>
-
-        { product && <RelatedProductsList /> }
-
-      </div>
-
+      { 
+        product && 
+        (
+          reviewsFetchStatus === FETCH_STATUSES.DONE || 
+          reviewsFetchStatus === FETCH_STATUSES.MORE || 
+          reviewsFetchStatus === FETCH_STATUSES.EMPTY
+        ) &&
+        <RelatedList /> 
+      }
     </section>
   );
 }

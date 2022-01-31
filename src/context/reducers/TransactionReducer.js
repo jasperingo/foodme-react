@@ -33,19 +33,22 @@ export default function TransactionReducer (state, action) {
       return {
         ...state,
         transaction: transactionState.transaction,
+        transactionID: transactionState.transactionID,
         transactionFetchStatus: transactionState.transactionFetchStatus
       };
     
     case TRANSACTION.FETCH_STATUS_CHANGED :
       return {
         ...state,
-        transactionFetchStatus: action.payload
+        transactionID: action.payload.id,
+        transactionFetchStatus: action.payload.fetchStatus
       };
     
     case TRANSACTION.FETCHED :
       return {
         ...state,
         transaction: action.payload.transaction, 
+        transactionID: action.payload.transaction.id, 
         transactionFetchStatus: action.payload.fetchStatus,
       };
 

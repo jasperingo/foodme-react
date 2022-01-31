@@ -1,7 +1,7 @@
 
 import Icon from '@mdi/react';
 import React from 'react';
-import { reviewIcon } from '../assets/icons';
+import { reviewIcon } from '../../assets/icons';
 
 export default function ReviewStars({ ratings }) {
   
@@ -14,10 +14,6 @@ export default function ReviewStars({ ratings }) {
       stars.push(<Icon path={reviewIcon} key={i} className="w-4 h-4 text-gray-500" />);
   }
 
-  return (
-    <div className="flex flex-grow">
-      { stars }
-    </div>
-  );
+  return <div className="flex flex-grow">{ stars }</div>;
 }
 

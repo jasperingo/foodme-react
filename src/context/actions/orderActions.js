@@ -9,9 +9,11 @@ export const ORDER = {
   LIST_STATUS_FILTER_CHANGED: 'ORDERS_STATUS_FILTER_CHANGED',
 };
 
-export const getOrderFetchStatusAction = (payload) => ({
+export const getOrderFetchStatusAction = (fetchStatus, id) => ({
   type: ORDER.FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, id
+  }
 });
 
 export const getOrdersListFetchStatusAction = (payload) => ({

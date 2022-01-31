@@ -1,21 +1,15 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import Forbidden from '../components/Forbidden';
-import H4Heading from '../components/H4Heading';
-import Loading from '../components/Loading';
-import NotFound from '../components/NotFound';
-import OrderItemItem from '../components/list_item/OrderItemItem';
-import ProfileDetailsText from '../components/profile/ProfileDetailsText';
-import ProfileHeaderText from '../components/profile/ProfileHeaderText';
-import Reload from '../components/Reload';
-import UserDescList from '../components/UserDescList';
-import { useOrderFetch } from '../hooks/order/orderFetchHook';
-import { useOrderStatus } from '../hooks/order/orderViewHook';
-import { useDateFormat, useMoneyFormat, useRenderOnDataFetched } from '../hooks/viewHook';
+import H4Heading from '../H4Heading';
+import ProfileDetailsText from './ProfileDetailsText';
+import ProfileHeaderText from './ProfileHeaderText';
+import UserDescList from '../UserDescList';
+import { useOrderStatus } from '../../hooks/order/orderViewHook';
+import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
+import OrderItemItem from '../list_item/OrderItemItem';
 
-
-function Profile({ order, appType }) {
+export default function OrderProfile({ order, isCustomer }) {
   
   const { t } = useTranslation();
 
@@ -23,7 +17,7 @@ function Profile({ order, appType }) {
 
   const usersLinks = [
     {
-      href: appType === 1 ? `/customer/${order.customer.id}` : `/messages/${order.customer.id}`,
+      href: !isCustomer ? `/customer/${order.customer.id}` : `/profile`,
       photo: order.customer.user.photo.href,
       name: `${order.customer.user.name}`,
       title: '_order.Ordered_by'
@@ -103,7 +97,7 @@ function Profile({ order, appType }) {
                 body: t(theStatus)
               },
               {
-                title: '_extra.sub_total',
+                title: '_extra.Sub_total',
                 body: useMoneyFormat(order.sub_total)
               },
               {
@@ -147,58 +141,3 @@ function Profile({ order, appType }) {
     </>
   );
 }
-
-export default function Order() {
-
-  const [
-    order, 
-    orderFetchStatus, 
-    refetch
-  ] = useOrderFetch();
-
-  
-
-  // const ID = parseInt(useParams().ID);
-
-  // const { 
-  //   user: { user },
-  //   orders: {
-  //     order: {
-  //       order,
-  //       orderFetchStatus
-  //     }
-  //   }, 
-  //   ordersDispatch 
-  // } = useAppContext();
-
-  // useEffect(()=> {
-  //   if (order !== null && ID !== order.id) {
-  //     ordersDispatch({ type: ORDER.UNFETCH });
-  //   } else if (orderFetchStatus === FETCH_STATUSES.LOADING) {
-  //     const api = new OrderApi(user.api_token);
-  //     api.get(ID, ordersDispatch);
-  //   }
-  // }, [ID, user, order, orderFetchStatus, ordersDispatch]);
-
-  // function refetchOrder() {
-  //   if (orderFetchStatus !== FETCH_STATUSES.LOADING) 
-  //     ordersDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING));
-  // }
-
-  return (
-    <section>
-      {
-        useRenderOnDataFetched(
-          orderFetchStatus,
-          ()=> <Profile order={order} />,
-          ()=> <div className="container-x"> <Loading /> </div>,
-          ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
-          ()=> <div className="container-x"> <NotFound /> </div>,
-          ()=> <div className="container-x"> <Forbidden /> </div>,
-        )
-      }
-    </section>
-  );
-}
-
-

@@ -6,7 +6,7 @@ import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 
-export function useStoreFetch() {
+export function useStoreFetch(userToken) {
 
   const { ID } = useParams();
 
@@ -15,40 +15,34 @@ export function useStoreFetch() {
       storeDispatch,
       store: {
         store,
+        storeID,
         storeFetchStatus
       } 
-    },
-    customer: {
-      customer: {
-        customer: {
-          customerToken
-        }
-      } 
-    } 
+    }
   } = useAppContext();
 
   const refetch = useCallback(
     ()=> {
       if (storeFetchStatus !== FETCH_STATUSES.LOADING && storeFetchStatus !== FETCH_STATUSES.DONE)
-        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.LOADING));
+        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
     },
-    [storeFetchStatus, storeDispatch]
+    [ID, storeFetchStatus, storeDispatch]
   );
   
   useEffect(
     ()=> {
 
-      if (store !== null && store.id !== Number(ID)) {
+      if (storeID !== null && storeID !== Number(ID)) {
         
         storeDispatch({ type: STORE.UNFETCHED });
 
       } else if (storeFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR));
+        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
 
       } else if (storeFetchStatus === FETCH_STATUSES.LOADING) {
 
-        const api = new StoreRepository(customerToken);
+        const api = new StoreRepository(userToken);
         api.get(ID)
         .then(res=> {
           
@@ -61,15 +55,15 @@ export function useStoreFetch() {
               }
             });
           } else if (res.status === 404) {
-            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.NOT_FOUND));
+            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
           } else if (res.status === 403) {
-            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.FORBIDDEN));
+            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID)));
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR));
+          storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
         });
       }
     }

@@ -79,6 +79,20 @@ export default class CustomerRepository extends Fetch {
       'GET'
     );
   }
+
+  getFavoritesList(id, page) {
+    return this.apiFetch(
+      `customer/${id}/favorite/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
+  getSavedCartsList(id, page) {
+    return this.apiFetch(
+      `customer/${id}/saved-cart/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
   
   // async forgotPassword(formData) {
 

@@ -13,13 +13,13 @@ import { useCategoryFetch } from '../hooks/category/categoryFetchHook';
 import { useRenderOnDataFetched } from '../hooks/viewHook';
 
 
-function Profile({ category, canAdd }) {
+function Profile({ category, isAdmin }) {
 
   const { t } = useTranslation();
 
   const topLinks = [];
 
-  if (canAdd) {
+  if (isAdmin) {
     topLinks.push({
       href: `/category/${category.id}/update`,
       title: '_extra.Edit',
@@ -46,7 +46,7 @@ function Profile({ category, canAdd }) {
 
       <div>
         {
-          canAdd && <AddButton text="_category.Add_sub_category" href={`/sub-category/add?category=${category.id}`} />
+          isAdmin && <AddButton text="_category.Add_sub_category" href={`/sub-category/add?category=${category.id}`} />
         }
         <ul className="category-list">
           {
@@ -57,7 +57,7 @@ function Profile({ category, canAdd }) {
                 category={item} 
                 index={i} 
                 sub={true} 
-                canEdit={false}
+                canEdit={isAdmin}
                 />
             ))
           }
@@ -68,7 +68,7 @@ function Profile({ category, canAdd }) {
 }
 
 
-export default function Category() {
+export default function Category({ isAdmin }) {
 
   const [
     category, 
@@ -83,7 +83,7 @@ export default function Category() {
         {
           useRenderOnDataFetched(
             categoryFetchStatus,
-            ()=> <Profile category={category} />,
+            ()=> <Profile category={category} isAdmin={isAdmin} />,
             ()=> <Loading />,
             ()=> <Reload action={refetch} />,
             ()=> <NotFound />

@@ -36,19 +36,22 @@ export default function CategoryReducer (state, action) {
       return {
         ...state,
         category: categoryState.category,
+        categoryID: categoryState.categoryID,
         categoryFetchStatus: categoryState.categoryFetchStatus
       };
       
     case CATEGORY.FETCH_STATUS_CHANGED:
       return {
         ...state,
-        categoryFetchStatus: action.payload
+        categoryID: action.payload.id,
+        categoryFetchStatus: action.payload.fetchStatus
       };
     
     case CATEGORY.FETCHED:
       return {
         ...state,
         category: action.payload.category, 
+        categoryID: action.payload.category.id, 
         categoryFetchStatus: action.payload.fetchStatus
       };
 

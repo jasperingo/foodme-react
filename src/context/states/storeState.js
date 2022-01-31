@@ -3,6 +3,7 @@ import { FETCH_STATUSES } from "../../repositories/Fetch";
 export const storeState = {
 
   store: null,
+  storeID: null,
   storeFetchStatus: FETCH_STATUSES.LOADING,
 
   stores: [],
@@ -21,10 +22,10 @@ export const storeState = {
   reviewsNumberOfPages: 0,
   reviewsFetchStatus: FETCH_STATUSES.LOADING,
 
-  promotions: [],
-  promotionsPage: 1,
-  promotionsNumberOfPages: 0,
-  promotionsFetchStatus: FETCH_STATUSES.LOADING,
+  discounts: [],
+  discountsPage: 1,
+  discountsNumberOfPages: 0,
+  discountsFetchStatus: FETCH_STATUSES.LOADING,
 
   orders: [],
   ordersPage: 1,

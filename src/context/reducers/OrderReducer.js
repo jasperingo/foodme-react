@@ -34,19 +34,22 @@ export default function OrderReducer (state, action) {
       return {
         ...state,
         order: orderState.order,
+        orderID: orderState.orderID,
         orderFetchStatus: orderState.orderFetchStatus
       };
 
     case ORDER.FETCH_STATUS_CHANGED :
       return {
         ...state,
-        orderFetchStatus: action.payload
+        orderID: action.payload.id,
+        orderFetchStatus: action.payload.fetchStatus
       };
     
     case ORDER.FETCHED :
       return {
         ...state,
         order: action.payload.order, 
+        orderID: action.payload.order.id, 
         orderFetchStatus: action.payload.fetchStatus,
       };
 

@@ -45,7 +45,8 @@ import {
   mdiArrowLeftRightBold,
   mdiKey,
   mdiBank,
-  mdiAlert as mdiWarn
+  mdiAlert as mdiWarn,
+  mdiScaleBalance
 
 } from '@mdi/js';
 
@@ -57,7 +58,7 @@ export const categoryIcon = mdiGrid;
 export const locationIcon = mdiMapMarker;
 export const visibilityIcon = mdiEye;
 export const visibilityOffIcon = mdiEyeOff;
-export const promotionIcon = mdiTag;
+export const discountIcon = mdiTag;
 export const editIcon = mdiPen;
 export const timeIcon = mdiClock;
 export const dateIcon = mdiCalendar;
@@ -94,6 +95,7 @@ export const refreshIcon = mdiSync;
 export const leftRightIcon = mdiArrowLeftRightBold;
 export const passwordIcon = mdiKey;
 export const bankAccountIcon = mdiBank;
+export const weightIcon = mdiScaleBalance;
 
 export const notFoundIcon = mdiWarn;
 

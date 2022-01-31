@@ -34,28 +34,6 @@ const CAROUSEL_IMGS = [
   }
 ];
 
-// function CategoryItem({ category, index }) {
-
-//   const iconColor = useCategoryColor(index);
-
-//   const iconType = category.type === 'product' ? productIcon : storeIcon;
-
-//   return (
-//     <li className="lg:mb-2">
-//       <Link 
-//         to={`/category/${category.id}`} 
-//         className={`block bg-color dark:bg-color-d hover:bg-color-gray-h shadow-lg px-2 py-3 rounded text-center ${iconColor} lg:flex lg:text-left lg:gap-2`}
-//         >
-//         <img src={`/photos/category/${category.photo}`} alt={category.name} width="100" height="100" className="w-10 h-10 block mx-auto rounded" />        
-//         <div className="flex flex-grow gap-1 justify-center items-center lg:justify-start">
-//           <div className="text-sm truncate overflow-ellipsis">{ category.name }</div>
-//           <Icon path={iconType} className='w-4 h-4' />
-//         </div>
-//       </Link>
-//     </li>
-//   );
-// }
-
 
 function Categories({ categories, categoriesFetchStatus, refetch }) {
 

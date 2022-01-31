@@ -6,7 +6,7 @@ import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
 
-export function useCustomerOrderList() {
+export function useOrderList(userId, userToken) {
 
   const { 
     order: { 
@@ -17,15 +17,7 @@ export function useCustomerOrderList() {
         ordersNumberOfPages,
         ordersFetchStatus
       } 
-    },
-    customer: {
-      customer: {
-        customer: {
-          customer,
-          customerToken
-        }
-      } 
-    } 
+    }
   } = useAppContext();
 
   const listStatusUpdater = useUpdateListFetchStatus();
@@ -48,10 +40,13 @@ export function useCustomerOrderList() {
   useEffect(
     ()=> {
       if (ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+
         orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR));
+
       } else if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new CustomerRepository(customerToken);
-        api.getOrdersList(customer.id, ordersPage)
+
+        const api = new CustomerRepository(userToken);
+        api.getOrdersList(userId, ordersPage)
         .then(res=> {
           
           if (res.status === 200) {
@@ -77,7 +72,7 @@ export function useCustomerOrderList() {
         });
       }
     },
-    [customer.id, customerToken, orders.length, ordersPage, ordersFetchStatus, orderDispatch, listStatusUpdater]
+    [userId, userToken, orders.length, ordersPage, ordersFetchStatus, orderDispatch, listStatusUpdater]
   );
 
 

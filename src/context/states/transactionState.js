@@ -7,6 +7,7 @@ const transactionState = {
   walletFetchStatus: FETCH_STATUSES.LOADING,
 
   transaction: null,
+  transactionID: null,
   transactionFetchStatus: FETCH_STATUSES.LOADING,
 
   transactions: [],

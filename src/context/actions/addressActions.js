@@ -2,11 +2,10 @@
 export const ADDRESS = {
   FETCHED: 'ADDRESS_FETCHED',
   UNFETCHED: 'ADDRESS_UNFETCHED',
-  DELETED: 'ADDRESS_DELETED',
   FETCH_STATUS_CHANGED: 'ADDRESS_FETCH_STATUS_CHANGED',
   
-  LIST_UNFETCHED: 'ADDRESSES_LIST_UNFETCHED',
   LIST_FETCHED: 'ADDRESSES_LIST_FETCHED',
+  LIST_UNFETCHED: 'ADDRESSES_LIST_UNFETCHED',
   LIST_FETCH_STATUS_CHANGED: 'ADDRESSES_LIST_FETCH_STATUS_CHANGED',
 
   LOCATIONS_LIST_FETCHED: 'LOCATIONS_LIST_FETCHED',
@@ -18,9 +17,11 @@ export const getAddressesListFetchStatusAction = (payload) => ({
   payload
 });
 
-export const getAddressFetchStatusAction = (payload) => ({
+export const getAddressFetchStatusAction = (fetchStatus, id) => ({
   type: ADDRESS.FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, id
+  }
 });
 
 export const getLocationsListFetchStatusAction = (payload) => ({

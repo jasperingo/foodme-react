@@ -6,7 +6,7 @@ import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
 
-export function useCustomerTransactionList() {
+export function useTransactionList(userId, userToken) {
 
   const { 
     transaction: { 
@@ -17,15 +17,7 @@ export function useCustomerTransactionList() {
         transactionsNumberOfPages,
         transactionsFetchStatus
       } 
-    },
-    customer: {
-      customer: {
-        customer: {
-          customer,
-          customerToken
-        }
-      } 
-    } 
+    }, 
   } = useAppContext();
 
   const listStatusUpdater = useUpdateListFetchStatus();
@@ -54,8 +46,8 @@ export function useCustomerTransactionList() {
 
       } else if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
         
-        const api = new CustomerRepository(customerToken);
-        api.getTransactionsList(customer.id, transactionsPage)
+        const api = new CustomerRepository(userToken);
+        api.getTransactionsList(userId, transactionsPage)
         .then(res=> {
           
           if (res.status === 200) {
@@ -81,7 +73,7 @@ export function useCustomerTransactionList() {
         });
       }
     },
-    [customer.id, customerToken, transactions.length, transactionsPage, transactionsFetchStatus, transactionDispatch, listStatusUpdater]
+    [userId, userToken, transactions.length, transactionsPage, transactionsFetchStatus, transactionDispatch, listStatusUpdater]
   );
 
 

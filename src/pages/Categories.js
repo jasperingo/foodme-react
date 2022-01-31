@@ -1,16 +1,16 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { categoryIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import SingleList from '../../components/list/SingleList';
-import CategoryItem from '../../components/list_item/CategoryItem';
-import Loading from '../../components/Loading';
-import Reload from '../../components/Reload';
-import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
-import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
-import { useRenderListFooter } from '../../hooks/viewHook';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
+import { categoryIcon } from '../assets/icons';
+import EmptyList from '../components/EmptyList';
+import SingleList from '../components/list/SingleList';
+import CategoryItem from '../components/list_item/CategoryItem';
+import Loading from '../components/Loading';
+import Reload from '../components/Reload';
+import { useProductCategoryList } from '../hooks/category/productCategoryListHook';
+import { useStoreCategoryList } from '../hooks/category/storeCategoryListHook';
+import { useRenderListFooter } from '../hooks/viewHook';
+import { FETCH_STATUSES } from '../repositories/Fetch';
 
 
 function List({ headerText, categories, categoriesFetchStatus, refetch }) {
@@ -19,7 +19,7 @@ function List({ headerText, categories, categoriesFetchStatus, refetch }) {
 
   return (
     <div className="py-2">
-      <h2 className="font-bold my-2">{ t(headerText) }</h2>
+      <h3 className="font-bold my-2">{ t(headerText) }</h3>
       <SingleList
         data={categories}
         className="category-list"
@@ -33,9 +33,9 @@ function List({ headerText, categories, categoriesFetchStatus, refetch }) {
         )}
         footer={useRenderListFooter(
           categoriesFetchStatus,
-          ()=> <li key="categories-footer" className="col-span-3"> <Loading /> </li>, 
-          ()=> <li key="categories-footer" className="col-span-3"> <Reload action={refetch} /> </li>,
-          ()=> <li key="categories-footer" className="col-span-3"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
+          ()=> <li key="category-footer" className="col-span-3"> <Loading /> </li>, 
+          ()=> <li key="category-footer" className="col-span-3"> <Reload action={refetch} /> </li>,
+          ()=> <li key="category-footer" className="col-span-3"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
         )}
         />
     </div>

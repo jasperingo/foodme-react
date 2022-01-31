@@ -1,23 +1,33 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-import { useURLQuery } from '../context/AppHooks';
+import { useURLQuery } from '../../hooks/viewHook';
 
 export default function SearchForm() {
 
   const history = useHistory();
 
+  const location = useLocation();
+
   const { t } = useTranslation();
 
   const [q, setQ] = useState('');
 
-  const queryParam = useURLQuery().get('q');
+  const param = useURLQuery();
+  
+  const queryParam = param.get('q');
 
   function onSearchSubmitted(e) {
     e.preventDefault();
     if (q === '') return;
-    history.push(`/search/stores?q=${q}`)
+    param.set('q', q);
+    if (location.pathname !== '/search/stores' && location.pathname !== '/search/products') {
+      history.push(`/search/stores?${param.toString()}`);
+    } else {
+      history.replace(`${location.pathname}?${param.toString()}`);
+    }
   }
 
   function updateInputOnRoute() {

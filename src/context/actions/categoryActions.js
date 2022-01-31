@@ -17,14 +17,18 @@ export const CATEGORY = {
   PRODUCTS_LIST_FETCH_STATUS_CHANGED: 'PRODUCT_CATEGORIES_FETCH_STATUS_CHANGED',
 };
 
-export const getCategoryFetchStatusAction = (payload) => ({
+export const getCategoryFetchStatusAction = (fetchStatus, id) => ({
   type: CATEGORY.FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, id
+  }
 });
 
-export const getSubCategoryFetchStatusAction = (payload) => ({
+export const getSubCategoryFetchStatusAction = (fetchStatus, id) => ({
   type: CATEGORY.SUB_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, id
+  }
 });
 
 export const getCategoriesListFetchStatusAction = (payload) => ({

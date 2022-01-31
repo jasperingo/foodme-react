@@ -3,7 +3,7 @@ import React from 'react';
 import { Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
 import { messageIcon } from '../../assets/icons';
 import DualPaneIntro from '../../components/DualPaneIntro';
-import MessagesItem from '../../components/MessagesItem';
+import MessagesItem from '../../components/list_item/MessagesItem';
 import Message from './Message';
 
 export default function Messages() {

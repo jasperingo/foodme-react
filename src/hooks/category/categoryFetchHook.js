@@ -14,10 +14,11 @@ export function useCategoryFetch() {
     category: { 
       categoryDispatch,
       category: {
-        category,
-        categoryFetchStatus,
+        stores,
         products,
-        stores
+        category,
+        categoryID,
+        categoryFetchStatus,
       } 
     },
   } = useAppContext();
@@ -25,20 +26,21 @@ export function useCategoryFetch() {
   const refetch = useCallback(
     ()=> {
       if (categoryFetchStatus !== FETCH_STATUSES.LOADING && categoryFetchStatus !== FETCH_STATUSES.DONE)
-        categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.LOADING));
+        categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
     },
-    [categoryFetchStatus, categoryDispatch]
+    [ID, categoryFetchStatus, categoryDispatch]
   );
   
   useEffect(
     ()=> {
-      if (category !== null && category.id !== Number(ID)) {
+
+      if (categoryID !== null && categoryID !== Number(ID)) {
 
         categoryDispatch({ type: CATEGORY.UNFETCHED });
 
       } else if (categoryFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR));
+        categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
 
       } else if (categoryFetchStatus === FETCH_STATUSES.LOADING) {
 
@@ -69,13 +71,13 @@ export function useCategoryFetch() {
                 }
               });
             } else if (res.status === 404) {
-              categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.NOT_FOUND));
+              categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
             } else {
               throw new Error();
             }
           })
           .catch(()=> {
-            categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR));
+            categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
           });
         }
       }

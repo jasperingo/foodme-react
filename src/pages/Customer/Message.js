@@ -27,7 +27,7 @@ export default function Message() {
   return (
     <section className="flex-grow">
       <div className="bg-color-primary p-2 flex items-center gap-2">
-        <img src="/photos/user.jpg" alt="Gift" width="50" height="50" className="w-12 h-12 rounded-full" />
+        <img src="/photos/about-delivery.jpg" alt="Gift" width="50" height="50" className="w-12 h-12 rounded-full" />
         <div className="text-xl text-white">Jobs market place</div>
       </div>
 

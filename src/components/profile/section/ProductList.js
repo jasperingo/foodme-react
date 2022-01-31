@@ -27,12 +27,12 @@ export default function ProductList({ products, productsFetchStatus, productsPag
           )}
           footer={useRenderListFooter(
             productsFetchStatus,
-            ()=> <li key="products-footer"> <Loading /> </li>, 
-            ()=> <li key="products-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="products-footer"> <EmptyList text="_empty.No_transaction" icon={productIcon} /> </li>,
-            ()=> <li key="products-footer"> <FetchMoreButton action={refetch} /> </li>,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
+            ()=> <li key="product-footer"> <Loading /> </li>, 
+            ()=> <li key="product-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="product-footer"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>,
+            ()=> <li key="product-footer"> <FetchMoreButton action={refetch} /> </li>,
+            ()=> <li key="product-footer"> <NotFound /> </li>,
+            ()=> <li key="product-footer"> <Forbidden /> </li>,
           )}
           />
 

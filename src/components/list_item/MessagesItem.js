@@ -2,14 +2,14 @@
 import Icon from '@mdi/react';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { checkIcon } from '../assets/icons';
+import { checkIcon } from '../../assets/icons';
 
 export default function MessagesItem({ href, message: { id, date, sender_name, sender_photo, unread_messages_count, last_message, last_message_status}}) {
   return (
     <li className="pb-4">
       <Link to={href} className="flex items-start gap-2 py-2 px-1 hover:bg-color-gray-h">
         <img 
-          src={`/photos/${sender_photo}`}
+          src={`/photos/about-delivery.jpg`}
           alt="message" 
           width="50" 
           height="50" 

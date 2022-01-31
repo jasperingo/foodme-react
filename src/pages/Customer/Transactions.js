@@ -7,11 +7,23 @@ import ScrollList from '../../components/list/ScrollList';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import TransactionItem from '../../components/list_item/TransactionItem';
-import { useCustomerTransactionList } from '../../hooks/transaction/customerTransactionListHook';
+import { useTransactionList } from '../../hooks/transaction/transactionListHook';
 import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
+import { useAppContext } from '../../hooks/contextHook';
 
 
 export default function Transactions() {
+
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customer,
+          customerToken
+        }
+      } 
+    } 
+  } = useAppContext();
 
   const [
     transactions, 
@@ -20,7 +32,7 @@ export default function Transactions() {
     transactionsNumberOfPages, 
     refetch,
     refresh
-  ] = useCustomerTransactionList();
+  ] = useTransactionList(customer.id, customerToken);
 
   return (
     <section>

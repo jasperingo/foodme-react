@@ -9,6 +9,7 @@ const orderState = {
   ordersFetchStatus: FETCH_STATUSES.LOADING,
   
   order: null,
+  orderID: null,
   orderFetchStatus: FETCH_STATUSES.LOADING,
   
 };

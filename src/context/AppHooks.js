@@ -3,9 +3,6 @@ import { useLocation } from "react-router-dom";
 import { FETCH_STATUSES } from '../repositories/Fetch';
 import { useAppContext } from "../hooks/contextHook";
 
-export function useURLQuery() {
-  return new URLSearchParams(useLocation().search);
-}
 
 export function useMoneyFormat(amount) {
   return <>&#8358; {amount.toFixed(2)}</>;
@@ -221,9 +218,6 @@ export function useCategoryColor(index) {
 }
 
 
-export function useHasMoreToFetchViaScroll(page, numberOfPages, status, scrollCount=5) {
-  return page % scrollCount !== 0 && page < numberOfPages && status !== FETCH_STATUSES.ERROR;
-}
 
 export function useDataRender(item, status, viewCallback, loadingCallback, errorCallback, options={}) {
   

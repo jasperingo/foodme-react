@@ -6,7 +6,7 @@ import TransactionRepository from "../../repositories/TransactionRepository";
 import { useAppContext } from "../contextHook";
 
 
-export function useTransactionFetch() {
+export function useTransactionFetch(userToken) {
 
   const { ID } = useParams();
 
@@ -15,40 +15,34 @@ export function useTransactionFetch() {
       transactionDispatch,
       transaction: {
         transaction,
+        transactionID,
         transactionFetchStatus
       } 
-    },
-    customer: {
-      customer: {
-        customer: {
-          customerToken
-        }
-      } 
-    } 
+    }
   } = useAppContext();
 
   const refetch = useCallback(
     ()=> {
       if (transactionFetchStatus !== FETCH_STATUSES.LOADING && transactionFetchStatus !== FETCH_STATUSES.DONE)
-        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.LOADING));
+        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
     },
-    [transactionFetchStatus, transactionDispatch]
+    [ID, transactionFetchStatus, transactionDispatch]
   );
   
   useEffect(
     ()=> {
 
-      if (transaction !== null && transaction.id !== Number(ID)) {
+      if (transactionID !== null && transactionID !== Number(ID)) {
         
         transactionDispatch({ type: TRANSACTION.UNFETCHED });
 
       } else if (transactionFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR));
+        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
 
       } else if (transactionFetchStatus === FETCH_STATUSES.LOADING) {
 
-        const api = new TransactionRepository(customerToken);
+        const api = new TransactionRepository(userToken);
         api.get(ID)
         .then(res=> {
           
@@ -61,15 +55,15 @@ export function useTransactionFetch() {
               }
             });
           } else if (res.status === 404) {
-            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.NOT_FOUND));
+            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
           } else if (res.status === 403) {
-            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.FORBIDDEN));
+            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID)));
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR));
+          transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
         });
       }
     }
