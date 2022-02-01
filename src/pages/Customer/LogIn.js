@@ -8,8 +8,14 @@ import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import SocialLoginList from '../../components/SocialLoginList';
 import { useCustomerLogin } from '../../hooks/customerHook';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function LogIn({ guestMiddleware }) {
+
+  useHeader({ 
+    title: 'Log In - DailyNeeds',
+    headerTitle: '_user.Log_in'
+  });
 
   const { t } = useTranslation();
 

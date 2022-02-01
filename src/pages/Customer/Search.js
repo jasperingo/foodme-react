@@ -18,6 +18,7 @@ import { useSearchProductList } from '../../hooks/search/searchProductListHook';
 import Icon from '@mdi/react';
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
+import { useHeader } from '../../hooks/headerHook';
 
 
 const TAB_LINKS = [
@@ -171,6 +172,12 @@ export default function Search() {
       } 
     }
   } = useAppContext();
+
+  useHeader({ 
+    searchPage: true,
+    title: `${query} - Search`,
+    headerTitle: '_search.Search',
+  });
 
   useEffect(
     ()=> {

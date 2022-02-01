@@ -9,16 +9,18 @@ export const TRANSACTION = {
   LIST_FETCH_STATUS_CHANGED: 'TRANSACTIONS_FETCH_STATUS_CHANGED',
 };
 
-export const getTransactionFetchStatusAction = (fetchStatus, id) => ({
+export const getTransactionFetchStatusAction = (fetchStatus, id, loading) => ({
   type: TRANSACTION.FETCH_STATUS_CHANGED,
   payload: {
-    fetchStatus, id
+    fetchStatus, id, loading
   }
 });
 
-export const getTransactionsListFetchStatusAction = (payload) => ({
+export const getTransactionsListFetchStatusAction = (fetchStatus, loading) => ({
   type: TRANSACTION.LIST_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, loading
+  }
 });
 
 

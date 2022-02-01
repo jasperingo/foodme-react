@@ -5,9 +5,15 @@ import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import { useAddressAdd } from '../../hooks/address/addressAddHook';
 import { useLocationList } from '../../hooks/address/locationListHook';
+import { useHeader } from '../../hooks/headerHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function AddressAdd() {
+
+  useHeader({
+    title: 'Create new - Address',
+    headerTitle: '_user.Add_address'
+  });
 
   const [
     locations, 

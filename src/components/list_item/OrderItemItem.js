@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { useMoneyFormat } from '../../context/AppHooks';
+import { useMoneyFormat } from '../../hooks/viewHook';
 
 export default function OrderItemItem({ item: { quantity, amount, product_variant: { name, product: { photo, title } } } }) {
 

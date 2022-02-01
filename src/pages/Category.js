@@ -10,6 +10,7 @@ import ProfileDetails from '../components/profile/ProfileDetails';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import Reload from '../components/Reload';
 import { useCategoryFetch } from '../hooks/category/categoryFetchHook';
+import { useHeader } from '../hooks/headerHook';
 import { useRenderOnDataFetched } from '../hooks/viewHook';
 
 
@@ -75,6 +76,11 @@ export default function Category({ isAdmin }) {
     categoryFetchStatus, 
     refetch
   ] = useCategoryFetch();
+
+  useHeader({ 
+    title: `${category?.name ?? 'Loading...'} - Category`,
+    headerTitle: '_category.Category'
+  });
 
   return (
     <section>

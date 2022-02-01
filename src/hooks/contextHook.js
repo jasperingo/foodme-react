@@ -4,6 +4,7 @@ import AddressReducer from "../context/reducers/AddressReducer";
 import BankReducer from "../context/reducers/BankReducer";
 import CategoryReducer from "../context/reducers/CategoryReducer";
 import CustomerReducer from "../context/reducers/CustomerReducer";
+import HeaderReducer from "../context/reducers/HeaderReducer";
 import HomeReducer from "../context/reducers/HomeReducer";
 import OrderReducer from "../context/reducers/OrderReducer";
 import ProductReducer from "../context/reducers/ProductReducer";
@@ -15,6 +16,7 @@ import addressState from "../context/states/addressState";
 import bankState from "../context/states/bankState";
 import categoryState from "../context/states/categoryState";
 import customerState from "../context/states/customerState";
+import headerState from "../context/states/headerState";
 import homeState from "../context/states/homeState";
 import orderState from "../context/states/orderState";
 import productState from "../context/states/productState";
@@ -26,6 +28,8 @@ import transactionState from "../context/states/transactionState";
 
 export function useAppContextValues() {
   
+  const [header, headerDispatch] = useReducer(HeaderReducer, headerState);
+
   const [customer, customerDispatch] = useReducer(CustomerReducer, customerState);
 
   const [home, homeDispatch] = useReducer(HomeReducer, homeState);
@@ -50,6 +54,11 @@ export function useAppContextValues() {
 
 
   return {
+
+    header: {
+      header,
+      headerDispatch
+    },
 
     customer: {
       customer,

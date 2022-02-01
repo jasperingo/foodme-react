@@ -5,7 +5,7 @@ import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
 
-export function useAddressList() {
+export function useAddressList(user, userToken) {
 
   const { 
     address: { 
@@ -14,15 +14,7 @@ export function useAddressList() {
         addresses,
         addressesFetchStatus
       } 
-    },
-    customer: {
-      customer: {
-        customer: {
-          customer,
-          customerToken
-        }
-      } 
-    } 
+    }
   } = useAppContext();
 
   const refetch = useCallback(
@@ -43,10 +35,13 @@ export function useAddressList() {
   useEffect(
     ()=> {
       if (addressesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+
         addressDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.ERROR));
+
       } else if (addressesFetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new CustomerRepository(customerToken);
-        api.getAddressesList(customer.id)
+
+        const api = new CustomerRepository(userToken);
+        api.getAddressesList(user.id)
         .then(res=> {
           
           if (res.status === 200) {
@@ -66,7 +61,7 @@ export function useAddressList() {
         });
       }
     },
-    [customer.id, customerToken, addressesFetchStatus, addressDispatch]
+    [user.id, userToken, addressesFetchStatus, addressDispatch]
   );
 
   return [addresses, addressesFetchStatus, refetch, refresh];

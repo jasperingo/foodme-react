@@ -20,6 +20,7 @@ import { useProductRelatedList } from '../../hooks/product/productRelatedHook';
 import ScrollList from '../../components/list/ScrollList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import ProductItem from '../../components/list_item/ProductItem';
+import { useHeader } from '../../hooks/headerHook';
 
 
 function RelatedList() {
@@ -159,7 +160,12 @@ export default function Product() {
     refetch
   ] = useProductFetch(customerToken);
 
-  
+  useHeader({ 
+    title: `${product?.name ?? 'Loading...'} - Product`,
+    headerTitle: '_product.Product',
+    topNavPaths: ['/cart', '/search']
+  });
+
   return (
     <section>
       {

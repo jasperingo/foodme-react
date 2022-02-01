@@ -1,53 +1,34 @@
 
 import React from 'react';
-import { Link, NavLink, useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import Icon from '@mdi/react';
-import { useHeader2Title } from '../context/AppHooks';
-import SearchForm from './form/SearchForm';
-import { backIcon } from '../assets/icons';
+import SearchForm from '../form/SearchForm';
+import { backIcon } from '../../assets/icons';
+import NavItem from './NavItem';
+import { useAppContext } from '../../hooks/contextHook';
 
-function CartCounter({ useCounter }) {
-  return (
-    <span className="-ml-2 -mt-1 text-xs absolute bg-red-500 text-white px-1 rounded-full">
-      { useCounter() }
-    </span>
-  );
-}
-
-function NavItem({ title, icon, href, useCounter, top=false }) {
-
-  return (
-    <li className="flex-1 text-center">
-      <NavLink 
-        exact 
-        to={ href }
-        className="block py-2 px-4 text-sm text-color-gray bg-color hover:bg-color-gray-h lg:flex lg:items-center lg:justify-center lg:gap-1"
-        activeClassName="text-color-primary"
-        >
-        <div className="relative">
-          <Icon path={icon} className="w-7 h-7 inline-block" />
-          { useCounter && <CartCounter useCounter={useCounter} /> }
-        </div>
-        <span className={top ? 'sr-only lg:not-sr-only' : 'block'}>{ title }</span>
-      </NavLink>
-    </li>
-  );
-}
 
 export default function Header({ navLinks, topNavLinks, searchable = false }) {
 
-  const history = useHistory();
+  const {
+    header: {
+      header: {
+        //path,
+        headerTitle,
+        searchPage,
+        topNavPaths
+      }
+    }
+  } = useAppContext();
 
-  const { pathname } = useLocation();
+  //console.log(headerTitle);
+
+  const history = useHistory();
 
   const { t } = useTranslation();
 
-  const showHeader = navLinks.find(item=> item.href === pathname || (item.hrefs && item.hrefs.includes(pathname)));
-
-  function onSearchPage() {
-    return ['/search', '/search/stores', '/search/products', '/search/orders'].includes(pathname);
-  }
+  const showHeader = headerTitle === null;
 
   return (
     <header className="bg-color dark:bg-color-d py-4 border-b lg:block">
@@ -59,7 +40,7 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
             <Link to="/">{ t('app_name') }</Link>
           </h1>
           
-          <div className={`flex ${!onSearchPage() && 'flex-grow'} items-center gap-1 lg:flex-grow-0 lg:bg-color-primary-lg lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
+          <div className={`flex ${!searchPage && 'flex-grow'} items-center gap-1 lg:flex-grow-0 lg:bg-color-primary-lg lg:py-1 lg:px-2 lg:rounded-3xl ${showHeader && 'hidden'}`}>
             <button
               onClick={ ()=> { history.goBack(); } }
               className="hover:bg-color-gray-h lg:hidden"
@@ -67,8 +48,8 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
               <Icon path={backIcon} className="w-7 h-7 text-color" />
               <span className="sr-only">{ t('Previous_page') }</span>
             </button>
-            <h2 className={`font-bold flex-grow text-left text-xl ${onSearchPage() && 'hidden'} lg:block`}>
-              { t(useHeader2Title()) }
+            <h2 className={`font-bold flex-grow text-left text-xl ${searchPage && 'hidden'} lg:block`}>
+              { t(headerTitle) }
             </h2>
           </div>
 
@@ -79,7 +60,7 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
                 navLinks
                 .filter(item=> !item.exclude)
                 .map((item, i) => (
-                  <NavItem 
+                  <NavItem
                     key={i}
                     title={t(item.title)}  
                     icon={item.icon} 
@@ -90,9 +71,11 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
               }
             </ul>
             
-            <ul className={`${onSearchPage() && 'hidden'} flex lg:flex lg:flex-grow`}>
+            <ul className={`${searchPage && 'hidden'} flex lg:flex lg:flex-grow`}>
               {
-                topNavLinks.map((item, i)=> (
+                topNavLinks
+                .filter(item=> topNavPaths.includes(item.href))
+                .map((item, i)=> (
                   <NavItem 
                     key={i}
                     href={item.href} 
@@ -107,8 +90,9 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
 
           </nav>
 
-          { searchable && 
-            <div className={`${(showHeader || !onSearchPage()) && 'hidden'} flex-grow lg:block`}>
+          { 
+            searchable && 
+            <div className={`${(showHeader || !searchPage) && 'hidden'} flex-grow lg:block`}>
               <SearchForm /> 
             </div>
           }

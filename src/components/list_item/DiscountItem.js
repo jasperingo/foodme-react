@@ -2,8 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useMoneyFormat } from '../../context/AppHooks';
-import { useDateFormat } from '../../hooks/viewHook';
+import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
 import Discount from '../../models/Discount';
 
 export default function DiscountItem(

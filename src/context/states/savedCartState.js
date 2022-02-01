@@ -4,6 +4,7 @@ const savedCartState = {
   
   savedCarts: [],
   savedCartsPage: 1,
+  savedCartsLoading: 1,
   savedCartsNumberOfPages: 0,
   savedCartsFetchStatus: FETCH_STATUSES.LOADING,
   

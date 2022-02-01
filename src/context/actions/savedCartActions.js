@@ -16,7 +16,9 @@ export const getSavedCartFetchStatusAction = (payload) => ({
   payload
 });
 
-export const getSavedCartsListFetchStatusAction = (payload) => ({
+export const getSavedCartsListFetchStatusAction = (fetchStatus, loading) => ({
   type: SAVED_CART.LIST_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, loading
+  }
 });

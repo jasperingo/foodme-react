@@ -11,6 +11,7 @@ import { useAddressFetch } from '../../hooks/address/addressFetchHook';
 import NotFound from '../../components/NotFound';
 import Forbidden from '../../components/Forbidden';
 import { useAddressDelete } from '../../hooks/address/addressDeleteHook';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function AddressUpdate() {
 
@@ -25,6 +26,11 @@ export default function AddressUpdate() {
     addressFetchStatus,
     refetch
   ] = useAddressFetch();
+
+  useHeader({ 
+    title: `${address?.title ?? 'Loading...'} - Address`,
+    headerTitle: '_user.Edit_address'
+  });
 
   const [
     onSubmit, 

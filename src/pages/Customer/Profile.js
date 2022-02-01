@@ -6,6 +6,7 @@ import FormMessage from '../../components/form/FormMessage';
 import FormField from '../../components/form/FormField';
 import { useCustomerUpdate } from '../../hooks/customerHook';
 import FormPhotoField from '../../components/form/FormPhotoField';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function Profile() {
 
@@ -32,6 +33,11 @@ export default function Profile() {
 
   ] = useCustomerUpdate();
 
+  useHeader({ 
+    title: `${customer.user.name} - Profile`,
+    headerTitle: "_user.Profile"
+  });
+  
   function onUpdateSubmit(e) {
     e.preventDefault();
     onSubmit(

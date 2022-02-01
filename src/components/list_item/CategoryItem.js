@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { Link } from 'react-router-dom';
-import { useCategoryColor } from '../../context/AppHooks';
+import { useCategoryColor } from '../../hooks/viewHook';
 
 export default function CategoryItem({ canEdit, category, index, sub, path, grid }) {
 

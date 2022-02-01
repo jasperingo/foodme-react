@@ -4,9 +4,14 @@ import { Switch, Route, useRouteMatch, useLocation } from 'react-router-dom';
 import { messageIcon } from '../../assets/icons';
 import DualPaneIntro from '../../components/DualPaneIntro';
 import MessagesItem from '../../components/list_item/MessagesItem';
+import { useHeader } from '../../hooks/headerHook';
 import Message from './Message';
 
 export default function Messages() {
+
+  useHeader({ 
+    title: `Messages - DailyNeeds`,
+  });
 
   const match = useRouteMatch();
 

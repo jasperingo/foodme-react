@@ -10,6 +10,7 @@ import TransactionItem from '../../components/list_item/TransactionItem';
 import { useTransactionList } from '../../hooks/transaction/transactionListHook';
 import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
 
 
 export default function Transactions() {
@@ -25,6 +26,11 @@ export default function Transactions() {
     } 
   } = useAppContext();
 
+  useHeader({ 
+    title: `${customer.user.name} - Transactions`,
+    headerTitle: "_transaction.Transactions"
+  });
+  
   const [
     transactions, 
     transactionsFetchStatus, 

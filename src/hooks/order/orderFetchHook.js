@@ -16,6 +16,7 @@ export function useOrderFetch(userToken) {
       order: {
         order,
         orderID,
+        orderLoading,
         orderFetchStatus
       } 
     }
@@ -24,7 +25,7 @@ export function useOrderFetch(userToken) {
   const refetch = useCallback(
     ()=> {
       if (orderFetchStatus !== FETCH_STATUSES.LOADING && orderFetchStatus !== FETCH_STATUSES.DONE)
-        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
+        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
     },
     [ID, orderFetchStatus, orderDispatch]
   );
@@ -36,11 +37,13 @@ export function useOrderFetch(userToken) {
 
         orderDispatch({ type: ORDER.UNFETCHED });
 
-      } else if (orderFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      } else if (orderLoading && orderFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
 
-      } else if (orderFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (orderLoading && orderFetchStatus === FETCH_STATUSES.LOADING) {
+
+        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
 
         const api = new OrderRepository(userToken);
         api.get(ID)
@@ -55,15 +58,15 @@ export function useOrderFetch(userToken) {
               }
             });
           } else if (res.status === 404) {
-            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
+            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
           } else if (res.status === 403) {
-            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID)));
+            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+          orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
         });
       }
     }

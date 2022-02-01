@@ -16,6 +16,7 @@ export function useTransactionFetch(userToken) {
       transaction: {
         transaction,
         transactionID,
+        transactionLoading,
         transactionFetchStatus
       } 
     }
@@ -24,7 +25,7 @@ export function useTransactionFetch(userToken) {
   const refetch = useCallback(
     ()=> {
       if (transactionFetchStatus !== FETCH_STATUSES.LOADING && transactionFetchStatus !== FETCH_STATUSES.DONE)
-        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
+        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
     },
     [ID, transactionFetchStatus, transactionDispatch]
   );
@@ -36,11 +37,13 @@ export function useTransactionFetch(userToken) {
         
         transactionDispatch({ type: TRANSACTION.UNFETCHED });
 
-      } else if (transactionFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      } else if (transactionLoading && transactionFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
 
-      } else if (transactionFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (transactionLoading && transactionFetchStatus === FETCH_STATUSES.LOADING) {
+
+        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
 
         const api = new TransactionRepository(userToken);
         api.get(ID)
@@ -55,15 +58,15 @@ export function useTransactionFetch(userToken) {
               }
             });
           } else if (res.status === 404) {
-            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
+            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
           } else if (res.status === 403) {
-            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID)));
+            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+          transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
         });
       }
     }

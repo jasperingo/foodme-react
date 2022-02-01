@@ -9,15 +9,17 @@ export const ORDER = {
   LIST_STATUS_FILTER_CHANGED: 'ORDERS_STATUS_FILTER_CHANGED',
 };
 
-export const getOrderFetchStatusAction = (fetchStatus, id) => ({
+export const getOrderFetchStatusAction = (fetchStatus, id, loading) => ({
   type: ORDER.FETCH_STATUS_CHANGED,
   payload: {
-    fetchStatus, id
+    fetchStatus, id, loading
   }
 });
 
-export const getOrdersListFetchStatusAction = (payload) => ({
+export const getOrdersListFetchStatusAction = (fetchStatus, loading) => ({
   type: ORDER.LIST_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, loading
+  }
 });
 

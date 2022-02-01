@@ -9,20 +9,23 @@ export default function TransactionReducer (state, action) {
       return {
         ...state,
         transactionsPage: 1,
+        transactionsLoading: true,
         transactionsNumberOfPages: 0,
         transactions: transactionState.transactions,
         transactionsFetchStatus: transactionState.transactionsFetchStatus,
       };
 
-    case TRANSACTION.LIST_FETCH_STATUS_CHANGED :
+    case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        transactionsFetchStatus: action.payload
+        transactionsLoading: action.payload.loading,
+        transactionsFetchStatus: action.payload.fetchStatus
       };
     
-    case TRANSACTION.LIST_FETCHED :
+    case TRANSACTION.LIST_FETCHED:
       return {
         ...state,
+        transactionsLoading: false,
         transactionsPage: state.transactionsPage+1,
         transactionsFetchStatus: action.payload.fetchStatus,
         transactionsNumberOfPages: action.payload.numberOfPages,
@@ -32,6 +35,7 @@ export default function TransactionReducer (state, action) {
     case TRANSACTION.UNFETCHED:
       return {
         ...state,
+        transactionLoading: true,
         transaction: transactionState.transaction,
         transactionID: transactionState.transactionID,
         transactionFetchStatus: transactionState.transactionFetchStatus
@@ -41,12 +45,14 @@ export default function TransactionReducer (state, action) {
       return {
         ...state,
         transactionID: action.payload.id,
+        transactionLoading: action.payload.loading,
         transactionFetchStatus: action.payload.fetchStatus
       };
     
     case TRANSACTION.FETCHED :
       return {
         ...state,
+        transactionLoading: false,
         transaction: action.payload.transaction, 
         transactionID: action.payload.transaction.id, 
         transactionFetchStatus: action.payload.fetchStatus,

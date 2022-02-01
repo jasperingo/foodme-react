@@ -15,6 +15,7 @@ export function useFavoriteList(userId, userToken) {
       product: {
         products,
         productsPage,
+        productsLoading,
         productsNumberOfPages,
         productsFetchStatus
       } 
@@ -26,7 +27,7 @@ export function useFavoriteList(userId, userToken) {
   const refetch = useCallback(
     ()=> {
       if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-        productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
+        productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [productDispatch, productsFetchStatus]
   );
@@ -40,11 +41,13 @@ export function useFavoriteList(userId, userToken) {
   
   useEffect(
     ()=> {
-      if (productsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (productsLoading && productsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+        productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (productsFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (productsLoading && productsFetchStatus === FETCH_STATUSES.LOADING) {
+
+        productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
         const api = new CustomerRepository(userToken);
         api.getFavoritesList(userId, productsPage)
@@ -66,22 +69,31 @@ export function useFavoriteList(userId, userToken) {
             });
           } else if (res.status === 404) {
 
-            productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND));
+            productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
 
           } else if (res.status === 403) {
 
-            productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN));
+            productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
             
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+          productDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [userId, products, productsPage, productsFetchStatus, userToken, productDispatch, listStatusUpdater]
+    [
+      userId, 
+      products, 
+      productsPage, 
+      productsLoading,
+      productsFetchStatus, 
+      userToken, 
+      productDispatch, 
+      listStatusUpdater
+    ]
   );
 
   return [products, productsFetchStatus, productsPage, productsNumberOfPages, refetch, refresh];

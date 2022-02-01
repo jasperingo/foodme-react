@@ -16,6 +16,7 @@ import ReviewList from '../../components/profile/section/ReviewList';
 import { useStoreDiscountList } from '../../hooks/store/storeDiscountListHook';
 import DiscountList from '../../components/profile/section/DiscountList';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
+import { useHeader } from '../../hooks/headerHook';
 
 const NAV_LINKS = [
   { title : '_product.Products', href: '' },
@@ -158,6 +159,13 @@ export default function Store() {
     storeFetchStatus, 
     refetch
   ] = useStoreFetch(customerToken);
+
+
+  useHeader({ 
+    title: `${store?.user.name ?? 'Loading...'} - Store`,
+    headerTitle: '_store.Store',
+    topNavPaths: ['/cart', '/search']
+  });
 
   return (
     <section>

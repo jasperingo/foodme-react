@@ -6,6 +6,7 @@ import NotFound from '../../components/NotFound';
 import TransactionProfile from '../../components/profile/TransactionProfile';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
 import { useTransactionFetch } from '../../hooks/transaction/transactionFetchHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
@@ -26,6 +27,11 @@ export default function Transaction() {
     transactionFetchStatus, 
     refetch
   ] = useTransactionFetch(customerToken);
+
+  useHeader({ 
+    title: `${transaction?.reference ?? 'Loading'} - Transaction`,
+    headerTitle: "_transaction.Transaction"
+  });
   
   return (
     <section>

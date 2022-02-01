@@ -8,8 +8,14 @@ import FormMessage from '../../components/form/FormMessage';
 import FormField from '../../components/form/FormField';
 import SocialLoginList from '../../components/SocialLoginList';
 import { useCustomerCreate } from '../../hooks/customerHook';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function Register({ guestMiddleware }) {
+
+  useHeader({ 
+    title: `Register - DailyNeeds`,
+    headerTitle: '_user.Register'
+  });
 
   const { t } = useTranslation();
 
@@ -23,7 +29,16 @@ export default function Register({ guestMiddleware }) {
 
   const passwordInput = useRef(null);
 
-  const [onSubmit, dialog, formError, firstNameError, lastNameError, emailError, phoneError, passwordError] = useCustomerCreate();
+  const [
+    onSubmit, 
+    dialog, 
+    formError, 
+    firstNameError, 
+    lastNameError, 
+    emailError, 
+    phoneError, 
+    passwordError
+  ] = useCustomerCreate();
 
   function onRegisterSubmit(e) {
     e.preventDefault();

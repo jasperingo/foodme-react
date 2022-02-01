@@ -9,15 +9,33 @@ import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import { useAddressList } from '../../hooks/address/addressListHook';
 import { useRenderListFooter } from '../../hooks/viewHook';
+import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function Addresses() {
 
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customer,
+          customerToken
+        }
+      } 
+    } 
+  } = useAppContext();
+
+  useHeader({ 
+    title: `${customer.user.name} - Addresses`,
+    headerTitle: "_user.Addresses"
+  });
+  
   const [
     addresses,
     addressesFetchStatus,
     refetch,
     refresh
-  ] = useAddressList();
+  ] = useAddressList(customer, customerToken);
 
   return (
     <section>

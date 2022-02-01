@@ -49,6 +49,7 @@ export default function ProductReducer (state, action) {
       return {
         ...state,
         productsPage: 1,
+        productsLoading: true,
         productsNumberOfPages: 0,
         products: productState.products,
         productsFetchStatus: productState.productsFetchStatus
@@ -57,12 +58,14 @@ export default function ProductReducer (state, action) {
     case PRODUCT.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
-        productsFetchStatus: action.payload
+        productsLoading: action.payload.loading,
+        productsFetchStatus: action.payload.fetchStatus
       };
     
     case PRODUCT.LIST_FETCHED:
       return {
         ...state,
+        productsLoading: false,
         productsPage: state.productsPage+1,
         productsFetchStatus: action.payload.fetchStatus,
         productsNumberOfPages: action.payload.numberOfPages,

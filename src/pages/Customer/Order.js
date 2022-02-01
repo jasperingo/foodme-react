@@ -8,6 +8,7 @@ import { useOrderFetch } from '../../hooks/order/orderFetchHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 import { useAppContext } from '../../hooks/contextHook';
 import OrderProfile from '../../components/profile/OrderProfile';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function Order() {
 
@@ -26,6 +27,11 @@ export default function Order() {
     orderFetchStatus, 
     refetch
   ] = useOrderFetch(customerToken);
+  
+  useHeader({ 
+    title: `${order?.number ?? 'Loading...'} - Order`,
+    headerTitle: "_order.Order"
+  });
 
   return (
     <section>

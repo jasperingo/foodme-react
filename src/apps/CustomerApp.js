@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
-import Header from '../components/Header';
+import Header from '../components/header/Header';
 import Footer from '../components/Footer';
 import Splash from '../pages/Splash';
 import Home from '../pages/Customer/Home';
@@ -34,13 +34,14 @@ import Transaction from '../pages/Customer/Transaction';
 import PasswordUpdate from '../pages/Customer/PasswordUpdate';
 import WithdrawalAccountUpdate from '../pages/Customer/WithdrawalAccountUpdate';
 
-import { useCartCounter } from '../context/AppHooks';
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
 import { useAuthCustomerFetch } from '../hooks/customerHook';
 import { FETCH_STATUSES } from '../repositories/Fetch';
 import { useAppContext } from '../hooks/contextHook';
 import ProductReviews from '../pages/Customer/ProductReviews';
 import Discount from '../pages/Customer/Discount';
+import { useCartCounter } from '../hooks/viewHook';
+import SavedCart from '../pages/Customer/SavedCart';
 
 
 const HEADER_NAV_LINKS = [
@@ -104,6 +105,7 @@ export default function CustomerApp() {
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/saved-cart/:ID" render={()=> authMiddleware() || <SavedCart />} />
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
           <Route path="/favorites" render={()=> authMiddleware() || <Favorites />} />
           <Route path="/address/add" render={()=> authMiddleware() || <AddressAdd />} />

@@ -25,6 +25,31 @@ export function useDateFormat(date, type) {
   return moment(date).format(format);
 }
 
+export function useCategoryColor(index) {
+  const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
+  return catColors[index%catColors.length];
+}
+
+export function useCartCounter() {
+  //const { cart: {cartItems} } = useAppContext();
+  return 0; //cartItems.length-1 < 100 ? cartItems.length-1 : '99+';
+}
+
+export function useCopyText() {
+  return (text)=> {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const input = document.createElement('input');
+      input.value = text;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+    }
+  }
+}
+
 export function useHasMoreToFetchViaScroll(page, numberOfPages, status, scrollCount=5) {
   return page % scrollCount !== 0 && page <= numberOfPages && status !== FETCH_STATUSES.ERROR;
 }

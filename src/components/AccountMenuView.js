@@ -2,9 +2,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useCategoryColor } from '../context/AppHooks';
 import Icon from '@mdi/react';
 import AlertDialog from './dialog/AlertDialog';
+import { useCategoryColor } from '../hooks/viewHook';
 
 function MenuItem({ icon, text, href, index }) {
 

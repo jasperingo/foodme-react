@@ -19,9 +19,11 @@ export const getProductFetchStatusAction = (fetchStatus, id) => ({
   }
 });
 
-export const getProductsListFetchStatusAction = (payload) => ({
+export const getProductsListFetchStatusAction = (fetchStatus, loading) => ({
   type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, loading
+  }
 });
 
 export const getRelatedProductsListFetchStatusAction = (payload) => ({

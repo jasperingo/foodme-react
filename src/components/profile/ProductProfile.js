@@ -111,7 +111,7 @@ export default function ProductProfile(
           </div>
         </div>
 
-        <div className="container-x py-4 flex-grow lg:w-1/2 lg:pt-0">
+        <div className="container-x pt-4 flex-grow lg:w-1/2 lg:pt-0">
 
           { dialog && <AlertDialog dialog={dialog} /> }
 
@@ -207,9 +207,9 @@ export default function ProductProfile(
 
       </div>
       
-      <div className="my-2 lg:my-5 lg:flex lg:items-start lg:gap-10">
+      <div className="container-x mb-4 lg:my-5 lg:flex lg:items-start lg:gap-10">
 
-        <div className="p-2 shadow rounded mb-3 flex-grow">
+        <div className="md:shadow rounded mb-3 flex-grow md:p-2">
           <H4Heading text="_extra.Description" />
           <p className="max-h-40 overflow-auto">{ description }</p>
         </div>

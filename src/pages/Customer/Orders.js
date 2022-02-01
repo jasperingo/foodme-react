@@ -10,6 +10,7 @@ import { useOrderList } from '../../hooks/order/orderListHook';
 import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 import ScrollList from '../../components/list/ScrollList';
 import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function Orders() {
 
@@ -23,6 +24,11 @@ export default function Orders() {
       } 
     } 
   } = useAppContext();
+
+  useHeader({ 
+    title: `${customer.user.name} - Orders`,
+    headerTitle: "_order.Orders"
+  });
 
   const [
     orders, 

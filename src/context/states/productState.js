@@ -4,6 +4,7 @@ const productState = {
   
   products: [],
   productsPage: 1,
+  productsLoading: true,
   productsNumberOfPages: 0,
   productsFetchStatus: FETCH_STATUSES.LOADING,
 
@@ -13,11 +14,13 @@ const productState = {
 
   reviews: [],
   reviewsPage: 1,
+  reviewsLoading: true,
   reviewsNumberOfPages: 0,
   reviewsFetchStatus: FETCH_STATUSES.LOADING,
 
   related: [],
   relatedPage: 1,
+  relatedLoading: true,
   relatedNumberOfPages: 0,
   relatedFetchStatus: FETCH_STATUSES.LOADING
 };

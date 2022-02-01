@@ -4,6 +4,7 @@ import { bankAccountIcon, cartIcon, favoritedIcon, locationIcon, orderIcon, pass
 import AccountMenuView from '../../components/AccountMenuView';
 import { useAppContext } from '../../hooks/contextHook';
 import { useCustomerLogOut } from '../../hooks/customerHook';
+import { useHeader } from '../../hooks/headerHook';
 
 const MENU_ITEMS = [
   { text: '_user.Profile', icon: userIcon, href: '/profile'},
@@ -28,6 +29,11 @@ export default function AccountMenu() {
     } 
   } = useAppContext();
 
+  useHeader({ 
+    title: `${customer.user.name} - Account`,
+    topNavPaths: ['/cart', '/search']
+  });
+  
   const onLogOut = useCustomerLogOut();
 
   return (

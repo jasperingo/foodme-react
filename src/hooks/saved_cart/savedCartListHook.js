@@ -14,6 +14,7 @@ export function useSavedCartList(userId, userToken) {
       savedCart: {
         savedCarts,
         savedCartsPage,
+        savedCartsLoading,
         savedCartsNumberOfPages,
         savedCartsFetchStatus
       } 
@@ -26,7 +27,7 @@ export function useSavedCartList(userId, userToken) {
   const refetch = useCallback(
     ()=> {
       if (savedCartsFetchStatus !== FETCH_STATUSES.LOADING) 
-        savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.LOADING));
+        savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [savedCartDispatch, savedCartsFetchStatus]
   );
@@ -40,12 +41,14 @@ export function useSavedCartList(userId, userToken) {
 
   useEffect(
     ()=> {
-      if (savedCartsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (savedCartsLoading && savedCartsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.ERROR));
+        savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (savedCartsFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (savedCartsLoading && savedCartsFetchStatus === FETCH_STATUSES.LOADING) {
         
+        savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+
         const api = new CustomerRepository(userToken);
         api.getSavedCartsList(userId, savedCartsPage)
         .then(res=> {
@@ -69,11 +72,20 @@ export function useSavedCartList(userId, userToken) {
           }
         })
         .catch(()=> {
-          savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.ERROR));
+          savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [userId, userToken, savedCarts.length, savedCartsPage, savedCartsFetchStatus, savedCartDispatch, listStatusUpdater]
+    [
+      userId, 
+      userToken, 
+      savedCarts.length, 
+      savedCartsPage, 
+      savedCartsLoading, 
+      savedCartsFetchStatus, 
+      savedCartDispatch, 
+      listStatusUpdater
+    ]
   );
 
 

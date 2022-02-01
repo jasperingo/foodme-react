@@ -14,6 +14,7 @@ export function useTransactionList(userId, userToken) {
       transaction: {
         transactions,
         transactionsPage,
+        transactionsLoading,
         transactionsNumberOfPages,
         transactionsFetchStatus
       } 
@@ -26,7 +27,7 @@ export function useTransactionList(userId, userToken) {
   const refetch = useCallback(
     ()=> {
       if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
-        transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING));
+        transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [transactionDispatch, transactionsFetchStatus]
   );
@@ -40,11 +41,13 @@ export function useTransactionList(userId, userToken) {
 
   useEffect(
     ()=> {
-      if (transactionsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (transactionsLoading && transactionsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR));
+        transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (transactionsLoading && transactionsFetchStatus === FETCH_STATUSES.LOADING) {
+
+        transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
         const api = new CustomerRepository(userToken);
         api.getTransactionsList(userId, transactionsPage)
@@ -69,11 +72,20 @@ export function useTransactionList(userId, userToken) {
           }
         })
         .catch(()=> {
-          transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR));
+          transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [userId, userToken, transactions.length, transactionsPage, transactionsFetchStatus, transactionDispatch, listStatusUpdater]
+    [
+      userId, 
+      userToken, 
+      transactions.length, 
+      transactionsPage, 
+      transactionsLoading, 
+      transactionsFetchStatus, 
+      transactionDispatch, 
+      listStatusUpdater
+    ]
   );
 
 

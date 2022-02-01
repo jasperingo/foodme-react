@@ -11,6 +11,7 @@ import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
 import { useFavoriteList } from '../../hooks/favorite/favoriteListHook';
+import { useHeader } from '../../hooks/headerHook';
 import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 
 
@@ -26,6 +27,11 @@ export default function Favorites() {
       } 
     } 
   } = useAppContext();
+
+  useHeader({ 
+    title: `${customer.user.name} - Favorites`,
+    headerTitle: "_extra.Favorites"
+  });
 
   const [
     products, 

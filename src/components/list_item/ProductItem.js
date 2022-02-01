@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { storeIcon } from '../../assets/icons';
-import { useMoneyFormat } from '../../context/AppHooks';
+import { useMoneyFormat } from '../../hooks/viewHook';
 
 export default function ProductItem(
   { 

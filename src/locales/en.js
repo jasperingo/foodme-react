@@ -30,19 +30,6 @@ export const TRANSLATIONS_EN = {
   cart: 'Cart',
   account: 'Account',
 
-  Name: 'Name',
-  First_name: 'First name',
-  Last_name: 'Last name',
-  Email: 'Email',
-  Phone_number: 'Phone number',
-  Password: 'Password',
-
-  Login: 'Login',
-  Register: 'Register',
-  Forgot_your_password: 'Forgot your password?',
-  Dont_have_an_account: 'Don\'t have an account?',
-  Already_have_an_account: 'Already have an account?',
-  By_registering_you_agree_to_our: 'By registering, you agree to our',
 
   _user: {
     Join_us: 'Join us',
@@ -82,6 +69,7 @@ export const TRANSLATIONS_EN = {
     Phone_number: 'Phone number',
     Registration_date: 'Registration date',
     Password: 'Password',
+    Edit_password: 'Edit password',
     New_password: 'New password',
     Change_password: 'Change password',
     Current_password: 'Current password',

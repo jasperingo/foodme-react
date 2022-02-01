@@ -10,6 +10,7 @@ export default function SavedCartReducer (state, action) {
       return {
         ...state,
         savedCartsPage: 1,
+        savedCartsLoading: true,
         savedCartsNumberOfPages: 0,
         savedCarts: savedCartState.savedCarts,
         savedCartsFetchStatus: savedCartState.savedCartsFetchStatus,
@@ -18,12 +19,14 @@ export default function SavedCartReducer (state, action) {
     case SAVED_CART.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        savedCartsFetchStatus: action.payload
+        savedCartsLoading: action.payload.loading,
+        savedCartsFetchStatus: action.payload.fetchStatus
       };
     
     case SAVED_CART.LIST_FETCHED:
       return {
         ...state,
+        savedCartsLoading: false,
         savedCartsPage: state.savedCartsPage+1,
         savedCartsFetchStatus: action.payload.fetchStatus,
         savedCartsNumberOfPages: action.payload.numberOfPages,

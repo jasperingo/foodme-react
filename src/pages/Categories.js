@@ -9,6 +9,7 @@ import Loading from '../components/Loading';
 import Reload from '../components/Reload';
 import { useProductCategoryList } from '../hooks/category/productCategoryListHook';
 import { useStoreCategoryList } from '../hooks/category/storeCategoryListHook';
+import { useHeader } from '../hooks/headerHook';
 import { useRenderListFooter } from '../hooks/viewHook';
 import { FETCH_STATUSES } from '../repositories/Fetch';
 
@@ -44,6 +45,11 @@ function List({ headerText, categories, categoriesFetchStatus, refetch }) {
 
 
 export default function Categories() {
+
+  useHeader({ 
+    title: `Categories - DailyNeeds`,
+    topNavPaths: ['/cart', '/search']
+  });
 
   const [
     stores, 

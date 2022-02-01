@@ -6,6 +6,7 @@ import Reload from '../../components/Reload';
 import { useBankList } from '../../hooks/bankHook';
 import { useAppContext } from '../../hooks/contextHook';
 import { useCustomerWithdrawalAccountUpdate } from '../../hooks/customerHook';
+import { useHeader } from '../../hooks/headerHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function WithdrawalAccountUpdate() {
@@ -19,6 +20,11 @@ export default function WithdrawalAccountUpdate() {
       } 
     } 
   } = useAppContext();
+
+  useHeader({ 
+    title: `${customer.user.name ?? 'Loading...'} - Withdrawal Account`,
+    headerTitle: '_transaction.Bank_account'
+  });
 
   const [
     banks,

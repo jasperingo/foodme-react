@@ -14,6 +14,7 @@ export function useOrderList(userId, userToken) {
       order: {
         orders,
         ordersPage,
+        ordersLoading,
         ordersNumberOfPages,
         ordersFetchStatus
       } 
@@ -25,7 +26,7 @@ export function useOrderList(userId, userToken) {
   const refetch = useCallback(
     ()=> {
       if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-      orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING));
+      orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [orderDispatch, ordersFetchStatus]
   );
@@ -39,11 +40,13 @@ export function useOrderList(userId, userToken) {
 
   useEffect(
     ()=> {
-      if (ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR));
+        orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING) {
+        
+        orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
 
         const api = new CustomerRepository(userToken);
         api.getOrdersList(userId, ordersPage)
@@ -68,11 +71,11 @@ export function useOrderList(userId, userToken) {
           }
         })
         .catch(()=> {
-          orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR));
+          orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [userId, userToken, orders.length, ordersPage, ordersFetchStatus, orderDispatch, listStatusUpdater]
+    [userId, userToken, orders.length, ordersPage, ordersLoading, ordersFetchStatus, orderDispatch, listStatusUpdater]
   );
 
 

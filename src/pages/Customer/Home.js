@@ -15,6 +15,7 @@ import { useHomeStoreList } from '../../hooks/home/homeStoreListHook';
 import { useHomeProductList } from '../../hooks/home/homeProductListHook';
 import { useRenderListFooter } from '../../hooks/viewHook';
 import { FETCH_STATUSES } from '../../repositories/Fetch';
+import { useHeader } from '../../hooks/headerHook';
 
 const CAROUSEL_IMGS = [
   {
@@ -33,7 +34,6 @@ const CAROUSEL_IMGS = [
     photo: '/home/drink.jpg'
   }
 ];
-
 
 function Categories({ categories, categoriesFetchStatus, refetch }) {
 
@@ -115,6 +115,10 @@ function Products({ products, productsFetchStatus, refetch }) {
 }
 
 export default function Home() {
+
+  useHeader({
+    topNavPaths: ['/cart', '/search']
+  });
 
   const [
     categories, 

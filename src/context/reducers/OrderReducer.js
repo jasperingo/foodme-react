@@ -10,6 +10,7 @@ export default function OrderReducer (state, action) {
       return {
         ...state,
         ordersPage: 1,
+        ordersLoading: true,
         ordersNumberOfPages: 0,
         orders: orderState.orders,
         ordersFetchStatus: orderState.ordersFetchStatus,
@@ -18,12 +19,14 @@ export default function OrderReducer (state, action) {
     case ORDER.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
-        ordersFetchStatus: action.payload,
+        ordersLoading: action.payload.loading,
+        ordersFetchStatus: action.payload.fetchStatus,
       };
     
     case ORDER.LIST_FETCHED :
       return {
         ...state,
+        ordersLoading: false,
         ordersPage: state.ordersPage+1,
         ordersFetchStatus: action.payload.fetchStatus,
         ordersNumberOfPages: action.payload.numberOfPages,
@@ -33,6 +36,7 @@ export default function OrderReducer (state, action) {
     case ORDER.UNFETCHED:
       return {
         ...state,
+        orderLoading: true,
         order: orderState.order,
         orderID: orderState.orderID,
         orderFetchStatus: orderState.orderFetchStatus
@@ -42,12 +46,14 @@ export default function OrderReducer (state, action) {
       return {
         ...state,
         orderID: action.payload.id,
+        orderLoading: action.payload.loading,
         orderFetchStatus: action.payload.fetchStatus
       };
     
     case ORDER.FETCHED :
       return {
         ...state,
+        orderLoading: false,
         order: action.payload.order, 
         orderID: action.payload.order.id, 
         orderFetchStatus: action.payload.fetchStatus,

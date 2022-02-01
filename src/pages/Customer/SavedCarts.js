@@ -10,6 +10,7 @@ import { useSavedCartList } from '../../hooks/saved_cart/savedCartListHook';
 import { useAppContext } from '../../hooks/contextHook';
 import ScrollList from '../../components/list/ScrollList';
 import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function SavedCarts() {
   
@@ -23,6 +24,11 @@ export default function SavedCarts() {
       } 
     } 
   } = useAppContext();
+
+  useHeader({ 
+    title: `${customer.user.name} - Saved Carts`,
+    headerTitle: "_cart.Saved_carts"
+  });
 
   const [
     savedCarts, 
