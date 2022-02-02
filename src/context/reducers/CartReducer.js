@@ -36,6 +36,7 @@ export default function CartReducer (state, { type, payload }) {
         if (item.product_variant.id === payload.item.product_variant.id) {
           const qty = item.quantity + payload.quantity;
           if (qty <= item.product_variant.quantity) {
+            item.amount += payload.amount;
             item.quantity += payload.quantity;
           }
         }

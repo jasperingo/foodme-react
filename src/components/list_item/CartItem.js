@@ -32,7 +32,8 @@ export default function CartItem({ cartItem: { quantity, amount, product, produc
         type: CART.ITEM_QUANTITY_CHANGED,
         payload: {
           quantity: value,
-          item: { product_variant }
+          item: { product_variant },
+          amount: (product_variant.price * value),
         }
       });
     }
