@@ -6,7 +6,7 @@ import { userIcon } from '../../assets/icons';
 import { useDateFormat } from '../../hooks/viewHook';
 import ReviewStars from '../review/ReviewStars';
 
-export default function ReviewItem({ canEdit, editReview, review: { id, customer, description, rating, created_at } }) {
+export default function ReviewItem({ canEdit, editReview, deletReview, review: { id, customer, description, rating, created_at } }) {
 
   const { t } = useTranslation();
 
@@ -26,7 +26,7 @@ export default function ReviewItem({ canEdit, editReview, review: { id, customer
           canEdit && 
           <div className="flex gap-2 flex-grow justify-end">
             <button className="btn-color-primary px-2 rounded" onClick={()=> editReview(rating)}>{ t('_extra.Edit') }</button>
-            <button className="btn-color-red px-2 rounded">{ t('_extra.Delete') }</button>
+            <button className="btn-color-red px-2 rounded" onClick={()=> deletReview()}>{ t('_extra.Delete') }</button>
           </div>
         }
       </div>

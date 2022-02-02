@@ -16,6 +16,7 @@ export function useStoreFetch(userToken) {
       store: {
         store,
         storeID,
+        storeLoading,
         storeFetchStatus
       } 
     }
@@ -24,7 +25,7 @@ export function useStoreFetch(userToken) {
   const refetch = useCallback(
     ()=> {
       if (storeFetchStatus !== FETCH_STATUSES.LOADING && storeFetchStatus !== FETCH_STATUSES.DONE)
-        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
+        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
     },
     [ID, storeFetchStatus, storeDispatch]
   );
@@ -36,11 +37,13 @@ export function useStoreFetch(userToken) {
         
         storeDispatch({ type: STORE.UNFETCHED });
 
-      } else if (storeFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      } else if (storeLoading && storeFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
 
-      } else if (storeFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (storeLoading && storeFetchStatus === FETCH_STATUSES.LOADING) {
+
+        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
 
         const api = new StoreRepository(userToken);
         api.get(ID)
@@ -55,15 +58,19 @@ export function useStoreFetch(userToken) {
               }
             });
           } else if (res.status === 404) {
-            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
+
+            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
+
           } else if (res.status === 403) {
-            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID)));
+
+            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
+
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+          storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
         });
       }
     }

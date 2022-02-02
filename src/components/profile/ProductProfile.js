@@ -2,11 +2,16 @@
 import Icon from "@mdi/react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { categoryIcon, editIcon, favoritedIcon, favoriteIcon, weightIcon } from "../../assets/icons";
+import { categoryIcon, editIcon, favoritedIcon, favoriteIcon, notFoundIcon, weightIcon } from "../../assets/icons";
+import { CART } from "../../context/actions/cartActions";
+import { useAppContext } from "../../hooks/contextHook";
 import { useMoneyFormat } from "../../hooks/viewHook";
-//import { CART } from "../../context/AppActions";
+import { FETCH_STATUSES } from "../../repositories/Fetch";
 import AlertDialog from "../dialog/AlertDialog";
+import LoadingDialog from "../dialog/LoadingDialog";
 import H4Heading from "../H4Heading";
 import QuantityChooser from "../QuantityChooser";
 
@@ -15,6 +20,8 @@ export default function ProductProfile(
   { 
     isCustomer, 
     isStore,
+    onFavoriteSubmit,
+    onUnfavoriteSubmit,
     customerToken,
     product: {
       id,
@@ -31,9 +38,22 @@ export default function ProductProfile(
 
   const { t } = useTranslation();
 
-  //const { cartDispatch } = useAppContext();
+  const history = useHistory();
+
+  const location = useLocation();
+
+  const {
+    cart: {
+      cartDispatch,
+      cart: {
+        cartItems
+      }
+    }
+  } = useAppContext();
   
   const [dialog, setDialog] = useState(null);
+
+  const [loadingDialog, setLoadingDialog] = useState(null);
 
   const [quantity, setQuantity] = useState(1);
 
@@ -43,41 +63,145 @@ export default function ProductProfile(
   
   function onQuantityButtonClicked(value) {
     value = (quantity || 1) + value;
-    setQuantity(value < 1 ? 1 : value);
+    if (value < 1) {
+      setQuantity(1);
+    } else if (value > variant.quantity) {
+      setQuantity(variant.quantity);
+    } else {
+      setQuantity(value);
+    }
   }
 
   function onAddToCart() {
-    
-    // cartDispatch({
-    //   type: CART.ITEM_ADDED,
-    //   payload: {
-    //     amount: (product.price*quantity),
-    //     delivery_fee: 200.00,
-    //     unit: product.unit,
-    //     quantity,
-    //     product
-    //   }
-    // });
 
-    setDialog({
-      body: '_product.Product_has_been_added_to_cart',
-      positiveButton: {
-        text: '_extra.Done',
-        action() {
-          setDialog(null);
+    const item = {
+      quantity,
+      product_variant: variant,
+      amount: (variant.price * quantity),
+      product: { id, photo, title, store }
+    };
+
+    if (cartItems.length > 0 && cartItems[0].product.store.id !== store.id) {
+
+      setDialog({
+        body: '_cart._cart_item_store_conflict_resolve_confirm',
+        positiveButton: {
+          text: '_extra.Yes',
+          action() {
+            cartDispatch({
+              type: CART.ITEMS_REPLACED,
+              payload: {
+                list: [item],
+                fetchStatus: FETCH_STATUSES.DONE
+              }
+            });
+            setDialog(null);
+          }
+        },
+        negativeButton: {
+          text: '_extra.No',
+          action() {
+            setDialog(null);
+          }
         }
-      }
-    });
+      });
+
+    } else {
+
+      cartDispatch({
+        type: CART.ITEM_ADDED,
+        payload: {
+          item,
+          fetchStatus: FETCH_STATUSES.DONE
+        }
+      });
+
+      setDialog({
+        body: '_product.Product_has_been_added_to_cart',
+        positiveButton: {
+          text: '_extra.Done',
+          action() {
+            setDialog(null);
+          }
+        }
+      });
+    }
   }
 
   function favoriteProduct() {
-    alert('Adding product to favourites');
+
+    if (customerToken === null) {
+
+      history.push(`/login?redirect_to=${encodeURIComponent(location.pathname)}`);
+
+    } else {
+
+      setLoadingDialog(true);
+      onFavoriteSubmit({
+        
+        onSuccess() {
+          setLoadingDialog(false);
+          setDialog({
+            body: '_product.Product_added_to_favorites',
+            positiveButton: {
+              text: '_extra.Done',
+              action() {
+                setDialog(null);
+              }
+            }
+          });
+        },
+
+        onError(message) {
+          setLoadingDialog(false);
+          setDialog({
+            body: message,
+            positiveButton: {
+              text: '_extra.Done',
+              action() {
+                setDialog(null);
+              }
+            }
+          });
+        }
+
+      });
+    }
   }
 
   function unfavoriteProduct() {
-    alert('Removing product from favourites');
-  }
+    setLoadingDialog(true);
+    onUnfavoriteSubmit({
+      
+      onSuccess() {
+        setLoadingDialog(false);
+        setDialog({
+          body: '_product.Product_removed_from_favorites',
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          }
+        });
+      },
 
+      onError(message) {
+        setLoadingDialog(false);
+        setDialog({
+          body: message,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          }
+        });
+      }
+
+    });
+  }
+  
   function confirmUnfavoriteProduct() {
     setDialog({
       body: '_product._remove_product_from_favorites_confirm_message',
@@ -114,6 +238,8 @@ export default function ProductProfile(
         <div className="container-x pt-4 flex-grow lg:w-1/2 lg:pt-0">
 
           { dialog && <AlertDialog dialog={dialog} /> }
+
+          { loadingDialog && <LoadingDialog /> }
 
           <div className="flex">
             <h3 className="text-xl flex-grow">{ title }</h3>
@@ -191,13 +317,18 @@ export default function ProductProfile(
               </div>
               
               {
-                variant.available && 
+                variant.available ?
                 <button 
                   onClick={onAddToCart}
                   className="w-full btn-color-primary my-4 py-3 px-5 font-bold rounded lg:w-auto"
                   >
                   { t('_product.Add_to_cart') }
                 </button>
+                :
+                <div className="flex gap-2 w-full bg-red-500 my-4 py-3 px-5 rounded lg:w-auto">
+                  <Icon path={notFoundIcon} className="w-6 h-6" />
+                  <span>{ t('_product._not_available_message') }</span>
+                </div>
               }
               
             </>

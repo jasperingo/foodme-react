@@ -16,6 +16,7 @@ export function useAddressFetch() {
       address: {
         address,
         addressID,
+        addressLoading,
         addressFetchStatus
       } 
     },
@@ -31,7 +32,7 @@ export function useAddressFetch() {
   const refetch = useCallback(
     ()=> {
       if (addressFetchStatus !== FETCH_STATUSES.LOADING && addressFetchStatus !== FETCH_STATUSES.DONE)
-        addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
+        addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
     },
     [ID, addressFetchStatus, addressDispatch]
   );
@@ -43,11 +44,13 @@ export function useAddressFetch() {
         
         addressDispatch({ type: ADDRESS.UNFETCHED });
 
-    } else if (addressFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+    } else if (addressLoading && addressFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+        addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
 
-      } else if (addressFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (addressLoading && addressFetchStatus === FETCH_STATUSES.LOADING) {
+
+        addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
 
         const api = new AddressRepository(customerToken);
         api.get(ID)
@@ -62,15 +65,15 @@ export function useAddressFetch() {
               }
             });
           } else if (res.status === 404) {
-            addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
+            addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
           } else if (res.status === 403) {
-            addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID)));
+            addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+          addressDispatch(getAddressFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
         });
       }
     }

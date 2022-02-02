@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
 import { FETCH_STATUSES } from "../repositories/Fetch";
+import { useAppContext } from './contextHook';
 
 export function useURLQuery() {
   return new URLSearchParams(useLocation().search);
@@ -31,8 +32,14 @@ export function useCategoryColor(index) {
 }
 
 export function useCartCounter() {
-  //const { cart: {cartItems} } = useAppContext();
-  return 0; //cartItems.length-1 < 100 ? cartItems.length-1 : '99+';
+  const { 
+    cart: {
+      cart: {
+        cartItems
+      }
+    } 
+  } = useAppContext();
+  return cartItems.length < 100 ? cartItems.length : '99+';
 }
 
 export function useCopyText() {

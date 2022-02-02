@@ -7,15 +7,18 @@ export const STORE = {
   LIST_FETCH_STATUS_CHANGED: 'STORES_FETCH_STATUS_CHANGED',
 };
 
-export const getStoreFetchStatusAction = (fetchState, id) => ({
+export const getStoreFetchStatusAction = (fetchStatus, id, loading) => ({
   type: STORE.FETCH_STATUS_CHANGED,
   payload: {
     id, 
-    fetchState
+    fetchStatus,
+    loading
   }
 });
 
-export const getStoresListFetchStatusAction = (payload) => ({
+export const getStoresListFetchStatusAction = (fetchStatus, loading) => ({
   type: STORE.LIST_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, loading
+  }
 });

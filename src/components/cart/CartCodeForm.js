@@ -1,9 +1,9 @@
 
 import React, { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import SavedCartApi from '../api/SavedCartApi';
-import { CART } from '../context/AppActions';
-import { useAppContext } from '../context/AppContext';
+import SavedCartApi from '../../api/SavedCartApi';
+import { CART } from '../../context/AppActions';
+import { useAppContext } from '../../context/AppContext';
 import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 
 export default function CartCodeForm() {

@@ -1,5 +1,4 @@
 
-//import { CUSTOMER, FETCH_STATUSES, getCustomerFetchStatusAction, getCustomersListFetchStatusAction } from "../context/AppActions";
 import Fetch from "./Fetch";
 
 export default class CustomerRepository extends Fetch {

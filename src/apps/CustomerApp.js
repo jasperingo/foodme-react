@@ -3,24 +3,24 @@ import React from 'react';
 import { Switch, Route, Redirect } from "react-router-dom";
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
+import AboutUs from '../pages/AboutUs';
+import ContactUs from '../pages/ContactUs';
+import TermsOfService from '../pages/TermsOfService';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
 import Splash from '../pages/Splash';
 import Home from '../pages/Customer/Home';
 import LogIn from '../pages/Customer/LogIn';
 import Register from '../pages/Customer/Register';
 import Cart from '../pages/Customer/Cart';
 import AccountMenu from '../pages/Customer/AccountMenu';
-// import AboutUs from '../pages/AboutUs';
-// import ContactUs from '../pages/ContactUs';
-// import TermsOfService from '../pages/TermsOfService';
 import Category from '../pages/Category';
 import Categories from '../pages/Categories';
 import Search from '../pages/Customer/Search';
 import Store from '../pages/Customer/Store';
 import Product from '../pages/Customer/Product';
 import Messages from '../pages/Customer/Messages';
-// import PrivacyPolicy from '../pages/PrivacyPolicy';
-// import ForgotPassword from '../pages/ForgotPassword';
-// import ResetPassword from '../pages/ResetPassword';
+import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Customer/Profile';
 import Addresses from '../pages/Customer/Addresses';
 import AddressAdd from '../pages/Customer/AddressAdd';
@@ -33,15 +33,16 @@ import Transactions from '../pages/Customer/Transactions';
 import Transaction from '../pages/Customer/Transaction';
 import PasswordUpdate from '../pages/Customer/PasswordUpdate';
 import WithdrawalAccountUpdate from '../pages/Customer/WithdrawalAccountUpdate';
+import SavedCart from '../pages/Customer/SavedCart';
+import DeliveryFirm from '../pages/Customer/DeliveryFirm';
+import ProductReviews from '../pages/Customer/ProductReviews';
+import Discount from '../pages/Customer/Discount';
 
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
 import { useAuthCustomerFetch } from '../hooks/customerHook';
 import { FETCH_STATUSES } from '../repositories/Fetch';
 import { useAppContext } from '../hooks/contextHook';
-import ProductReviews from '../pages/Customer/ProductReviews';
-import Discount from '../pages/Customer/Discount';
-import { useCartCounter } from '../hooks/viewHook';
-import SavedCart from '../pages/Customer/SavedCart';
+import { useCartCounter, useURLQuery } from '../hooks/viewHook';
 
 
 const HEADER_NAV_LINKS = [
@@ -68,6 +69,8 @@ export default function CustomerApp() {
     } 
   } = useAppContext();
 
+  const redirectTo = useURLQuery().get('redirect_to');
+
   const [authDone, retry] = useAuthCustomerFetch();
 
   if (authDone !== FETCH_STATUSES.DONE) {
@@ -82,7 +85,7 @@ export default function CustomerApp() {
   }
 
   function guestMiddleware() {
-    return customer === null ? null : <Redirect to="/account" />
+    return customer === null ? null : <Redirect to={redirectTo ?? '/account'} />
   }
   
   return (
@@ -94,13 +97,11 @@ export default function CustomerApp() {
         />
       <main className="pb-52">
         <Switch>
-          {/*
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
-          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} /> */}
+
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
@@ -118,11 +119,14 @@ export default function CustomerApp() {
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
           <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />
           <Route path="/cart" render={()=> <Cart />} />
           <Route path="/search" render={()=> <Search />} /> 
           <Route path="/discount/:ID" render={()=> <Discount />} />
           <Route path="/product/:ID/reviews" render={()=> <ProductReviews />} />
           <Route path="/product/:ID" render={()=> <Product />} />
+          <Route path="/delivery-firm/:ID" render={()=> <DeliveryFirm />} />
           <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/category/:ID" render={()=> <Category isAdmin={false} />} /> 
           <Route path="/categories" render={()=> <Categories />} />

@@ -1,7 +1,7 @@
 
 export const SAVED_CART = {
-  UNFETCHED: 'SAVED_CART_UNFETCHED',
   FETCHED: 'SAVED_CART_FETCHED',
+  UNFETCHED: 'SAVED_CART_UNFETCHED',
   FETCH_STATUS_CHANGED: 'SAVED_CART_FETCH_STATUS_CHANGED',
 
   LIST_FETCHED: 'SAVED_CARTS_FETCHED',
@@ -11,9 +11,11 @@ export const SAVED_CART = {
   DELETED: 'SAVED_CART_DELETED'
 };
 
-export const getSavedCartFetchStatusAction = (payload) => ({
+export const getSavedCartFetchStatusAction = (fetchStatus, id, loading) => ({
   type: SAVED_CART.FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, id, loading
+  }
 });
 
 export const getSavedCartsListFetchStatusAction = (fetchStatus, loading) => ({

@@ -1,21 +1,31 @@
 
 import React from 'react';
-// import { useListRender } from '../../context/AppHooks';
 import EmptyList from '../../components/EmptyList';
-//import { useAppContext } from '../../context/AppContext';
-// import CartItem from '../../components/CartItem';
 //import CartCodeForm from '../../components/CartCodeForm';
-//import CartCheckOutOrSave from '../../components/CartCheckOutOrSave';
+import CartCheckOutOrSave from '../../components/cart/CartCheckOutOrSave';
 import { cartIcon } from '../../assets/icons';
+import { useAppContext } from '../../hooks/contextHook';
+import { FETCH_STATUSES } from '../../repositories/Fetch';
+import CartItem from '../../components/list_item/CartItem';
+import { useHeader } from '../../hooks/headerHook';
 
 
 export default function Cart() {
 
-  // const { cart: {
-  //     cartItems,
-  //     cartItemsFetchStatus
-  //   } 
-  // } = useAppContext();
+  useHeader({ 
+    title: `Cart - Dailyneeds`,
+    headerTitle: '_cart.Cart',
+    topNavPaths: ['/cart']
+  });
+
+  const { 
+    cart: {
+      cart: {
+        cartItems,
+        cartItemsFetchStatus
+      } 
+    }
+  } = useAppContext();
 
   return (
     <section>
@@ -25,28 +35,20 @@ export default function Cart() {
       <div className="container-x">
         <div className="lg:flex lg:gap-4 lg:items-start">
           <ul className="py-2 lg:flex-grow">
-            <EmptyList text="_empty.Your_cart_is_empty" icon={cartIcon} />
-            {/* { 
-              useListRender(
-                cartItems, 
-                cartItemsFetchStatus,
-                (item, i)=> (
-                  <CartItem
-                    key={`cart-item-${i}`} 
-                    cartItem={item} 
-                    />
-                ),
-                null, 
-                null,
-                (k)=> (
-                  <li key={k}>
-                    <EmptyList text="_empty.Your_cart_is_empty" icon={cartIcon} />
-                  </li>
-                )
-              )
-            } */}
+            { 
+              cartItems.map((item, i)=> (
+                <CartItem
+                  key={`cart-item-${i}`} 
+                  cartItem={item} 
+                  />
+              ))
+            }
+            {
+              cartItemsFetchStatus === FETCH_STATUSES.EMPTY && 
+              <EmptyList text="_empty.Your_cart_is_empty" icon={cartIcon} />
+            }
           </ul>
-          {/* { cartItemsFetchStatus === FETCH_STATUSES.DONE && <CartCheckOutOrSave appType={CustomerApp.TYPE} /> } */}
+          { cartItemsFetchStatus === FETCH_STATUSES.DONE && <CartCheckOutOrSave /> }
         </div>
       </div>
     </section>

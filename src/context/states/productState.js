@@ -10,6 +10,7 @@ const productState = {
 
   product: null,
   productID: null,
+  productLoading: true,
   productFetchStatus: FETCH_STATUSES.LOADING,
 
   reviews: [],

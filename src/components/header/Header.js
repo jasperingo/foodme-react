@@ -93,7 +93,7 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
           { 
             searchable && 
             <div className={`${(showHeader || !searchPage) && 'hidden'} flex-grow lg:block`}>
-              <SearchForm /> 
+              <SearchForm onSearchPage={searchPage} /> 
             </div>
           }
         </div>

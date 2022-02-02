@@ -22,18 +22,21 @@ export default function AddressReducer (state, action) {
       return {
         ...state,
         addresses: addressState.addresses,
+        addressesLoading: addressState.addressesLoading,
         addressesFetchStatus: addressState.addressesFetchStatus,
       };
     
     case ADDRESS.LIST_FETCH_STATUS_CHANGED: 
       return {
         ...state,
-        addressesFetchStatus: action.payload
+        addressesLoading: action.payload.loading,
+        addressesFetchStatus: action.payload.fetchStatus
       };
 
     case ADDRESS.LIST_FETCHED:
       return {
         ...state,
+        addressesLoading: false, 
         addresses: action.payload.list, 
         addressesFetchStatus: action.payload.fetchStatus,
       };
@@ -41,6 +44,7 @@ export default function AddressReducer (state, action) {
     case ADDRESS.UNFETCHED:
       return {
         ...state,
+        addressLoading: true,
         address: addressState.address,
         addressID: addressState.addressID,
         addressFetchStatus: addressState.addressFetchStatus,
@@ -50,12 +54,14 @@ export default function AddressReducer (state, action) {
       return {
         ...state,
         addressID: action.payload.id,
+        addressLoading: action.payload.loading,
         addressFetchStatus: action.payload.fetchStatus
       };
 
     case ADDRESS.FETCHED:
       return {
         ...state,
+        addressLoading: false,
         address: action.payload.address, 
         addressID: action.payload.address.id, 
         addressFetchStatus: action.payload.fetchStatus

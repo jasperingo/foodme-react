@@ -10,7 +10,7 @@ function ContactUsData({ param, value }) {
   return (
     <div className="mb-3">
       <dt className="text-color-gray font-bold text-sm">{ t(param) }</dt>
-      <dd className="text-black">{ value }</dd>
+      <dd>{ value }</dd>
     </div>
   );
 }
@@ -82,9 +82,9 @@ export default function ContactUs() {
 
           <div className="bg-color-gray rounded p-4 pb-1 my-4">
             <dl>
-              <ContactUsData param="Phone_number" value="+234806470889" />
-              <ContactUsData param="Email" value="dailyneeds785@gmail.com" />
-              <ContactUsData param="Working_hours" value="Monday - Sunday: 24/7" />
+              <ContactUsData param="_user.Phone_number" value="+234806470889" />
+              <ContactUsData param="_user.Email" value="dailyneeds785@gmail.com" />
+              <ContactUsData param="_user.Working_hours" value="Monday - Sunday: 24/7" />
             </dl>
           </div>
 

@@ -1,24 +1,28 @@
 
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import ProfileButton from './ProfileButton';
+import ProfileLink from './ProfileLink';
 
-function Button({ text, color, action }) {
-  const { t } = useTranslation()
-  return (
-    <li>
-      <button className={`${color} px-2 py-1 rounded`} onClick={action}>{ t(text) }</button>
-    </li>
-  );
-}
 
-export default function ProfileHeaderText({ text, buttons=[] }) {
+export default function ProfileHeaderText({ text, links=[], buttons=[] }) {
+
+  const actions = links.concat(buttons);
+
   return (
     <div className="my-4 flex items-center flex-wrap gap-2">
       <h3 className="flex-grow font-bold text-3xl">{ text }</h3> 
       <ul className="flex flex-wrap gap-2 mt-2">
         {
-          buttons.map((item, i)=> (
-            <Button 
+          actions.map((item, i)=> (
+            item.href ? 
+              <ProfileLink 
+                key={`profile-link-${i}`} 
+                href={item.href} 
+                title={item.title} 
+                icon={item.icon} 
+                /> 
+              :
+              <ProfileButton 
               text={item.text}
               color={item.color}
               action={item.action}

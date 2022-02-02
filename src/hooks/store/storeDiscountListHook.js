@@ -16,6 +16,7 @@ export function useStoreDiscountList(userToken) {
         store,
         discounts,
         discountsPage,
+        discountsLoading,
         discountsNumberOfPages,
         discountsFetchStatus
       } 
@@ -27,19 +28,21 @@ export function useStoreDiscountList(userToken) {
   const refetch = useCallback(
     ()=> {
       if (discountsFetchStatus !== FETCH_STATUSES.LOADING) 
-        storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.LOADING));
+        storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [storeDispatch, discountsFetchStatus]
   );
   
   useEffect(
     ()=> {
-      if (discountsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (discountsLoading && discountsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.ERROR));
+        storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (discountsFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (discountsLoading && discountsFetchStatus === FETCH_STATUSES.LOADING) {
         
+        storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+
         const api = new StoreRepository(userToken);
         api.getDiscountsList(store.id, discountsPage)
         .then(res=> {
@@ -59,19 +62,19 @@ export function useStoreDiscountList(userToken) {
               }
             });
           } else if (res.status === 404) {
-            storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND));
+            storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
           } else if (res.status === 403) {
-            storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN));
+            storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.ERROR));
+          storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [store.id, discounts, discountsPage, discountsFetchStatus, userToken, storeDispatch, listStatusUpdater]
+    [store.id, discounts, discountsPage, discountsLoading, discountsFetchStatus, userToken, storeDispatch, listStatusUpdater]
   );
 
   return [discounts, discountsFetchStatus, discountsPage, discountsNumberOfPages, refetch];

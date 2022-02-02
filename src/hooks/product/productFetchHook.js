@@ -16,6 +16,7 @@ export function useProductFetch(userToken) {
       product: {
         product,
         productID,
+        productLoading,
         productFetchStatus
       } 
     }
@@ -24,7 +25,7 @@ export function useProductFetch(userToken) {
   const refetch = useCallback(
     ()=> {
       if (productFetchStatus !== FETCH_STATUSES.LOADING && productFetchStatus !== FETCH_STATUSES.DONE)
-        productDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
+        productDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
     },
     [ID, productFetchStatus, productDispatch]
   );
@@ -36,11 +37,13 @@ export function useProductFetch(userToken) {
         
         productDispatch({ type: PRODUCT.UNFETCHED });
 
-      } else if (productFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      } else if (productLoading && productFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        productDispatch(getProductFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+        productDispatch(getProductFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
 
-      } else if (productFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (productLoading && productFetchStatus === FETCH_STATUSES.LOADING) {
+
+        productDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
 
         const api = new ProductRepository(userToken);
         api.get(ID)
@@ -55,15 +58,15 @@ export function useProductFetch(userToken) {
               }
             });
           } else if (res.status === 404) {
-            productDispatch(getProductFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
+            productDispatch(getProductFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
           } else if (res.status === 403) {
-            productDispatch(getProductFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID)));
+            productDispatch(getProductFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          productDispatch(getProductFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+          productDispatch(getProductFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
         });
       }
     }

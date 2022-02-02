@@ -1,62 +1,56 @@
+import { CART } from "../actions/cartActions";
 
-import { CART, FETCH_STATUSES } from "../AppActions";
-
-export default function CartReducer (state, action) {
+export default function CartReducer (state, { type, payload }) {
   
-  switch (action.type) {  
+  switch (type) {  
     
     case CART.ITEM_ADDED:
 
-      let found = false;
+      let item = state.cartItems.find(i=> i.product_variant.id === payload.item.product_variant.id);
 
-      const items = state.cartItems.map(item=> {
-        if (item && item.product.id === action.payload.product.id) {
-          found = true;
-          item.amount += action.payload.amount;
-          item.quantity += action.payload.quantity;
+      if (item === undefined) {
+        item = payload.item;
+      } else {
+        const qty = item.quantity + payload.item.quantity;
+        if (qty <= item.product_variant.quantity) {
+          item.amount += payload.item.amount;
+          item.quantity += payload.item.quantity;
         }
-        return item;
-      });
-
-      if (!found) {
-        items.unshift(action.payload);
       }
-
+      
       return {
-        cartItems: items,
-        cartItemsFetchStatus: FETCH_STATUSES.DONE
+        cartItemsFetchStatus: payload.fetchStatus,
+        cartItems: [item, ...state.cartItems.filter(i=> i.product_variant.id !== item.product_variant.id)]
       };
     
     case CART.ITEM_REMOVED:
-
-      const itemss = state.cartItems.filter(item=> item && item.product.id !== action.payload.product.id);
-
       return {
-        cartItems: [...itemss, null],
-        cartItemsFetchStatus: (itemss.length > 0 ? FETCH_STATUSES.DONE: FETCH_STATUSES.EMPTY)
+        cartItemsFetchStatus: payload.fetchStatus,
+        cartItems: [...state.cartItems.filter(item=> item.product_variant.id !== payload.item.product_variant.id)]
       };
     
     case CART.ITEM_QUANTITY_CHANGED:
 
-      const itemsss = state.cartItems.map(item=> {
-        if (item && item.product.id === action.payload.item.product.id) {
-          let value = item.quantity + action.payload.value;
-          item.quantity = (value < 1 ? 1 : value);
-          item.amount = action.payload.item.product.price * item.quantity;
+      const items = state.cartItems.map(i=> {
+        let item = { ...i };
+        if (item.product_variant.id === payload.item.product_variant.id) {
+          const qty = item.quantity + payload.quantity;
+          if (qty <= item.product_variant.quantity) {
+            item.quantity += payload.quantity;
+          }
         }
-        
         return item;
       });
       
       return {
-        cartItems: itemsss,
-        cartItemsFetchStatus: FETCH_STATUSES.DONE
+        ...state,
+        cartItems: items
       };
     
-    case CART.DUMPED:
+    case CART.ITEMS_REPLACED:
       return {
-        cartItems: [...action.payload, null],
-        cartItemsFetchStatus: FETCH_STATUSES.DONE
+        cartItems: [...payload.list],
+        cartItemsFetchStatus: payload.fetchStatus
       };
 
     default:

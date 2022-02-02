@@ -14,20 +14,23 @@ export default function StoreReducer (state, action) {
         ...storeState,
         stores: state.stores,
         storesPage: state.storesPage,
+        storesLoading: state.storesLoading,
         storesNumberOfPages: state.storesNumberOfPages,
-        storesFetchStatus: state.storesPage
+        storesFetchStatus: state.storesFetchStatus
       };
     
     case STORE.FETCH_STATUS_CHANGED:
       return {
         ...state,
         storeID: action.payload.id,
+        storeLoading: action.payload.loading,
         storeFetchStatus: action.payload.fetchStatus
       };
     
     case STORE.FETCHED:
       return {
         ...state,
+        storeLoading: false, 
         store: action.payload.store, 
         storeID: action.payload.store.id,
         storeFetchStatus: action.payload.fetchStatus
@@ -65,12 +68,14 @@ export default function StoreReducer (state, action) {
     case PRODUCT.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
-        productsFetchStatus: action.payload
+        productsLoading: action.payload.loading,
+        productsFetchStatus: action.payload.fetchStatus
       };
     
     case PRODUCT.LIST_FETCHED:
       return {
         ...state,
+        productsLoading: false,
         productsPage: state.productsPage+1,
         productsFetchStatus: action.payload.fetchStatus,
         productsNumberOfPages: action.payload.numberOfPages,
@@ -81,12 +86,14 @@ export default function StoreReducer (state, action) {
     case REVIEW.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
-        reviewsFetchStatus: action.payload
+        reviewsLoading: action.payload.loading,
+        reviewsFetchStatus: action.payload.fetchStatus
       };
 
     case REVIEW.LIST_FETCHED:
       return {
         ...state,
+        reviewsLoading: false,
         reviewsPage: state.reviewsPage+1,
         reviewsFetchStatus: action.payload.fetchStatus,
         reviewsNumberOfPages: action.payload.numberOfPages,
@@ -97,12 +104,14 @@ export default function StoreReducer (state, action) {
     case DISCOUNT.LIST_FETCH_STATUS_CHANGED :
       return {
         ...state,
-        discountsFetchStatus: action.payload
+        discountsLoading: action.payload.loading,
+        discountsFetchStatus: action.payload.fetchStatus
       };
 
     case DISCOUNT.LIST_FETCHED:
       return {
         ...state,
+        discountsLoading: false,
         discountsPage: state.discountsPage+1,
         discountsFetchStatus: action.payload.fetchStatus,
         discountsNumberOfPages: action.payload.numberOfPages,
@@ -167,6 +176,80 @@ export default function StoreReducer (state, action) {
     //       transactions: [...trans, ...action.payload.transactions, null],
     //     }
     //   };
+
+    case REVIEW.CREATED:
+
+      const review = action.payload;
+
+      const summary = { ...state.store.review_summary };
+
+      summary.total++;
+
+      summary.ratings[review.rating-1] = summary.ratings[review.rating-1] + 1;
+
+      const average = summary.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
+      
+      summary.average = average / summary.total;
+
+      return {
+        ...state,
+        store: {
+          ...state.store,
+          reviews: [ review ],
+          review_summary: summary
+        }
+      };
+
+    case REVIEW.UPDATED:
+
+      const reviewCur = action.payload;
+
+      const reviewPrev = state.store.reviews[0];
+
+      const summaryY = { ...state.store.review_summary };
+
+      summaryY.ratings[reviewCur.rating-1] = summaryY.ratings[reviewCur.rating-1] + 1;
+
+      summaryY.ratings[reviewPrev.rating-1] = summaryY.ratings[reviewPrev.rating-1] - 1;
+
+      const averageY = summaryY.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
+
+      summaryY.average = averageY / summaryY.total;
+      
+      return {
+        ...state,
+        store: {
+          ...state.store,
+          reviews: [ reviewCur ],
+          review_summary: summaryY,
+        }
+      };
+
+    case REVIEW.DELETED:
+
+      const reviewX = state.store.reviews[0];
+
+      const summaryX = { ...state.store.review_summary };
+
+      summaryX.total--;
+
+      summaryX.ratings[reviewX.rating-1] = summaryX.ratings[reviewX.rating-1] - 1;
+
+      if (summaryX.total > 0) {
+        const averageX = summaryX.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
+        summaryX.average = averageX / summaryX.total;
+      } else {
+        summaryX.average = 0;
+      }
+
+      return {
+        ...state,
+        store: {
+          ...state.store,
+          reviews: undefined,
+          review_summary: summaryX
+        }
+      };
     
     default:
       return state;

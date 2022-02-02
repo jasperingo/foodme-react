@@ -5,9 +5,15 @@ export const REVIEW = {
   FETCH_STATUS_CHANGED: 'REVIEW_FETCH_STATUS_CHANGED',
   LIST_FETCHED: 'REVIEWS_FETCHED',
   LIST_FETCH_STATUS_CHANGED: 'REVIEWS_FETCH_STATUS_CHANGED',
+
+  CREATED: 'REVIEW_CREATED',
+  UPDATED: 'REVIEW_UPDATED',
+  DELETED: 'REVIEW_DELETED'
 };
 
-export const getReviewsListFetchStatusAction = (payload) => ({
+export const getReviewsListFetchStatusAction = (fetchStatus, loading) => ({
   type: REVIEW.LIST_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, loading
+  }
 });

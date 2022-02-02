@@ -12,6 +12,7 @@ export function useAddressList(user, userToken) {
       addressDispatch,
       address: {
         addresses,
+        addressesLoading,
         addressesFetchStatus
       } 
     }
@@ -20,7 +21,7 @@ export function useAddressList(user, userToken) {
   const refetch = useCallback(
     ()=> {
       if (addressesFetchStatus !== FETCH_STATUSES.LOADING) 
-        addressDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.LOADING));
+        addressDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [addressDispatch, addressesFetchStatus]
   );
@@ -34,11 +35,13 @@ export function useAddressList(user, userToken) {
 
   useEffect(
     ()=> {
-      if (addressesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (addressesLoading && addressesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        addressDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.ERROR));
+        addressDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (addressesFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (addressesLoading && addressesFetchStatus === FETCH_STATUSES.LOADING) {
+
+        addressDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.LOADING, false));
 
         const api = new CustomerRepository(userToken);
         api.getAddressesList(user.id)
@@ -57,11 +60,11 @@ export function useAddressList(user, userToken) {
           }
         })
         .catch(()=> {
-          addressDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.ERROR));
+          addressDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [user.id, userToken, addressesFetchStatus, addressDispatch]
+    [user.id, userToken, addressesLoading, addressesFetchStatus, addressDispatch]
   );
 
   return [addresses, addressesFetchStatus, refetch, refresh];

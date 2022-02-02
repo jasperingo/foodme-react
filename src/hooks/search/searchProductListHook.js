@@ -11,15 +11,17 @@ export function useSearchProductList() {
 
   const queryParam = useURLQuery().get('q');
 
+  const subCategoryParam = useURLQuery().get('products_sub_category');
+
   const { 
     search: {
       searchDispatch,
       search: {
         products,
         productsFetchStatus,
+        productsLoading,
         productsPage,
-        productsNumberOfPages,
-        productsSubCategory,
+        productsNumberOfPages
       } 
     }
   } = useAppContext();
@@ -29,21 +31,24 @@ export function useSearchProductList() {
   const refetch = useCallback(
     ()=> {
       if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-        searchDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
+        searchDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [searchDispatch, productsFetchStatus]
   );
   
   useEffect(
     ()=> {
-      if (productsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        searchDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+      if (productsLoading && productsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-      } else if (productsFetchStatus === FETCH_STATUSES.LOADING) {
+        searchDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+
+      } else if (productsLoading && productsFetchStatus === FETCH_STATUSES.LOADING) {
+
+        searchDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
         const api = new ProductRepository();
-        api.getSearchList(queryParam, productsSubCategory, productsPage)
+        api.getSearchList(queryParam, subCategoryParam, productsPage)
         .then(res=> {
           
           if (res.status === 200) {
@@ -65,11 +70,20 @@ export function useSearchProductList() {
           }
         })
         .catch(()=> {
-          searchDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+          searchDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [queryParam, productsSubCategory, products, productsPage, productsFetchStatus, searchDispatch, listStatusUpdater]
+    [
+      queryParam, 
+      subCategoryParam, 
+      products, 
+      productsLoading, 
+      productsPage, 
+      productsFetchStatus, 
+      searchDispatch, 
+      listStatusUpdater
+    ]
   );
 
   return [products, productsFetchStatus, productsPage, productsNumberOfPages, refetch];

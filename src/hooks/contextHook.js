@@ -2,8 +2,10 @@ import { useContext, useReducer } from "react";
 import AppContext from "../context/AppContext";
 import AddressReducer from "../context/reducers/AddressReducer";
 import BankReducer from "../context/reducers/BankReducer";
+import CartReducer from "../context/reducers/CartReducer";
 import CategoryReducer from "../context/reducers/CategoryReducer";
 import CustomerReducer from "../context/reducers/CustomerReducer";
+import DiscountReducer from "../context/reducers/DiscountReducer";
 import HeaderReducer from "../context/reducers/HeaderReducer";
 import HomeReducer from "../context/reducers/HomeReducer";
 import OrderReducer from "../context/reducers/OrderReducer";
@@ -14,8 +16,10 @@ import StoreReducer from "../context/reducers/StoreReducer";
 import TransactionReducer from "../context/reducers/TransactionReducer";
 import addressState from "../context/states/addressState";
 import bankState from "../context/states/bankState";
+import cartState from "../context/states/cartState";
 import categoryState from "../context/states/categoryState";
 import customerState from "../context/states/customerState";
+import discountState from "../context/states/discountState";
 import headerState from "../context/states/headerState";
 import homeState from "../context/states/homeState";
 import orderState from "../context/states/orderState";
@@ -51,6 +55,10 @@ export function useAppContextValues() {
   const [product, productDispatch] = useReducer(ProductReducer, productState);
 
   const [savedCart, savedCartDispatch] = useReducer(SavedCartReducer, savedCartState);
+
+  const [discount, discountDispatch] = useReducer(DiscountReducer, discountState);
+
+  const [cart, cartDispatch] = useReducer(CartReducer, cartState);
 
 
   return {
@@ -114,6 +122,16 @@ export function useAppContextValues() {
       savedCart, 
       savedCartDispatch
     },
+
+    discount: {
+      discount, 
+      discountDispatch
+    },
+
+    cart: {
+      cart, 
+      cartDispatch
+    }
 
   }
 }

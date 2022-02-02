@@ -10,12 +10,15 @@ export const PRODUCT = {
 
   RELATED_LIST_FETCHED: 'RELATED_PRODUCTS_FETCHED',
   RELATED_LIST_FETCH_STATUS_CHANGED: 'RELATED_PRODUCTS_FETCH_STATUS_CHANGED',
+
+  FAVORITED: 'PRODUCT_FAVORITED',
+  UNFAVORITED: 'PRODUCT_UNFAVORITED'
 };
 
-export const getProductFetchStatusAction = (fetchStatus, id) => ({
+export const getProductFetchStatusAction = (fetchStatus, id, loading) => ({
   type: PRODUCT.FETCH_STATUS_CHANGED,
   payload: {
-    fetchStatus, id
+    fetchStatus, id, loading
   }
 });
 
@@ -26,8 +29,10 @@ export const getProductsListFetchStatusAction = (fetchStatus, loading) => ({
   }
 });
 
-export const getRelatedProductsListFetchStatusAction = (payload) => ({
+export const getRelatedProductsListFetchStatusAction = (fetchStatus, loading) => ({
   type: PRODUCT.RELATED_LIST_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, loading
+  }
 });
 

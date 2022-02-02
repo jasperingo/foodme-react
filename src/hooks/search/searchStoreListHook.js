@@ -11,15 +11,17 @@ export function useSearchStoreList() {
 
   const queryParam = useURLQuery().get('q');
 
+  const subCategoryParam = useURLQuery().get('stores_sub_category');
+
   const { 
     search: {
       searchDispatch,
       search: {
         stores,
         storesFetchStatus,
+        storesLoading,
         storesPage,
-        storesNumberOfPages,
-        storesSubCategory,
+        storesNumberOfPages
       } 
     }
   } = useAppContext();
@@ -30,21 +32,23 @@ export function useSearchStoreList() {
   const refetch = useCallback(
     ()=> {
       if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
-        searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING));
+        searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [searchDispatch, storesFetchStatus]
   );
 
   useEffect(
     ()=> {
-      if (storesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (storesLoading && storesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR));
+        searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (storesFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (storesLoading && storesFetchStatus === FETCH_STATUSES.LOADING) {
+
+        searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING, false));
 
         const api = new StoreRepository();
-        api.getSearchList(queryParam, storesSubCategory, storesPage)
+        api.getSearchList(queryParam, subCategoryParam, storesPage)
         .then(res=> {
           
           if (res.status === 200) {
@@ -66,11 +70,21 @@ export function useSearchStoreList() {
           }
         })
         .catch(()=> {
-          searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR));
+          searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [queryParam, storesSubCategory, stores, storesFetchStatus, storesPage, storesNumberOfPages, searchDispatch, listStatusUpdater]
+    [
+      queryParam, 
+      subCategoryParam, 
+      stores, 
+      storesLoading, 
+      storesFetchStatus, 
+      storesPage, 
+      storesNumberOfPages, 
+      searchDispatch, 
+      listStatusUpdater
+    ]
   );
 
   return [stores, storesFetchStatus, storesPage, storesNumberOfPages, refetch];

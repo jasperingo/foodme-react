@@ -12,15 +12,17 @@ export const ADDRESS = {
   LOCATIONS_LIST_FETCH_STATUS_CHANGED: 'LOCATIONS_LIST_FETCH_STATUS_CHANGED',
 };
 
-export const getAddressesListFetchStatusAction = (payload) => ({
+export const getAddressesListFetchStatusAction = (fetchStatus, loading) => ({
   type: ADDRESS.LIST_FETCH_STATUS_CHANGED,
-  payload
+  payload: {
+    fetchStatus, loading
+  }
 });
 
-export const getAddressFetchStatusAction = (fetchStatus, id) => ({
+export const getAddressFetchStatusAction = (fetchStatus, id, loading) => ({
   type: ADDRESS.FETCH_STATUS_CHANGED,
   payload: {
-    fetchStatus, id
+    fetchStatus, id, loading
   }
 });
 

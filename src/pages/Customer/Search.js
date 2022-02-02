@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch, useHistory } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import EmptyList from '../../components/EmptyList';
@@ -19,6 +19,7 @@ import Icon from '@mdi/react';
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
 import { useHeader } from '../../hooks/headerHook';
+import { useTranslation } from 'react-i18next';
 
 
 const TAB_LINKS = [
@@ -34,12 +35,21 @@ function SearchEmpty() {
   );
 }
 
-function SubCategoryFilter({ categories }) {
+function SubCategoryFilter({ categories, subCategory, onFilterChange }) {
+
+  const { t } = useTranslation();
 
   return (
-    <div className="flex gap-2 items-center mb-2">
+    <form className="flex gap-2 items-center mb-2">
       <Icon path={filterIcon} className="w-6 h-6" />
-      <select className="px-2 py-1 rounded bg-color-gray">
+      <label htmlFor="search-filter" className="sr-only">{ t('_search.Filter_search_by_sub_category') }</label>
+      <select 
+        id="search-filter" 
+        className="px-2 py-1 rounded bg-color-gray" 
+        defaultValue={subCategory}
+        onChange={(e)=> onFilterChange(e.target.value)}
+        >
+        <option value="">{ t('_category.Sub_category') }</option>
         {
           categories.map(cat=> 
             <optgroup key={`category-${cat.id}`} label={cat.name}>
@@ -52,7 +62,7 @@ function SubCategoryFilter({ categories }) {
           )
         }
       </select>
-    </div>
+    </form>
   )
 }
 
@@ -88,17 +98,38 @@ function ProductList() {
 
 function Products() {
 
+  const {
+    search: {
+      searchDispatch
+    }
+  } = useAppContext();
+
   const [
     products, 
     productsFetchStatus, 
     refetchProducts
   ] = useProductCategoryList(true);
 
+  const history = useHistory()
+
+  const param = useURLQuery();
+
+  const subCategoryParam = param.get('products_sub_category');
+
+  function filterChanged(value) {
+    param.set('products_sub_category', value);
+    searchDispatch({
+      type: SEARCH.STORES_FILTER_CHANGED,
+      payload: value
+    });
+    history.replace(`/search/products?${param.toString()}`);
+  }
+
   return useRenderOnDataFetched(
     productsFetchStatus,
     ()=> (
       <div>
-        <SubCategoryFilter categories={products} />
+        <SubCategoryFilter categories={products} subCategory={subCategoryParam} onFilterChange={filterChanged} />
         <ProductList />
       </div>
     ),
@@ -139,17 +170,38 @@ function StoreList() {
 
 function Stores() {
 
+  const {
+    search: {
+      searchDispatch
+    }
+  } = useAppContext();
+
   const [
     stores, 
     storesFetchStatus, 
     refetchStores
   ] = useStoreCategoryList();
 
+  const history = useHistory()
+
+  const param = useURLQuery();
+
+  const subCategoryParam = param.get('stores_sub_category');
+
+  function filterChanged(value) {
+    param.set('stores_sub_category', value);
+    searchDispatch({
+      type: SEARCH.STORES_FILTER_CHANGED,
+      payload: value
+    });
+    history.replace(`/search/stores?${param.toString()}`);
+  }
+
   return useRenderOnDataFetched(
     storesFetchStatus,
     ()=> (
       <div>
-        <SubCategoryFilter categories={stores} />
+        <SubCategoryFilter categories={stores} subCategory={subCategoryParam} onFilterChange={filterChanged} />
         <StoreList />
       </div>
     ),
@@ -164,18 +216,24 @@ export default function Search() {
   
   const queryParam = useURLQuery().get('q');
 
-  const { 
+  const storesSubCategoryParam = useURLQuery().get('stores_sub_category');
+
+  const productsSubCategoryParam = useURLQuery().get('products_sub_category');
+
+  const {
     search: {
       searchDispatch,
       search: {
         query,
+        storesSubCategory,
+        productsSubCategory
       } 
     }
   } = useAppContext();
 
   useHeader({ 
     searchPage: true,
-    title: `${query} - Search`,
+    title: `${queryParam ?? 'No search parameter'} - Search`,
     headerTitle: '_search.Search',
   });
 
@@ -186,30 +244,43 @@ export default function Search() {
           type: SEARCH.QUERY_CHANGED,
           payload: queryParam
         });
+      } else if (storesSubCategoryParam !== null && storesSubCategoryParam !== storesSubCategory) {
+        searchDispatch({
+          type: SEARCH.STORES_FILTER_CHANGED,
+          payload: storesSubCategoryParam
+        });
+      } else if (productsSubCategoryParam !== null && productsSubCategoryParam !== productsSubCategory) {
+        searchDispatch({
+          type: SEARCH.STORES_FILTER_CHANGED,
+          payload: productsSubCategoryParam
+        });
       }
     }, 
-    [queryParam, query, searchDispatch]
+    [queryParam, storesSubCategoryParam, productsSubCategoryParam, query, storesSubCategory, productsSubCategory, searchDispatch]
   );
   
-  if (queryParam === null) {
+  if (
+    !queryParam && 
+    storesSubCategoryParam === null && 
+    productsSubCategoryParam === null
+  ) {
     return <SearchEmpty />
   }
-
+  
   return (
     <section>
 
       <div className="container-x">
         <Tab 
           keyPrefix="search-tab" 
-          items={ TAB_LINKS.map(i=> ({ ...i, href: `${i.href}?q=${query}` })) } 
+          items={ TAB_LINKS.map(i=> ({ ...i, href: `${i.href}${queryParam ? `?q=${queryParam}`: ''}` })) } 
           />
       </div>
 
       <div className="container-x">
         <Switch>
           <Route path={`${match.url}/products`} render={()=> <Products />} />
-          <Route 
-            path={`${match.url}/stores`} render={()=> <Stores />} />
+          <Route path={`${match.url}/stores`} render={()=> <Stores />} />
         </Switch>
       </div>
 

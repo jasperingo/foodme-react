@@ -54,7 +54,7 @@ function Profile({ category, isAdmin }) {
             category.sub_categories.map((item, i)=> (
               <CategoryItem 
                 key={`sub-category-${item.id}`} 
-                path={category.type}
+                path={category.type+'s'}
                 category={item} 
                 index={i} 
                 sub={true} 

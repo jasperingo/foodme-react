@@ -21,6 +21,11 @@ import ScrollList from '../../components/list/ScrollList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import ProductItem from '../../components/list_item/ProductItem';
 import { useHeader } from '../../hooks/headerHook';
+import { useFavoriteCreate } from '../../hooks/favorite/favoriteCreateHook';
+import { useFavoriteDelete } from '../../hooks/favorite/favoriteDeleteHook';
+import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
+import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
+import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
 
 
 function RelatedList() {
@@ -100,20 +105,23 @@ function ReviewList() {
     refetch
   ] = useProductReviewList(customerToken);
 
-  function onNewReview(rating, description) {
-    console.log(rating, description);
-  }
+  const onReviewUpdate = useReviewUpdate();
 
+  const onReviewDelete = useReviewDelete({ product: true });
+  
+  const onReviewCreate = useReviewCreate({ product: product.id });
   
   return (
     <div className="my-2 container-x">
       <H4Heading text="_review.Reviews" href={`/product/${product.id}/reviews`} />
 
       <ReviewRaterAndSummary 
+        onReviewCreate={onReviewCreate}
+        onReviewUpdate={onReviewUpdate}
+        onReviewDelete={onReviewDelete}
         summary={product.review_summary}
-        onReviewSubmit={onNewReview}
         title="_review.Rate_this_product"
-        review={customerToken === null || product.reviews?.length === 0 ? null : product.reviews[0]}
+        review={customerToken === null || !product?.reviews?.length ? null : product.reviews[0]}
         />
 
       <SingleList
@@ -160,8 +168,12 @@ export default function Product() {
     refetch
   ] = useProductFetch(customerToken);
 
+  const onFavoriteCreateSubmit = useFavoriteCreate();
+
+  const onFavoriteDeleteSubmit = useFavoriteDelete();
+
   useHeader({ 
-    title: `${product?.name ?? 'Loading...'} - Product`,
+    title: `${product?.title ?? 'Loading...'} - Product`,
     headerTitle: '_product.Product',
     topNavPaths: ['/cart', '/search']
   });
@@ -171,7 +183,15 @@ export default function Product() {
       {
         useRenderOnDataFetched(
           productFetchStatus,
-          ()=> <ProductProfile product={product} isCustomer={true} customerToken={customerToken} />,
+          ()=> (
+            <ProductProfile 
+              product={product} 
+              isCustomer={true} 
+              customerToken={customerToken} 
+              onFavoriteSubmit={onFavoriteCreateSubmit} 
+              onUnfavoriteSubmit={onFavoriteDeleteSubmit} 
+              />
+          ),
           ()=> <div className="container-x"> <Loading /> </div>,
           ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
           ()=> <div className="container-x"> <NotFound /> </div>,

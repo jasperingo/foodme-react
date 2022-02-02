@@ -6,9 +6,9 @@ import { reviewIcon } from '../../assets/icons';
 import ReviewStars from './ReviewStars';
 
 function ReviewNumberData({ number, count, total }) {
-
-  const value = (count / total) * 100;
-
+  
+  const value = total === 0 ? 0 : (count / total) * 100;
+  
   return (
     <li>
       <div className="flex gap-1 items-center">

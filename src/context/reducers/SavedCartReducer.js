@@ -33,23 +33,33 @@ export default function SavedCartReducer (state, action) {
         savedCarts: [...state.savedCarts, ...action.payload.list],
       };
 
-    // case SAVED_CART.FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     order: {
-    //       order: state.order.order,
-    //       orderFetchStatus: action.payload
-    //     }
-    //   };
+
+    case SAVED_CART.UNFETCHED:
+      return {
+        ...state,
+        savedCartLoading: true,
+        savedCart: savedCartState.savedCart,
+        savedCartID: savedCartState.savedCartID,
+        savedCartFetchStatus: savedCartState.savedCartFetchStatus
+      };
+
+    case SAVED_CART.FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        savedCartID: action.payload.id,
+        savedCartLoading: action.payload.loading,
+        savedCartFetchStatus: action.payload.fetchStatus
+      };
     
-    // case SAVED_CART.FETCHED :
-    //   return {
-    //     ...state,
-    //     order: {
-    //       order: action.payload, 
-    //       orderFetchStatus: FETCH_STATUSES.DONE,
-    //     }
-    //   };
+    case SAVED_CART.FETCHED:
+      return {
+        ...state,
+        savedCartLoading: false,
+        savedCart: action.payload.savedCart, 
+        savedCartID: action.payload.savedCart.id, 
+        savedCartFetchStatus: action.payload.fetchStatus,
+      };
+      
     
     // case SAVED_CART.DELETED:
      

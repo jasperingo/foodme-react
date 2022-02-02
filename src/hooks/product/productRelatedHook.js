@@ -16,6 +16,7 @@ export function useProductRelatedList(userToken) {
         product,
         related,
         relatedPage,
+        relatedLoading,
         relatedNumberOfPages,
         relatedFetchStatus
       } 
@@ -27,18 +28,20 @@ export function useProductRelatedList(userToken) {
   const refetch = useCallback(
     ()=> {
       if (relatedFetchStatus !== FETCH_STATUSES.LOADING) 
-        productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
+        productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [productDispatch, relatedFetchStatus]
   );
   
   useEffect(
     ()=> {
-      if (relatedFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (relatedLoading && relatedFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+        productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (relatedFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (relatedLoading && relatedFetchStatus === FETCH_STATUSES.LOADING) {
+
+        productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
         const api = new ProductRepository(userToken);
         api.getRelatedList(product.id, relatedPage)
@@ -60,22 +63,22 @@ export function useProductRelatedList(userToken) {
             });
           } else if (res.status === 404) {
 
-            productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND));
+            productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
 
           } else if (res.status === 403) {
 
-            productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN));
+            productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
             
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.ERROR));
+          productDispatch(getRelatedProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [product.id, related, relatedPage, relatedFetchStatus, userToken, productDispatch, listStatusUpdater]
+    [product.id, related, relatedLoading, relatedPage, relatedFetchStatus, userToken, productDispatch, listStatusUpdater]
   );
 
   return [related, relatedFetchStatus, relatedPage, relatedNumberOfPages, refetch];

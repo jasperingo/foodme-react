@@ -62,14 +62,14 @@ export default function LogIn({ guestMiddleware }) {
             />
 
           <div className="mb-4 text-sm">
-            <Link to="/forgot-password" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
+            <Link to="/forgot-password" className="text-blue-500 font-bold">{ t('_user.Forgot_your_password') }</Link>
           </div>
 
           <FormButton text="_user.Log_in" />
 
           <div className="mb-4 text-center text-sm">
-            <span>{ t('Dont_have_an_account') } </span>
-            <Link to="/register" className="text-blue-500 font-bold">{ t('Register') }</Link>
+            <span>{ t('_user.Dont_have_an_account') } </span>
+            <Link to="/register" className="text-blue-500 font-bold">{ t('_user.Register') }</Link>
           </div>
 
           <SocialLoginList href="/login" />

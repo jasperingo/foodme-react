@@ -16,6 +16,7 @@ export function useProductReviewList(userToken) {
         product,
         reviews,
         reviewsPage,
+        reviewsLoading,
         reviewsNumberOfPages,
         reviewsFetchStatus
       } 
@@ -27,18 +28,20 @@ export function useProductReviewList(userToken) {
   const refetch = useCallback(
     ()=> {
       if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
-        productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING));
+        productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [productDispatch, reviewsFetchStatus]
   );
   
   useEffect(
     ()=> {
-      if (reviewsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (reviewsLoading && reviewsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.ERROR));
+        productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
-      } else if (reviewsFetchStatus === FETCH_STATUSES.LOADING) {
+      } else if (reviewsLoading && reviewsFetchStatus === FETCH_STATUSES.LOADING) {
+
+        productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
         const api = new ProductRepository(userToken);
         api.getReviewsList(product.id, reviewsPage)
@@ -60,22 +63,31 @@ export function useProductReviewList(userToken) {
             });
           } else if (res.status === 404) {
 
-            productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND));
+            productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
 
           } else if (res.status === 403) {
 
-            productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN));
+            productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
             
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.ERROR));
+          productDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [product.id, reviews, reviewsPage, reviewsFetchStatus, userToken, productDispatch, listStatusUpdater]
+    [
+      product.id, 
+      reviews, 
+      reviewsLoading, 
+      reviewsPage, 
+      reviewsFetchStatus, 
+      userToken, 
+      productDispatch, 
+      listStatusUpdater
+    ]
   );
 
   return [reviews, reviewsFetchStatus, reviewsPage, reviewsNumberOfPages, refetch];

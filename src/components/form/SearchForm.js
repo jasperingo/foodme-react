@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { useURLQuery } from '../../hooks/viewHook';
 
-export default function SearchForm() {
+export default function SearchForm({ onSearchPage }) {
 
   const history = useHistory();
 
@@ -23,7 +23,7 @@ export default function SearchForm() {
     e.preventDefault();
     if (q === '') return;
     param.set('q', q);
-    if (location.pathname !== '/search/stores' && location.pathname !== '/search/products') {
+    if (!onSearchPage || location.pathname === '/search') {
       history.push(`/search/stores?${param.toString()}`);
     } else {
       history.replace(`${location.pathname}?${param.toString()}`);

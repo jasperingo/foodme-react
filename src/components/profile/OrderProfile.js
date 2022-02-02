@@ -130,7 +130,7 @@ export default function OrderProfile({ order, isCustomer }) {
       
       <div className="py-2 border-b">
         <div className="container-x">
-          <H4Heading color="text-color-gray" text={ t('_order.Order_items') } />
+          <H4Heading color="text-color-gray" text="_order.Order_items" />
           <ul className="list-3-x">
             {
               order.order_items.map((item)=> <OrderItemItem key={`order-item-${item.id}`} item={item} />)

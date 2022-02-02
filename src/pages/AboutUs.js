@@ -3,7 +3,7 @@ import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { deliveryIcon, promotionIcon, storeIcon } from '../assets/icons';
+import { deliveryIcon, discountIcon, storeIcon } from '../assets/icons';
 
 
 const h2Style = "font-bold text-xl mb-2";
@@ -83,7 +83,7 @@ export default function AboutUs() {
             <ul className="md:flex md:gap-2">
               <AboutFeature icon={deliveryIcon} text={ t('Express_Delivery') } />
               <AboutFeature icon={storeIcon} text={ t('_store.store__Num', { num : '50+' }) } />
-              <AboutFeature icon={promotionIcon} text={ t('Discount_System') } />
+              <AboutFeature icon={discountIcon} text={ t('Discount_System') } />
             </ul>
           </div>
           

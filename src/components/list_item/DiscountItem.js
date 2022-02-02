@@ -5,6 +5,11 @@ import { Link } from 'react-router-dom';
 import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
 import Discount from '../../models/Discount';
 
+function Off() {
+  const { t } = useTranslation();
+  return <span className="bg-color-gray px-2 rounded text-sm ml-2">{ t('_extra.Off') }</span>
+}
+
 export default function DiscountItem(
   {
     discount: { 
@@ -26,10 +31,12 @@ export default function DiscountItem(
     <li>
       <Link to={`/discount/${id}`} className="block hover:bg-color-gray-h p-2 mb-4 md:shadow">
         <div className="mb-2">{ title }</div>
-        <div className="font-bold text-color-primary mb-2">
-          { type === Discount.TYPE_AMOUNT && amount }
-          { type === Discount.TYPE_AMOUNT && ` ${t('_extra.Off')}` }
-          { type === Discount.TYPE_PERCENTAGE && `${value}% ${t('_extra.Off')}` }
+        <div className="mb-2">
+          <span className="font-bold text-color-primary">
+            { type === Discount.TYPE_AMOUNT && amount }
+            { type === Discount.TYPE_PERCENTAGE && `${value}%` }
+          </span>
+          <Off />
         </div>
         <div className="flex flex-wrap gap-2 items-center justify-between text-sm text-color-gray">
           <div>

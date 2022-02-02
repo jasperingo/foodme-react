@@ -5,8 +5,6 @@ export const TRANSLATIONS_EN = {
   Resturants: 'Resturants',
   Application: 'Application',
 
-  OR: 'OR',
-
   Retry: 'Retry',
   Previous_page: 'Previous page',
   
@@ -55,6 +53,8 @@ export const TRANSLATIONS_EN = {
     Log_in: 'Log in',
     Log_out: 'Log out',
     Register: 'Register',
+    Dont_have_an_account: 'Dont have an account',
+    Forgot_your_password: 'Forgot your password',
     Forgot_password: 'Forgot password',
     Reset_password: 'Reset password',
     Or_login_with: 'Or login with',
@@ -142,6 +142,7 @@ export const TRANSLATIONS_EN = {
     Refresh: 'Refresh',
     Let_go_to_refresh: 'Let go to refresh',
     Pull_to_refresh: 'Pull to refresh',
+    Variation: 'Variation',
 
     Approved: 'Approved',
     Process: 'Process',
@@ -154,6 +155,7 @@ export const TRANSLATIONS_EN = {
     Search: 'Search',
     Search__app: 'Search DailyNeeds',
     Search_history: 'Search history',
+    Filter_search_by_sub_category: 'Filter search by sub category'
   },
   
   _category: {
@@ -185,12 +187,14 @@ export const TRANSLATIONS_EN = {
   },
 
   _discount: {
-    Promotion: 'Promotion',
-    Promotions: 'Promotions',
-    Add_promotion: 'Add promotion',
     Discount: 'Discount',
     Discounts: 'Discounts',
     Discount_amount: 'Discount amount',
+    Discount_value: 'Discount value',
+    Start_date: 'Start date',
+    End_date: 'End date',
+    Minimium_required_amount: 'Minimium required amount',
+    Minimium_required_quantity: 'Minimium required quantity'
   },
 
   _product: {
@@ -202,11 +206,17 @@ export const TRANSLATIONS_EN = {
     Products_on_Dailyneeds: 'Products on Dailyneeds',
     Product_category: 'Product category',
     Product_categories: 'Product categories',
+    Product_reviews: 'Product reviews',
     product__Count: '{{ count }} product',
     product__Count_plural: '{{ count }} products',
+    Product_quantity_less: 'Product quantity in stock is less',
+    Product_is_out_of_stock: 'Product is out of stock',
     _unit_quauntity_available: '{{ unit }} units in stock',
+    _not_available_message: 'This product is currently not available',
     Quantity: 'Quantity',
     Add_to_cart: 'Add to cart',
+    Product_added_to_favorites: 'Product added to favorites',
+    Product_removed_from_favorites: 'Product removed from favorites',
     Add_product_to_favorites: 'Add product to favorites',
     Remove_product_from_favorites: 'Remove product from favorites',
     _remove_product_from_favorites_confirm_message: 'Are you sure you want to unfavorite this product?',
@@ -219,11 +229,15 @@ export const TRANSLATIONS_EN = {
     Cart: 'Cart',
     Open_cart: 'Open cart',
     Copy_code: 'Copy code',
+    Saved_cart: 'Saved cart',
     Saved_carts: 'Saved carts',
+    Saved_on: 'Saved on',
+    Saved_items: 'Saved items',
     Cart_saved: 'Cart saved',
     Enter_cart_code: 'Enter cart code',
     Check_out: 'Check out',
     Remove_cart_item: 'Remove cart item',
+    _cart_item_store_conflict_resolve_confirm: 'Your cart contains products form a different store, do you want to clear your cart and add this product?',
     _confirm_item_removal: 'Are you sure you want to remove this item?',
     _confirm_saved_cart_delete: 'Are you sure you want to delete this cart?',
   },
@@ -237,7 +251,8 @@ export const TRANSLATIONS_EN = {
     review__Count_plural: '{{ count }} reviews',
     Rate_this_store: 'Rate this store',
     Rate_this_product: 'Rate this product',
-    Tell_us_your_experience: 'Tell us your experience'
+    Tell_us_your_experience: 'Tell us your experience',
+    _delete_review_confirm_message: 'Are you sure you want to delete this review?'
   },
 
   _delivery: {

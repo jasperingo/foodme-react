@@ -17,6 +17,9 @@ import { useStoreDiscountList } from '../../hooks/store/storeDiscountListHook';
 import DiscountList from '../../components/profile/section/DiscountList';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
 import { useHeader } from '../../hooks/headerHook';
+import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
+import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
+import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
 
 const NAV_LINKS = [
   { title : '_product.Products', href: '' },
@@ -81,19 +84,23 @@ function StoreReviewsList() {
     refetch
   ] = useStoreReviewList(customerToken);
 
-  function onNewReview(rating, description) {
-    console.log(rating, description);
-  }
+  const onReviewUpdate = useReviewUpdate();
+
+  const onReviewDelete = useReviewDelete({ store: true });
+
+  const onReviewCreate = useReviewCreate({ store: store.id });
 
   return (
     <>
       <div className="container-x">
 
-        <ReviewRaterAndSummary 
-          onReviewSubmit={onNewReview}
+        <ReviewRaterAndSummary
+          onReviewCreate={onReviewCreate} 
+          onReviewUpdate={onReviewUpdate}
+          onReviewDelete={onReviewDelete}
           summary={store.review_summary}
           title="_review.Rate_this_store"
-          review={customerToken === null || store.reviews?.length === 0 ? null : store.reviews[0]}
+          review={customerToken === null || !store?.reviews?.length ? null : store.reviews[0]}
           />
 
       </div>
