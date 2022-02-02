@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route, Redirect, useLocation } from "react-router-dom";
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
 import AboutUs from '../pages/AboutUs';
@@ -43,6 +43,7 @@ import { useAuthCustomerFetch } from '../hooks/customerHook';
 import { FETCH_STATUSES } from '../repositories/Fetch';
 import { useAppContext } from '../hooks/contextHook';
 import { useCartCounter, useURLQuery } from '../hooks/viewHook';
+import CartDeliveryMethod from '../pages/Customer/CartDeliveryMethod';
 
 
 const HEADER_NAV_LINKS = [
@@ -69,6 +70,8 @@ export default function CustomerApp() {
     } 
   } = useAppContext();
 
+  const location = useLocation();
+
   const redirectTo = useURLQuery().get('redirect_to');
 
   const [authDone, retry] = useAuthCustomerFetch();
@@ -81,7 +84,7 @@ export default function CustomerApp() {
   }
 
   function authMiddleware() {
-    return customer !== null ? null : <Redirect to="/login" />
+    return customer !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
   }
 
   function guestMiddleware() {
@@ -101,7 +104,9 @@ export default function CustomerApp() {
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
-
+          
+          <Route path="/cart/delivery-method" render={()=> authMiddleware() || <CartDeliveryMethod />} />
+          
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />

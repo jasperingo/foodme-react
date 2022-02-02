@@ -1,6 +1,11 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
+import { CART } from '../../context/actions/cartActions';
+import { useAppContext } from '../../hooks/contextHook';
 import { useCopyText, useDateFormat } from '../../hooks/viewHook';
+import { FETCH_STATUSES } from '../../repositories/Fetch';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
 import H4Heading from '../H4Heading';
@@ -8,9 +13,21 @@ import SavedCartSavedItem from '../list_item/SavedCartSavedItem';
 import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeaderText from './ProfileHeaderText';
 
-export default function SavedCartProfile({ savedCart: { code, title, created_at, saved_cart_items } }) {
+export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code, title, created_at, saved_cart_items } }) {
+
+  const {
+    cart: {
+      cartDispatch
+    }
+  } = useAppContext();
+
+  const { t } = useTranslation();
+
+  const history = useHistory();
 
   const copy = useCopyText();
+
+  const cartItems = [];
 
   const [alertDialog, setAlertDialog] = useState(null);
   
@@ -56,31 +73,93 @@ export default function SavedCartProfile({ savedCart: { code, title, created_at,
 
     setLoadingDialog(true);
 
-    setTimeout(()=> setLoadingDialog(false), 2000);
+    onDeleteSubmit(id, {
 
-    // api.delete(code)
-    //   .then(()=> {
-    //     setDialog(null);
-    //     savedCartsDispatch({
-    //       type: SAVED_CART.DELETED,
-    //       payload: code
-    //     });
-    //   })
-    //   .catch(()=> {
-    //     setDialog({
-    //       body: '_errors.Something_went_wrong',
-    //       negativeButton: {
-    //         text: '_extra.Cancel',
-    //         action() {
-    //           setDialog(null);
-    //         }
-    //       }
-    //     });
-    //   });
+      onSuccess() {
+        setLoadingDialog(false);
+        history.goBack();
+      },
+
+      onError(message) {
+        setLoadingDialog(false);
+        setAlertDialog({
+          body: message,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setAlertDialog(null);
+            }
+          }
+        });
+      }
+
+    });
+  }
+
+  function openCartConfirm() {
+
+    let itemsUnavailable = 0;
+
+    for (let item of saved_cart_items) {
+
+      if (
+        !item.product_variant.available || 
+        item.product_variant.quantity < item.quantity || 
+        item.product_variant.quantity === 0
+      ) {
+        itemsUnavailable++;
+        continue;
+      }
+
+      cartItems.push({
+        quantity: item.quantity,
+        product_variant: item.product_variant,
+        amount: (item.product_variant.price * item.quantity),
+        product: item.product_variant.product
+      });
+    }
+
+    if (itemsUnavailable > 0) {
+
+      setAlertDialog({
+        body: t('_cart._num_products_are_available', { count: itemsUnavailable }),
+        positiveButton: {
+          text: '_extra.Yes',
+          action() {
+            openCart();
+          }
+        },
+        negativeButton: {
+          text: '_extra.No',
+          action() {
+            setAlertDialog(null);
+          }
+        }
+      });
+
+    } else {
+      openCart();
+    }
   }
 
   function openCart() {
-    console.log('Opening...')
+    cartDispatch({
+      type: CART.ITEMS_REPLACED,
+      payload: {
+        list: cartItems,
+        fetchStatus: cartItems.length > 0 ? FETCH_STATUSES.DONE : FETCH_STATUSES.EMPTY
+      }
+    });
+
+    setAlertDialog({
+      body: '_cart.Cart_has_been_opened',
+      positiveButton: {
+        text: '_extra.Done',
+        action() {
+          setAlertDialog(null);
+        }
+      },
+    });
   }
 
   return (
@@ -94,7 +173,7 @@ export default function SavedCartProfile({ savedCart: { code, title, created_at,
               {
                 text: '_cart.Open_cart',
                 color: 'btn-color-primary',
-                action: openCart
+                action: openCartConfirm
               },
               {
                 text: '_cart.Copy_code',

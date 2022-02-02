@@ -5,6 +5,7 @@ import BankReducer from "../context/reducers/BankReducer";
 import CartReducer from "../context/reducers/CartReducer";
 import CategoryReducer from "../context/reducers/CategoryReducer";
 import CustomerReducer from "../context/reducers/CustomerReducer";
+import DeliveryFirmsReducer from "../context/reducers/DeliveryFirmsReducer";
 import DiscountReducer from "../context/reducers/DiscountReducer";
 import HeaderReducer from "../context/reducers/HeaderReducer";
 import HomeReducer from "../context/reducers/HomeReducer";
@@ -19,6 +20,7 @@ import bankState from "../context/states/bankState";
 import cartState from "../context/states/cartState";
 import categoryState from "../context/states/categoryState";
 import customerState from "../context/states/customerState";
+import deliveryFirmState from "../context/states/deliveryFirmState";
 import discountState from "../context/states/discountState";
 import headerState from "../context/states/headerState";
 import homeState from "../context/states/homeState";
@@ -59,6 +61,8 @@ export function useAppContextValues() {
   const [discount, discountDispatch] = useReducer(DiscountReducer, discountState);
 
   const [cart, cartDispatch] = useReducer(CartReducer, cartState);
+  
+  const [deliveryFirm, deliveryFirmDispatch] = useReducer(DeliveryFirmsReducer, deliveryFirmState);
 
 
   return {
@@ -131,6 +135,11 @@ export function useAppContextValues() {
     cart: {
       cart, 
       cartDispatch
+    },
+
+    deliveryFirm: {
+      deliveryFirm, 
+      deliveryFirmDispatch
     }
 
   }

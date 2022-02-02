@@ -1,48 +1,31 @@
 
-//import Icon from '@mdi/react';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-//import { useHistory } from 'react-router-dom';
-//import { copyIcon } from '../../assets/icons';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../hooks/contextHook';
+import { useSavedCartCreate } from '../../hooks/saved_cart/savedCartCreateHook';
 import { useMoneyFormat } from '../../hooks/viewHook';
 import AlertDialog from '../dialog/AlertDialog';
-import FormTextArea from '../form/FormTextArea';
-
-// function CartSaved({ code }) {
-
-//   const { t } = useTranslation();
-
-//   const [copied, setCopied] = useState(false);
-
-//   const copy = useCopyText();
-
-//   function copyCode() {
-//     copy(code);
-//     setCopied(true);
-//   }
-
-//   return (
-//     <div className="text-center">
-//     <div className="text-green-500 font-bold text-lg mb-2">{ t('_cart.Cart_saved') }</div>
-//     <div className="flex gap-2 items-center border rounded mb-2">
-//       <div className="flex-grow">{ code }</div>
-//       <button className="btn-color-primary p-2 rounded" onClick={copyCode}>
-//         <Icon path={copyIcon} className="w-5 h-5" />
-//       </button>
-//     </div>
-//     { copied && <div className="text-sm bg-color-gray px-2 py-1 rounded-full">{ t('_extra.Copied') }!</div> }
-//   </div>
-//   );
-// }
+import LoadingDialog from '../dialog/LoadingDialog';
+import CartSavedDialog from './CartSavedDialog';
+import SaveCartDialog from './SaveCartDialog';
 
 export default function CartCheckOutOrSave({ saveOnly }) {
   
   const { t } = useTranslation();
 
-  // const history = useHistory();
+  const history = useHistory();
+
+  const location = useLocation();
 
   const { 
+    customer: { 
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    },
     cart: {
       cart: {
         cartItems
@@ -50,45 +33,54 @@ export default function CartCheckOutOrSave({ saveOnly }) {
     }
   } = useAppContext();
 
-  const [dialog, ] = useState(null);
+  const [dialog, setDialog] = useState(null);
 
-  function saveCart() {
-    console.log('save cart');
-    // if (user === null) {
-    //   history.push('/login');
-    //   return;
-    // }
+  const [loadingDialog, setLoadingDialog] = useState(false);
 
-    // setDialog(LOADING_DIALOG);
+  const [saveCartDialog, setSaveCartDialog] = useState(false);
 
-    // saveApi.add(cartItems)
-    //   .then(res=> {
-    //     setDialog({
-    //       body: {
-    //         layout() {
-    //           return <CartSaved code={res.data.code} />;
-    //         }
-    //       },
-    //       positiveButton: {
-    //         text: '_extra.Done',
-    //         action() {
-    //           setDialog(null);
-    //         }
-    //       }
-    //     });
-    //   })
-    //   .catch(err=> {
-    //     setDialog({
-    //       body: '_errors.Cart_could_not_be_saved',
-    //       negativeButton: {
-    //         text: '_extra.Cancel',
-    //         action() {
-    //           setDialog(null);
-    //         }
-    //       }
-    //     });
-    //   });
-    
+  const [cartSavedDialog, setCartSavedDialog] = useState(null);
+
+  const onSubmitSaveCart = useSavedCartCreate(customerToken);
+
+  function getSaveCartTitle() {
+    if (customerToken === null) {
+      history.push(`/login?redirect_to=${encodeURIComponent(location.pathname)}`);
+    } else {
+      setSaveCartDialog(true);
+    }
+  }
+
+  function saveCart(title) {
+    setLoadingDialog(true);
+    setSaveCartDialog(false);
+
+    onSubmitSaveCart(title, {
+      
+      onSuccess(code) {
+        setLoadingDialog(false);
+        setCartSavedDialog({
+          code: code,
+          onDone() {
+            setCartSavedDialog(null)
+          }
+        })
+      },
+
+      onError(message) {
+        setLoadingDialog(false);
+        setDialog({
+          body: message,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          }
+        });
+      }
+
+    });
   }
 
   return (
@@ -98,32 +90,43 @@ export default function CartCheckOutOrSave({ saveOnly }) {
         <span className="font-bold text-lg">{ useMoneyFormat(cartItems.reduce((sum, i)=> sum + i.amount, 0)) }</span>
       </div>
 
-      {
+      {/* {
         !saveOnly &&
         <FormTextArea 
           ID="order-note-input"
           label="_order.Order_note"
           />
-      }
-    
+      } */}
+      
       {
         !saveOnly && 
-        <button 
-          className="w-full py-3 my-2 rounded btn-color-primary" 
-          onClick={()=> alert('Checking out...')}
+        <Link 
+          to="/cart/delivery-method"
+          className="block w-full py-3 my-2 rounded btn-color-primary text-center"
           >
           { t('_cart.Check_out') }
-        </button>
+        </Link>
       }
 
       <button 
         className="w-full py-3 my-2 rounded btn-color-blue" 
-        onClick={saveCart}
+        onClick={getSaveCartTitle}
         >
         { t('_extra.Save') }
       </button>
       
       { dialog && <AlertDialog dialog={dialog} /> }
+
+      { cartSavedDialog && <CartSavedDialog dialog={cartSavedDialog} /> }
+
+      {
+        loadingDialog && <LoadingDialog />
+      }
+
+      {
+        saveCartDialog && 
+        <SaveCartDialog  onSubmitClicked={saveCart} onCancelClicked={()=> setSaveCartDialog(false)} />
+      }
     </div>
   );
 }

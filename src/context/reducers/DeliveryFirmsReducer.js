@@ -1,65 +1,80 @@
+import { DELIVERY_FIRM } from "../actions/deliveryFirmActions";
+import { ROUTE } from "../actions/routeActions";
+import deliveryFirmState from "../states/deliveryFirmState";
 
-import { DELIVERY_FIRM, FETCH_STATUSES } from "../AppActions";
-import { useListFetchStatus } from "../AppHooks";
-import { initialDeliveryFirmState } from "../AppInitialStates";
 
-export default function DeliveryFirmsReducer(state, action) {
+export default function DeliveryFirmsReducer(state, { type, payload }) {
   
-  const fetchUpdater = useListFetchStatus();
-  
-  switch (action.type) {  
+  switch (type) {  
     
-    case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED :
-      return {
-        ...state,
-        deliveryFirms: {
-          ...state.deliveryFirms,
-          deliveryFirmsFetchStatus: action.payload
-        }
-      };
+    // case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED :
+    //   return {
+    //     ...state,
+    //     deliveryFirms: {
+    //       ...state.deliveryFirms,
+    //       deliveryFirmsFetchStatus: action.payload
+    //     }
+    //   };
     
-    case DELIVERY_FIRM.LIST_FETCHED :
-      let status = fetchUpdater(
-        state.deliveryFirms.deliveryFirmsPage, 
-        action.payload.deliveryFirmsNumberOfPages, 
-        state.deliveryFirms.deliveryFirms.length, 
-        action.payload.deliveryFirms.length
-      );
-      
-      const delv = state.deliveryFirms.deliveryFirms.filter(i=> i !== null);
-      
-      return {
-        ...state,
-        deliveryFirms: {
-          deliveryFirmsFetchStatus: status,
-          deliveryFirmsPage: state.deliveryFirms.deliveryFirmsPage+1,
-          deliveryFirmsNumberOfPages: action.payload.deliveryFirmsNumberOfPages,
-          deliveryFirms: [...delv, ...action.payload.deliveryFirms, null],
-        }
-      };
+    // case DELIVERY_FIRM.LIST_FETCHED :
+    //   return {
+    //     ...state,
+    //     deliveryFirms: {
+    //       deliveryFirmsFetchStatus: status,
+    //       deliveryFirmsPage: state.deliveryFirms.deliveryFirmsPage+1,
+    //       deliveryFirmsNumberOfPages: action.payload.deliveryFirmsNumberOfPages,
+    //       deliveryFirms: [...delv, ...action.payload.deliveryFirms, null],
+    //     }
+    //   };
 
-    case DELIVERY_FIRM.UNFETCH:
-      return initialDeliveryFirmState;
+    case DELIVERY_FIRM.UNFETCHED:
+      return {
+        ...deliveryFirmState,
+        deliveryFirms: state.deliveryFirms,
+        deliveryFirmsPage: state.deliveryFirmsPage,
+        deliveryFirmsLoading: state.deliveryFirmsLoading,
+        deliveryFirmsNumberOfPages: state.deliveryFirmsNumberOfPages,
+        deliveryFirmsFetchStatus: state.deliveryFirmsFetchStatus
+      }
       
     case DELIVERY_FIRM.FETCH_STATUS_CHANGED:
       return {
         ...state,
-        deliveryFirm: {
-          ...state.deliveryFirm,
-          deliveryFirmFetchStatus: action.payload
-        }
+        deliveryFirmID: payload.id,
+        deliveryFirmLoading: payload.loading,
+        deliveryFirmFetchStatus: payload.fetchStatus
       };
     
     case DELIVERY_FIRM.FETCHED:
       return {
         ...state,
-        deliveryFirm: {
-          deliveryFirm: action.payload, 
-          deliveryFirmFetchStatus: FETCH_STATUSES.DONE,
-        }
+        deliveryFirmLoading: false, 
+        deliveryFirm: payload.deliveryFirm, 
+        deliveryFirmID: payload.deliveryFirm.id,
+        deliveryFirmFetchStatus: payload.fetchStatus
       };
 
+    
+    case ROUTE.LIST_FETCH_STATUS_CHANGED :
+      return {
+        ...state,
+        routesLoading: payload.loading,
+        routesFetchStatus: payload.fetchStatus
+      };
+    
+    case ROUTE.LIST_FETCHED:
+      return {
+        ...state,
+        routesLoading: false,
+        routesPage: state.routesPage+1,
+        routesFetchStatus: payload.fetchStatus,
+        routesNumberOfPages: payload.numberOfPages,
+        routes: [...state.routes, ...payload.list],
+      };
+
+    
     default:
       return state;
   }
 }
+

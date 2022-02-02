@@ -59,6 +59,11 @@ export default function SavedCartReducer (state, action) {
         savedCartID: action.payload.savedCart.id, 
         savedCartFetchStatus: action.payload.fetchStatus,
       };
+
+
+    case SAVED_CART.CREATED:
+      console.log('Saved cart created');
+      return state;
       
     
     // case SAVED_CART.DELETED:

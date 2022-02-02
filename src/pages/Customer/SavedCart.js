@@ -7,6 +7,7 @@ import SavedCartProfile from '../../components/profile/SavedCartProfile';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
+import { useSavedCartDelete } from '../../hooks/saved_cart/savedCartDeleteHook';
 import { useSavedCartFetch } from '../../hooks/saved_cart/savedCartFetchHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
@@ -27,6 +28,8 @@ export default function SavedCart() {
     savedCartFetchStatus, 
     refetch
   ] = useSavedCartFetch(customerToken);
+
+  const onDeleteSubmit = useSavedCartDelete(customerToken);
   
   useHeader({ 
     title: `${savedCart?.code ?? 'Loading...'} - Saved Cart`,
@@ -39,7 +42,7 @@ export default function SavedCart() {
       {
         useRenderOnDataFetched(
           savedCartFetchStatus,
-          ()=> <SavedCartProfile savedCart={savedCart} />,
+          ()=> <SavedCartProfile savedCart={savedCart} onDeleteSubmit={onDeleteSubmit} />,
           ()=> <div className="container-x"> <Loading /> </div>,
           ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
           ()=> <div className="container-x"> <NotFound /> </div>,

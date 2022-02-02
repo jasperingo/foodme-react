@@ -12,6 +12,8 @@ export default function SearchReducer (state, action) {
       return {
         ...searchState,
         query: action.payload,
+        storesSubCategory: state.storesSubCategory,
+        productsSubCategory: state.productsSubCategory
       };
 
     case SEARCH.STORES_FILTER_CHANGED: 

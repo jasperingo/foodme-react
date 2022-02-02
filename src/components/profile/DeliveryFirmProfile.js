@@ -1,16 +1,16 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { categoryIcon, emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
+import { emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
 import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeader from './ProfileHeader';
 
-export default function StoreProfile(
+export default function DeliveryFirmProfile(
   { 
     navLinks,
-    store: { 
+    deliveryFirm: {
       id,
       user: {
         photo, 
@@ -19,10 +19,9 @@ export default function StoreProfile(
         email, 
         addresses,
         working_hours
-      }, 
-      sub_category,
+      },
       review_summary
-    } 
+    }
   }
 ) {
 
@@ -58,10 +57,6 @@ export default function StoreProfile(
             data: email
           },
           {
-            icon: categoryIcon,
-            data: `${sub_category.name}, ${sub_category.category.name}`
-          },
-          {
             icon: reviewIcon,
             data: review_summary.average.toFixed(1)
           }
@@ -83,8 +78,9 @@ export default function StoreProfile(
         </div>
       }
 
-      <Tab keyPrefix="store-tab" items={navLinks} />
+      <Tab keyPrefix="delivery-firm-tab" items={navLinks} />
 
     </div>
   );
 }
+

@@ -100,7 +100,10 @@ function Products() {
 
   const {
     search: {
-      searchDispatch
+      searchDispatch, 
+      search: {
+        productsSubCategory
+      } 
     }
   } = useAppContext();
 
@@ -119,11 +122,23 @@ function Products() {
   function filterChanged(value) {
     param.set('products_sub_category', value);
     searchDispatch({
-      type: SEARCH.STORES_FILTER_CHANGED,
+      type: SEARCH.PRODUCTS_FILTER_CHANGED,
       payload: value
     });
     history.replace(`/search/products?${param.toString()}`);
   }
+
+  useEffect(
+    ()=> {
+      if (subCategoryParam !== null && subCategoryParam !== productsSubCategory) {
+        searchDispatch({
+          type: SEARCH.PRODUCTS_FILTER_CHANGED,
+          payload: subCategoryParam
+        });
+      }
+    }, 
+    [subCategoryParam, productsSubCategory, searchDispatch]
+  );
 
   return useRenderOnDataFetched(
     productsFetchStatus,
@@ -172,7 +187,10 @@ function Stores() {
 
   const {
     search: {
-      searchDispatch
+      searchDispatch, 
+      search: {
+        storesSubCategory
+      } 
     }
   } = useAppContext();
 
@@ -196,6 +214,18 @@ function Stores() {
     });
     history.replace(`/search/stores?${param.toString()}`);
   }
+
+  useEffect(
+    ()=> {
+      if (subCategoryParam !== null && subCategoryParam !== storesSubCategory) {
+        searchDispatch({
+          type: SEARCH.STORES_FILTER_CHANGED,
+          payload: subCategoryParam
+        });
+      }
+    }, 
+    [subCategoryParam, storesSubCategory, searchDispatch]
+  );
 
   return useRenderOnDataFetched(
     storesFetchStatus,
@@ -224,9 +254,7 @@ export default function Search() {
     search: {
       searchDispatch,
       search: {
-        query,
-        storesSubCategory,
-        productsSubCategory
+        query
       } 
     }
   } = useAppContext();
@@ -244,19 +272,9 @@ export default function Search() {
           type: SEARCH.QUERY_CHANGED,
           payload: queryParam
         });
-      } else if (storesSubCategoryParam !== null && storesSubCategoryParam !== storesSubCategory) {
-        searchDispatch({
-          type: SEARCH.STORES_FILTER_CHANGED,
-          payload: storesSubCategoryParam
-        });
-      } else if (productsSubCategoryParam !== null && productsSubCategoryParam !== productsSubCategory) {
-        searchDispatch({
-          type: SEARCH.STORES_FILTER_CHANGED,
-          payload: productsSubCategoryParam
-        });
       }
     }, 
-    [queryParam, storesSubCategoryParam, productsSubCategoryParam, query, storesSubCategory, productsSubCategory, searchDispatch]
+    [queryParam, query, searchDispatch]
   );
   
   if (
