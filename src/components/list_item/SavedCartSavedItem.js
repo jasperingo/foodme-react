@@ -21,8 +21,8 @@ export default function SavedCartSavedItem({ item: { quantity, product_variant }
           <div className="mb-1">{ product_variant.product.title }</div>
           <div className="mb-1 text-color-gray">{ t('_extra.Variation') }: { product_variant.name }</div>
           <div className="font-bold mb-1">{ useMoneyFormat(product_variant.price) }</div>
-          <div className="mb-1 flex gap-2 items-center">
-            <span>QTY: { quantity }</span>
+          <div className="mb-1 flex gap-2 flex-wrap items-center">
+            <div>QTY: { quantity }</div>
             {
               product_variant.quantity === 0 && 
               <div className="flex items-center gap-1 bg-color-gray px-2 rounded text-sm">
