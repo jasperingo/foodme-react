@@ -1,67 +1,67 @@
 
-import React, { useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import UserApi from '../../api/UserApi';
+import React from 'react';
 import { userIcon } from '../../assets/icons';
-import AddButton from '../../components/AddButton';
-import CustomerItem from '../../components/CustomerItem';
+import CustomerItem from '../../components/list_item/CustomerItem';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import { FETCH_STATUSES, getCustomersListFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
+import ScrollList from '../../components/list/ScrollList';
+import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
+import NotFound from '../../components/NotFound';
+import Forbidden from '../../components/Forbidden';
+import { useCustomerList } from '../../hooks/customer/customerListHook';
+import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function Customers() {
 
-  const { user: { user }, customers: {
-    customers: {
-      customers,
-      customersPage,
-      customersNumberOfPages,
-      customersFetchStatus
-    }
-  }, customersDispatch } = useAppContext();
+  useHeader({ 
+    title: 'Customers - DailyNeeds',
+    headerTitle: "_user.Customers"
+  });
 
-  useEffect(()=> {
-    if (customersFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new UserApi(user.api_token);
-      api.getList(customersDispatch);
-    }
-  }, [user, customersFetchStatus, customersDispatch]);
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    } 
+  } = useAppContext();
 
-  function refetchCustomers() {
-    if (customersFetchStatus !== FETCH_STATUSES.LOADING) 
-      customersDispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    customers, 
+    customersFetchStatus, 
+    customersPage, 
+    customersNumberOfPages, 
+    refetch, 
+    refresh
+  ] = useCustomerList(adminToken);
 
   return (
     <section>
       
       <div className="container-x">
 
-        <AddButton text="_user.Add_customer" href="/customer/add" />
-
-        <InfiniteScroll 
-          dataLength={customers.length}
-          next={refetchCustomers}
+        <ScrollList
+          data={customers}
+          nextPage={refetch}
+          refreshPage={refresh}
           hasMore={useHasMoreToFetchViaScroll(customersPage, customersNumberOfPages, customersFetchStatus)}
-          >
-          <ul className="list-3-x">
-            { 
-              useListRender(
-                customers, 
-                customersFetchStatus,
-                (item, i)=> <CustomerItem key={`customer-${i}`} customer={item} />, 
-                (k)=> <li key={k}> <Loading /> </li>, 
-                (k)=> <li key={k}> <Reload action={refetchCustomers} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_review" icon={userIcon} /> </li>, 
-                (k)=> <li key={k}> <FetchMoreButton action={refetchCustomers} /> </li>,
-              )
-            }
-          </ul>
-        </InfiniteScroll>
+          className="list-x"
+          renderDataItem={(item)=> (
+            <CustomerItem key={`customer-${item.id}`} customer={item} />
+          )}
+          footer={useRenderListFooter(
+            customersFetchStatus,
+            ()=> <li key="customer-footer"> <Loading /> </li>, 
+            ()=> <li key="customer-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="customer-footer"> <EmptyList text="_empty.No_customer" icon={userIcon} /> </li>,
+            ()=> <li key="customer-footer"> <FetchMoreButton action={refetch} /> </li>,
+            ()=> <li key="customer-footer"> <NotFound /> </li>,
+            ()=> <li key="customer-footer"> <Forbidden /> </li>,
+          )}
+          />
 
       </div>
 

@@ -11,6 +11,7 @@ import FormTextArea from './FormTextArea';
 export default function SubCategoryForm(
   { 
     add, 
+    category,
     categories, 
     subCategory,
     onSubmit, 
@@ -45,18 +46,25 @@ export default function SubCategoryForm(
         descriptionInput.current.validity,
       );
     } else {
+      onSubmit(
+        nameInput.current.value,
+        descriptionInput.current.value,
 
+        nameInput.current.validity,
+        descriptionInput.current.validity,
+      );
     }
   }
 
   useEffect(
     ()=> {
-      if (formSuccess) {
+      if (formSuccess && add) {
         nameInput.current.value =  '';
         categoryInput.current.value =  '';
+        descriptionInput.current.value =  '';
       }
     }, 
-    [formSuccess]
+    [formSuccess, add]
   );
   
   return (
@@ -91,7 +99,7 @@ export default function SubCategoryForm(
           ID="category-input" 
           label="_category.Category" 
           required={true}
-          value={subCategory.category_id}
+          value={category}
           options={categories.map(i=> ({ key: i.id, value: i.name }))}
           />
       }

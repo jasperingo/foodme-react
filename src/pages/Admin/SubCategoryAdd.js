@@ -7,7 +7,7 @@ import { useProductCategoryList } from '../../hooks/category/productCategoryList
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 import { useSubCategoryCreate } from '../../hooks/category/subCategoryCreateHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
+import { useRenderOnDataFetched, useURLQuery } from '../../hooks/viewHook';
 
 export default function SubCategoryAdd() {
 
@@ -15,6 +15,8 @@ export default function SubCategoryAdd() {
     title: 'Add Sub Category - DailyNeeds',
     headerTitle: '_category.Add_sub_category'
   });
+
+  const category = useURLQuery().get('category_id');
 
   const [
     stores, 
@@ -41,7 +43,8 @@ export default function SubCategoryAdd() {
     formError, 
     formSuccess, 
     nameError, 
-    categoryError
+    categoryError,
+    descriptionError
   ] = useSubCategoryCreate();
 
   return (
@@ -53,6 +56,7 @@ export default function SubCategoryAdd() {
             ()=> (
               <SubCategoryForm 
                 add={true}
+                category={category}
                 categories={stores.concat(products)}
                 subCategory={{ photo: { href: '/photos/default.jpg' } }}
                 onSubmit={onSubmit}
@@ -63,6 +67,7 @@ export default function SubCategoryAdd() {
                 formSuccess={formSuccess}
                 nameError={nameError}
                 categoryError={categoryError}  
+                descriptionError={descriptionError}
                 />
             ),
             ()=> <Loading />,

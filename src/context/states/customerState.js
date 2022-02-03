@@ -5,26 +5,31 @@ const customerState = {
   customer: {
     customer: null,
     customerToken: null,
+    customerID: null,
+    customerLoading: true,
     customerFetchStatus: FETCH_STATUSES.LOADING
   },
 
   customers: {
     customers: [],
-    customersPage: 0,
+    customersPage: 1,
+    customersLoading: true,
     customersNumberOfPages: 0,
     customersFetchStatus: FETCH_STATUSES.LOADING
   },
 
   orders: {
     orders: [],
-    ordersPage: 0,
+    ordersPage: 1,
+    ordersLoading: true,
     ordersNumberOfPages: 0,
     ordersFetchStatus: FETCH_STATUSES.LOADING,
   },
 
   products: {
     products: [],
-    productsPage: 0,
+    productsPage: 1,
+    productsLoading: true,
     productsNumberOfPages: 0,
     productsFetchStatus: FETCH_STATUSES.LOADING
   },
@@ -36,7 +41,8 @@ const customerState = {
 
   transactions: {
     transactions: [],
-    transactionsPage: 0,
+    transactionsPage: 1,
+    transactionsLoading: true,
     transactionsNumberOfPages: 0,
     transactionsFetchStatus: FETCH_STATUSES.LOADING
   },

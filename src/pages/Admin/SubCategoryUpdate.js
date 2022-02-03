@@ -8,6 +8,7 @@ import Reload from '../../components/Reload';
 import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 import { useSubCategoryFetch } from '../../hooks/category/subCategoryFetchHook';
+import { useSubCategoryUpdate } from '../../hooks/category/subCategoryUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
@@ -20,7 +21,7 @@ export default function SubCategoryUpdate() {
   ] = useSubCategoryFetch();
   
   useHeader({ 
-    title: 'Edit Sub Category - DailyNeeds',
+    title: `${subCategory?.name ?? 'Loading...'}- DailyNeeds`,
     headerTitle: '_category.Edit_sub_category'
   });
 
@@ -42,26 +43,36 @@ export default function SubCategoryUpdate() {
     refetchProducts();
   }
 
+  const [
+    onSubmit, 
+    onPhotoChoose,
+    photoUploaded, 
+    dialog, 
+    formError, 
+    formSuccess, 
+    nameError,
+    descriptionError
+  ] = useSubCategoryUpdate();
+
   return (
     <section className="flex-grow">
       <div className="container-x">
         {
           useRenderOnDataFetched(
-            [subCategoryFetchStatus, storesFetchStatus, productsFetchStatus]
-,            ()=> (
+            [subCategoryFetchStatus, storesFetchStatus, productsFetchStatus],
+            ()=> (
               <SubCategoryForm 
                 add={false} 
                 categories={stores.concat(products)}
                 subCategory={subCategory} 
-                // onSubmit={onSubmit}
-                // onPhotoChoose={onPhotoChoose}
-                // photoUploaded={photoUploaded}
-                // dialog={dialog}
-                // formError={formError}
-                // formSuccess={formSuccess}
-                // nameError={nameError}
-                // typeError={typeError} 
-                // descriptionError={descriptionError}
+                onSubmit={onSubmit}
+                onPhotoChoose={onPhotoChoose}
+                photoUploaded={photoUploaded}
+                dialog={dialog}
+                formError={formError}
+                formSuccess={formSuccess}
+                nameError={nameError}
+                descriptionError={descriptionError}
                 />
             ),
             ()=> <Loading />,

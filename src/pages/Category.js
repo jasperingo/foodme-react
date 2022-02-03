@@ -51,7 +51,7 @@ function Profile({ category, isAdmin }) {
 
       <div>
         {
-          isAdmin && <AddButton text="_category.Add_sub_category" href={`/sub-category/add?category=${category.id}`} />
+          isAdmin && <AddButton text="_category.Add_sub_category" href={`/sub-category/add?category_id=${category.id}`} />
         }
         <ul className="category-list">
           {

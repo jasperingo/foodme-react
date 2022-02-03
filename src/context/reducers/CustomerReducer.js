@@ -3,7 +3,6 @@ import { CUSTOMER } from "../actions/customerActions";
 import customerState from "../states/customerState";
 
 export default function CustomerReducer (state, action) {
-
   
   switch (action.type) {
 
@@ -27,8 +26,9 @@ export default function CustomerReducer (state, action) {
       return {
         ...state,
         customer: {
-          customer: state.customer.customer,
-          customerFetchStatus: action.payload
+          customerID: action.payload.id,
+          customerLoading: action.payload.loading,
+          customerFetchStatus: action.payload.fetchStatus
         }
       };
     
@@ -37,42 +37,43 @@ export default function CustomerReducer (state, action) {
         ...state,
         customer: {
           ...state.customer,
-          customer: action.payload.customer, 
+          customerLoading: false, 
+          customer: action.payload.customer,
+          customerID: action.payload.customer.id,
           customerFetchStatus: action.payload.fetchStatus,
         }
       };
 
+    case CUSTOMER.LIST_UNFETCHED:
+      return {
+        ...state,
+        customers: customerState.customers
+      };
     
-    /*case CUSTOMER.LIST_FETCH_STATUS_CHANGED :
+    case CUSTOMER.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
         customers: {
           ...state.customers,
-          customersFetchStatus: action.payload
+          customersLoading: action.payload.loading,
+          customersFetchStatus: action.payload.fetchStatus
         }
       };
     
-    case CUSTOMER.LIST_FETCHED :
-      let status = fetchUpdater(
-        state.customers.customersPage, 
-        action.payload.customersNumberOfPages, 
-        state.customers.customers.length, 
-        action.payload.customers.length
-      );
-      
-      const cus = state.customers.customers.filter(i=> i !== null);
-      
+    case CUSTOMER.LIST_FETCHED:
       return {
         ...state,
         customers: {
-          customersFetchStatus: status,
+          customersLoading: false,
           customersPage: state.customers.customersPage+1,
-          customersNumberOfPages: action.payload.customersNumberOfPages,
-          customers: [...cus, ...action.payload.customers, null],
+          customersFetchStatus: action.payload.fetchStatus,
+          customersNumberOfPages: action.payload.numberOfPages,
+          customers: [...state.customers.customers, ...action.payload.list],
         }
       };
 
-    case CUSTOMER.UNFETCH:
+
+    /*case CUSTOMER.UNFETCH:
       return initialCustomerState;
       
     

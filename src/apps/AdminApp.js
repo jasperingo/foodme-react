@@ -13,7 +13,8 @@ import LogIn from '../pages/Admin/LogIn';
 import AccountMenu from '../pages/Admin/AccountMenu';
 import Profile from '../pages/Admin/Profile';
 import PasswordUpdate from '../pages/Admin/PasswordUpdate';
-// import Customers from '../pages/Admin/Customers';
+import Customers from '../pages/Admin/Customers';
+import Customer from '../pages/Admin/Customer';
 // import Dashboard from '../pages/Admin/Dashboard';
 // import DeliveryFirms from '../pages/Admin/DeliveryFirms';
 // import Messages from '../pages/Admin/Messages';
@@ -22,7 +23,6 @@ import PasswordUpdate from '../pages/Admin/PasswordUpdate';
 // import Transactions from '../pages/Admin/Transactions';
 // import DeliveryFirm from '../pages/Admin/DeliveryFirm';
 // import Store from '../pages/Store';
-// import Customer from '../pages/Admin/Customer';
 // import Order from '../pages/Order';
 import Categories from '../pages/Categories';
 import Category from '../pages/Category';
@@ -112,14 +112,14 @@ export default function AdminApp() {
           <Route path="/stores" render={()=> authMiddleware() || <Stores />} />
           <Route path="/customer/:ID/update" render={()=> authMiddleware() || <CustomerUpdate />} />
           <Route path="/customer/add" render={()=> authMiddleware() || <CustomerAdd />} />
-          <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer />} />
-          <Route path="/customers" render={()=> authMiddleware() || <Customers />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> */}
+          <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer />} />
+          <Route path="/customers" render={()=> authMiddleware() || <Customers />} />
           <Route path="/sub-category/:ID/update" render={()=> authMiddleware() || <SubCategoryUpdate />} />
           <Route path="/sub-category/add" render={()=> authMiddleware() || <SubCategoryAdd />} />
           <Route path="/category/:ID/update" render={()=> authMiddleware() || <CategoryUpdate />} />
