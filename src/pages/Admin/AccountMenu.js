@@ -2,7 +2,9 @@
 import React from 'react';
 import { adminIcon, categoryIcon, deliveryIcon, passwordIcon, storeIcon, userIcon } from '../../assets/icons';
 import AccountMenuView from '../../components/AccountMenuView';
-import { useAppContext } from '../../context/AppContext';
+import { useAdminLogOut } from '../../hooks/admin/adminLogOutHook';
+import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
 
 const MENU_ITEMS = [
   { text: '_user.Profile', icon: adminIcon, href: '/profile'},
@@ -15,12 +17,30 @@ const MENU_ITEMS = [
 
 export default function AccountMenu() {
 
-  const { user: { user } } = useAppContext();
+  const { 
+    admin: { 
+      admin: {
+        admin
+      }
+    } 
+  } = useAppContext();
 
+  useHeader({ 
+    title: `${admin.customer.user.name} - Account`,
+    topNavPaths: ['/messages']
+  });
+
+  const onLogOut = useAdminLogOut();
+  
   return (
     <section>
       <div className="container-x">
-        <AccountMenuView photo={`/photos/customer/${user.photo}`} name={`${user.first_name} ${user.last_name}`} items={MENU_ITEMS} />
+        <AccountMenuView 
+          onLogOut={onLogOut}
+          photo={admin.customer.user.photo.href} 
+          name={admin.customer.user.name} 
+          items={MENU_ITEMS} 
+          />
       </div>
     </section>
   );

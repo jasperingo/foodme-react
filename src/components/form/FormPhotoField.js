@@ -5,7 +5,7 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { minusIcon } from '../../assets/icons';
 
-export default function FormPhotoField({ src, alt, text = '_extra.Add_photo', onChoose, uploaded, required }) {
+export default function FormPhotoField({ src, alt, text = '_extra.Select_photo', onChoose, uploaded, required }) {
 
   const { t } = useTranslation();
 

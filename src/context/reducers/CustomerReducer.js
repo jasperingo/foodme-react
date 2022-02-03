@@ -1,12 +1,9 @@
-//import { useListFetchStatus } from "../AppHooks";
-//import { initialCustomerState } from "../AppInitialStates";
 
 import { CUSTOMER } from "../actions/customerActions";
 import customerState from "../states/customerState";
 
 export default function CustomerReducer (state, action) {
 
-  //const fetchUpdater = useListFetchStatus();
   
   switch (action.type) {
 

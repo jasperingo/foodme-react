@@ -1,71 +1,33 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import AdminApi from '../../api/AdminApi';
+import React, { useRef } from 'react';
 import { adminIcon } from '../../assets/icons';
-import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
+import LoadingDialog from '../../components/dialog/LoadingDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
-import FormButton from '../../components/FormButton';
-import FormField from '../../components/FormField';
-import FormMessage from '../../components/FormMessage';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import User from '../../models/User';
+import FormButton from '../../components/form/FormButton';
+import FormField from '../../components/form/FormField';
+import FormMessage from '../../components/form/FormMessage';
+import { useHeader } from '../../hooks/headerHook';
+import { useAdminLogin } from '../../hooks/admin/adminLoginHook';
 
 export default function LogIn({ guestMiddleware }) {
 
-  const { userDispatch } = useAppContext();
-
+  useHeader({ title: 'Log In - DailyNeeds' });
+  
   const emailInput = useRef(null);
 
   const passwordInput = useRef(null);
 
-  const [dialog, setDialog] = useState(null);
+  const [onSubmit, dialog, formError] = useAdminLogin();
 
-  const [formError, setFormError] = useState('');
-
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
-  
   function onLoginSubmit(e) {
     e.preventDefault();
-
-    if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
-      setFormError('_errors.Credentials_are_incorrect');
-    } else {
-      setFormError('');
-      setFetchStatus(FETCH_STATUSES.LOADING);
-      setDialog(LOADING_DIALOG);
-    }
+    onSubmit(
+      emailInput.current.value,
+      passwordInput.current.value,
+      emailInput.current.validity,
+      passwordInput.current.validity
+    );
   }
-
-  useEffect(()=> {
-
-    if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-      const api = new AdminApi();
-      api.auth({
-        email: emailInput.current.value,
-        password: passwordInput.current.value,
-        confirm_password: passwordInput.current.value
-      }).then(res=> {
-        res.data.TYPE = User.TYPE_ADMINISTRATOR;
-        userDispatch({ type: USER.AUTHED, payload: res.data });
-      }).catch(err=> {
-        
-        setFetchStatus(FETCH_STATUSES.ERROR);
-
-        if (err.errors) {
-          setFormError(err.errors.msg);
-        } else {
-          setFormError('_errors.Something_went_wrong');
-        }
-      });
-
-    } else if (dialog !== null) {
-      setDialog(null);
-    }
-
-  }, [fetchStatus, userDispatch, dialog]);
   
   return guestMiddleware() || (
     <section>
@@ -74,7 +36,7 @@ export default function LogIn({ guestMiddleware }) {
 
         <form method="POST" action="" onSubmit={onLoginSubmit} className="form-1-x" noValidate>
 
-          { formError && <FormMessage text={formError} /> }
+          <FormMessage error={formError} />
 
           <AuthFormHeader icon={adminIcon} text="_user.Welcome_back" />
 
@@ -101,7 +63,7 @@ export default function LogIn({ guestMiddleware }) {
 
       </div>
 
-      { dialog && <AlertDialog dialog={dialog} /> }
+      { dialog && <LoadingDialog /> }
 
     </section>
   );

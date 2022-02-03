@@ -50,7 +50,7 @@ export function useAddressAdd() {
     streetValidity,
     stateValidity,
     cityValidity,
-    typeValidity,
+    typeValidity
   ) {
     
     setFormError(null);

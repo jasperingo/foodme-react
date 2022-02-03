@@ -1,52 +1,65 @@
 
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import CategoryApi from '../../api/CategoryApi';
-import CategoryForm from '../../components/CategoryForm';
+import React from 'react';
+import CategoryForm from '../../components/form/CategoryForm';
+import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
+import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
-import { CATEGORIES, FETCH_STATUSES, getCategoryFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useDataRender } from '../../context/AppHooks';
+import { useCategoryFetch } from '../../hooks/category/categoryFetchHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
+import { useCategoryUpdate } from '../../hooks/category/categoryUpdateHook';
 
 export default function CategoryUpdate() {
 
-  const cID = parseInt(useParams().ID);
+  const [
+    category, 
+    categoryFetchStatus, 
+    refetch
+  ] = useCategoryFetch();
 
-  const { 
-    categories: {
-      category: {
-        category,
-        categoryFetchStatus
-      },
-    }, 
-    categoriesDispatch
-  } = useAppContext();
+  useHeader({ 
+    title: `${category?.name ?? 'Loading...'} - Category`,
+    headerTitle: '_category.Edit_category'
+  });
 
-  useEffect(()=> {
-    if (category !== null && cID !== category.id) {
-      categoriesDispatch({ type: CATEGORIES.UNFETCH });
-    } else if (categoryFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new CategoryApi();
-      api.get(cID, categoriesDispatch);
-    }
-  }, [cID, category, categoryFetchStatus, categoriesDispatch]);
-
-  function refetchCategory() {
-    if (categoryFetchStatus !== FETCH_STATUSES.LOADING) 
-      categoriesDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    onSubmit, 
+    onPhotoChoose,
+    photoUploaded, 
+    dialog, 
+    formError, 
+    formSuccess, 
+    nameError, 
+    typeError, 
+    descriptionError
+  ] = useCategoryUpdate();
 
   return (
-    <section className="flex-grow">
+    <section>
       <div className="container-x">
-        { 
-          useDataRender(
-            category, 
+        {
+          useRenderOnDataFetched(
             categoryFetchStatus,
-            ()=> <CategoryForm type={CategoryForm.UPDATE} category={category} />,
-            ()=> <Loading />, 
-            ()=> <Reload action={refetchCategory} />,
+            ()=> (
+              <CategoryForm 
+                add={false} 
+                category={category} 
+                onSubmit={onSubmit}
+                onPhotoChoose={onPhotoChoose}
+                photoUploaded={photoUploaded}
+                dialog={dialog}
+                formError={formError}
+                formSuccess={formSuccess}
+                nameError={nameError}
+                typeError={typeError} 
+                descriptionError={descriptionError}
+                />
+            ),
+            ()=> <Loading />,
+            ()=> <Reload action={refetch} />,
+            ()=> <NotFound />,
+            ()=> <Forbidden />,
           )
         }
       </div>

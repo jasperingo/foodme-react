@@ -1,52 +1,73 @@
 
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import SubCategoryApi from '../../api/SubCategoryApi';
+import React from 'react';
+import Forbidden from '../../components/Forbidden';
+import SubCategoryForm from '../../components/form/SubCategoryForm';
 import Loading from '../../components/Loading';
+import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
-import SubCategoryForm from '../../components/SubCategoryForm';
-import { CATEGORIES, FETCH_STATUSES, getSubCategoryFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useDataRender } from '../../context/AppHooks';
+import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
+import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
+import { useSubCategoryFetch } from '../../hooks/category/subCategoryFetchHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function SubCategoryUpdate() {
+
+  const [
+    subCategory, 
+    subCategoryFetchStatus, 
+    refetch
+  ] = useSubCategoryFetch();
   
-  const cID = parseInt(useParams().ID);
+  useHeader({ 
+    title: 'Edit Sub Category - DailyNeeds',
+    headerTitle: '_category.Edit_sub_category'
+  });
 
-  const { 
-    categories: {
-      subCategory: {
-        subCategory,
-        subCategoryFetchStatus
-      },
-    }, 
-    categoriesDispatch
-  } = useAppContext();
+  const [
+    stores, 
+    storesFetchStatus, 
+    refetchStores
+  ] = useStoreCategoryList();
 
-  useEffect(()=> {
-    if (subCategory !== null && cID !== subCategory.id) {
-      categoriesDispatch({ type: CATEGORIES.SUB_UNFETCH });
-    } else if (subCategoryFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new SubCategoryApi();
-      api.get(cID, categoriesDispatch);
-    }
-  }, [cID, subCategory, subCategoryFetchStatus, categoriesDispatch]);
+  const [
+    products, 
+    productsFetchStatus, 
+    refetchProducts
+  ] = useProductCategoryList(true);
 
-  function refetchCategory() {
-    if (subCategoryFetchStatus !== FETCH_STATUSES.LOADING) 
-      categoriesDispatch(getSubCategoryFetchStatusAction(FETCH_STATUSES.LOADING));
+  function retryLoad() {
+    refetch();
+    refetchStores();
+    refetchProducts();
   }
 
   return (
     <section className="flex-grow">
       <div className="container-x">
-        { 
-          useDataRender(
-            subCategory, 
-            subCategoryFetchStatus,
-            ()=> <SubCategoryForm type={SubCategoryForm.UPDATE} category={subCategory} />,
-            ()=> <Loading />, 
-            ()=> <Reload action={refetchCategory} />,
+        {
+          useRenderOnDataFetched(
+            [subCategoryFetchStatus, storesFetchStatus, productsFetchStatus]
+,            ()=> (
+              <SubCategoryForm 
+                add={false} 
+                categories={stores.concat(products)}
+                subCategory={subCategory} 
+                // onSubmit={onSubmit}
+                // onPhotoChoose={onPhotoChoose}
+                // photoUploaded={photoUploaded}
+                // dialog={dialog}
+                // formError={formError}
+                // formSuccess={formSuccess}
+                // nameError={nameError}
+                // typeError={typeError} 
+                // descriptionError={descriptionError}
+                />
+            ),
+            ()=> <Loading />,
+            ()=> <Reload action={retryLoad} />,
+            ()=> <NotFound />,
+            ()=> <Forbidden />,
           )
         }
       </div>

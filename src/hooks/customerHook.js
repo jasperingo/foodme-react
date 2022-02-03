@@ -407,6 +407,8 @@ export function useCustomerUpdate() {
           setPhotoUploaded(true);
 
         } else if (res.status === 400) {
+          
+          setFetchStatus(FETCH_STATUSES.PENDING);
 
           const error = res.body.data[0];
           
@@ -453,6 +455,8 @@ export function useCustomerUpdate() {
           }
 
         } else if (res.status === 400) {
+          
+          setFetchStatus(FETCH_STATUSES.PENDING);
           
           for (let error of res.body.data) {
 
@@ -563,7 +567,19 @@ export function useCustomerUpdate() {
     [fetchStatus, dialog, update]
   );
   
-  return [onSubmit, onPhotoChoose, photoUploaded, customer, dialog, formError, formSuccess, firstNameError, lastNameError, emailError, phoneError];
+  return [
+    onSubmit, 
+    onPhotoChoose, 
+    photoUploaded, 
+    customer, 
+    dialog, 
+    formError, 
+    formSuccess, 
+    firstNameError, 
+    lastNameError, 
+    emailError, 
+    phoneError
+  ];
 }
 
 

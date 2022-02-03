@@ -41,6 +41,10 @@ function Profile({ category, isAdmin }) {
           {
             icon: categoryIcon,
             data: t('_category.sub_category__Count', { count: category.sub_categories.length })
+          },
+          {
+            icon: editIcon,
+            data: category.description
           }
         ]}
         />

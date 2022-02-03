@@ -1,6 +1,7 @@
 import { useContext, useReducer } from "react";
 import AppContext from "../context/AppContext";
 import AddressReducer from "../context/reducers/AddressReducer";
+import AdminReducer from "../context/reducers/AdminReducer";
 import BankReducer from "../context/reducers/BankReducer";
 import CartReducer from "../context/reducers/CartReducer";
 import CategoryReducer from "../context/reducers/CategoryReducer";
@@ -15,8 +16,10 @@ import ProductReducer from "../context/reducers/ProductReducer";
 import SavedCartReducer from "../context/reducers/SavedCartReducer";
 import SearchReducer from "../context/reducers/SearchReducer";
 import StoreReducer from "../context/reducers/StoreReducer";
+import SubCategoryReducer from "../context/reducers/SubCategoryReducer";
 import TransactionReducer from "../context/reducers/TransactionReducer";
 import addressState from "../context/states/addressState";
+import adminState from "../context/states/adminState";
 import bankState from "../context/states/bankState";
 import cartState from "../context/states/cartState";
 import categoryState from "../context/states/categoryState";
@@ -31,12 +34,15 @@ import productState from "../context/states/productState";
 import savedCartState from "../context/states/savedCartState";
 import searchState from "../context/states/searchState";
 import storeState from "../context/states/storeState";
+import subCategoryState from "../context/states/subCategoryState";
 import transactionState from "../context/states/transactionState";
 
 
 export function useAppContextValues() {
   
   const [header, headerDispatch] = useReducer(HeaderReducer, headerState);
+
+  const [admin, adminDispatch] = useReducer(AdminReducer, adminState);
 
   const [customer, customerDispatch] = useReducer(CustomerReducer, customerState);
 
@@ -45,6 +51,8 @@ export function useAppContextValues() {
   const [search, searchDispatch] = useReducer(SearchReducer, searchState);
 
   const [category, categoryDispatch] = useReducer(CategoryReducer, categoryState);
+
+  const [subCategory, subCategoryDispatch] = useReducer(SubCategoryReducer, subCategoryState);
   
   const [bank, bankDispatch] = useReducer(BankReducer, bankState);
 
@@ -76,6 +84,11 @@ export function useAppContextValues() {
       headerDispatch
     },
 
+    admin: {
+      admin, 
+      adminDispatch
+    },
+
     customer: {
       customer,
       dispatch: customerDispatch
@@ -84,6 +97,11 @@ export function useAppContextValues() {
     category: {
       category, 
       categoryDispatch
+    },
+
+    subCategory: {
+      subCategory, 
+      subCategoryDispatch
     },
 
     home: {

@@ -2,6 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { categoryIcon } from '../assets/icons';
+import AddButton from '../components/AddButton';
 import EmptyList from '../components/EmptyList';
 import SingleList from '../components/list/SingleList';
 import CategoryItem from '../components/list_item/CategoryItem';
@@ -44,11 +45,12 @@ function List({ headerText, categories, categoriesFetchStatus, refetch }) {
 }
 
 
-export default function Categories() {
+export default function Categories({ isAdmin }) {
 
   useHeader({ 
     title: `Categories - DailyNeeds`,
-    topNavPaths: ['/cart', '/search']
+    topNavPaths: ['/cart', '/search'],
+    headerTitle: isAdmin ? '_category.Categories' : null
   });
 
   const [
@@ -67,6 +69,8 @@ export default function Categories() {
     <section>
       
       <div className="container-x">
+
+        { isAdmin && <AddButton text="_category.Add_category" href="/category/add" />}
         
         <List 
           headerText="_store.Store_categories"

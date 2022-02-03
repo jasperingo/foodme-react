@@ -133,6 +133,7 @@ export const TRANSLATIONS_EN = {
     optional: 'optional',
     Add_photo: 'Add photo',
     Edit_photo: 'Edit photo',
+    Select_photo: 'Select photo',
     Amount: 'Amount',
     Percent: 'Percent',
     Status: 'Status',
