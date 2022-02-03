@@ -59,7 +59,7 @@ export default function ProductItem(
         <div className="mb-1">{ title }</div>
         {
           variant?.price ?
-          priceView :
+          <div className="font-bold mb-1">{ priceView }</div> :
           <div className="italic mb-1 text-red-500">{ t('_extra.No_price') }</div>
         }
         <div className="flex gap-1 items-start text-color-primary text-sm py-1 w-full">

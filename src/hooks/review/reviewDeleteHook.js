@@ -21,6 +21,9 @@ export function useReviewDelete({ product, store, deliveryFirm }) {
     },
     product: {
       productDispatch,
+    },
+    deliveryFirm: {
+      deliveryFirmDispatch
     }
   } = useAppContext();
 
@@ -63,6 +66,10 @@ export function useReviewDelete({ product, store, deliveryFirm }) {
               storeDispatch({ type: REVIEW.DELETED });
             }
 
+            if (deliveryFirm) {
+              deliveryFirmDispatch({ type: REVIEW.DELETED });
+            }
+
           } else {
             throw new Error();
           }
@@ -76,7 +83,7 @@ export function useReviewDelete({ product, store, deliveryFirm }) {
       }
 
     }, 
-    [id, product, store, deliveryFirm, fetchStatus, customerToken, response, storeDispatch, productDispatch]
+    [id, product, store, deliveryFirm, fetchStatus, customerToken, response, storeDispatch, productDispatch, deliveryFirmDispatch]
   );
 
 

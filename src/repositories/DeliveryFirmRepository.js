@@ -17,4 +17,11 @@ export default class DeliveryFirmRepository extends Fetch {
     );
   }
 
+  getReviewsList(id, page) {
+    return this.apiFetch(
+      `delivery-firm/${id}/review/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
 }

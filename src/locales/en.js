@@ -61,7 +61,10 @@ export const TRANSLATIONS_EN = {
     Manage_your_account: 'Manage your account',
     _log_out_confirm_message: 'Are you sure you want to log out?',
     _forgot_password_instruction: 'To reset your password, enter your email address',
+    _forgot_password_success: 'An link has been sent to your email, click on the link to finish resetting your password, it expires in 15 minutes',
     _reset_password_instruction: 'Enter your new password, use a password you will not forget',
+    _reset_password_success: 'Your password has been reset successfully, you can now log in with your new password',
+    _reset_password_token_invalid: 'Password reset token is invalid',
     Name: 'Name',
     First_name: 'First name',
     Last_name: 'Last name',
@@ -272,6 +275,9 @@ export const TRANSLATIONS_EN = {
     Route: 'Route',
     Routes: 'Routes',
     Add_route: 'Add route',
+    Delivery_route: 'Delivery route',
+    Delivery_weights: 'Delivery weights',
+    Delivery_durations: 'Delivery durations'
   },
 
   _order: {
@@ -349,6 +355,7 @@ export const TRANSLATIONS_EN = {
     No_saved_cart: 'No saved cart',
     No_store_category: 'No store category',
     No_product_category: 'No product category',
+    No_route: 'No route',
     List_is_empty: 'List is empty',
     Your_cart_is_empty: 'Your cart is empty',
   },

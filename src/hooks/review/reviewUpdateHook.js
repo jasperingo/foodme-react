@@ -21,6 +21,9 @@ export function useReviewUpdate() {
     },
     product: {
       productDispatch,
+    },
+    deliveryFirm: {
+      deliveryFirmDispatch
     }
   } = useAppContext();
 
@@ -76,6 +79,14 @@ export function useReviewUpdate() {
               });
             }
 
+            if (review.delivery_firm !== null) {
+              review.delivery_firm = undefined;
+              deliveryFirmDispatch({
+                type: REVIEW.UPDATED,
+                payload: review
+              });
+            }
+
           } else if (res.status === 400) {
             
             response.onError(res.body.data[0].message);
@@ -93,7 +104,7 @@ export function useReviewUpdate() {
       }
 
     }, 
-    [id, data, fetchStatus, customerToken, response, storeDispatch, productDispatch]
+    [id, data, fetchStatus, customerToken, response, storeDispatch, productDispatch, deliveryFirmDispatch]
   );
 
 

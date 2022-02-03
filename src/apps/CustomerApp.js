@@ -19,8 +19,8 @@ import Search from '../pages/Customer/Search';
 import Store from '../pages/Customer/Store';
 import Product from '../pages/Customer/Product';
 import Messages from '../pages/Customer/Messages';
-import ForgotPassword from '../pages/ForgotPassword';
-import ResetPassword from '../pages/ResetPassword';
+import ForgotPassword from '../pages/Customer/ForgotPassword';
+import ResetPassword from '../pages/Customer/ResetPassword';
 import Profile from '../pages/Customer/Profile';
 import Addresses from '../pages/Customer/Addresses';
 import AddressAdd from '../pages/Customer/AddressAdd';
@@ -44,6 +44,7 @@ import { FETCH_STATUSES } from '../repositories/Fetch';
 import { useAppContext } from '../hooks/contextHook';
 import { useCartCounter, useURLQuery } from '../hooks/viewHook';
 import CartDeliveryMethod from '../pages/Customer/CartDeliveryMethod';
+import DeliveryRoute from '../pages/Customer/DeliveryRoute';
 
 
 const HEADER_NAV_LINKS = [
@@ -131,6 +132,7 @@ export default function CustomerApp() {
           <Route path="/discount/:ID" render={()=> <Discount />} />
           <Route path="/product/:ID/reviews" render={()=> <ProductReviews />} />
           <Route path="/product/:ID" render={()=> <Product />} />
+          <Route path="/route/:ID" render={()=> <DeliveryRoute />} />
           <Route path="/delivery-firm/:ID" render={()=> <DeliveryFirm />} />
           <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/category/:ID" render={()=> <Category isAdmin={false} />} /> 

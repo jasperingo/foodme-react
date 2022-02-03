@@ -1,5 +1,4 @@
 
-
 import { useEffect, useState } from "react";
 import { REVIEW } from "../../context/actions/reviewActions";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
@@ -22,6 +21,9 @@ export function useReviewCreate({ product, store, deliveryFirm }) {
     },
     product: {
       productDispatch,
+    },
+    deliveryFirm: {
+      deliveryFirmDispatch
     }
   } = useAppContext();
 
@@ -53,14 +55,10 @@ export function useReviewCreate({ product, store, deliveryFirm }) {
         if (product) {
           data.product_id = product;
           request = api.createForProduct(data);
-        }
-
-        if (store) {
+        } else if (store) {
           data.store_id = store;
           request = api.createForStore(data);
-        }
-
-        if (deliveryFirm) {
+        } else if (deliveryFirm) {
           data.delivery_firm = deliveryFirm;
           request = api.createForDeliveryFirm(data);
         }
@@ -92,6 +90,14 @@ export function useReviewCreate({ product, store, deliveryFirm }) {
               });
             }
 
+            if (deliveryFirm) {
+              review.delivery_firm = undefined;
+              deliveryFirmDispatch({
+                type: REVIEW.CREATED,
+                payload: review
+              });
+            }
+
           } else if (res.status === 400) {
             
             response.onError(res.body.data[0].message);
@@ -109,7 +115,7 @@ export function useReviewCreate({ product, store, deliveryFirm }) {
       }
 
     }, 
-    [store, product, deliveryFirm, data, fetchStatus, customerToken, response, storeDispatch, productDispatch]
+    [store, product, deliveryFirm, data, fetchStatus, customerToken, response, storeDispatch, productDispatch, deliveryFirmDispatch]
   );
 
 

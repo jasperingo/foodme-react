@@ -5,11 +5,18 @@ import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import DeliveryFirmProfile from '../../components/profile/DeliveryFirmProfile';
+import ReviewList from '../../components/profile/section/ReviewList';
+import RouteList from '../../components/profile/section/RouteList';
 import Reload from '../../components/Reload';
+import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
 import { useAppContext } from '../../hooks/contextHook';
+import { useDeliveryFirmReviewList } from '../../hooks/delivery_firm/deliveryFirmReviewListHook';
 import { useDeliveryFirmRouteList } from '../../hooks/delivery_firm/deliveryFirmRouteListHook';
-import { useDeliveryFirmFetch } from '../../hooks/delivery_firm/deliveryFrimFetchHook';
+import { useDeliveryFirmFetch } from '../../hooks/delivery_firm/deliveryFirmFetchHook';
 import { useHeader } from '../../hooks/headerHook';
+import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
+import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
+import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 const NAV_LINKS = [
@@ -17,6 +24,62 @@ const NAV_LINKS = [
   { title : '_extra.Reviews', href: '/reviews' }
 ];
 
+function DeliveryFirmReviewsList() {
+
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    },
+    deliveryFirm: {
+      deliveryFirm: {
+        deliveryFirm
+      }
+    }
+  } = useAppContext();
+  
+  const [
+    reviews, 
+    reviewsFetchStatus, 
+    reviewsPage, 
+    reviewsNumberOfPages, 
+    refetch
+  ] = useDeliveryFirmReviewList(customerToken);
+
+  const onReviewUpdate = useReviewUpdate();
+
+  const onReviewDelete = useReviewDelete({ deliveryFirm: true });
+
+  const onReviewCreate = useReviewCreate({ deliveryFirm: deliveryFirm.id });
+
+  return (
+    <>
+      <div className="container-x">
+
+        <ReviewRaterAndSummary
+          onReviewCreate={onReviewCreate} 
+          onReviewUpdate={onReviewUpdate}
+          onReviewDelete={onReviewDelete}
+          summary={deliveryFirm.review_summary}
+          title="_review.Rate_this_store"
+          review={customerToken === null || !deliveryFirm?.reviews?.length ? null : deliveryFirm.reviews[0]}
+          />
+
+      </div>
+
+      <ReviewList 
+        reviews={reviews}
+        reviewsFetchStatus={reviewsFetchStatus}
+        reviewsPage={reviewsPage}
+        reviewsNumberOfPages={reviewsNumberOfPages}
+        refetch={refetch}
+        />
+    </>
+  );
+}
 
 function DeliveryFirmRoutesList() {
 
@@ -32,26 +95,22 @@ function DeliveryFirmRoutesList() {
 
   const [
     routes, 
-    // productsFetchStatus, 
-    // productsPage, 
-    // productsNumberOfPages, 
-    // refetch
+    routesFetchStatus, 
+    routesPage, 
+    routesNumberOfPages, 
+    refetch
   ] = useDeliveryFirmRouteList(customerToken);
-
-  console.log(routes);
   
   return (
-    <div>Delivery routes List...</div>
-    // <ProductList 
-    //   products={products}
-    //   productsFetchStatus={productsFetchStatus}
-    //   productsPage={productsPage}
-    //   productsNumberOfPages={productsNumberOfPages}
-    //   refetch={refetch}
-    //   />
+    <RouteList 
+      routes={routes}
+      routesFetchStatus={routesFetchStatus}
+      routesPage={routesPage}
+      routesNumberOfPages={routesNumberOfPages}
+      refetch={refetch}
+      />
   );
 }
-
 
 export default function DeliveryFirm() {
 
@@ -98,7 +157,7 @@ export default function DeliveryFirm() {
       {
         deliveryFirm && 
         <Switch>
-          <Route path={`${match.url}/reviews`} render={()=> <div>Delivery reviews</div>} />
+          <Route path={`${match.url}/reviews`} render={()=> <DeliveryFirmReviewsList />} />
           <Route path={match.url} render={()=> <DeliveryFirmRoutesList />} />
         </Switch>
       }

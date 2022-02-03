@@ -7,6 +7,10 @@ export function useURLQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
+export function useMoneyFormatter() {
+  return (amount)=> <>&#8358; {amount.toFixed(2)}</>;
+}
+
 export function useMoneyFormat(amount) {
   return <>&#8358; {amount.toFixed(2)}</>;
 }

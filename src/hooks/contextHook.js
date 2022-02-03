@@ -5,7 +5,8 @@ import BankReducer from "../context/reducers/BankReducer";
 import CartReducer from "../context/reducers/CartReducer";
 import CategoryReducer from "../context/reducers/CategoryReducer";
 import CustomerReducer from "../context/reducers/CustomerReducer";
-import DeliveryFirmsReducer from "../context/reducers/DeliveryFirmsReducer";
+import DeliveryFirmReducer from "../context/reducers/DeliveryFirmReducer";
+import DeliveryRouteReducer from "../context/reducers/DeliveryRouteReducer";
 import DiscountReducer from "../context/reducers/DiscountReducer";
 import HeaderReducer from "../context/reducers/HeaderReducer";
 import HomeReducer from "../context/reducers/HomeReducer";
@@ -21,6 +22,7 @@ import cartState from "../context/states/cartState";
 import categoryState from "../context/states/categoryState";
 import customerState from "../context/states/customerState";
 import deliveryFirmState from "../context/states/deliveryFirmState";
+import deliveryRouteState from "../context/states/deliveryRouteState";
 import discountState from "../context/states/discountState";
 import headerState from "../context/states/headerState";
 import homeState from "../context/states/homeState";
@@ -62,7 +64,9 @@ export function useAppContextValues() {
 
   const [cart, cartDispatch] = useReducer(CartReducer, cartState);
   
-  const [deliveryFirm, deliveryFirmDispatch] = useReducer(DeliveryFirmsReducer, deliveryFirmState);
+  const [deliveryFirm, deliveryFirmDispatch] = useReducer(DeliveryFirmReducer, deliveryFirmState);
+
+  const [deliveryRoute, deliveryRouteDispatch] = useReducer(DeliveryRouteReducer, deliveryRouteState);
 
 
   return {
@@ -140,7 +144,12 @@ export function useAppContextValues() {
     deliveryFirm: {
       deliveryFirm, 
       deliveryFirmDispatch
-    }
+    },
+
+    deliveryRoute: {
+      deliveryRoute, 
+      deliveryRouteDispatch
+    },
 
   }
 }

@@ -68,4 +68,3 @@ export default function SearchReducer (state, action) {
       return state;
   }
 }
-
