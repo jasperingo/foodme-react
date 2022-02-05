@@ -16,14 +16,14 @@ export default function OrderReducer (state, action) {
         ordersFetchStatus: orderState.ordersFetchStatus,
       };
 
-    case ORDER.LIST_FETCH_STATUS_CHANGED :
+    case ORDER.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
         ordersLoading: action.payload.loading,
         ordersFetchStatus: action.payload.fetchStatus,
       };
     
-    case ORDER.LIST_FETCHED :
+    case ORDER.LIST_FETCHED:
       return {
         ...state,
         ordersLoading: false,
@@ -42,7 +42,7 @@ export default function OrderReducer (state, action) {
         orderFetchStatus: orderState.orderFetchStatus
       };
 
-    case ORDER.FETCH_STATUS_CHANGED :
+    case ORDER.FETCH_STATUS_CHANGED:
       return {
         ...state,
         orderID: action.payload.id,
@@ -50,7 +50,7 @@ export default function OrderReducer (state, action) {
         orderFetchStatus: action.payload.fetchStatus
       };
     
-    case ORDER.FETCHED :
+    case ORDER.FETCHED:
       return {
         ...state,
         orderLoading: false,
@@ -59,15 +59,16 @@ export default function OrderReducer (state, action) {
         orderFetchStatus: action.payload.fetchStatus,
       };
 
-    // case ORDER.LIST_STATUS_FILTER_CHANGED :
-    //   return {
-    //     ...state,
-    //     orders: {
-    //       ...initialOrdersState.orders,
-    //       orders: [null],
-    //       ordersStatus: action.payload
-    //     }
-    //   };
+    case ORDER.LIST_STATUS_FILTER_CHANGED:
+      return {
+        ...state,
+        ordersPage: 1,
+        ordersLoading: true,
+        ordersNumberOfPages: 0,
+        orders: orderState.orders,
+        ordersFetchStatus: orderState.ordersFetchStatus,
+        orderStatus: action.payload.status
+      };
   
     default:
       return state;

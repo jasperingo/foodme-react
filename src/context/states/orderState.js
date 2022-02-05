@@ -4,9 +4,9 @@ const orderState = {
   
   orders: [],
   ordersPage: 1,
+  ordersStatus: null,
   ordersLoading: true,
   ordersNumberOfPages: 0,
-  ordersStatus: 'pending',
   ordersFetchStatus: FETCH_STATUSES.LOADING,
   
   order: null,

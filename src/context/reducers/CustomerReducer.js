@@ -88,6 +88,11 @@ export default function CustomerReducer (state, action) {
         }
       };
     
+    case ORDER.LIST_UNFETCHED:
+      return {
+        ...state,
+        orders: customerState.orders
+      };
       
     case ORDER.LIST_FETCH_STATUS_CHANGED:
       return {
@@ -132,6 +137,12 @@ export default function CustomerReducer (state, action) {
           productsNumberOfPages: action.payload.numberOfPages,
           products: [...state.products.products, ...action.payload.list],
         }
+      };
+
+    case TRANSACTION.LIST_UNFETCHED:
+      return {
+        ...state,
+        transactions: customerState.transactions
       };
 
     case TRANSACTION.LIST_FETCH_STATUS_CHANGED:

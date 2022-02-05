@@ -1,67 +1,54 @@
 
-import React, { useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import TransactionApi from '../../api/TransactionApi';
-import AdminApp from '../../apps/AdminApp';
+import React from 'react';
 import { transactionIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
+import ScrollList from '../../components/list/ScrollList';
+import TransactionItem from '../../components/list_item/TransactionItem';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import TransactionItem from '../../components/TransactionItem';
-import { FETCH_STATUSES, getTransactionsListFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
+import { useHeader } from '../../hooks/headerHook';
+import { useTransactionList } from '../../hooks/transaction/transactionListHook';
+import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 
 export default function Transactions() {
 
-  const { 
-    user: { user }, 
-    transactions: {
-      transactions: {
-        transactions,
-        transactionsFetchStatus,
-        transactionsPage,
-        transactionsNumberOfPages
-      }
-    }, 
-    transactionsDispatch 
-  } = useAppContext();
-
-  useEffect(()=>{
-    if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new TransactionApi(user.api_token);
-      api.getListByAdmin(transactionsDispatch);
-    }
+  useHeader({
+    topNavPaths: ['/messages'],
+    title: 'Transactions - DailyNeeds'
   });
 
-  function refetchTransactions() {
-    if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
-      transactionsDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    transactions, 
+    transactionsFetchStatus, 
+    transactionsPage, 
+    transactionsNumberOfPages, 
+    refetch,
+    refresh
+  ] = useTransactionList();
   
   return (
     <section>
       <div className="container-x">
-        <InfiniteScroll
-          dataLength={transactions.length}
-          next={refetchTransactions}
+        
+        <ScrollList
+          data={transactions}
+          nextPage={refetch}
+          refreshPage={refresh}
           hasMore={useHasMoreToFetchViaScroll(transactionsPage, transactionsNumberOfPages, transactionsFetchStatus)}
-          >
-          <ul className="list-2-x">
-            { 
-              useListRender(
-                transactions, 
-                transactionsFetchStatus,
-                (item, i)=> <TransactionItem key={`transaction-${i}`} transaction={item} appType={AdminApp.TYPE} />, 
-                (k)=> <li key={k}> <Loading /> </li>, 
-                (k)=> <li key={k}> <Reload action={refetchTransactions} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>, 
-                (k)=> <li key={k}> <FetchMoreButton action={refetchTransactions} /> </li>,
-              )
-            }
-          </ul>
-        </InfiniteScroll>
+          className="list-2-x"
+          renderDataItem={(item)=> (
+            <TransactionItem key={`transaction-${item.id}`} transaction={item} />
+          )}
+          footer={useRenderListFooter(
+            transactionsFetchStatus,
+            ()=> <li key="transactions-footer"> <Loading /> </li>, 
+            ()=> <li key="transactions-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="transactions-footer" className="col-span-2"> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>,
+            ()=> <li key="transactions-footer"> <FetchMoreButton action={refetch} /> </li>
+          )}
+          />
+
       </div>
     </section>
   );

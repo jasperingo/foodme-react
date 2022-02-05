@@ -10,4 +10,11 @@ export default class TransactionRepository extends Fetch {
     );
   }
   
+  getList(page) {
+    return this.apiFetch(
+      `transaction/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
 }

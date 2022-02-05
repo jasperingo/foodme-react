@@ -12,7 +12,7 @@ import Splash from '../pages/Splash';
 import LogIn from '../pages/Admin/LogIn';
 import Dashboard from '../pages/Admin/Dashboard';
 import Orders from '../pages/Admin/Orders';
-// import Transactions from '../pages/Admin/Transactions';
+import Transactions from '../pages/Admin/Transactions';
 import Messages from '../pages/Admin/Messages';
 import AccountMenu from '../pages/Admin/AccountMenu';
 import Profile from '../pages/Admin/Profile';
@@ -37,6 +37,12 @@ import Discount from '../pages/Admin/Discount';
 import Order from '../pages/Admin/Order';
 import Transaction from '../pages/Admin/Transaction';
 import DeliveryRoute from '../pages/Admin/DeliveryRoute';
+import TermsOfService from '../pages/TermsOfService';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
+import ContactUs from '../pages/ContactUs';
+import AboutUs from '../pages/AboutUs';
+import ResetPassword from '../pages/ResetPassword';
+import ForgotPassword from '../pages/Admin/ForgotPassword';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -92,8 +98,11 @@ export default function AdminApp() {
         />
       <main className="pb-52">
         <Switch>
-          {/* 
-          <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />*/}
+          <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
+          <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
+          <Route path="/contact-us" render={()=> <ContactUs />} />
+          <Route path="/about-us" render={()=> <AboutUs />} /> 
+
           <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
@@ -118,8 +127,11 @@ export default function AdminApp() {
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> 
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />
           <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>

@@ -2,8 +2,15 @@
 import React from 'react';
 import TermsOfServiceHeader from '../components/TermsOfServiceHeader';
 import TermsOfServiceItem from '../components/TermsOfServiceItem';
+import { useHeader } from '../hooks/headerHook';
 
 export default function PrivacyPolicy() {
+
+  useHeader({ 
+    title: `Privacy Policy - Dailyneeds`,
+    headerTitle: '_extra.Privacy_policy'
+  });
+
   return (
     <section>
       <div className="container-x">

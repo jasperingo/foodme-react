@@ -30,7 +30,7 @@ export default function Footer() {
   return (
     <footer className={`py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full pb-16 lg:block`}>
       <div className="container-x">
-        <ul className="flex flex-wrap gap-1 justify-around">
+        <ul className="flex flex-wrap gap-2 justify-around">
           <FooterLink text="_user.Register" href="/register" />
           <FooterLink text="_user.Log_in" href="/login" />
           <FooterAnchor text="_store.Become_a_store_partner" href="/?app=1" />

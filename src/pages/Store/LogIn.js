@@ -1,75 +1,66 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import StoreApi from '../../api/StoreApi';
+import React from 'react';
 import { storeIcon } from '../../assets/icons';
-import { LOADING_DIALOG } from '../../components/AlertDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
-import FormButton from '../../components/FormButton';
-import FormField from '../../components/FormField';
-import FormMessage from '../../components/FormMessage';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import User from '../../models/User';
+
 
 export default function LogIn({ guestMiddleware }) {
 
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
 
-  const { userDispatch, addressesDispatch } = useAppContext();
+  // const { userDispatch, addressesDispatch } = useAppContext();
 
-  const emailInput = useRef(null);
+  // const emailInput = useRef(null);
 
-  const passwordInput = useRef(null);
+  // const passwordInput = useRef(null);
 
-  const [dialog, setDialog] = useState(null);
+  // const [dialog, setDialog] = useState(null);
 
-  const [formError, setFormError] = useState('');
+  // const [formError, setFormError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  // const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
   
   function onLoginSubmit(e) {
     e.preventDefault();
-
-    if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
-      setFormError('_errors.Credentials_are_incorrect');
-    } else {
-      setFormError('');
-      setFetchStatus(FETCH_STATUSES.LOADING);
-      setDialog(LOADING_DIALOG);
-    }
+    
+  //   if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
+  //     setFormError('_errors.Credentials_are_incorrect');
+  //   } else {
+  //     setFormError('');
+  //     setFetchStatus(FETCH_STATUSES.LOADING);
+  //     setDialog(LOADING_DIALOG);
+  //   }
   }
 
-  useEffect(()=> {
+  // useEffect(()=> {
 
-    if (fetchStatus === FETCH_STATUSES.LOADING) {
+  //   if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      const api = new StoreApi();
-      api.auth({
-        email: emailInput.current.value,
-        password: passwordInput.current.value,
-        confirm_password: passwordInput.current.value
-      }).then(res=> {
-        res.data.TYPE = User.TYPE_STORE;
-        userDispatch({ type: USER.AUTHED, payload: res.data });
-      }).catch(err=> {
+  //     const api = new StoreApi();
+  //     api.auth({
+  //       email: emailInput.current.value,
+  //       password: passwordInput.current.value,
+  //       confirm_password: passwordInput.current.value
+  //     }).then(res=> {
+  //       res.data.TYPE = User.TYPE_STORE;
+  //       userDispatch({ type: USER.AUTHED, payload: res.data });
+  //     }).catch(err=> {
 
-        setFetchStatus(FETCH_STATUSES.ERROR);
+  //       setFetchStatus(FETCH_STATUSES.ERROR);
 
-        if (err.errors) {
-          setFormError(err.errors.msg);
-        } else {
-          setFormError('_errors.Something_went_wrong');
-        }
-      });
+  //       if (err.errors) {
+  //         setFormError(err.errors.msg);
+  //       } else {
+  //         setFormError('_errors.Something_went_wrong');
+  //       }
+  //     });
 
-    } else if (dialog !== null) {
-      setDialog(null);
-    }
+  //   } else if (dialog !== null) {
+  //     setDialog(null);
+  //   }
 
-  }, [fetchStatus, dialog, userDispatch, addressesDispatch]);
+  // }, [fetchStatus, dialog, userDispatch, addressesDispatch]);
 
   
   return guestMiddleware() || (
@@ -81,7 +72,7 @@ export default function LogIn({ guestMiddleware }) {
 
           <AuthFormHeader icon={storeIcon} text="_user.Welcome_back" />
 
-          { formError && <FormMessage text={formError} /> }
+          {/* { formError && <FormMessage text={formError} /> }
 
           <FormField
             ref={emailInput} 
@@ -109,7 +100,7 @@ export default function LogIn({ guestMiddleware }) {
           <div className="mb-4 text-center text-sm">
             <span>{ t('Dont_have_an_account') } </span>
             <Link to="/register" className="text-blue-500 font-bold">{ t('Register') }</Link>
-          </div>
+          </div> */}
 
         </form>
 

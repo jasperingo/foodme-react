@@ -4,6 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { deliveryIcon, discountIcon, storeIcon } from '../assets/icons';
+import { useHeader } from '../hooks/headerHook';
 
 
 const h2Style = "font-bold text-xl mb-2";
@@ -46,6 +47,11 @@ function PartnerWithUsItem({ image, url, text }) {
 
 
 export default function AboutUs() {
+
+  useHeader({
+    title: `About Us - Dailyneeds`,
+    headerTitle: '_extra.About_us'
+  });
 
   const { t } = useTranslation();
 

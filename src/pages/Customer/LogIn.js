@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
+import ForgotPasswordLink from '../../components/form/ForgotPasswordLink';
 import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
@@ -61,9 +62,7 @@ export default function LogIn({ guestMiddleware }) {
             minLength={6}
             />
 
-          <div className="mb-4 text-sm">
-            <Link to="/forgot-password" className="text-blue-500 font-bold">{ t('_user.Forgot_your_password') }</Link>
-          </div>
+          <ForgotPasswordLink />
 
           <FormButton text="_user.Log_in" />
 

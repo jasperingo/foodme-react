@@ -8,6 +8,7 @@ import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import { useHeader } from '../../hooks/headerHook';
 import { useAdminLogin } from '../../hooks/admin/adminLoginHook';
+import ForgotPasswordLink from '../../components/form/ForgotPasswordLink';
 
 export default function LogIn({ guestMiddleware }) {
 
@@ -56,6 +57,8 @@ export default function LogIn({ guestMiddleware }) {
             required={true}
             minLength={6}
             />
+
+          <ForgotPasswordLink />
 
           <FormButton text="_user.Log_in" />
 

@@ -1,14 +1,19 @@
 import { useCallback, useEffect } from "react";
 import { getTransactionsListFetchStatusAction, TRANSACTION } from "../../context/actions/transactionActions";
-import CustomerRepository from "../../repositories/CustomerRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
+import TransactionRepository from "../../repositories/TransactionRepository";
 import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
 
-export function useTransactionList(userId, userToken) {
+export function useTransactionList() {
 
   const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    },
     transaction: { 
       transactionDispatch,
       transaction: {
@@ -49,11 +54,12 @@ export function useTransactionList(userId, userToken) {
 
         transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
-        const api = new CustomerRepository(userToken);
-        api.getTransactionsList(userId, transactionsPage)
+        const api = new TransactionRepository(adminToken);
+        api.getList(transactionsPage)
         .then(res=> {
           
           if (res.status === 200) {
+
             transactionDispatch({
               type: TRANSACTION.LIST_FETCHED, 
               payload: {
@@ -67,6 +73,7 @@ export function useTransactionList(userId, userToken) {
                 ),
               }
             });
+
           } else {
             throw new Error();
           }
@@ -77,8 +84,7 @@ export function useTransactionList(userId, userToken) {
       }
     },
     [
-      userId, 
-      userToken, 
+      adminToken, 
       transactions.length, 
       transactionsPage, 
       transactionsLoading, 

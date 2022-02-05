@@ -32,3 +32,30 @@ export function useOrderStatus(status) {
 
   return [theStatus, statusColor];
 }
+
+
+export function useOrderStatusText() {
+  
+  return (status)=> {
+
+    switch(status) {
+
+      case 'declined':
+        return '_order.Declined';
+
+      case 'cancelled':
+        return '_order.Cancelled';
+
+      case 'processing':
+        return '_order.Processing';
+
+      case 'fulfilled':
+        return '_order.Fulfilled';
+
+      default: 
+        return '_order.Pending';
+    }
+  }
+}
+
+

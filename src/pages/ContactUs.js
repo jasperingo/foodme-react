@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useHeader } from '../hooks/headerHook';
 
 
 function ContactUsData({ param, value }) {
@@ -16,6 +17,11 @@ function ContactUsData({ param, value }) {
 }
 
 export default function ContactUs() {
+
+  useHeader({
+    title: `Contact Us - Dailyneeds`,
+    headerTitle: '_extra.Contact_us'
+  });
 
   const { t } = useTranslation();
 

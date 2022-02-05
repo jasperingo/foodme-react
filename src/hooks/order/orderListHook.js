@@ -3,10 +3,12 @@ import { getOrdersListFetchStatusAction, ORDER } from "../../context/actions/ord
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import OrderRepository from "../../repositories/OrderRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
+import { useUpdateListFetchStatus, useURLQuery } from "../viewHook";
 
 
 export function useOrderList() {
+
+  const statusParam = useURLQuery().get('status');
 
   const { 
     admin: { 
@@ -28,10 +30,17 @@ export function useOrderList() {
 
   const listStatusUpdater = useUpdateListFetchStatus();
 
+  const onStatusChange = useCallback(
+    ()=> {
+      orderDispatch({ type: ORDER.LIST_STATUS_FILTER_CHANGED, payload: { status: statusParam } });
+    },
+    [statusParam, orderDispatch]
+  );
+
   const refetch = useCallback(
     ()=> {
       if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-      orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
+        orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [orderDispatch, ordersFetchStatus]
   );
@@ -45,6 +54,7 @@ export function useOrderList() {
 
   useEffect(
     ()=> {
+
       if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
         orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
@@ -54,7 +64,7 @@ export function useOrderList() {
         orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
 
         const api = new OrderRepository(adminToken);
-        api.getList(ordersPage)
+        api.getList(ordersPage, statusParam)
         .then(res=> {
           
           if (res.status === 200) {
@@ -82,9 +92,18 @@ export function useOrderList() {
         });
       }
     },
-    [adminToken, orders.length, ordersPage, ordersLoading, ordersFetchStatus, orderDispatch, listStatusUpdater]
+    [
+      adminToken, 
+      statusParam,
+      orders.length, 
+      ordersPage, 
+      ordersLoading, 
+      ordersFetchStatus, 
+      orderDispatch, 
+      listStatusUpdater
+    ]
   );
 
 
-  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch, refresh];
+  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch, refresh, onStatusChange];
 }

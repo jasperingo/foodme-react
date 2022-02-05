@@ -20,7 +20,7 @@ import Store from '../pages/Customer/Store';
 import Product from '../pages/Customer/Product';
 import Messages from '../pages/Customer/Messages';
 import ForgotPassword from '../pages/Customer/ForgotPassword';
-import ResetPassword from '../pages/Customer/ResetPassword';
+import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Customer/Profile';
 import Addresses from '../pages/Customer/Addresses';
 import AddressAdd from '../pages/Customer/AddressAdd';

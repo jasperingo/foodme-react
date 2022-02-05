@@ -1,13 +1,17 @@
 
 import React from 'react';
-// import { useLocation } from 'react-router-dom';
-// import { orderIcon } from '../../assets/icons';
-// import EmptyList from '../../components/EmptyList';
-// import FetchMoreButton from '../../components/FetchMoreButton';
+import { useHistory } from 'react-router-dom';
+import { orderIcon } from '../../assets/icons';
+import EmptyList from '../../components/EmptyList';
+import FetchMoreButton from '../../components/FetchMoreButton';
 import OrderFilter from '../../components/filter/OrderFilter';
-// import Loading from '../../components/Loading';
-// import Reload from '../../components/Reload';
+import ScrollList from '../../components/list/ScrollList';
+import OrderItem from '../../components/list_item/OrderItem';
+import Loading from '../../components/Loading';
+import Reload from '../../components/Reload';
 import { useHeader } from '../../hooks/headerHook';
+import { useOrderList } from '../../hooks/order/orderListHook';
+import { useHasMoreToFetchViaScroll, useRenderListFooter, useURLQuery } from '../../hooks/viewHook';
 import Order from '../../models/Order';
 
 
@@ -18,74 +22,50 @@ export default function Orders() {
     title: 'Orders - DailyNeeds'
   });
 
-  // const paths = useLocation().pathname.split('/');
+  const [
+    orders, 
+    ordersFetchStatus, 
+    ordersPage, 
+    ordersNumberOfPages, 
+    refetch,
+    refresh,
+    onStatusChange
+  ] = useOrderList();
 
-  // const status = paths.length < 3 ? 'pending' : paths[paths.length-1];
+  const history = useHistory()
 
-  // const { 
-  //   user: { user }, 
-  //   orders: {
-  //     orders: {
-  //       orders,
-  //       ordersStatus,
-  //       ordersFetchStatus,
-  //       ordersPage,
-  //       ordersNumberOfPages
-  //     }
-  //   }, 
-  //   ordersDispatch 
-  // } = useAppContext();
+  const param = useURLQuery();
 
-  // useEffect(()=>{
-    
-  //   if (status !== ordersStatus) {
-  //     ordersDispatch({
-  //       type: ORDER.LIST_STATUS_FILTER_CHANGED,
-  //       payload: status
-  //     });
-  //   } else if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
-  //     const api = new OrderApi(user.api_token);
-  //     api.getListByAdminAndStatus(status, ordersDispatch);
-  //   }
-
-  // }, [status, user, ordersFetchStatus, ordersStatus, ordersDispatch]);
-
-  // function refetchOrders() {
-  //   if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-  //     ordersDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING));
-  // }
-
-
-  function change() {
-    console.log('Changeing...')
+  function change(value) {
+    param.set('status', value);
+    history.replace(`/orders?${param.toString()}`);
+    onStatusChange();
   }
 
   return (
     <section>
       <div className="container-x">
 
-        <OrderFilter statuses={Order.getStatuses()} status="" onFilterChange={change} />
+        <OrderFilter statuses={Order.getStatuses()} status={param.get('status')} onFilterChange={change} />
         
-        Orders...
-        {/* <InfiniteScroll
-          dataLength={orders.length}
-          next={refetchOrders}
+        <ScrollList
+          data={orders}
+          nextPage={refetch}
+          refreshPage={refresh}
           hasMore={useHasMoreToFetchViaScroll(ordersPage, ordersNumberOfPages, ordersFetchStatus)}
-          >
-          <ul className="list-2-x">
-            { 
-              useListRender(
-                orders, 
-                ordersFetchStatus,
-                (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/order/${item.id}`} appType={AdminApp.TYPE} />, 
-                (k)=> <li key={k}> <Loading /> </li>, 
-                (k)=> <li key={k}> <Reload action={refetchOrders} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>, 
-                (k)=> <li key={k}> <FetchMoreButton action={refetchOrders} /> </li>,
-              )
-            }
-          </ul>
-        </InfiniteScroll> */}
+          className="list-2-x"
+          renderDataItem={(item)=> (
+            <OrderItem key={`order-${item.id}`} order={item} />
+          )}
+          footer={useRenderListFooter(
+            ordersFetchStatus,
+            ()=> <li key="order-footer"> <Loading /> </li>, 
+            ()=> <li key="order-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="order-footer" className="col-span-2"> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>,
+            ()=> <li key="order-footer"> <FetchMoreButton action={refetch} /> </li>
+          )}
+          />
+
       </div>
     </section>
   );

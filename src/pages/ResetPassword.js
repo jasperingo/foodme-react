@@ -1,13 +1,13 @@
 
 import React, { useRef } from 'react';
-import LoadingDialog from '../../components/dialog/LoadingDialog';
-import FormButton from '../../components/form/FormButton';
-import FormField from '../../components/form/FormField';
-import FormMessage from '../../components/form/FormMessage';
-import FormTopTip from '../../components/form/FormTopTip';
-import { useHeader } from '../../hooks/headerHook';
-import { usePasswordResetUpdate } from '../../hooks/password_reset/passwordResetUpdateHook';
-import { useURLQuery } from '../../hooks/viewHook';
+import LoadingDialog from '../components/dialog/LoadingDialog';
+import FormButton from '../components/form/FormButton';
+import FormField from '../components/form/FormField';
+import FormMessage from '../components/form/FormMessage';
+import FormTopTip from '../components/form/FormTopTip';
+import { useHeader } from '../hooks/headerHook';
+import { usePasswordResetUpdate } from '../hooks/password_reset/passwordResetUpdateHook';
+import { useURLQuery } from '../hooks/viewHook';
 
 export default function ResetPassword() {
 

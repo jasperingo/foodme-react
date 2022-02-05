@@ -2,9 +2,15 @@
 import React from 'react';
 import TermsOfServiceHeader from '../components/TermsOfServiceHeader';
 import TermsOfServiceItem from '../components/TermsOfServiceItem';
+import { useHeader } from '../hooks/headerHook';
 
 
 export default function TermsOfService() {
+
+  useHeader({ 
+    title: `Terms of Service - Dailyneeds`,
+    headerTitle: '_extra.Terms_of_service'
+  });
   
   return (
     <section>
