@@ -44,9 +44,7 @@ export default function DiscountProfile(
     refetch, 
     refresh
   ] = useDiscountProductList(userToken);
-
-  console.log(products)
-
+  
   const amount = useMoneyFormat(value);
 
   const data = [

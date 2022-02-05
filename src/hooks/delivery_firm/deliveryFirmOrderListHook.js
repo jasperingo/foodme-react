@@ -1,22 +1,19 @@
+
 import { useCallback, useEffect } from "react";
 import { getOrdersListFetchStatusAction, ORDER } from "../../context/actions/orderActions";
+import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
-import OrderRepository from "../../repositories/OrderRepository";
 import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
 
-export function useOrderList() {
+export function useDeliveryFirmOrderList(userToken) {
 
   const { 
-    admin: { 
-      admin: {
-        adminToken
-      }
-    },
-    order: { 
-      orderDispatch,
-      order: {
+    deliveryFirm: { 
+      deliveryFirmDispatch,
+      deliveryFirm: {
+        deliveryFirm,
         orders,
         ordersPage,
         ordersLoading,
@@ -31,35 +28,28 @@ export function useOrderList() {
   const refetch = useCallback(
     ()=> {
       if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-      orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
+        deliveryFirmDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
-    [orderDispatch, ordersFetchStatus]
+    [deliveryFirmDispatch, ordersFetchStatus]
   );
-
-  const refresh = useCallback(
-    ()=> {
-      orderDispatch({ type: ORDER.LIST_UNFETCHED });
-    },
-    [orderDispatch]
-  );
-
+  
   useEffect(
     ()=> {
       if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        deliveryFirmDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
       } else if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING) {
         
-        orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+        deliveryFirmDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
 
-        const api = new OrderRepository(adminToken);
-        api.getList(ordersPage)
+        const api = new DeliveryFirmRepository(userToken);
+        api.getOrdersList(deliveryFirm.id, ordersPage)
         .then(res=> {
           
           if (res.status === 200) {
-
-            orderDispatch({
+            
+            deliveryFirmDispatch({
               type: ORDER.LIST_FETCHED, 
               payload: {
                 list: res.body.data, 
@@ -73,18 +63,35 @@ export function useOrderList() {
               }
             });
 
+          } else if (res.status === 404) {
+
+            deliveryFirmDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
+
+          } else if (res.status === 403) {
+
+            deliveryFirmDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
+
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+          deliveryFirmDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [adminToken, orders.length, ordersPage, ordersLoading, ordersFetchStatus, orderDispatch, listStatusUpdater]
+    [
+      deliveryFirm.id, 
+      orders, 
+      ordersPage, 
+      ordersLoading, 
+      ordersFetchStatus, 
+      userToken, 
+      deliveryFirmDispatch, 
+      listStatusUpdater
+    ]
   );
 
-
-  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch, refresh];
+  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch];
 }
+

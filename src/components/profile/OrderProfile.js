@@ -43,10 +43,6 @@ export default function OrderProfile({ order, isCustomer }) {
     console.log('Cancel...')
   }
 
-  function onReorderClicked() {
-    console.log('Reorder...')
-  }
-
   function onAcceptClicked() {
     console.log('Accept...')
   }
@@ -63,11 +59,6 @@ export default function OrderProfile({ order, isCustomer }) {
           <ProfileHeaderText
             text={`#${order.number}`}
             buttons={[
-              {
-                text: '_order.Reorder',
-                color: 'btn-color-primary',
-                action: onReorderClicked
-              },
               {
                 text: '_extra.Accept',
                 color: 'btn-color-primary',

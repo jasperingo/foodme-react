@@ -42,7 +42,7 @@ function Categories({ categories, categoriesFetchStatus, refetch }) {
   return (
     <div className="bg-color-gray lg:my-2">
       <div className="container-x border pt-2 pb-4 border-transparent">
-        <h2 className="font-bold my-2">{ t('_category.Categories') }</h2>
+        <h3 className="font-bold my-2">{ t('_category.Categories') }</h3>
         <SingleList
           data={categories}
           className="grid gap-4 grid-cols-3"
@@ -72,7 +72,7 @@ function Stores({ stores, storesFetchStatus, refetch }) {
 
   return (
     <div className="container-x py-2">
-      <h2 className="font-bold my-2">{ t('_store.Stores') }</h2>
+      <h3 className="font-bold my-2">{ t('_store.Stores') }</h3>
       <SingleList
           data={stores}
           className="list-x"
@@ -96,7 +96,7 @@ function Products({ products, productsFetchStatus, refetch }) {
 
   return (
     <div className="container-x py-2">
-      <h2 className="font-bold my-2">{ t('_product.Products') }</h2>
+      <h3 className="font-bold my-2">{ t('_product.Products') }</h3>
       <SingleList
           data={products}
           className="list-x"

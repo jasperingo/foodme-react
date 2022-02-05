@@ -6,6 +6,7 @@ import BankReducer from "../context/reducers/BankReducer";
 import CartReducer from "../context/reducers/CartReducer";
 import CategoryReducer from "../context/reducers/CategoryReducer";
 import CustomerReducer from "../context/reducers/CustomerReducer";
+import DashboardReducer from "../context/reducers/DashboardReducer";
 import DeliveryFirmReducer from "../context/reducers/DeliveryFirmReducer";
 import DeliveryRouteReducer from "../context/reducers/DeliveryRouteReducer";
 import DiscountReducer from "../context/reducers/DiscountReducer";
@@ -24,6 +25,7 @@ import bankState from "../context/states/bankState";
 import cartState from "../context/states/cartState";
 import categoryState from "../context/states/categoryState";
 import customerState from "../context/states/customerState";
+import dashboardState from "../context/states/dashboardState";
 import deliveryFirmState from "../context/states/deliveryFirmState";
 import deliveryRouteState from "../context/states/deliveryRouteState";
 import discountState from "../context/states/discountState";
@@ -47,6 +49,8 @@ export function useAppContextValues() {
   const [customer, customerDispatch] = useReducer(CustomerReducer, customerState);
 
   const [home, homeDispatch] = useReducer(HomeReducer, homeState);
+
+  const [dashboard, dashboardDispatch] = useReducer(DashboardReducer, dashboardState);
 
   const [search, searchDispatch] = useReducer(SearchReducer, searchState);
 
@@ -107,6 +111,11 @@ export function useAppContextValues() {
     home: {
       home, 
       homeDispatch
+    },
+
+    dashboard: {
+      dashboard, 
+      dashboardDispatch
     },
 
     search: {

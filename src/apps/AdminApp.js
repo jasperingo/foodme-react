@@ -10,6 +10,10 @@ import Header from '../components/header/Header';
 import Footer from '../components/Footer';
 import Splash from '../pages/Splash';
 import LogIn from '../pages/Admin/LogIn';
+import Dashboard from '../pages/Admin/Dashboard';
+import Orders from '../pages/Admin/Orders';
+// import Transactions from '../pages/Admin/Transactions';
+import Messages from '../pages/Admin/Messages';
 import AccountMenu from '../pages/Admin/AccountMenu';
 import Profile from '../pages/Admin/Profile';
 import PasswordUpdate from '../pages/Admin/PasswordUpdate';
@@ -20,35 +24,25 @@ import Stores from '../pages/Admin/Stores';
 import Store from '../pages/Admin/Store';
 import StoreUpdate from '../pages/Admin/StoreUpdate';
 import DeliveryFirms from '../pages/Admin/DeliveryFirms';
-// import DeliveryFirm from '../pages/Admin/DeliveryFirm';
-// import Dashboard from '../pages/Admin/Dashboard';
-// import Messages from '../pages/Admin/Messages';
-// import Orders from '../pages/Admin/Orders';
-// import Transactions from '../pages/Admin/Transactions';
-// import Order from '../pages/Order';
+import DeliveryFirm from '../pages/Admin/DeliveryFirm';
+import DeliveryFirmUpdate from '../pages/Admin/DeliveryFirmUpdate';
 import Categories from '../pages/Categories';
 import Category from '../pages/Category';
 import CategoryAdd from '../pages/Admin/CategoryAdd';
 import CategoryUpdate from '../pages/Admin/CategoryUpdate';
 import SubCategoryAdd from '../pages/Admin/SubCategoryAdd';
 import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
-// import DeliveryFirmUpdate from '../pages/Admin/DeliveryFirmUpdate';
-// import DeliveryFirmAdd from '../pages/Admin/DeliveryFirmAdd';
-// import Transaction from '../pages/Transaction';
+import Product from '../pages/Admin/Product';
+import Discount from '../pages/Admin/Discount';
+import Order from '../pages/Admin/Order';
+import Transaction from '../pages/Admin/Transaction';
+import DeliveryRoute from '../pages/Admin/DeliveryRoute';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
   { href: '/register', exclude: true },
   { title : '_extra.Dashboard', icon: dashboardIcon, href: '/dashboard' },
-  { title : '_order.Orders', icon: orderIcon, href: '/orders', hrefs: [
-    '/orders/processing', 
-      '/orders/delivered', 
-      '/orders/in-transit', 
-      '/orders/declined', 
-      '/orders/cancelled',
-      '/orders/returned'
-    ] 
-  },
+  { title : '_order.Orders', icon: orderIcon, href: '/orders' },
   { title : '_transaction.Transactions', icon: transactionIcon, href: '/transactions' },
   { title : '_user.Account', icon: adminIcon, href: '/account' }
 ];
@@ -99,16 +93,14 @@ export default function AdminApp() {
       <main className="pb-52">
         <Switch>
           {/* 
-          
-          <Route path="/delivery-firm/:ID/update" render={()=> authMiddleware() || <DeliveryFirmUpdate />} />
-          <Route path="/delivery-firm/add" render={()=> authMiddleware() || <DeliveryFirmAdd />} />
-          <Route path="/delivery-firm/:ID" render={()=> authMiddleware() || <DeliveryFirm />} />
-          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
-          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
-          <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />*/}
+          <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
-          <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
-          <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> */}
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount />} />
+          <Route path="/product/:ID" render={()=> authMiddleware() || <Product />} />
+          <Route path="/delivery-firm/:ID/update" render={()=> authMiddleware() || <DeliveryFirmUpdate />} />
+          <Route path="/delivery-firm/:ID" render={()=> authMiddleware() || <DeliveryFirm />} />
           <Route path="/delivery-firms" render={()=> authMiddleware() || <DeliveryFirms />} />
           <Route path="/store/:ID/update" render={()=> authMiddleware() || <StoreUpdate />} />
           <Route path="/store/:ID" render={()=> authMiddleware() || <Store />} />
@@ -125,6 +117,9 @@ export default function AdminApp() {
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> 
           <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>

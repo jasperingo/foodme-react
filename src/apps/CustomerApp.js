@@ -132,7 +132,7 @@ export default function CustomerApp() {
           <Route path="/discount/:ID" render={()=> <Discount />} />
           <Route path="/product/:ID/reviews" render={()=> <ProductReviews />} />
           <Route path="/product/:ID" render={()=> <Product />} />
-          <Route path="/route/:ID" render={()=> <DeliveryRoute />} />
+          <Route path="/delivery-route/:ID" render={()=> <DeliveryRoute />} />
           <Route path="/delivery-firm/:ID" render={()=> <DeliveryFirm />} />
           <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/category/:ID" render={()=> <Category isAdmin={false} />} /> 

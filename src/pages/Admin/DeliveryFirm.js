@@ -1,10 +1,23 @@
 
-import React, { useEffect } from 'react';
-import { Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
-import { editIcon, emailIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
+import React from 'react';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
+import NotFound from '../../components/NotFound';
+import DeliveryFirmProfile from '../../components/profile/DeliveryFirmProfile';
+import OrderList from '../../components/profile/section/OrderList';
+import ReviewList from '../../components/profile/section/ReviewList';
+import RouteList from '../../components/profile/section/RouteList';
+import TransactionList from '../../components/profile/section/TransactionList';
 import Reload from '../../components/Reload';
-import Tab from '../../components/Tab';
+import { useAppContext } from '../../hooks/contextHook';
+import { useDeliveryFirmFetch } from '../../hooks/delivery_firm/deliveryFirmFetchHook';
+import { useDeliveryFirmOrderList } from '../../hooks/delivery_firm/deliveryFirmOrderListHook';
+import { useDeliveryFirmReviewList } from '../../hooks/delivery_firm/deliveryFirmReviewListHook';
+import { useDeliveryFirmRouteList } from '../../hooks/delivery_firm/deliveryFirmRouteListHook';
+import { useDeliveryFirmTransactionList } from '../../hooks/delivery_firm/deliveryFirmTransactionListHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 const NAV_LINKS = [
   { title : '_delivery.Routes', href: '' },
@@ -13,43 +26,172 @@ const NAV_LINKS = [
   { title : '_transaction.Transactions', href: '/transactions' }
 ];
 
-function Transactions() {
+function DeliveryFirmTransactionsList() {
+
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    }, 
+  } = useAppContext();
   
+  const [
+    transactions, 
+    transactionsFetchStatus, 
+    transactionsPage, 
+    transactionsNumberOfPages, 
+    refetch
+  ] = useDeliveryFirmTransactionList(adminToken);
+
   return (
-    <div>Transactions...</div>
-  )
+    <TransactionList
+      transactions={transactions}
+      transactionsFetchStatus={transactionsFetchStatus}
+      transactionsPage={transactionsPage}
+      transactionsNumberOfPages={transactionsNumberOfPages}
+      refetch={refetch}
+      />
+  );
 }
 
-function Orders() {
-  
+function DeliveryFirmOrdersList() {
+
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    }
+  } = useAppContext();
+
+  const [
+    orders, 
+    ordersFetchStatus, 
+    ordersPage, 
+    ordersNumberOfPages, 
+    refetch,
+  ] = useDeliveryFirmOrderList(adminToken);
+
   return (
-    <div>Orders...</div>
-  )
+    <OrderList 
+      orders={orders}
+      ordersFetchStatus={ordersFetchStatus}
+      ordersPage={ordersPage}
+      ordersNumberOfPages={ordersNumberOfPages}
+      refetch={refetch}
+      />
+  );
 }
 
-function Reviews() {
+function DeliveryFirmReviewsList() {
+
+  const {
+    admin: { 
+      admin: {
+        adminToken
+      }
+    } 
+  } = useAppContext();
   
+  const [
+    reviews, 
+    reviewsFetchStatus, 
+    reviewsPage, 
+    reviewsNumberOfPages, 
+    refetch
+  ] = useDeliveryFirmReviewList(adminToken);
+
   return (
-    <div>Reviews...</div>
-  )
+    <ReviewList 
+      reviews={reviews}
+      reviewsFetchStatus={reviewsFetchStatus}
+      reviewsPage={reviewsPage}
+      reviewsNumberOfPages={reviewsNumberOfPages}
+      refetch={refetch}
+      />
+  );
 }
 
-function Routes() {
+function DeliveryFirmRoutesList() {
+  
+  const {
+    admin: { 
+      admin: {
+        adminToken
+      }
+    } 
+  } = useAppContext();
+
+  const [
+    routes, 
+    routesFetchStatus, 
+    routesPage, 
+    routesNumberOfPages, 
+    refetch
+  ] = useDeliveryFirmRouteList(adminToken);
   
   return (
-    <div>Routes...</div>
-  )
+    <RouteList 
+      routes={routes}
+      routesFetchStatus={routesFetchStatus}
+      routesPage={routesPage}
+      routesNumberOfPages={routesNumberOfPages}
+      refetch={refetch}
+      />
+  );
 }
 
 export default function DeliveryFirm() {
 
-  
+  const match = useRouteMatch();
+
+  const {
+    admin: { 
+      admin: {
+        adminToken
+      }
+    } 
+  } = useAppContext();
+
+  const [
+    deliveryFirm, 
+    deliveryFirmFetchStatus,
+    refetch
+  ] = useDeliveryFirmFetch(adminToken);
+
+
+  useHeader({ 
+    title: `${deliveryFirm?.user.name ?? 'Loading...'} - Delivery Firm`,
+    headerTitle: '_delivery.Delivery_firm'
+  });
 
   return (
     <section>
+
       <div className="container-x">
-        Delivery firm
+        {
+          useRenderOnDataFetched(
+            deliveryFirmFetchStatus,
+            ()=> <DeliveryFirmProfile deliveryFirm={deliveryFirm} navLinks={NAV_LINKS} isAdmin={true} />,
+            ()=> <Loading />,
+            ()=> <Reload action={refetch} />,
+            ()=> <NotFound />,
+            ()=> <Forbidden />,
+          )
+        }
       </div>
+
+      {
+        deliveryFirm && 
+        <Switch>
+          <Route path={`${match.url}/transactions`} render={()=> <DeliveryFirmTransactionsList />} />
+          <Route path={`${match.url}/orders`} render={()=> <DeliveryFirmOrdersList />} />
+          <Route path={`${match.url}/reviews`} render={()=> <DeliveryFirmReviewsList />} /> 
+          <Route path={match.url} render={()=> <DeliveryFirmRoutesList />} />
+        </Switch>
+      }
+
     </section>
   );
 }

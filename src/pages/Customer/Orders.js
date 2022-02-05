@@ -6,11 +6,11 @@ import Loading from '../../components/Loading';
 import OrderItem from '../../components/list_item/OrderItem';
 import Reload from '../../components/Reload';
 import { orderIcon } from '../../assets/icons';
-import { useOrderList } from '../../hooks/order/orderListHook';
 import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 import ScrollList from '../../components/list/ScrollList';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
+import { useCustomerOrderList } from '../../hooks/customer/customerOrderListHook';
 
 export default function Orders() {
 
@@ -37,7 +37,7 @@ export default function Orders() {
     ordersNumberOfPages, 
     refetch,
     refresh
-  ] = useOrderList(customer.id, customerToken);
+  ] = useCustomerOrderList(customer.id, customerToken);
   
   return (
     <section>

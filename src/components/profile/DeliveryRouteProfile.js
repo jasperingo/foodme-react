@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useMoneyFormatter } from '../../hooks/viewHook';
+import EmptyList from '../EmptyList';
 import H4Heading from '../H4Heading';
 import UserDescList from '../UserDescList';
 import ProfileDetailsText from './ProfileDetailsText';
@@ -48,6 +49,10 @@ export default function DeliveryRouteProfile(
             ({ title: `${i.minimium} - ${i.maximium} ${i.unit}s`, body: moneyFormat(i.fee) })
           )}
           />
+        {
+          delivery_route_durations.length === 0 &&
+          <EmptyList text="_empty.No_delivery_duration" />
+        }
       </div>
 
       <div>
@@ -57,6 +62,10 @@ export default function DeliveryRouteProfile(
             ({ title: `${i.minimium} - ${i.maximium} kg`, body: moneyFormat(i.fee) })
           )}
           />
+        {
+          delivery_route_weights.length === 0 &&
+          <EmptyList text="_empty.No_delivery_weight" />
+        }
       </div>
 
     </div>

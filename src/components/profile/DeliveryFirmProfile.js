@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
+import { checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
+import { useDateFormat } from '../../hooks/viewHook';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
 import ProfileDetailsText from './ProfileDetailsText';
@@ -10,6 +11,7 @@ import ProfileHeader from './ProfileHeader';
 export default function DeliveryFirmProfile(
   { 
     navLinks,
+    isAdmin,
     deliveryFirm: {
       id,
       user: {
@@ -18,7 +20,9 @@ export default function DeliveryFirmProfile(
         phone_number, 
         email, 
         addresses,
-        working_hours
+        working_hours,
+        status,
+        created_at
       },
       review_summary
     }
@@ -27,40 +31,73 @@ export default function DeliveryFirmProfile(
 
   const { t } = useTranslation();
 
+  const details = [
+    {
+      icon: phoneIcon,
+      data: phone_number
+    }
+  ];
+
+  if (addresses.length > 0) {
+    details.push({
+      icon: locationIcon,
+      data: `${addresses[0].street}, ${addresses[0].city}, ${addresses[0].state}`
+    });
+  }
+
+  if (review_summary) {
+    details.push({
+      icon: reviewIcon,
+      data: review_summary.average.toFixed(1)
+    });
+  }
+
+  const date = useDateFormat(created_at);
+
+  if (isAdmin) {
+    details.push(
+      {
+        icon: emailIcon,
+        data: email
+      },
+      {
+        icon: checkIcon,
+        data: status
+      },
+      {
+        icon: dateIcon,
+        data: date
+      }
+    );
+  }
+
+  const links = [
+    {
+      href: `/messages/${id}`,
+      title: '_message.Message',
+      icon: messageIcon
+    }
+  ];
+
+  if (isAdmin) {
+    links.push({
+      href: `/delivery-firm/${id}/update`,
+      title: '_extra.Edit',
+      icon: editIcon
+    });
+  }
+
   return (
     <div>
       
       <ProfileHeader 
         photo={photo.href}
         name={name} 
-        links={[
-          {
-            href: `/messages/${id}`,
-            title: '_message.Message',
-            icon: messageIcon
-          }
-        ]} 
+        links={links} 
         />
 
       <ProfileDetails 
-        details={[
-          {
-            icon: locationIcon,
-            data: addresses.length === 0 ? t('_user.No_address') : `${addresses[0].street}, ${addresses[0].city}, ${addresses[0].state}`
-          },
-          {
-            icon: phoneIcon,
-            data: phone_number
-          },
-          {
-            icon: emailIcon,
-            data: email
-          },
-          {
-            icon: reviewIcon,
-            data: review_summary.average.toFixed(1)
-          }
-        ]}
+        details={details}
         />
         
       {

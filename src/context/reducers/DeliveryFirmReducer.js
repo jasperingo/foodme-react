@@ -1,6 +1,8 @@
 import { DELIVERY_FIRM } from "../actions/deliveryFirmActions";
+import { ORDER } from "../actions/orderActions";
 import { REVIEW } from "../actions/reviewActions";
 import { ROUTE } from "../actions/routeActions";
+import { TRANSACTION } from "../actions/transactionActions";
 import deliveryFirmState from "../states/deliveryFirmState";
 
 
@@ -8,25 +10,22 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
   
   switch (type) {  
     
-    // case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     deliveryFirms: {
-    //       ...state.deliveryFirms,
-    //       deliveryFirmsFetchStatus: action.payload
-    //     }
-    //   };
+    case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        deliveryFirmsLoading: payload.loading,
+        deliveryFirmsFetchStatus: payload.fetchStatus
+      };
     
-    // case DELIVERY_FIRM.LIST_FETCHED :
-    //   return {
-    //     ...state,
-    //     deliveryFirms: {
-    //       deliveryFirmsFetchStatus: status,
-    //       deliveryFirmsPage: state.deliveryFirms.deliveryFirmsPage+1,
-    //       deliveryFirmsNumberOfPages: action.payload.deliveryFirmsNumberOfPages,
-    //       deliveryFirms: [...delv, ...action.payload.deliveryFirms, null],
-    //     }
-    //   };
+    case DELIVERY_FIRM.LIST_FETCHED:
+      return {
+        ...state,
+          deliveryFirmsLoading: false,
+          deliveryFirmsPage: state.deliveryFirmsPage+1,
+          deliveryFirmsFetchStatus: payload.fetchStatus,
+          deliveryFirmsNumberOfPages: payload.numberOfPages,
+          deliveryFirms: [...state.deliveryFirms, ...payload.list],
+      };
 
     case DELIVERY_FIRM.UNFETCHED:
       return {
@@ -88,6 +87,40 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
         reviewsFetchStatus: payload.fetchStatus,
         reviewsNumberOfPages: payload.numberOfPages,
         reviews: [...state.reviews, ...payload.list],
+      };
+
+    case ORDER.LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        ordersLoading: payload.loading,
+        ordersFetchStatus: payload.fetchStatus,
+      };
+      
+    case ORDER.LIST_FETCHED:
+      return {
+        ...state,
+        ordersLoading: false,
+        ordersPage: state.ordersPage+1,
+        ordersFetchStatus: payload.fetchStatus,
+        ordersNumberOfPages: payload.numberOfPages,
+        orders: [...state.orders, ...payload.list],
+      };
+  
+    case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        transactionsLoading: payload.loading,
+        transactionsFetchStatus: payload.fetchStatus
+      };
+    
+    case TRANSACTION.LIST_FETCHED:
+      return {
+        ...state,
+        transactionsLoading: false,
+        transactionsPage: state.transactionsPage+1,
+        transactionsFetchStatus: payload.fetchStatus,
+        transactionsNumberOfPages: payload.numberOfPages,
+        transactions: [...state.transactions, ...payload.list],
       };
 
     case REVIEW.CREATED:

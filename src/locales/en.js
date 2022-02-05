@@ -113,6 +113,7 @@ export const TRANSLATIONS_EN = {
     Cancel: 'Cancel',
     Confirm: 'Confirm',
     Submit: 'Submit',
+    All: 'All',
     Yes: 'Yes',
     No: 'No',
     By: 'By',
@@ -266,7 +267,7 @@ export const TRANSLATIONS_EN = {
     Logistics: 'Logistics',
     Delivery_firm: 'Delivery firm',
     Delivery_firms: 'Delivery firms',
-    Add_delivery_firm: 'Add delivery firm',
+    Edit_delivery_firm: 'Edit delivery firm',
     Recent_delivery_firms: 'Recent delivery firms',
     Delivery_fee: 'Delivery fee',
     Delivery_method: 'Delivery method',
@@ -308,6 +309,7 @@ export const TRANSLATIONS_EN = {
     Delivery_information: 'Delivery information',
     Recent_orders: 'Recent orders',
     Track_order: 'Track order',
+    Filter_order_by_status: 'Filter order by status'
   },
 
   _transaction: {
@@ -359,6 +361,8 @@ export const TRANSLATIONS_EN = {
     No_store_category: 'No store category',
     No_product_category: 'No product category',
     No_route: 'No route',
+    No_delivery_weight: 'No delivery weight',
+    No_delivery_duration: 'No delivery duration',
     List_is_empty: 'List is empty',
     Your_cart_is_empty: 'Your cart is empty',
   },

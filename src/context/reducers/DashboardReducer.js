@@ -1,99 +1,95 @@
+import { CUSTOMER } from "../actions/customerActions";
+import { DELIVERY_FIRM } from "../actions/deliveryFirmActions";
+import { ORDER } from "../actions/orderActions";
+import { STORE } from "../actions/storeActions";
 
-import { CUSTOMER, DELIVERY_FIRM, FETCH_STATUSES, ORDER, STATISTICS, STORE } from "../AppActions";
 
-export default function DashboardReducer (state, action) {
+export default function DashboardReducer (state, { type, payload }) {
   
-  switch (action.type) {  
+  switch (type) {  
     
-    case STATISTICS.FETCH_STATUS_CHANGED :
+    // case STATISTICS.FETCH_STATUS_CHANGED :
+    //   return {
+    //     ...state,
+    //     statistics: {
+    //       ...state.statistics,
+    //       statisticsFetchStatus: action.payload
+    //     }
+    //   };
+    
+    // case STATISTICS.FETCHED :
+    //   return {
+    //     ...state,
+    //     statistics: {
+    //       statistics: action.payload, 
+    //       statisticsFetchStatus: FETCH_STATUSES.DONE,
+    //     }
+    //   };
+    
+    
+    case ORDER.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        statistics: {
-          ...state.statistics,
-          statisticsFetchStatus: action.payload
-        }
-      };
-    
-    case STATISTICS.FETCHED :
-      return {
-        ...state,
-        statistics: {
-          statistics: action.payload, 
-          statisticsFetchStatus: FETCH_STATUSES.DONE,
-        }
-      };
-    
-    case ORDER.LIST_FETCH_STATUS_CHANGED :
-      return {
-        ...state,
-        orders: {
-          ...state.orders,
-          ordersFetchStatus: action.payload,
-        }
+        ordersLoading: payload.loading,
+        ordersFetchStatus: payload.fetchStatus,
       };
       
     case ORDER.LIST_FETCHED: 
       return {
         ...state,
-        orders: {
-          ordersFetchStatus: FETCH_STATUSES.DONE,
-          orders: [...action.payload.orders],
-        }
+        ordersLoading: false,
+        orders: payload.list,
+        ordersFetchStatus: payload.fetchStatus,
       };
     
-    case CUSTOMER.LIST_FETCH_STATUS_CHANGED :
+
+    case CUSTOMER.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        customers: {
-          ...state.customers,
-          customersFetchStatus: action.payload
-        }
+        customersLoading: payload.loading,
+        customersFetchStatus: payload.fetchStatus
       };
     
-    case CUSTOMER.LIST_FETCHED :
+    case CUSTOMER.LIST_FETCHED:
       return {
         ...state,
-        customers: {
-          customersFetchStatus: FETCH_STATUSES.DONE,
-          customers: [...action.payload.customers],
-        }
+        customersLoading: false,
+        customers: payload.list,
+        customersFetchStatus: payload.fetchStatus,
       };
     
-    case STORE.LIST_FETCH_STATUS_CHANGED :
+
+    case STORE.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        stores: {
-          ...state.stores,
-          storesFetchStatus: action.payload
-        }
+        storesLoading: payload.loading,
+        storesFetchStatus: payload.fetchStatus
       };
     
-    case STORE.LIST_FETCHED :
+    case STORE.LIST_FETCHED:
       return {
         ...state,
-        stores: {
-          storesFetchStatus: FETCH_STATUSES.DONE,
-          stores: [...action.payload.stores],
-        }
+        storesLoading: false,
+        stores: payload.list,
+        storesFetchStatus: payload.fetchStatus,
       };
 
-    case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED :
+
+    case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
-        deliveryFirms: {
-          ...state.deliveryFirms,
-          deliveryFirmsFetchStatus: action.payload
-        }
+        deliveryFirmsLoading: payload.loading,
+        deliveryFirmsFetchStatus: payload.fetchStatus
       };
     
-    case DELIVERY_FIRM.LIST_FETCHED :
+    case DELIVERY_FIRM.LIST_FETCHED:
       return {
         ...state,
-        deliveryFirms: {
-          deliveryFirmsFetchStatus: FETCH_STATUSES.DONE,
-          deliveryFirms: [...action.payload.deliveryFirms],
-        }
+        deliveryFirmsLoading: false,
+        deliveryFirms: payload.list,
+        deliveryFirmsFetchStatus: payload.fetchStatus,
       };
+
 
     default:
       return state;

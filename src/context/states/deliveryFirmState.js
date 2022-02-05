@@ -25,6 +25,18 @@ const deliveryFirmState = {
   reviewsNumberOfPages: 0,
   reviewsFetchStatus: FETCH_STATUSES.LOADING,
 
+  orders: [],
+  ordersPage: 1,
+  ordersLoading: true,
+  ordersNumberOfPages: 0,
+  ordersFetchStatus: FETCH_STATUSES.LOADING,
+
+  transactions: [],
+  transactionsPage: 1,
+  transactionsLoading: true,
+  transactionsNumberOfPages: 0,
+  transactionsFetchStatus: FETCH_STATUSES.LOADING
+
 };
 
 export default deliveryFirmState;

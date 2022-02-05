@@ -241,14 +241,14 @@ export default function ProductProfile(
 
           { loadingDialog && <LoadingDialog /> }
 
-          <div className="flex">
+          <div className="flex mb-2">
             <h3 className="text-xl flex-grow">{ title }</h3>
             <div>
               {
                 isCustomer && (customerToken === null || !favorites?.length) && 
                 <button onClick={favoriteProduct}>
                   <span className="sr-only">{ t('_product.Add_product_to_favorites') }</span>
-                  <Icon path={favoriteIcon} className="w-8 h-8 text-red-500" />
+                  <Icon path={favoriteIcon} className="w-7 h-7 text-red-500" />
                 </button>
               }
 
@@ -256,7 +256,7 @@ export default function ProductProfile(
                 isCustomer && customerToken !== null && favorites?.length > 0 && 
                 <button onClick={confirmUnfavoriteProduct}>
                   <span className="sr-only">{ t('_product.Remove_product_from_favorites') }</span>
-                  <Icon path={favoritedIcon} className="w-8 h-8 text-red-500" />
+                  <Icon path={favoritedIcon} className="w-7 h-7 text-red-500" />
                 </button>
               }
 
@@ -297,7 +297,7 @@ export default function ProductProfile(
 
               <div className="flex gap-2 items-center flex-wrap mb-3">
                 {
-                  variant.available && 
+                  (variant.available && (isCustomer || isStore)) && 
                   <>
                     <div className="text-sm">{ t('_product.Quantity') }</div>
                     <QuantityChooser
@@ -310,7 +310,7 @@ export default function ProductProfile(
                   { t('_product._unit_quauntity_available', { unit: variant.quantity }) }
                 </div>
               </div>
-
+              
               <div className="flex gap-1 items-center text-color-gray text-sm mb-2">
                 <Icon path={weightIcon} className="w-5 h-5" />
                 <span>{ variant.weight } kg</span>
@@ -318,12 +318,13 @@ export default function ProductProfile(
               
               {
                 variant.available ?
-                <button 
-                  onClick={onAddToCart}
-                  className="w-full btn-color-primary my-4 py-3 px-5 font-bold rounded lg:w-auto"
-                  >
-                  { t('_product.Add_to_cart') }
-                </button>
+                (isCustomer || isStore) && 
+                  <button 
+                    onClick={onAddToCart}
+                    className="w-full btn-color-primary my-4 py-3 px-5 font-bold rounded lg:w-auto"
+                    >
+                    { t('_product.Add_to_cart') }
+                  </button>
                 :
                 <div className="flex gap-2 w-full bg-red-500 my-4 py-3 px-5 rounded lg:w-auto">
                   <Icon path={notFoundIcon} className="w-6 h-6" />

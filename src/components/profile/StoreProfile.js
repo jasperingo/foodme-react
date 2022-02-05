@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { categoryIcon, checkIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
+import { categoryIcon, checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
+import { useDateFormat } from '../../hooks/viewHook';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
 import ProfileDetailsText from './ProfileDetailsText';
@@ -20,7 +21,8 @@ export default function StoreProfile(
         email, 
         addresses,
         working_hours,
-        status
+        status,
+        created_at
       }, 
       sub_category,
       review_summary
@@ -32,22 +34,30 @@ export default function StoreProfile(
 
   const details = [
     {
-      icon: locationIcon,
-      data: addresses.length === 0 ? t('_user.No_address') : `${addresses[0].street}, ${addresses[0].city}, ${addresses[0].state}`
-    },
-    {
-      icon: phoneIcon,
-      data: phone_number
-    },
-    {
       icon: categoryIcon,
       data: `${sub_category.name}, ${sub_category.category.name}`
     },
     {
-      icon: reviewIcon,
-      data: review_summary.average.toFixed(1)
+      icon: phoneIcon,
+      data: phone_number
     }
   ];
+
+  if (addresses.length > 0) {
+    details.push({
+      icon: locationIcon,
+      data: `${addresses[0].street}, ${addresses[0].city}, ${addresses[0].state}`
+    });
+  }
+
+  if (review_summary) {
+    details.push({
+      icon: reviewIcon,
+      data: review_summary.average.toFixed(1)
+    });
+  }
+
+  const date = useDateFormat(created_at);
 
   if (isAdmin) {
     details.push(
@@ -58,6 +68,10 @@ export default function StoreProfile(
       {
         icon: checkIcon,
         data: status
+      },
+      {
+        icon: dateIcon,
+        data: date
       }
     );
   }

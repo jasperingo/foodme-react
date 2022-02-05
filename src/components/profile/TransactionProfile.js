@@ -6,6 +6,8 @@ import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
 import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeaderText from './ProfileHeaderText';
 import UserDescList from '../UserDescList';
+import User from '../../models/User';
+import Transaction from '../../models/Transaction';
 
 export default function TransactionProfile(
   { 
@@ -50,8 +52,8 @@ export default function TransactionProfile(
       action: onCancelClicked
     });
   }
-
-  if (canProcessAndDecline) {
+  
+  if (canProcessAndDecline && status === Transaction.STATUS_PENDING) {
     btns.push(
       {
         text: '_extra.Process',
@@ -64,6 +66,48 @@ export default function TransactionProfile(
         action: onDeclineClicked
       }
     )
+  }
+
+  const links = [];
+
+  switch(user.type) {
+
+    case User.TYPE_CUSTOMER: 
+      links.push({
+        href: `/customer/${user.customer.id}`,
+        photo: user.photo.href,
+        name: user.name,
+        title: '_user.Customer'
+      });
+      break;
+
+    case User.TYPE_STORE: 
+      links.push({
+        href: `/store/${user.store.id}`,
+        photo: user.photo.href,
+        name: user.name,
+        title: '_store.Store'
+      });
+      break;
+
+    case User.TYPE_DELIVERY_FIRM: 
+      links.push({
+        href: `/delievery-firm/${user.delivery_firm.id}`,
+        photo: user.photo.href,
+        name: user.name,
+        title: '_delivery.Delivery_firm'
+      });
+      break;
+
+    default:
+  }
+
+  if (order !== null) {
+    links.push({
+      href: `/order/${order.id}`,
+      name: `#${order.number}`,
+      title: '_order.Order'
+    });
   }
 
   return (
@@ -96,31 +140,7 @@ export default function TransactionProfile(
         />
 
       <UserDescList 
-        users={[
-          {
-            href: `/order/${order.id}`,
-            name: `#${order.number}`,
-            title: '_order.Order'
-          },
-          // {
-          //   href: `/customer/${customer.id}`,
-          //   photo: `/photos/customer/${customer.photo}`,
-          //   name: `${customer.first_name} ${customer.last_name}`,
-          //   title: '_user.Customer'
-          // },
-          // {
-          //   href: `/store/${store.id}`,
-          //   photo: `/photos/store/${store.photo}`,
-          //   name: store.name,
-          //   title: '_store.Store'
-          // },
-          // {
-          //   href: `/delivery-firm/${delivery_firm.id}`,
-          //   photo: `/photos/delivery-firm/${delivery_firm.photo}`,
-          //   name: delivery_firm.name,
-          //   title: '_delivery.Delivery_firm'
-          // }
-        ]} 
+        users={links} 
         />
     </div>
   );

@@ -6,7 +6,7 @@ import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
 
-export function useOrderList() {
+export function useDashboardOrderList() {
 
   const { 
     admin: { 
@@ -14,15 +14,13 @@ export function useOrderList() {
         adminToken
       }
     },
-    order: { 
-      orderDispatch,
-      order: {
+    dashboard: {
+      dashboardDispatch,
+      dashboard: {
         orders,
-        ordersPage,
         ordersLoading,
-        ordersNumberOfPages,
         ordersFetchStatus
-      } 
+      }
     }
   } = useAppContext();
 
@@ -31,45 +29,32 @@ export function useOrderList() {
   const refetch = useCallback(
     ()=> {
       if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-      orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
+        dashboardDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
-    [orderDispatch, ordersFetchStatus]
-  );
-
-  const refresh = useCallback(
-    ()=> {
-      orderDispatch({ type: ORDER.LIST_UNFETCHED });
-    },
-    [orderDispatch]
+    [dashboardDispatch, ordersFetchStatus]
   );
 
   useEffect(
     ()=> {
       if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        dashboardDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
       } else if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING) {
         
-        orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+        dashboardDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
 
         const api = new OrderRepository(adminToken);
-        api.getList(ordersPage)
+        api.getList(1)
         .then(res=> {
           
           if (res.status === 200) {
 
-            orderDispatch({
+            dashboardDispatch({
               type: ORDER.LIST_FETCHED, 
               payload: {
                 list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  ordersPage, 
-                  res.body.pagination.number_of_pages, 
-                  orders.length, 
-                  res.body.data.length
-                ),
+                fetchStatus: listStatusUpdater(1, 1, 0, res.body.data.length),
               }
             });
 
@@ -78,13 +63,13 @@ export function useOrderList() {
           }
         })
         .catch(()=> {
-          orderDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+          dashboardDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },
-    [adminToken, orders.length, ordersPage, ordersLoading, ordersFetchStatus, orderDispatch, listStatusUpdater]
+    [adminToken, ordersLoading, ordersFetchStatus, dashboardDispatch, listStatusUpdater]
   );
 
 
-  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch, refresh];
+  return [orders, ordersFetchStatus, refetch];
 }
