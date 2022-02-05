@@ -3,6 +3,14 @@ import Fetch from "./Fetch";
 
 export default class StoreRepository extends Fetch {
 
+  updateStatus(id, formData) {
+    return this.apiFetch(
+      `store/${id}/status/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `store/${id}`,
@@ -10,6 +18,13 @@ export default class StoreRepository extends Fetch {
     );
   }
 
+  getList(page) {
+    return this.apiFetch(
+      `store/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+  
   getRandomList() {
     return this.apiFetch(
       `store/random/list?page_limit=${Fetch.PAGE_LIMIT_BIG}`,
@@ -56,6 +71,20 @@ export default class StoreRepository extends Fetch {
   getDiscountsList(id, page) {
     return this.apiFetch(
       `store/${id}/discount/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
+  getOrdersList(id, page) {
+    return this.apiFetch(
+      `store/${id}/order/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
+  getTransactionList(id, page) {
+    return this.apiFetch(
+      `store/${id}/transaction/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
       'GET'
     );
   }

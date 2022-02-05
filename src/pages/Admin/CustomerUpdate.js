@@ -1,54 +1,65 @@
 
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import UserApi from '../../api/UserApi';
-import AdminApp from '../../apps/AdminApp';
-import CustomerForm from '../../components/CustomerForm';
+import React from 'react';
+import Forbidden from '../../components/Forbidden';
+import UserStatusForm from '../../components/form/UserStatusForm';
 import Loading from '../../components/Loading';
+import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
-import { CUSTOMER, FETCH_STATUSES, getCustomerFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useDataRender } from '../../context/AppHooks';
+import { useAppContext } from '../../hooks/contextHook';
+import { useCustomerFetch } from '../../hooks/customer/customerFetchHook';
+import { useCustomerStatusUpdate } from '../../hooks/customer/customerStatusUpdateHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function CustomerUpdate() {
 
-  const cID = parseInt(useParams().ID);
-
   const { 
-    user: { user }, 
-    customers: {
-      customer: {
-        customer,
-        customerFetchStatus
+    admin: { 
+      admin: {
+        adminToken
       }
-    }, 
-    customersDispatch 
+    } 
   } = useAppContext();
 
-  useEffect(()=> {
-    if (customer !== null && cID !== customer.id) {
-      customersDispatch({ type: CUSTOMER.UNFETCH });
-    } else if (customerFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new UserApi(user.api_token);
-      api.get(cID, customersDispatch);
-    }
-  }, [cID, user, customer, customerFetchStatus, customersDispatch]);
+  const [
+    customer, 
+    customerFetchStatus, 
+    refetch
+  ] = useCustomerFetch(adminToken);
 
-  function refetchCustomer() {
-    if (customerFetchStatus !== FETCH_STATUSES.LOADING) 
-      customersDispatch(getCustomerFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  useHeader({ 
+    title: `${customer?.user.name ?? 'Loading...'} - Customer`,
+    headerTitle: '_user.Edit_customer'
+  });
 
+  const [
+    onSubmit,
+    dialog, 
+    formError, 
+    formSuccess, 
+    statusError
+  ] = useCustomerStatusUpdate(customer.id, adminToken);
+  
   return (
     <section>
       <div className="container-x">
-        { 
-          useDataRender(
-            customer, 
+        {
+          useRenderOnDataFetched(
             customerFetchStatus,
-            ()=> <CustomerForm type={CustomerForm.UPDATE} customer={customer} appType={AdminApp.TYPE} />,
-            ()=> <Loading />, 
-            ()=> <Reload action={refetchCustomer} />,
+            ()=> (
+              <UserStatusForm 
+                status={customer.user.status} 
+                onSubmit={onSubmit}
+                dialog={dialog}
+                formError={formError}
+                formSuccess={formSuccess}
+                statusError={statusError}
+                />
+            ),
+            ()=> <Loading />,
+            ()=> <Reload action={refetch} />,
+            ()=> <NotFound />,
+            ()=> <Forbidden />,
           )
         }
       </div>

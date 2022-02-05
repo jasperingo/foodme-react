@@ -1,18 +1,40 @@
 
 import React from 'react';
-import { dateIcon, editIcon, emailIcon, messageIcon, phoneIcon } from '../../assets/icons';
+import { checkIcon, dateIcon, editIcon, emailIcon, messageIcon, phoneIcon } from '../../assets/icons';
 import { useDateFormat } from '../../hooks/viewHook';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
-// import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeader from './ProfileHeader';
 
 export default function CustomerProfile(
   { 
     navLinks, 
+    isAdmin,
     customer 
   }
 ) {
+
+  const details = [
+    {
+      icon: phoneIcon,
+      data: customer.user.phone_number
+    },
+    {
+      icon: emailIcon,
+      data: customer.user.email
+    },
+    {
+      icon: dateIcon,
+      data: useDateFormat(customer.user.created_at)
+    }
+  ];
+
+  if (isAdmin) {
+    details.push({
+      icon: checkIcon,
+      data: customer.user.status
+    });
+  }
   
   return (
     <div>
@@ -33,22 +55,7 @@ export default function CustomerProfile(
         ]}
         />
 
-      <ProfileDetails 
-        details={[
-          {
-            icon: phoneIcon,
-            data: customer.user.phone_number
-          },
-          {
-            icon: emailIcon,
-            data: customer.user.email
-          },
-          {
-            icon: dateIcon,
-            data: useDateFormat(customer.user.created_at)
-          }
-        ]}
-        />
+      <ProfileDetails details={details} />
 
       <Tab items={navLinks} />
     </div>

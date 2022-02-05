@@ -1,5 +1,9 @@
 
+import { ADDRESS } from "../actions/addressActions";
 import { CUSTOMER } from "../actions/customerActions";
+import { ORDER } from "../actions/orderActions";
+import { PRODUCT } from "../actions/productActions";
+import { TRANSACTION } from "../actions/transactionActions";
 import customerState from "../states/customerState";
 
 export default function CustomerReducer (state, action) {
@@ -19,6 +23,18 @@ export default function CustomerReducer (state, action) {
           customer: action.payload.customer,
           customerToken: action.payload.token,
           customerFetchStatus: action.payload.fetchStatus
+        }
+      };
+
+    case CUSTOMER.UNFETCHED: 
+      return {
+        ...customerState,
+        customers: {
+          customers: state.customers,
+          customersPage: state.customersPage,
+          customersLoading: state.customersLoading,
+          customersNumberOfPages: state.customersNumberOfPages,
+          customersFetchStatus: state.customersFetchStatus
         }
       };
 
@@ -71,48 +87,83 @@ export default function CustomerReducer (state, action) {
           customers: [...state.customers.customers, ...action.payload.list],
         }
       };
-
-
-    /*case CUSTOMER.UNFETCH:
-      return initialCustomerState;
-      
     
-      case ORDER.LIST_FETCH_STATUS_CHANGED :
-        return {
-          ...state,
-          orders: {
-            ...state.orders,
-            ordersFetchStatus: action.payload,
-          }
-        };
       
-    case ORDER.LIST_FETCHED :
-      let status1 = fetchUpdater(
-        state.orders.ordersPage, 
-        action.payload.ordersNumberOfPages, 
-        state.orders.orders.length, 
-        action.payload.orders.length
-      );
-      
-      const ord = state.orders.orders.filter(i=> i !== null);
-      
+    case ORDER.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
         orders: {
-          ordersFetchStatus: status1,
-          ordersPage: state.orders.ordersPage+1,
-          ordersStatus: state.orders.ordersStatus,
-          ordersNumberOfPages: action.payload.ordersNumberOfPages,
-          orders: [...ord, ...action.payload.orders, null],
+          ...state.orders,
+          ordersLoading: action.payload.loading,
+          ordersFetchStatus: action.payload.fetchStatus,
         }
       };
+      
+    case ORDER.LIST_FETCHED:
+      return {
+        ...state,
+        orders: {
+          ordersLoading: false,
+          ordersPage: state.orders.ordersPage+1,
+          ordersFetchStatus: action.payload.fetchStatus,
+          ordersNumberOfPages: action.payload.numberOfPages,
+          orders: [...state.orders.orders, ...action.payload.list],
+        }
+      };
+    
+  
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        products: {
+          ...state.products,
+          productsLoading: action.payload.loading,
+          productsFetchStatus: action.payload.fetchStatus
+        }
+      };
+    
+    case PRODUCT.LIST_FETCHED:
+      return {
+        ...state,
+        products: {
+          productsLoading: false,
+          productsPage: state.products.productsPage+1,
+          productsFetchStatus: action.payload.fetchStatus,
+          productsNumberOfPages: action.payload.numberOfPages,
+          products: [...state.products.products, ...action.payload.list],
+        }
+      };
+
+    case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        transactions: {
+          ...state.transactions,
+          transactionsLoading: action.payload.loading,
+          transactionsFetchStatus: action.payload.fetchStatus
+        }
+      };
+    
+    case TRANSACTION.LIST_FETCHED:
+      return {
+        ...state,
+        transactions: {
+          transactionsLoading: false,
+          transactionsPage: state.transactions.transactionsPage+1,
+          transactionsFetchStatus: action.payload.fetchStatus,
+          transactionsNumberOfPages: action.payload.numberOfPages,
+          transactions: [...state.transactions.transactions, ...action.payload.list],
+        }
+      };
+      
 
     case ADDRESS.LIST_FETCH_STATUS_CHANGED: 
       return {
         ...state,
         addresses: {
           ...state.addresses,
-          addressesFetchStatus: action.payload
+          addressesLoading: action.payload.loading,
+          addressesFetchStatus: action.payload.fetchStatus
         }
       };
 
@@ -120,68 +171,12 @@ export default function CustomerReducer (state, action) {
       return {
         ...state,
         addresses: {
-          addresses: action.payload, 
-          addressesFetchStatus: FETCH_STATUSES.DONE,
-        }
-      };
-
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
-      return {
-        ...state,
-        products: {
-          ...state.products,
-          productsFetchStatus: action.payload
+          addressesLoading: false, 
+          addresses: action.payload.list, 
+          addressesFetchStatus: action.payload.fetchStatus,
         }
       };
     
-    case PRODUCT.LIST_FETCHED :
-      let status2 = fetchUpdater(
-        state.products.productsPage,
-        action.payload.productsNumberOfPages,
-        state.products.products.length,
-        action.payload.products.length
-      );
-      
-      const prod = state.products.products.filter(i=> i !== null);
-
-      return {
-        ...state,
-        products: {
-          productsFetchStatus: status2,
-          productsPage: state.products.productsPage+1,
-          productsNumberOfPages: action.payload.productsNumberOfPages,
-          products: [...prod, ...action.payload.products, null],
-        }
-      };
-
-    case TRANSACTION.LIST_FETCH_STATUS_CHANGED :
-      return {
-        ...state,
-        transactions: {
-          ...state.transactions,
-          transactionsFetchStatus: action.payload
-        }
-      };
-    
-    case TRANSACTION.LIST_FETCHED :
-      let status3 = fetchUpdater(
-        state.transactions.transactionsPage, 
-        action.payload.transactionsNumberOfPages, 
-        state.transactions.transactions.length, 
-        action.payload.transactions.length
-      );
-      
-      const trans = state.transactions.transactions.filter(i=> i !== null);
-
-      return {
-        ...state,
-        transactions: {
-          transactionsFetchStatus: status3,
-          transactionsPage: state.transactions.transactionsPage+1,
-          transactionsNumberOfPages: action.payload.transactionsNumberOfPages,
-          transactions: [...trans, ...action.payload.transactions, null],
-        }
-      };*/
 
     default:
       return state;

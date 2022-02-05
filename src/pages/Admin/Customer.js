@@ -1,13 +1,21 @@
 
 import React from 'react';
-// import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import CustomerProfile from '../../components/profile/CustomerProfile';
+import AddressList from '../../components/profile/section/AddressList';
+import OrderList from '../../components/profile/section/OrderList';
+import ProductList from '../../components/profile/section/ProductList';
+import TransactionList from '../../components/profile/section/TransactionList';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
+import { useCustomerAddressList } from '../../hooks/customer/customerAddressListHook';
+import { useCustomerFavoriteList } from '../../hooks/customer/customerFavoriteListHook';
 import { useCustomerFetch } from '../../hooks/customer/customerFetchHook';
+import { useCustomerOrderList } from '../../hooks/customer/customerOrderListHook';
+import { useCustomerTransactionList } from '../../hooks/customer/customerTransactionListHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
@@ -18,216 +26,150 @@ const TAB_LINKS = [
   { title : '_user.Addresses', href: '/addresses' },
 ];
 
+function CustomerAddressesList() {
 
-// function Favorites() {
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    },
+    customer: {
+      customer: {
+        customer: {
+          customer,
+        }
+      } 
+    } 
+  } = useAppContext();
   
-//   const { ID } = useParams();
+  const [
+    addresses,
+    addressesFetchStatus,
+    refetch
+  ] = useCustomerAddressList(customer.id, adminToken);
 
-//   const { 
-//     user: { user }, 
-//     customers: {
-//       products: {
-//         products,
-//         productsFetchStatus,
-//         productsPage,
-//         productsNumberOfPages
-//       }
-//     }, 
-//     customersDispatch 
-//   } = useAppContext();
+  return (
+    <AddressList 
+      addresses={addresses}
+      addressesFetchStatus={addressesFetchStatus}
+      refetch={refetch}
+      canEdit={false}
+      />
+  );
+}
 
-//   useEffect(()=> {
-//     if (productsFetchStatus === FETCH_STATUSES.LOADING) {
-//       const api = new ProductApi(user.api_token);
-//       api.getListByCustomer(ID, productsPage, customersDispatch);
-//     }
-//   }, [ID, user, productsFetchStatus, productsPage, customersDispatch]);
+function CustomerTransactionsList() {
 
-//   function refetchProducts() {
-//     if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-//       customersDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING));
-//   }
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    },
+    customer: {
+      customer: {
+        customer: {
+          customer,
+        }
+      } 
+    } 
+  } = useAppContext();
   
-//   return (
-//     <div>
-//       <InfiniteScroll 
-//         dataLength={products.length}
-//         next={refetchProducts}
-//         hasMore={useHasMoreToFetchViaScroll(productsPage, productsNumberOfPages, productsFetchStatus)}
-//         >
-//         <ul className="list-x">
-//           { 
-//             useListRender(
-//               products, 
-//               productsFetchStatus,
-//               (item, i)=> <li key={`prod-${i}`}> <ProductItem prod={item} /> </li>, 
-//               (k)=> <li key={k}> <Loading /> </li>, 
-//               (k)=> <li key={k}> <Reload action={refetchProducts} /> </li>,
-//               (k)=> <li key={k}> <EmptyList text="_empty.No_product" Icon={productIcon} /> </li>, 
-//               (k)=> <li key={k}> <FetchMoreButton action={refetchProducts} /> </li>,
-//             )
-//           }
-//         </ul>
-//       </InfiniteScroll>
-//       </div>
-//   );
-// }
+  const [
+    transactions, 
+    transactionsFetchStatus, 
+    transactionsPage, 
+    transactionsNumberOfPages, 
+    refetch
+  ] = useCustomerTransactionList(customer.id, adminToken);
 
-// function Transactions() {
+  return (
+    <TransactionList
+      transactions={transactions}
+      transactionsFetchStatus={transactionsFetchStatus}
+      transactionsPage={transactionsPage}
+      transactionsNumberOfPages={transactionsNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
+
+function CustomerFavoritesList() {
   
-//   const { ID } = useParams();
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    },
+    customer: {
+      customer: {
+        customer: {
+          customer,
+        }
+      } 
+    } 
+  } = useAppContext();
 
-//   const { 
-//     user: { user }, 
-//     customers: {
-//       transactions: {
-//         transactions,
-//         transactionsFetchStatus,
-//         transactionsPage,
-//         transactionsNumberOfPages
-//       }
-//     }, 
-//     customersDispatch 
-//   } = useAppContext();
-
-//   useEffect(()=>{
-//     if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
-//       const api = new TransactionApi(user.api_token);
-//       api.getListByCustomer(ID, transactionsPage, customersDispatch);
-//     }
-//   });
-
-//   function refetchTransactions() {
-//     if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
-//       customersDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING));
-//   }
-
-//   return (
-//     <div>
-//       <InfiniteScroll
-//         dataLength={transactions.length}
-//         next={refetchTransactions}
-//         hasMore={useHasMoreToFetchViaScroll(transactionsPage, transactionsNumberOfPages, transactionsFetchStatus)}
-//         >
-//         <ul className="list-2-x">
-//           { 
-//             useListRender(
-//               transactions, 
-//               transactionsFetchStatus,
-//               (item, i)=> <TransactionItem key={`transaction-${i}`} transaction={item} />, 
-//               (k)=> <li key={k}> <Loading /> </li>, 
-//               (k)=> <li key={k}> <Reload action={refetchTransactions} /> </li>,
-//               (k)=> <li key={k}> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>, 
-//               (k)=> <li key={k}> <FetchMoreButton action={refetchTransactions} /> </li>,
-//             )
-//           }
-//         </ul>
-//       </InfiniteScroll>
-//     </div>
-//   );
-// }
-
-// function Addresses() {
+  const [
+    products, 
+    productsFetchStatus, 
+    productsPage, 
+    productsNumberOfPages, 
+    refetch
+  ] = useCustomerFavoriteList(customer.id, adminToken);
   
-//   const { 
-//     user: { user }, 
-//     customers: {
-//       customer: {
-//         customer
-//       },
-//       addresses: {
-//         addresses,
-//         addressesFetchStatus
-//       }
-//     }, 
-//     customersDispatch 
-//   } = useAppContext();
+  return (
+    <ProductList 
+      products={products.map(i=> i.product)}
+      productsFetchStatus={productsFetchStatus}
+      productsPage={productsPage}
+      productsNumberOfPages={productsNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
 
-//   useEffect(()=> {
-//     if (addressesFetchStatus === FETCH_STATUSES.LOADING) {
-//       const api = new AddressApi(user.api_token);
-//       api.getListByCustomer(customer.id, customersDispatch);
-//     }
-//   }, [user, customer, addressesFetchStatus, customersDispatch]);
+function CustomerOrdersList() {
 
-//   function refetchAddresses() {
-//     if (addressesFetchStatus !== FETCH_STATUSES.LOADING) 
-//       customersDispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.LOADING));
-//   }
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    },
+    customer: {
+      customer: {
+        customer: {
+          customer,
+        }
+      } 
+    } 
+  } = useAppContext();
 
-//   return (
-//     <div>
-//       <ul className="list-2-x">
-//         { 
-//           useListRender(
-//             addresses, 
-//             addressesFetchStatus,
-//             (item, i)=> <AddressItem key={`address-${i}`} address={item} />,
-//             (k)=> <li key={k}> <Loading /> </li>, 
-//             (k)=> <li key={k}> <Reload action={refetchAddresses} /> </li>,
-//           )
-//         }
-//       </ul>
-//     </div>
-//   );
-// }
+  const [
+    orders, 
+    ordersFetchStatus, 
+    ordersPage, 
+    ordersNumberOfPages, 
+    refetch,
+  ] = useCustomerOrderList(customer.id, adminToken);
 
-// function Orders() {
-
-//   const { 
-//     user: { user }, 
-//     customers: {
-//       customer: {
-//         customer
-//       },
-//       orders: {
-//         orders,
-//         ordersFetchStatus,
-//         ordersPage,
-//         ordersNumberOfPages
-//       }
-//     }, 
-//     customersDispatch 
-//   } = useAppContext();
-
-//   useEffect(()=> {
-//     if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
-//       const api = new OrderApi(user.api_token);
-//       api.getListByCustomer(customer.id, ordersPage, customersDispatch);
-//     }
-//   });
-
-//   function refetchOrders() {
-//     if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-//       customersDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING));
-//   }
-
-//   return (
-//     <div>
-//       <InfiniteScroll
-//         dataLength={orders.length}
-//         next={refetchOrders}
-//         hasMore={useHasMoreToFetchViaScroll(ordersPage, ordersNumberOfPages, ordersFetchStatus)}
-//         >
-//         <ul className="list-2-x">
-//           { 
-//             useListRender(
-//               orders, 
-//               ordersFetchStatus,
-//               (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/order/${item.id}`} appType={AdminApp.TYPE} />, 
-//               (k)=> <li key={k}> <Loading /> </li>, 
-//               (k)=> <li key={k}> <Reload action={refetchOrders} /> </li>,
-//               (k)=> <li key={k}> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>, 
-//               (k)=> <li key={k}> <FetchMoreButton action={refetchOrders} /> </li>,
-//             )
-//           }
-//         </ul>
-//       </InfiniteScroll>
-//     </div>
-//   );
-// }
+  return (
+    <OrderList 
+      orders={orders}
+      ordersFetchStatus={ordersFetchStatus}
+      ordersPage={ordersPage}
+      ordersNumberOfPages={ordersNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
 
 export default function Customer() {
+
+  const match = useRouteMatch();
 
   const { 
     admin: { 
@@ -255,7 +197,7 @@ export default function Customer() {
         {
           useRenderOnDataFetched(
             customerFetchStatus,
-            ()=> <CustomerProfile customer={customer} navLinks={TAB_LINKS} />,
+            ()=> <CustomerProfile customer={customer} navLinks={TAB_LINKS} isAdmin={true} />,
             ()=> <Loading />,
             ()=> <Reload action={refetch} />,
             ()=> <NotFound />,
@@ -263,13 +205,16 @@ export default function Customer() {
           )
         }
       </div>
-
-      {/* <Switch>
-        <Route path={`${match.url}/addresses`} render={()=> <Addresses />} />
-        <Route path={`${match.url}/transactions`} render={()=> <Transactions />} />
-        <Route path={`${match.url}/favorites`} render={()=> <Favorites />} />
-        <Route path={match.url} render={()=> <Orders />} />
-      </Switch> */}
+      
+      {
+        customer && 
+        <Switch>
+          <Route path={`${match.url}/addresses`} render={()=> <CustomerAddressesList />} />
+          <Route path={`${match.url}/transactions`} render={()=> <CustomerTransactionsList />} />
+          <Route path={`${match.url}/favorites`} render={()=> <CustomerFavoritesList />} /> 
+          <Route path={match.url} render={()=> <CustomerOrdersList />} />
+        </Switch>
+      }
         
     </section>
   );

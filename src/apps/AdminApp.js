@@ -15,14 +15,16 @@ import Profile from '../pages/Admin/Profile';
 import PasswordUpdate from '../pages/Admin/PasswordUpdate';
 import Customers from '../pages/Admin/Customers';
 import Customer from '../pages/Admin/Customer';
+import CustomerUpdate from '../pages/Admin/CustomerUpdate';
+import Stores from '../pages/Admin/Stores';
+import Store from '../pages/Admin/Store';
+import StoreUpdate from '../pages/Admin/StoreUpdate';
+import DeliveryFirms from '../pages/Admin/DeliveryFirms';
+// import DeliveryFirm from '../pages/Admin/DeliveryFirm';
 // import Dashboard from '../pages/Admin/Dashboard';
-// import DeliveryFirms from '../pages/Admin/DeliveryFirms';
 // import Messages from '../pages/Admin/Messages';
 // import Orders from '../pages/Admin/Orders';
-// import Stores from '../pages/Admin/Stores';
 // import Transactions from '../pages/Admin/Transactions';
-// import DeliveryFirm from '../pages/Admin/DeliveryFirm';
-// import Store from '../pages/Store';
 // import Order from '../pages/Order';
 import Categories from '../pages/Categories';
 import Category from '../pages/Category';
@@ -30,10 +32,6 @@ import CategoryAdd from '../pages/Admin/CategoryAdd';
 import CategoryUpdate from '../pages/Admin/CategoryUpdate';
 import SubCategoryAdd from '../pages/Admin/SubCategoryAdd';
 import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
-// import CustomerAdd from '../pages/Admin/CustomerAdd';
-// import StoreUpdate from '../pages/Admin/StoreUpdate';
-// import CustomerUpdate from '../pages/Admin/CustomerUpdate';
-// import StoreAdd from '../pages/Admin/StoreAdd';
 // import DeliveryFirmUpdate from '../pages/Admin/DeliveryFirmUpdate';
 // import DeliveryFirmAdd from '../pages/Admin/DeliveryFirmAdd';
 // import Transaction from '../pages/Transaction';
@@ -105,19 +103,17 @@ export default function AdminApp() {
           <Route path="/delivery-firm/:ID/update" render={()=> authMiddleware() || <DeliveryFirmUpdate />} />
           <Route path="/delivery-firm/add" render={()=> authMiddleware() || <DeliveryFirmAdd />} />
           <Route path="/delivery-firm/:ID" render={()=> authMiddleware() || <DeliveryFirm />} />
-          <Route path="/delivery-firms" render={()=> authMiddleware() || <DeliveryFirms />} />
-          <Route path="/store/:ID/update" render={()=> authMiddleware() || <StoreUpdate />} />
-          <Route path="/store/add" render={()=> authMiddleware() || <StoreAdd />} />
-          <Route path="/store/:ID" render={()=> authMiddleware() || <Store appType={AdminApp.TYPE} />} />
-          <Route path="/stores" render={()=> authMiddleware() || <Stores />} />
-          <Route path="/customer/:ID/update" render={()=> authMiddleware() || <CustomerUpdate />} />
-          <Route path="/customer/add" render={()=> authMiddleware() || <CustomerAdd />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> */}
+          <Route path="/delivery-firms" render={()=> authMiddleware() || <DeliveryFirms />} />
+          <Route path="/store/:ID/update" render={()=> authMiddleware() || <StoreUpdate />} />
+          <Route path="/store/:ID" render={()=> authMiddleware() || <Store />} />
+          <Route path="/stores" render={()=> authMiddleware() || <Stores />} />
+          <Route path="/customer/:ID/update" render={()=> authMiddleware() || <CustomerUpdate />} />
           <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer />} />
           <Route path="/customers" render={()=> authMiddleware() || <Customers />} />
           <Route path="/sub-category/:ID/update" render={()=> authMiddleware() || <SubCategoryUpdate />} />

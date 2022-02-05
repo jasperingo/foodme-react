@@ -50,6 +50,14 @@ export default class CustomerRepository extends Fetch {
       JSON.stringify(formData)
     );
   }
+  
+  updateStatus(id, formData) {
+    return this.apiFetch(
+      `customer/${id}/status/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
 
   get(id) {
     return this.apiFetch(

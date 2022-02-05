@@ -1,53 +1,65 @@
 
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import StoreApi from '../../api/StoreApi';
-import AdminApp from '../../apps/AdminApp';
+import React from 'react';
+import Forbidden from '../../components/Forbidden';
+import UserStatusForm from '../../components/form/UserStatusForm';
 import Loading from '../../components/Loading';
+import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
-import StoreForm from '../../components/StoreForm';
-import { FETCH_STATUSES, getStoreFetchStatusAction, STORE } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useDataRender } from '../../context/AppHooks';
+import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useStoreFetch } from '../../hooks/store/storeFetchHook';
+import { useStoreStatusUpdate } from '../../hooks/store/storeStatusUpdateHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function StoreUpdate() {
 
-  const ID = parseInt(useParams().ID);
-
-  const { 
-    stores: {
-      store: {
-        store,
-        storeFetchStatus
+  const {
+    admin: { 
+      admin: {
+        adminToken
       }
-    }, 
-    storesDispatch 
+    } 
   } = useAppContext();
 
-  useEffect(()=> {
-    if (store !== null && ID !== store.id) {
-      storesDispatch({ type: STORE.UNFETCH });
-    } else if (storeFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new StoreApi();
-      api.get(ID, storesDispatch);
-    }
-  }, [ID, store, storeFetchStatus, storesDispatch]);
+  const [
+    store, 
+    storeFetchStatus, 
+    refetch
+  ] = useStoreFetch(adminToken);
 
-  function refetchStore() {
-    if (storeFetchStatus !== FETCH_STATUSES.LOADING) 
-      storesDispatch(getStoreFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  useHeader({ 
+    title: `${store?.user.name ?? 'Loading...'} - Store`,
+    headerTitle: '_store.Edit_store'
+  });
+
+  const [
+    onSubmit,
+    dialog, 
+    formError, 
+    formSuccess, 
+    statusError
+  ] = useStoreStatusUpdate(store?.id, adminToken);
 
   return (
     <section>
       <div className="container-x">
-        { 
-          useDataRender(
-            store, 
+        {
+          useRenderOnDataFetched(
             storeFetchStatus,
-            ()=> <StoreForm type={StoreForm.UPDATE} store={store} appType={AdminApp.TYPE} />,
-            ()=> <Loading />, 
-            ()=> <Reload action={refetchStore} />,
+            ()=> (
+              <UserStatusForm 
+                status={store.user.status} 
+                onSubmit={onSubmit}
+                dialog={dialog}
+                formError={formError}
+                formSuccess={formSuccess}
+                statusError={statusError}
+                />
+            ),
+            ()=> <Loading />,
+            ()=> <Reload action={refetch} />,
+            ()=> <NotFound />,
+            ()=> <Forbidden />,
           )
         }
       </div>

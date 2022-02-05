@@ -1,7 +1,9 @@
 import { DISCOUNT } from "../actions/discountActions";
+import { ORDER } from "../actions/orderActions";
 import { PRODUCT } from "../actions/productActions";
 import { REVIEW } from "../actions/reviewActions";
 import { STORE } from "../actions/storeActions";
+import { TRANSACTION } from "../actions/transactionActions";
 import storeState from "../states/storeState";
 
 
@@ -36,34 +38,22 @@ export default function StoreReducer (state, action) {
         storeFetchStatus: action.payload.fetchStatus
       };
 
-    // case STORE.LIST_FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     stores: {
-    //       ...state.stores,
-    //       storesFetchStatus: action.payload
-    //     }
-    //   };
+    case STORE.LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        storesLoading: action.payload.loading,
+        storesFetchStatus: action.payload.fetchStatus
+      };
     
-    // case STORE.LIST_FETCHED :
-    //   let statusx = fetchUpdater(
-    //     state.stores.storesPage, 
-    //     action.payload.storesNumberOfPages, 
-    //     state.stores.stores.length, 
-    //     action.payload.stores.length
-    //   );
-      
-    //   const st = state.stores.stores.filter(i=> i !== null);
-      
-    //   return {
-    //     ...state,
-    //     stores: {
-    //       storesFetchStatus: statusx,
-    //       storesPage: state.stores.storesPage+1,
-    //       storesNumberOfPages: action.payload.storesNumberOfPages,
-    //       stores: [...st, ...action.payload.stores, null],
-    //     }
-    //   };
+    case STORE.LIST_FETCHED:
+      return {
+        ...state,
+        storesLoading: false,
+        storesPage: state.storesPage+1,
+        storesFetchStatus: action.payload.fetchStatus,
+        storesNumberOfPages: action.payload.numberOfPages,
+        stores: [...state.stores, ...action.payload.list],
+      };
 
     case PRODUCT.LIST_FETCH_STATUS_CHANGED :
       return {
@@ -118,64 +108,40 @@ export default function StoreReducer (state, action) {
         discounts: [...state.discounts, ...action.payload.list],
       };
     
-    // case ORDER.LIST_FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     orders: {
-    //       ...state.orders,
-    //       ordersFetchStatus: action.payload,
-    //     }
-    //   };
-    
-    // case ORDER.LIST_FETCHED :
-    //   let status4 = fetchUpdater(
-    //     state.orders.ordersPage, 
-    //     action.payload.ordersNumberOfPages, 
-    //     state.orders.orders.length, 
-    //     action.payload.orders.length
-    //   );
+    case ORDER.LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        ordersLoading: action.payload.loading,
+        ordersFetchStatus: action.payload.fetchStatus,
+      };
       
-    //   const ord = state.orders.orders.filter(i=> i !== null);
-      
-    //   return {
-    //     ...state,
-    //     orders: {
-    //       ordersFetchStatus: status4,
-    //       ordersPage: state.orders.ordersPage+1,
-    //       ordersStatus: state.orders.ordersStatus,
-    //       ordersNumberOfPages: action.payload.ordersNumberOfPages,
-    //       orders: [...ord, ...action.payload.orders, null],
-    //     }
-    //   };
+    case ORDER.LIST_FETCHED:
+      return {
+        ...state,
+        ordersLoading: false,
+        ordersPage: state.ordersPage+1,
+        ordersFetchStatus: action.payload.fetchStatus,
+        ordersNumberOfPages: action.payload.numberOfPages,
+        orders: [...state.orders, ...action.payload.list],
+      };
 
-    // case TRANSACTION.LIST_FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     transactions: {
-    //       ...state.transactions,
-    //       transactionsFetchStatus: action.payload
-    //     }
-    //   };
+    case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        transactionsLoading: action.payload.loading,
+        transactionsFetchStatus: action.payload.fetchStatus
+      };
     
-    // case TRANSACTION.LIST_FETCHED :
-    //   let status5 = fetchUpdater(
-    //     state.transactions.transactionsPage, 
-    //     action.payload.transactionsNumberOfPages, 
-    //     state.transactions.transactions.length, 
-    //     action.payload.transactions.length
-    //   );
-      
-    //   const trans = state.transactions.transactions.filter(i=> i !== null);
+    case TRANSACTION.LIST_FETCHED:
+      return {
+        ...state,
+        transactionsLoading: false,
+        transactionsPage: state.transactionsPage+1,
+        transactionsFetchStatus: action.payload.fetchStatus,
+        transactionsNumberOfPages: action.payload.numberOfPages,
+        transactions: [...state.transactions, ...action.payload.list],
+      };
 
-    //   return {
-    //     ...state,
-    //     transactions: {
-    //       transactionsFetchStatus: status5,
-    //       transactionsPage: state.transactions.transactionsPage+1,
-    //       transactionsNumberOfPages: action.payload.transactionsNumberOfPages,
-    //       transactions: [...trans, ...action.payload.transactions, null],
-    //     }
-    //   };
 
     case REVIEW.CREATED:
 

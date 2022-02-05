@@ -1,129 +1,234 @@
 
 import React from 'react';
+import { useRouteMatch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom/cjs/react-router-dom.min';
+import Forbidden from '../../components/Forbidden';
+import Loading from '../../components/Loading';
+import NotFound from '../../components/NotFound';
+import DiscountList from '../../components/profile/section/DiscountList';
+import OrderList from '../../components/profile/section/OrderList';
+import ProductList from '../../components/profile/section/ProductList';
+import ReviewList from '../../components/profile/section/ReviewList';
+import TransactionList from '../../components/profile/section/TransactionList';
+import StoreProfile from '../../components/profile/StoreProfile';
+import Reload from '../../components/Reload';
+import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useStoreDiscountList } from '../../hooks/store/storeDiscountListHook';
+import { useStoreFetch } from '../../hooks/store/storeFetchHook';
+import { useStoreOrderList } from '../../hooks/store/storeOrderListHook';
+import { useStoreProductList } from '../../hooks/store/storeProductListHook';
+import { useStoreReviewList } from '../../hooks/store/storeReviewListHook';
+import { useStoreTransactionList } from '../../hooks/store/storeTransactionListHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 
-// const NAV_LINKS = [
-//   { title : '_product.Products', href: '' },
-//   { title : '_extra.Reviews', href: '/reviews' },
-//   { title : '_discount.Discounts', href: '/discounts' },
-//   { title : '_order.Orders', href: '/orders' },
-//   { title : '_transaction.Transactions', href: '/transactions' }
-// ];
+const NAV_LINKS = [
+  { title : '_product.Products', href: '' },
+  { title : '_extra.Reviews', href: '/reviews' },
+  { title : '_discount.Discounts', href: '/discounts' },
+  { title : '_order.Orders', href: '/orders' },
+  { title : '_transaction.Transactions', href: '/transactions' }
+];
 
 
-// function Transactions() {
+function StoreTransactionsList() {
+
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    }, 
+  } = useAppContext();
   
-  //   const { ID } = useParams();
+  const [
+    transactions, 
+    transactionsFetchStatus, 
+    transactionsPage, 
+    transactionsNumberOfPages, 
+    refetch
+  ] = useStoreTransactionList(adminToken);
+
+  return (
+    <TransactionList
+      transactions={transactions}
+      transactionsFetchStatus={transactionsFetchStatus}
+      transactionsPage={transactionsPage}
+      transactionsNumberOfPages={transactionsNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
+
+function StoreOrdersList() {
+
+  const { 
+    admin: { 
+      admin: {
+        adminToken
+      }
+    }
+  } = useAppContext();
+
+  const [
+    orders, 
+    ordersFetchStatus, 
+    ordersPage, 
+    ordersNumberOfPages, 
+    refetch,
+  ] = useStoreOrderList(adminToken);
+
+  return (
+    <OrderList 
+      orders={orders}
+      ordersFetchStatus={ordersFetchStatus}
+      ordersPage={ordersPage}
+      ordersNumberOfPages={ordersNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
+
+function StoreDiscountsList() {
+
+  const {
+    admin: { 
+      admin: {
+        adminToken
+      }
+    } 
+  } = useAppContext();
+
+  const [
+    discounts, 
+    discountsFetchStatus, 
+    discountsPage, 
+    discountsNumberOfPages, 
+    refetch
+  ] = useStoreDiscountList(adminToken);
   
-  //   const { 
-  //     user: { user }, 
-  //     stores: {
-  //       transactions: {
-  //         transactions,
-  //         transactionsFetchStatus,
-  //         transactionsPage,
-  //         transactionsNumberOfPages
-  //       }
-  //     }, 
-  //     storesDispatch 
-  //   } = useAppContext();
+  return (
+    <DiscountList
+      discounts={discounts}
+      discountsFetchStatus={discountsFetchStatus}
+      discountsPage={discountsPage}
+      discountsNumberOfPages={discountsNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
+
+function StoreReviewsList() {
+
+  const {
+    admin: { 
+      admin: {
+        adminToken
+      }
+    } 
+  } = useAppContext();
   
-  //   useEffect(()=>{
-  //     if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
-  //       const api = new TransactionApi(user.api_token);
-  //       api.getListByStore(ID, transactionsPage, storesDispatch);
-  //     }
-  //   });
+  const [
+    reviews, 
+    reviewsFetchStatus, 
+    reviewsPage, 
+    reviewsNumberOfPages, 
+    refetch
+  ] = useStoreReviewList(adminToken);
+
+  return (
+    <ReviewList 
+      reviews={reviews}
+      reviewsFetchStatus={reviewsFetchStatus}
+      reviewsPage={reviewsPage}
+      reviewsNumberOfPages={reviewsNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
+
+function StoreProductsList() {
+
+  const {
+    admin: { 
+      admin: {
+        adminToken
+      }
+    } 
+  } = useAppContext();
+
+  const [
+    products, 
+    productsFetchStatus, 
+    productsPage, 
+    productsNumberOfPages, 
+    refetch
+  ] = useStoreProductList(adminToken);
   
-  //   function refetchTransactions() {
-  //     if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
-  //       storesDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING));
-  //   }
-  
-  //   return (
-  //     <div>
-  //       <div className="container-x">
-  //         <InfiniteScroll
-  //           dataLength={transactions.length}
-  //           next={refetchTransactions}
-  //           hasMore={useHasMoreToFetchViaScroll(transactionsPage, transactionsNumberOfPages, transactionsFetchStatus)}
-  //           >
-  //           <ul className="list-2-x">
-  //             { 
-  //               useListRender(
-  //                 transactions, 
-  //                 transactionsFetchStatus,
-  //                 (item, i)=> <TransactionItem key={`transaction-${i}`} transaction={item} />, 
-  //                 (k)=> <li key={k}> <Loading /> </li>, 
-  //                 (k)=> <li key={k}> <Reload action={refetchTransactions} /> </li>,
-  //                 (k)=> <li key={k}> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>, 
-  //                 (k)=> <li key={k}> <FetchMoreButton action={refetchTransactions} /> </li>,
-  //               )
-  //             }
-  //           </ul>
-  //         </InfiniteScroll>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-  
-  // function Orders() {
-  
-  //   const { ID } = useParams();
-    
-  //   const { 
-  //     user: { user }, 
-  //     stores: {
-  //       orders: {
-  //         orders,
-  //         ordersFetchStatus,
-  //         ordersPage,
-  //         ordersNumberOfPages
-  //       }
-  //     }, 
-  //     storesDispatch 
-  //   } = useAppContext();
-  
-  //   useEffect(()=> {
-  //     if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
-  //       const api = new OrderApi(user.api_token);
-  //       api.getListByStore(ID, ordersPage, storesDispatch);
-  //     }
-  //   });
-  
-  //   function refetchOrders() {
-  //     if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-  //       storesDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING));
-  //   }
-  
-  //   return (
-  //     <div>
-  //        <div className="container-x">
-            
-  //         <InfiniteScroll
-  //           dataLength={orders.length}
-  //           next={refetchOrders}
-  //           hasMore={useHasMoreToFetchViaScroll(ordersPage, ordersNumberOfPages, ordersFetchStatus)}
-  //           >
-  //           <ul className="list-2-x">
-  //             { 
-  //               useListRender(
-  //                 orders, 
-  //                 ordersFetchStatus,
-  //                 (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/order/${item.id}`} appType={AdminApp.TYPE} />, 
-  //                 (k)=> <li key={k}> <Loading /> </li>, 
-  //                 (k)=> <li key={k}> <Reload action={refetchOrders} /> </li>,
-  //                 (k)=> <li key={k}> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>, 
-  //                 (k)=> <li key={k}> <FetchMoreButton action={refetchOrders} /> </li>,
-  //               )
-  //             }
-  //           </ul>
-  //         </InfiniteScroll>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  return (
+    <ProductList 
+      products={products}
+      productsFetchStatus={productsFetchStatus}
+      productsPage={productsPage}
+      productsNumberOfPages={productsNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
 
 export default function Store() {
-  return <div></div>;
+
+  const match = useRouteMatch();
+
+  const {
+    admin: { 
+      admin: {
+        adminToken
+      }
+    } 
+  } = useAppContext();
+
+  const [
+    store, 
+    storeFetchStatus, 
+    refetch
+  ] = useStoreFetch(adminToken);
+
+
+  useHeader({ 
+    title: `${store?.user.name ?? 'Loading...'} - Store`,
+    headerTitle: '_store.Store'
+  });
+
+  return (
+    <section>
+
+      <div className="container-x">
+        {
+          useRenderOnDataFetched(
+            storeFetchStatus,
+            ()=> <StoreProfile store={store} navLinks={NAV_LINKS} isAdmin={true} />,
+            ()=> <Loading />,
+            ()=> <Reload action={refetch} />,
+            ()=> <NotFound />,
+            ()=> <Forbidden />,
+          )
+        }
+      </div>
+
+      {
+        store && 
+        <Switch>
+          <Route path={`${match.url}/transactions`} render={()=> <StoreTransactionsList />} />
+          <Route path={`${match.url}/orders`} render={()=> <StoreOrdersList />} />
+          <Route path={`${match.url}/discounts`} render={()=> <StoreDiscountsList />} />
+          <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList />} />
+          <Route path={match.url} render={()=> <StoreProductsList />} />
+        </Switch>
+      }
+
+    </section>
+  );
 }
+
