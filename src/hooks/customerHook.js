@@ -163,7 +163,7 @@ export function useCustomerLogin() {
     [data, fetchStatus, dialog, dispatch, storeToken]
   );
 
-  return [onSubmit, dialog, formError]
+  return [onSubmit, dialog, formError];
 }
 
 

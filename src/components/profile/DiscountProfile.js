@@ -101,7 +101,7 @@ export default function DiscountProfile(
           <UserDescList 
             users={[
               {
-                href: `/store/${store.id}`,
+                href: isStore ? '/profile' : `/store/${store.id}`,
                 photo: store.user.photo.href,
                 name: store.user.name,
                 title: '_store.Store'

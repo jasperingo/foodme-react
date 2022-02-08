@@ -9,7 +9,7 @@ import { useOrderStatus } from '../../hooks/order/orderViewHook';
 import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
 import OrderItemItem from '../list_item/OrderItemItem';
 
-export default function OrderProfile({ order, isCustomer }) {
+export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm }) {
   
   const { t } = useTranslation();
 
@@ -38,6 +38,31 @@ export default function OrderProfile({ order, isCustomer }) {
       title: '_order.Delivered_by'
     });
   }
+  
+  const buttons = [];
+
+  if (isCustomer) {
+    buttons.push({
+      text: '_extra.Cancel',
+      color: 'btn-color-red',
+      action: onCancelClicked
+    });
+  }
+
+  if (isStore || isDeliveryFirm) {
+    buttons.push(
+      {
+        text: '_extra.Accept',
+        color: 'btn-color-primary',
+        action: onAcceptClicked
+      },
+      {
+        text: '_extra.Decline',
+        color: 'btn-color-red',
+        action: onDeclineClicked
+      }
+    );
+  }
 
   function onCancelClicked() {
     console.log('Cancel...')
@@ -58,23 +83,7 @@ export default function OrderProfile({ order, isCustomer }) {
 
           <ProfileHeaderText
             text={`#${order.number}`}
-            buttons={[
-              {
-                text: '_extra.Accept',
-                color: 'btn-color-primary',
-                action: onAcceptClicked
-              },
-              {
-                text: '_extra.Cancel',
-                color: 'btn-color-red',
-                action: onCancelClicked
-              },
-              {
-                text: '_extra.Decline',
-                color: 'btn-color-red',
-                action: onDeclineClicked
-              }
-            ]}
+            buttons={buttons}
             />
 
           <ProfileDetailsText

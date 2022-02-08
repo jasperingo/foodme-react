@@ -34,37 +34,51 @@ export default function AddressForm(
 
   const defaultInput = useRef(null);
 
-  const [state, setState] = useState(address.state);
+  const [state, setState] = useState(address?.state);
 
   useEffect(
     ()=> {
       if (formSuccess && clearOnSuccess) {
-        titleInput.current.value =  '';
+        if (hasTitleAndType) {
+          titleInput.current.value =  '';
+          defaultInput.current.value =  '';
+        }
         streetInput.current.value =  '';
         cityInput.current.value =  '';
         stateInput.current.value =  '';
-        defaultInput.current.value =  '';
       }
     }, 
-    [formSuccess, clearOnSuccess]
+    [formSuccess, clearOnSuccess, hasTitleAndType]
   );
-
 
   function onFormSubmit(e) {
     e.preventDefault();
-    onSubmit(
-      titleInput.current.value,
-      streetInput.current.value,
-      stateInput.current.value,
-      cityInput.current.value,
-      defaultInput.current.value,
-
-      titleInput.current.validity,
-      streetInput.current.validity,
-      stateInput.current.validity,
-      cityInput.current.validity,
-      defaultInput.current.validity
-    );
+    if (hasTitleAndType) {
+      onSubmit(
+        titleInput.current.value,
+        streetInput.current.value,
+        stateInput.current.value,
+        cityInput.current.value,
+        defaultInput.current.value,
+  
+        titleInput.current.validity,
+        streetInput.current.validity,
+        stateInput.current.validity,
+        cityInput.current.validity,
+        defaultInput.current.validity
+      );
+    } else {
+      onSubmit(
+        streetInput.current.value,
+        stateInput.current.value,
+        cityInput.current.value,
+  
+        streetInput.current.validity,
+        stateInput.current.validity,
+        cityInput.current.validity
+      );
+    }
+   
   }
 
   return (
@@ -82,7 +96,7 @@ export default function AddressForm(
           error={titleError}
           ID="address-title-input" 
           label="_extra.Title" 
-          value={ address.title } 
+          value={ address?.title } 
           required={true}
           />
       }
@@ -92,7 +106,7 @@ export default function AddressForm(
         error={streetError}
         ID="address-street-input" 
         label="_user.Street" 
-        value={ address.street } 
+        value={ address?.street } 
         required={true}
         />
 
@@ -101,7 +115,7 @@ export default function AddressForm(
         error={stateError}
         ID="address-state-input" 
         label="_user.State" 
-        value={ address.state } 
+        value={ address?.state } 
         required={true}
         options={locations.map(i=> ({ key: i.state, value: i.state}))}
         onChange={(e)=> setState(e.target.value)}
@@ -112,7 +126,7 @@ export default function AddressForm(
         error={cityError}
         ID="address-city-input" 
         label="_user.City" 
-        value={ address.city } 
+        value={ address?.city } 
         required={true}
         options={locations.find(i=> i.state === state)?.lgas.map(i=> ({ key: i, value: i}))}
         />
@@ -124,7 +138,7 @@ export default function AddressForm(
           error={defaultError}
           ID="address-default-input" 
           label="_user.Default_address" 
-          value={ address.type } 
+          value={ address?.type } 
           required={true}
           options={[
             { key: 'default', value: 'Yes' },

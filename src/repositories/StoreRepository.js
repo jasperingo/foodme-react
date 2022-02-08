@@ -3,6 +3,62 @@ import Fetch from "./Fetch";
 
 export default class StoreRepository extends Fetch {
 
+  create(formData) {
+    return this.apiFetch(
+      'store/register',
+      'POST',
+      JSON.stringify(formData)
+    );
+  }
+
+  auth(formData) {
+    return this.apiFetch(
+      'store/login',
+      'POST',
+      JSON.stringify(formData)
+    );
+  }
+
+  update(id, formData) {
+    return this.apiFetch(
+      `store/${id}/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
+  updatePhoto(id, formData) {
+    return this.apiFetch(
+      `store/${id}/photo/update`, 
+      'PUT',
+      formData
+    );
+  }
+
+  updateWithdrawalAccount(id, formData) {
+    return this.apiFetch(
+      `store/${id}/withdrawal-account/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+  
+  updateAddress(id, formData) {
+    return this.apiFetch(
+      `store/${id}/address/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
+  updateWorkingHours(id, formData) {
+    return this.apiFetch(
+      `store/${id}/working-hours/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
   updateStatus(id, formData) {
     return this.apiFetch(
       `store/${id}/status/update`,
@@ -82,9 +138,23 @@ export default class StoreRepository extends Fetch {
     );
   }
 
+  getTransactionBalance(id) {
+    return this.apiFetch(
+      `store/${id}/transaction/balance`,
+      'GET'
+    );
+  }
+
   getTransactionList(id, page) {
     return this.apiFetch(
       `store/${id}/transaction/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
+  getSavedCartsList(id, page) {
+    return this.apiFetch(
+      `store/${id}/saved-cart/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
       'GET'
     );
   }

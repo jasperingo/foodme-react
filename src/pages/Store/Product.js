@@ -1,58 +1,110 @@
 
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router';
-import ProductApi from '../../api/ProductApi';
-import StoreApp from '../../apps/StoreApp';
-import ProductProfile from '../../components/ProductProfile';
-import ProductReviewsList from '../../components/ProductReviewsList';
-import { FETCH_STATUSES, getProductFetchStatusAction, PRODUCT } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
+import React from 'react';
+import Forbidden from '../../components/Forbidden';
+import H4Heading from '../../components/H4Heading';
+import Loading from '../../components/Loading';
+import NotFound from '../../components/NotFound';
+import ProductProfile from '../../components/profile/ProductProfile';
+import ReviewList from '../../components/profile/section/ReviewList';
+import Reload from '../../components/Reload';
+import ReviewSummary from '../../components/review/ReviewSummary';
+import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useProductFetch } from '../../hooks/product/productFetchHook';
+import { useProductReviewList } from '../../hooks/product/productReviewListHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
+
+function ProductReviewList() {
+
+  const {
+    store: { 
+      store: {
+        storeToken
+      }
+    },
+    product: {
+      product: {
+        product
+      } 
+    }
+  } = useAppContext();
+
+  const [
+    reviews, 
+    reviewsFetchStatus, 
+    reviewsPage, 
+    reviewsNumberOfPages, 
+    refetch
+  ] = useProductReviewList(storeToken);
+  
+  return (
+    <>
+
+      <div className="mt-2 container-x">
+
+        <H4Heading text="_review.Reviews" />
+      
+        <ReviewSummary summary={product.review_summary} />
+
+      </div>
+
+      <ReviewList 
+        reviews={reviews}
+        reviewsFetchStatus={reviewsFetchStatus}
+        reviewsPage={reviewsPage}
+        reviewsNumberOfPages={reviewsNumberOfPages}
+        refetch={refetch}
+        />
+
+    </>
+  );
+}
+
 
 export default function Product() {
 
-  const pID = parseInt(useParams().ID);
-
-  const { 
-    user: { user }, 
-    products: {
-      product: {
-        product,
-        productFetchStatus
+  const {
+    store: { 
+      store: {
+        storeToken
       }
-    }, 
-    productsDispatch 
-  } = useAppContext();
-  
-  useEffect(()=> {
-    if (product !== null && pID !== product.id) {
-      productsDispatch({ type: PRODUCT.UNFETCH });
-    } else if (productFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new ProductApi(user.api_token);
-      api.get(pID, productsDispatch);
     }
-  }, [pID, user, product, productFetchStatus, productsDispatch]);
+  } = useAppContext();
 
-  function refetchProduct() {
-    if (productFetchStatus !== FETCH_STATUSES.LOADING) 
-      productsDispatch(getProductFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  const [
+    product, 
+    productFetchStatus, 
+    refetch
+  ] = useProductFetch(storeToken);
+
+  useHeader({ 
+    title: `${product?.title ?? 'Loading...'} - Product`,
+    headerTitle: '_product.Product',
+    topNavPaths: ['/cart', '/search']
+  });
 
   return (
     <section>
-      <div className="md:container mx-auto">
-        
-        <ProductProfile 
-          product={product} 
-          productFetchStatus={productFetchStatus} 
-          appType={StoreApp.TYPE} 
-          refetchProduct={refetchProduct} 
-          />
+      {
+        useRenderOnDataFetched(
+          productFetchStatus,
+          ()=> (
+            <ProductProfile 
+              product={product} 
+              isStore={true} 
+              />
+          ),
+          ()=> <div className="container-x"> <Loading /> </div>,
+          ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
+          ()=> <div className="container-x"> <NotFound /> </div>,
+          ()=> <div className="container-x"> <Forbidden /> </div>,
+        )
+      }
 
-        <div className="md:flex md:items-start md:gap-4 md:py-4">
-          { product && <ProductReviewsList pID={pID} /> }
-        </div>
-
-      </div>
+      { 
+        product && 
+        <ProductReviewList />
+      }
     </section>
   );
 }

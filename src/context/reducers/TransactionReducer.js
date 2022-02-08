@@ -41,7 +41,7 @@ export default function TransactionReducer (state, action) {
         transactionFetchStatus: transactionState.transactionFetchStatus
       };
     
-    case TRANSACTION.FETCH_STATUS_CHANGED :
+    case TRANSACTION.FETCH_STATUS_CHANGED:
       return {
         ...state,
         transactionID: action.payload.id,
@@ -49,7 +49,7 @@ export default function TransactionReducer (state, action) {
         transactionFetchStatus: action.payload.fetchStatus
       };
     
-    case TRANSACTION.FETCHED :
+    case TRANSACTION.FETCHED:
       return {
         ...state,
         transactionLoading: false,
@@ -57,24 +57,6 @@ export default function TransactionReducer (state, action) {
         transactionID: action.payload.transaction.id, 
         transactionFetchStatus: action.payload.fetchStatus,
       };
-
-    // case WALLET.FETCH_STATUS_CHANGED:
-    //   return {
-    //     ...state,
-    //     wallet: {
-    //       ...state.wallet,
-    //       walletFetchStatus: action.payload
-    //     }
-    //   };
-    
-    // case WALLET.FETCHED:
-    //   return {
-    //     ...state,
-    //     wallet: {
-    //       wallet: action.payload.amount, 
-    //       walletFetchStatus: FETCH_STATUSES.DONE,
-    //     }
-    //   };
     
     default:
       return state;

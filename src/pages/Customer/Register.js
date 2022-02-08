@@ -1,7 +1,5 @@
 
 import React, { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
 import FormButton from '../../components/form/FormButton';
 import FormMessage from '../../components/form/FormMessage';
@@ -9,6 +7,8 @@ import FormField from '../../components/form/FormField';
 import SocialLoginList from '../../components/SocialLoginList';
 import { useCustomerCreate } from '../../hooks/customerHook';
 import { useHeader } from '../../hooks/headerHook';
+import RegistrationAgreementLink from '../../components/form/RegistrationAgreementLink';
+import LoginIfHasAccountLink from '../../components/form/LoginIfHasAccountLink';
 
 export default function Register({ guestMiddleware }) {
 
@@ -16,8 +16,6 @@ export default function Register({ guestMiddleware }) {
     title: `Register - DailyNeeds`,
     headerTitle: '_user.Register'
   });
-
-  const { t } = useTranslation();
 
   const firstNameInput = useRef(null);
 
@@ -111,17 +109,11 @@ export default function Register({ guestMiddleware }) {
             minLength={6}
             />
 
-          <div className="mb-4 text-sm">
-            <span>{ t('By_registering_you_agree_to_our') }</span>
-            <Link to="/terms-of-service" className="text-blue-500 font-bold"> { t('_extra.Terms_of_service') }.</Link>
-          </div>
+          <RegistrationAgreementLink />
 
           <FormButton text="Register" />
 
-          <div className="mb-4 text-center text-sm">
-            <span>{ t('Already_have_an_account') } </span>
-            <Link to="/login" className="text-blue-500 font-bold">{ t('login') }</Link>
-          </div>
+          <LoginIfHasAccountLink />
 
           <SocialLoginList href="/login" />
 

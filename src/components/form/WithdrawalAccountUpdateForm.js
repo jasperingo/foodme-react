@@ -57,7 +57,7 @@ export default function UpdateWithdrawalAccountForm(
         ID="bank-name-input" 
         label="_transaction.Bank_name" 
         required={true}
-        value={ banks.find(i=> i.name === account.bank_name)?.code }
+        value={ banks.find(i=> i.name === account?.bank_name)?.code }
         options={banks.map(i=> ({ key: i.code, value: i.name }))}
         />
 
@@ -67,7 +67,7 @@ export default function UpdateWithdrawalAccountForm(
         ID="bank-account-name-input" 
         label="_transaction.Account_name" 
         required={true}
-        value={ account.account_name }
+        value={ account?.account_name }
         />
       
       <FormField 
@@ -79,7 +79,7 @@ export default function UpdateWithdrawalAccountForm(
         required={true}
         minLength={10}
         maxLength={10}
-        value={ account.account_number }
+        value={ account?.account_number }
         />
 
       <FormSelect 
@@ -88,7 +88,7 @@ export default function UpdateWithdrawalAccountForm(
         ID="bank-account-type-input" 
         label="_transaction.Account_type" 
         required={true}
-        value={ account.account_type }
+        value={ account?.account_type }
         options={[
           { key: 'savings', value: 'Savings' },
           { key: 'current', value: 'Current' }

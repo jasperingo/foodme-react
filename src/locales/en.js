@@ -54,6 +54,9 @@ export const TRANSLATIONS_EN = {
     Log_out: 'Log out',
     Register: 'Register',
     Dont_have_an_account: 'Dont have an account',
+    Already_have_an_account: 'Already have an account',
+    By_registering_you_agree_to_our: 'By registering you agree to our',
+    _admin_email_registration_tip: 'Enter your DailyNeeds account email, if you haven\'t created a DailyNeeds account, please create one before you continue.',
     Forgot_your_password: 'Forgot your password',
     Forgot_password: 'Forgot password',
     Reset_password: 'Reset password',
@@ -71,7 +74,10 @@ export const TRANSLATIONS_EN = {
     Email: 'Email',
     Phone_number: 'Phone number',
     Registration_date: 'Registration date',
+    Administrator_email: 'Administrator email',
+    Administrator_password: 'Administrator password',
     Password: 'Password',
+    Edit_admin_password: 'Edit admin password',
     Edit_password: 'Edit password',
     New_password: 'New password',
     Change_password: 'Change password',
@@ -80,6 +86,9 @@ export const TRANSLATIONS_EN = {
     State: 'State',
     City: 'City',
     Save_address: 'Save address',
+    Edit_working_hours: 'Edit working hours',
+
+
   },
 
   _extra: {
@@ -104,6 +113,8 @@ export const TRANSLATIONS_EN = {
     No_price: 'No price',
     Reviews: 'Reviews',
     Edit: 'Edit',
+    Add: 'Add',
+    Update: 'Update',
     Delete: 'Delete',
     Total: 'Total',
     Sub_total: 'Sub total',
@@ -153,7 +164,25 @@ export const TRANSLATIONS_EN = {
     Process: 'Process',
     Failed: 'Failed',
     Accept: 'Accept',
-    Decline: 'Decline'
+    Decline: 'Decline',
+
+    Active: 'Active',
+    Activating: 'Activating',
+    Deactivating: 'Deactivating',
+
+    Sunday: 'Sunday',
+    Monday: 'Monday',
+    Tuesday: 'Tuesday',
+    Wednesday: 'Wednesday',
+    Thursday: 'Thursday',
+    Friday: 'Friday',
+    Saturday: 'Saturday',
+
+    Opening: 'Opening',
+    Closing: 'Closing',
+    Day: 'Day',
+    Pick_day_of_the_week: 'Pick day of the week',
+
   },
 
   _search: {
@@ -180,6 +209,7 @@ export const TRANSLATIONS_EN = {
     Store: 'Store',
     Stores: 'Stores',
     Edit_store: 'Edit store',
+    Store_name: 'Store name',
     Recent_stores: 'Recent stores',
     Stores_on_Dailyneeds: 'Stores on Dailyneeds',
     Become_a_store_partner : 'Become a store partner',
@@ -193,6 +223,7 @@ export const TRANSLATIONS_EN = {
 
   _discount: {
     Discount: 'Discount',
+    Add_discount: 'Add discount',
     Discounts: 'Discounts',
     Discount_amount: 'Discount amount',
     Discount_value: 'Discount value',
@@ -376,6 +407,8 @@ export const TRANSLATIONS_EN = {
     This_field_is_required: 'This field is required',
     This_field_is_invalid: 'This field is invalid',
     Email_already_exists: 'Email already exists',
+    Empty_working_hours_list: 'You have not added any working hour yet',
+    invalid_working_hours_list: 'Your working hours contain an invalid value',
     Password_must_be_a_minimium_of_5_characters: 'Password must be a minimium of 6 characters',
     _Minimium_withdrawal: 'Can\'t withdraw 1000 and below',
     _Maximium_withdrawal: 'Can\'t withdraw more than your balance',

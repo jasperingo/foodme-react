@@ -1,18 +1,37 @@
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
+import User from '../models/User';
 import { FETCH_STATUSES } from "../repositories/Fetch";
 import { useAppContext } from './contextHook';
+
+
+export function useUserStatus(status) {
+  switch(status) {
+
+    case User.STATUS_ACTIVE:
+      return '_extra.Active';
+
+    case User.STATUS_ACTIVATING:
+      return '_extra.Activating';
+
+    case User.STATUS_DEACTIVATED:
+      return '_extra.Deactivating';
+
+    default:
+      return status;
+  }
+}
 
 export function useURLQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
 export function useMoneyFormatter() {
-  return (amount)=> <>&#8358; {amount.toFixed(2)}</>;
+  return (amount)=> <>&#8358; {amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</>;
 }
 
 export function useMoneyFormat(amount) {
-  return <>&#8358; {amount.toFixed(2)}</>;
+  return <>&#8358; {amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</>;
 }
 
 export function useDateFormat(date, type) {

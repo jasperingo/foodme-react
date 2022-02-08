@@ -4,6 +4,8 @@ export const storeState = {
 
   store: null,
   storeID: null,
+  storeToken: null,
+  storeAdminID: null,
   storeLoading: true,
   storeFetchStatus: FETCH_STATUSES.LOADING,
 
@@ -43,7 +45,12 @@ export const storeState = {
   transactionsPage: 1,
   transactionsLoading: true,
   transactionsNumberOfPages: 0,
-  transactionsFetchStatus: FETCH_STATUSES.LOADING
+  transactionsFetchStatus: FETCH_STATUSES.LOADING,
+
+  
+  transactionBalance: null,
+  transactionBalanceLoading: true,
+  transactionBalanceFetchStatus: FETCH_STATUSES.LOADING,
 
 };
 

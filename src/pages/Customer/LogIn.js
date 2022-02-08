@@ -1,12 +1,11 @@
 
 import React, { useRef } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
 import ForgotPasswordLink from '../../components/form/ForgotPasswordLink';
 import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
+import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLink';
 import SocialLoginList from '../../components/SocialLoginList';
 import { useCustomerLogin } from '../../hooks/customerHook';
 import { useHeader } from '../../hooks/headerHook';
@@ -17,8 +16,6 @@ export default function LogIn({ guestMiddleware }) {
     title: 'Log In - DailyNeeds',
     headerTitle: '_user.Log_in'
   });
-
-  const { t } = useTranslation();
 
   const emailInput = useRef(null);
 
@@ -66,10 +63,7 @@ export default function LogIn({ guestMiddleware }) {
 
           <FormButton text="_user.Log_in" />
 
-          <div className="mb-4 text-center text-sm">
-            <span>{ t('_user.Dont_have_an_account') } </span>
-            <Link to="/register" className="text-blue-500 font-bold">{ t('_user.Register') }</Link>
-          </div>
+          <RegisterIfNoAccountLink />
 
           <SocialLoginList href="/login" />
 

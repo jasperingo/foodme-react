@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Icon from '@mdi/react';
 import AlertDialog from './dialog/AlertDialog';
-import { useCategoryColor } from '../hooks/viewHook';
+import { useCategoryColor, useUserStatus } from '../hooks/viewHook';
 
 function MenuItem({ icon, text, href, index }) {
 
@@ -70,7 +70,12 @@ function AccountMenuList({ items, onLogout }) {
   );
 }
 
-function AccountMenuTop({ photo, name }) {
+function AccountMenuTop({ photo, name, status }) {
+
+  const { t } = useTranslation();
+
+  status = useUserStatus(status);
+
   return (
     <div className="py-2">
       <img 
@@ -81,14 +86,18 @@ function AccountMenuTop({ photo, name }) {
         className="w-20 h-20 rounded-full mx-auto my-2 border"
         />
       <div className="text-center font-bold text-lg">{ name }</div>
+      {
+        status && 
+        <div className="text-center text-sm bg-color-gray rounded w-min mx-auto px-2 mt-1">{ t(status) }</div>
+      }
     </div>
   );
 }
 
-export default function AccountMenuView({ photo, name, items, onLogOut }) {
+export default function AccountMenuView({ photo, name, status, items, onLogOut }) {
   return (
     <div className="max-w-lg mx-auto md:shadow md:my-6 md:py-2 md:px-4 md:rounded">
-      <AccountMenuTop photo={photo} name={name} />
+      <AccountMenuTop photo={photo} name={name} status={status} />
       <AccountMenuList items={items} onLogout={onLogOut} />
     </div>
   );

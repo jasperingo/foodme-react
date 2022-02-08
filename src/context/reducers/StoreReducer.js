@@ -11,6 +11,18 @@ export default function StoreReducer (state, action) {
   
   switch (action.type) {  
 
+    case STORE.UNAUTHED:
+      return { ...storeState };
+
+    case STORE.AUTHED:
+      return {
+        ...state,
+        store: action.payload.store,
+        storeToken: action.payload.token,
+        storeAdminID: action.payload.adminID,
+        storeFetchStatus: action.payload.fetchStatus
+      };
+
     case STORE.UNFETCHED: 
       return {
         ...storeState,
@@ -140,6 +152,29 @@ export default function StoreReducer (state, action) {
         transactionsFetchStatus: action.payload.fetchStatus,
         transactionsNumberOfPages: action.payload.numberOfPages,
         transactions: [...state.transactions, ...action.payload.list],
+      };
+
+    case TRANSACTION.BALANCE_UNFETCHED:
+      return {
+        ...state,
+        transactionBalanceLoading: true,
+        transactionBalance: storeState.transactionBalance,
+        transactionBalanceFetchStatus: storeState.transactionBalanceFetchStatus
+      };
+
+    case TRANSACTION.BALANCE_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        transactionBalanceLoading: action.payload.loading,
+        transactionBalanceFetchStatus: action.payload.fetchStatus
+      };
+    
+    case TRANSACTION.BALANCE_FETCHED:
+      return {
+        ...state,
+        transactionBalanceLoading: false,
+        transactionBalance: action.payload.balance,
+        transactionBalanceFetchStatus: action.payload.fetchStatus
       };
 
 

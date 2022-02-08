@@ -4,7 +4,7 @@ import React, { useState, forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { visibilityIcon, visibilityOffIcon } from '../../assets/icons';
 
-const FormField = forwardRef(function ({ ID, label, type, error, value = '', required, minLength, maxLength, step, min, max }, ref) {
+const FormField = forwardRef(function ({ ID, label, type, error, value = '', required, minLength, maxLength, step, min, max, tip }, ref) {
 
   const { t } = useTranslation();
 
@@ -41,11 +41,10 @@ const FormField = forwardRef(function ({ ID, label, type, error, value = '', req
           </button>
         }
         <div className="text-red-500 text-sm">{ t(error) }</div>
+        <div className="text-color-gray text-sm mt-1">{ t(tip) }</div>
     </div>
   );
 });
 
 
 export default FormField;
-
-

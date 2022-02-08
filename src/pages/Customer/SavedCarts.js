@@ -54,10 +54,10 @@ export default function SavedCarts() {
           )}
           footer={useRenderListFooter(
             savedCartsFetchStatus,
-            ()=> <li key="transactions-footer"> <Loading /> </li>, 
-            ()=> <li key="transactions-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="transactions-footer" className="col-span-2"> <EmptyList text="_empty.No_saved_cart" icon={cartIcon} /> </li>,
-            ()=> <li key="transactions-footer"> <FetchMoreButton action={refetch} /> </li>
+            ()=> <li key="saved-cart-footer"> <Loading /> </li>, 
+            ()=> <li key="saved-cart-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="saved-cart-footer" className="col-span-2"> <EmptyList text="_empty.No_saved_cart" icon={cartIcon} /> </li>,
+            ()=> <li key="saved-cart-footer"> <FetchMoreButton action={refetch} /> </li>
           )}
           />
 

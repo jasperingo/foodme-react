@@ -1,67 +1,39 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { storeIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
+import LoadingDialog from '../../components/dialog/LoadingDialog';
+import ForgotPasswordLink from '../../components/form/ForgotPasswordLink';
+import FormButton from '../../components/form/FormButton';
+import FormField from '../../components/form/FormField';
+import FormMessage from '../../components/form/FormMessage';
+import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLink';
+import { useStoreLogin } from '../../hooks/store/storeLoginHook';
 
 
 export default function LogIn({ guestMiddleware }) {
 
-  // const { t } = useTranslation();
+  const nameInput = useRef(null);
 
-  // const { userDispatch, addressesDispatch } = useAppContext();
+  const emailInput = useRef(null);
 
-  // const emailInput = useRef(null);
+  const passwordInput = useRef(null);
 
-  // const passwordInput = useRef(null);
 
-  // const [dialog, setDialog] = useState(null);
-
-  // const [formError, setFormError] = useState('');
-
-  // const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const [onSubmit, dialog, formError] = useStoreLogin();
 
   
   function onLoginSubmit(e) {
     e.preventDefault();
-    
-  //   if (!emailInput.current.validity.valid || !passwordInput.current.validity.valid) {
-  //     setFormError('_errors.Credentials_are_incorrect');
-  //   } else {
-  //     setFormError('');
-  //     setFetchStatus(FETCH_STATUSES.LOADING);
-  //     setDialog(LOADING_DIALOG);
-  //   }
+    onSubmit(
+      nameInput.current.value,
+      emailInput.current.value,
+      passwordInput.current.value,
+      nameInput.current.validity,
+      emailInput.current.validity,
+      passwordInput.current.validity,
+    );
   }
-
-  // useEffect(()=> {
-
-  //   if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-  //     const api = new StoreApi();
-  //     api.auth({
-  //       email: emailInput.current.value,
-  //       password: passwordInput.current.value,
-  //       confirm_password: passwordInput.current.value
-  //     }).then(res=> {
-  //       res.data.TYPE = User.TYPE_STORE;
-  //       userDispatch({ type: USER.AUTHED, payload: res.data });
-  //     }).catch(err=> {
-
-  //       setFetchStatus(FETCH_STATUSES.ERROR);
-
-  //       if (err.errors) {
-  //         setFormError(err.errors.msg);
-  //       } else {
-  //         setFormError('_errors.Something_went_wrong');
-  //       }
-  //     });
-
-  //   } else if (dialog !== null) {
-  //     setDialog(null);
-  //   }
-
-  // }, [fetchStatus, dialog, userDispatch, addressesDispatch]);
-
   
   return guestMiddleware() || (
     <section>
@@ -72,12 +44,19 @@ export default function LogIn({ guestMiddleware }) {
 
           <AuthFormHeader icon={storeIcon} text="_user.Welcome_back" />
 
-          {/* { formError && <FormMessage text={formError} /> }
+          <FormMessage error={formError} />
+
+          <FormField
+            ref={nameInput} 
+            ID="name-input" 
+            label="_store.Store_name" 
+            required={true}
+            />
 
           <FormField
             ref={emailInput} 
             ID="email-input" 
-            label="Email" 
+            label="_user.Administrator_email" 
             type="email"
             required={true}
             />
@@ -85,26 +64,24 @@ export default function LogIn({ guestMiddleware }) {
           <FormField 
             ref={passwordInput}
             ID="password-input" 
-            label="Password" 
+            label="_user.Administrator_password" 
             type="password" 
             required={true}
             minLength={6}
             />
 
-          <div className="mb-4 text-sm">
-            <Link to="/forgot-password" className="text-blue-500 font-bold">{ t('Forgot_your_password') }</Link>
-          </div>
+          <ForgotPasswordLink />
 
           <FormButton text="_user.Log_in" />
 
-          <div className="mb-4 text-center text-sm">
-            <span>{ t('Dont_have_an_account') } </span>
-            <Link to="/register" className="text-blue-500 font-bold">{ t('Register') }</Link>
-          </div> */}
+          <RegisterIfNoAccountLink />
 
         </form>
 
       </div>
+
+      { dialog && <LoadingDialog /> }
+
     </section>
   );
 }

@@ -35,6 +35,15 @@ export default class AdminRepository extends Fetch {
     );
   }
 
+  
+  updateStorePassword(id, formData) {
+    return this.apiFetch(
+      `administrator/${id}/store/password/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `administrator/${id}`,

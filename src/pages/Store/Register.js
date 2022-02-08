@@ -1,25 +1,22 @@
 
-import React, { useEffect, useRef } from 'react';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import StoreApi from '../../api/StoreApi';
+import React, { useRef } from 'react';
 import { storeIcon } from '../../assets/icons';
-import AlertDialog, { LOADING_DIALOG } from '../../components/AlertDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
-import FormButton from '../../components/FormButton';
-import FormField from '../../components/FormField';
-import FormMessage from '../../components/FormMessage';
-import FormSelect from '../../components/FormSelect';
-import { FETCH_STATUSES, USER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import User from '../../models/User';
+import LoadingDialog from '../../components/dialog/LoadingDialog';
+import FormButton from '../../components/form/FormButton';
+import FormField from '../../components/form/FormField';
+import FormMessage from '../../components/form/FormMessage';
+import FormSelect from '../../components/form/FormSelect';
+import LoginIfHasAccountLink from '../../components/form/LoginIfHasAccountLink';
+import RegistrationAgreementLink from '../../components/form/RegistrationAgreementLink';
+import Loading from '../../components/Loading';
+import Reload from '../../components/Reload';
+import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useStoreCreate } from '../../hooks/store/storeCreateHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
-export default function Register({ guestMiddleware }) {
-
-  const { t } = useTranslation();
-
-  const { userDispatch, addressesDispatch } = useAppContext();
+function RegisterForm({ guestMiddleware, stores }) {
 
   const nameInput = useRef(null);
 
@@ -29,114 +26,39 @@ export default function Register({ guestMiddleware }) {
 
   const phoneInput = useRef(null);
 
-  const passwordInput = useRef(null);
+  const adminEmailInput = useRef(null);
 
-  const [dialog, setDialog] = useState(null);
+  const adminPasswordInput = useRef(null);
 
-  const [formError, setFormError] = useState('');
-
-  const [nameError, setNameError] = useState('');
-
-  const [categoryError, setCategoryError] = useState('');
-
-  const [emailError, setEmailError] = useState('');
-
-  const [phoneError, setPhoneError] = useState('');
-
-  const [passwordError, setPasswordError] = useState('');
-  
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const [
+    onSubmit, 
+    dialog, 
+    formError, 
+    nameError, 
+    categoryError, 
+    emailError, 
+    phoneError, 
+    adminEmailError, 
+    adminPasswordError
+  ] = useStoreCreate();
 
   function onRegisterSubmit(e) {
     e.preventDefault();
-
-    let error = false;
-
-    setFormError('');
-    
-    if (!nameInput.current.validity.valid) {
-      error = true;
-      setNameError('_errors.This_field_is_required');
-    } else {
-      setNameError('');
-    }
-
-    if (!categoryInput.current.validity.valid) {
-      error = true;
-      setCategoryError('_errors.This_field_is_required');
-    } else {
-      setCategoryError('');
-    }
-
-    if (!emailInput.current.validity.valid) {
-      error = true;
-      setEmailError('_errors.This_field_is_required');
-    } else {
-      setEmailError('');
-    }
-
-    if (!phoneInput.current.validity.valid) {
-      error = true;
-      setPhoneError('_errors.This_field_is_required');
-    } else {
-      setPhoneError('');
-    }
-
-    if (!passwordInput.current.validity.valid) {
-
-      error = true;
-      
-      if (passwordInput.current.validity.tooShort) 
-        setPasswordError('_errors.Password_must_be_a_minimium_of_5_characters');
-      else 
-        setPasswordError('_errors.This_field_is_required');
-
-    } else {
-      setPasswordError('');
-    }
-    
-    if (!error) {
-      setFetchStatus(FETCH_STATUSES.LOADING);
-      setDialog(LOADING_DIALOG);
-    }
+    onSubmit(
+      nameInput.current.value, 
+      categoryInput.current.value, 
+      emailInput.current.value, 
+      phoneInput.current.value, 
+      adminEmailInput.current.value,
+      adminPasswordInput.current.value, 
+      nameInput.current.validity, 
+      categoryInput.current.validity, 
+      emailInput.current.validity, 
+      phoneInput.current.validity, 
+      adminEmailInput.current.validity, 
+      adminPasswordInput.current.validity
+    );
   }
-
-  useEffect(()=> {
-
-    if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-      const api = new StoreApi();
-      api.auth({
-        store_name: nameInput.current.value,
-        store_cat_id: categoryInput.current.value,
-        store_email: emailInput.current.value,
-        store_phone: phoneInput.current.value,
-        password: passwordInput.current.value,
-        confirm_password: passwordInput.current.value
-      }).then(res=> {
-        res.data.TYPE = User.TYPE_STORE;
-        userDispatch({ type: USER.AUTHED, payload: res.data });
-      }).catch(err=> {
-
-        setFetchStatus(FETCH_STATUSES.ERROR);
-
-        if (err.errors) {
-          setNameError(err.errors.store_name);
-          setCategoryError(err.errors.store_category);
-          setEmailError(err.errors.store_email);
-          setPhoneError(err.errors.store_phone);
-          setPasswordError(err.errors.password);
-        } else {
-          setFormError('_errors.Something_went_wrong');
-        }
-      });
-
-    } else if (dialog !== null) {
-      setDialog(null);
-    }
-
-  }, [formError, fetchStatus, dialog, userDispatch, addressesDispatch]);
-
 
   return guestMiddleware() || (
     <section>
@@ -147,7 +69,7 @@ export default function Register({ guestMiddleware }) {
 
           <AuthFormHeader icon={storeIcon} text="_user.Join_us" />
 
-          { formError && <FormMessage text={formError} /> }
+          <FormMessage error={formError} />
 
           <FormField 
             ref={nameInput}
@@ -163,11 +85,7 @@ export default function Register({ guestMiddleware }) {
             ID="category-input" 
             label="_store.Store_category"
             required={true}
-            options={[
-              'Restuarant',
-              'Phamarcy',
-              'Super market'
-            ]}
+            options={stores.flatMap(i=> i.sub_categories).map(i=> ({ key: i.id, value: i.name }))}
             />
 
           <FormField 
@@ -189,34 +107,69 @@ export default function Register({ guestMiddleware }) {
             />
 
           <FormField 
-            ref={passwordInput}
-            error={passwordError}
-            ID="password-input" 
-            label="_user.Password" 
+            ref={adminEmailInput}
+            error={adminEmailError}
+            ID="admin-email-input" 
+            label="_user.Administrator_email" 
+            type="email" 
+            required={true}
+            tip="_user._admin_email_registration_tip"
+            />
+
+          <FormField 
+            ref={adminPasswordInput}
+            error={adminPasswordError}
+            ID="admin-password-input" 
+            label="_user.Administrator_password" 
             type="password" 
             required={true}
             minLength={6}
             />
 
-          <div className="mb-4 text-sm">
-            <span>{ t('By_registering_you_agree_to_our') }</span>
-            <Link to="/terms-of-service" className="text-blue-500 font-bold"> { t('_extra.Terms_of_service') }.</Link>
-          </div>
+          <RegistrationAgreementLink />
 
           <FormButton text="_user.Register" />
 
-          <div className="mb-4 text-center text-sm">
-            <span>{ t('Already_have_an_account') } </span>
-            <Link to="/" className="text-blue-500 font-bold">{ t('login') }</Link>
-          </div>
+          <LoginIfHasAccountLink />
 
         </form>
         
       </div>
 
-      { dialog && <AlertDialog dialog={dialog} /> }
+      { dialog && <LoadingDialog /> }
       
     </section>
   );
 }
 
+export default function Register({ guestMiddleware }) {
+
+  useHeader({ 
+    title: `Register store - DailyNeeds`
+  });
+
+  const [
+    stores, 
+    storesFetchStatus, 
+    refetchStores
+  ] = useStoreCategoryList();
+
+  return (
+    <section>
+
+      <div className="container-x">
+
+        {
+          useRenderOnDataFetched(
+            storesFetchStatus,
+            ()=> <RegisterForm guestMiddleware={guestMiddleware} stores={stores} />,
+            ()=> <Loading />,
+            ()=> <Reload action={refetchStores} />,
+          )
+        }
+        
+      </div>
+
+    </section>
+  );
+}
