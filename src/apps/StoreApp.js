@@ -39,6 +39,7 @@ import Products from '../pages/Store/Products';
 import ProductCreate from '../pages/Store/ProductCreate';
 import Product from '../pages/Store/Product';
 import ProductUpdate from '../pages/Store/ProductUpdate';
+import ProductVariantCreate from '../pages/Store/ProductVariantCreate';
 import Cart from '../pages/Store/Cart';
 
 const HEADER_NAV_LINKS = [
@@ -104,6 +105,7 @@ export default function StoreApp() {
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
         <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />*/}
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
+          <Route path="/product-variant/create" render={()=> authMiddleware() || <ProductVariantCreate />} />
           <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />
           <Route path="/product/create" render={()=> authMiddleware() || <ProductCreate />} />
           <Route path="/product/:ID" render={()=> authMiddleware() || <Product />} />

@@ -94,6 +94,18 @@ export default function ProductReducer (state, action) {
         related: [...state.related, ...action.payload.list],
       };
 
+    case PRODUCT.VARIANT_CREATED: 
+      return {
+        ...state,
+        product: state.product ? 
+          { 
+            ...state.product, 
+            product_variants: [...state.product.product_variants, action.payload] 
+          } 
+          : 
+          state.product
+      };
+      
     case PRODUCT.FAVORITED:
       return {
         ...state,

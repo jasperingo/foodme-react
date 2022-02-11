@@ -95,6 +95,7 @@ export const TRANSLATIONS_EN = {
     Name: 'Name',
     Type: 'Type',
     Home: 'Home',
+    Available: 'Available',
     Dashboard: 'Dashboard',
     Contact_us: 'Contact us',
     About_us: 'About us',
@@ -259,6 +260,8 @@ export const TRANSLATIONS_EN = {
     Product_has_been_added_to_cart: 'Product has been added to cart',
     Decrease_quantity: 'Decrease quantity',
     Increase_quantity: 'Increase quantity',
+    Add_product_variant: 'Add product variant',
+    Edit_product_variant: 'Edit product variant',
   },
 
   _cart: {

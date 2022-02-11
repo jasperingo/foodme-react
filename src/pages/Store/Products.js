@@ -3,6 +3,7 @@ import React from 'react';
 import AddButton from '../../components/AddButton';
 import ProductList from '../../components/profile/section/ProductList';
 import { useAppContext } from '../../hooks/contextHook';
+import { useHeader } from '../../hooks/headerHook';
 import { useStoreProductList } from '../../hooks/store/storeProductListHook';
 
 
@@ -11,10 +12,16 @@ export default function Products() {
   const {
     store: { 
       store: {
+        store,
         storeToken
       }
     } 
   } = useAppContext();
+
+  useHeader({ 
+    title: `${store.user.name} - Products`,
+    topNavPaths: ['/messages', '/cart']
+  });
 
   const [
     products, 

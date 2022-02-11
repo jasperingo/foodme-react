@@ -1,15 +1,15 @@
+
 import { useEffect, useState } from "react";
-import CategoryRepository from "../../repositories/CategoryRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
+import ProductRepository from "../../repositories/ProductRepository";
 import { useAppContext } from "../contextHook";
 
-
-export function useCategoryCreate() {
+export function useProductCreate() {
 
   const { 
-    admin: { 
-      admin: {
-        adminToken
+    store: { 
+      store: {
+        storeToken
       }
     }
   } = useAppContext();
@@ -28,9 +28,9 @@ export function useCategoryCreate() {
 
   const [formSuccess, setFormSuccess] = useState(null);
 
-  const [nameError, setNameError] = useState('');
+  const [titleError, setTitleError] = useState('');
 
-  const [typeError, setTypeError] = useState('');
+  const [categoryError, setCategoryError] = useState('');
 
   const [descriptionError, setDescriptionError] = useState('');
 
@@ -42,11 +42,11 @@ export function useCategoryCreate() {
   }
 
   function onSubmit(
-    name,
-    type,
+    title,
+    sub_category_id,
     description,
-    nameValidity,
-    typeValidity,
+    titleValidity,
+    categoryValidity,
     descriptionValidity
   ) {
     
@@ -59,18 +59,18 @@ export function useCategoryCreate() {
 
     setFormSuccess('');
     
-    if (!nameValidity.valid) {
+    if (!titleValidity.valid) {
       error = true;
-      setNameError('_errors.This_field_is_required');
+      setTitleError('_errors.This_field_is_required');
     } else {
-      setNameError('');
+      setTitleError('');
     }
 
-    if (!typeValidity.valid) {
+    if (!categoryValidity.valid) {
       error = true;
-      setTypeError('_errors.This_field_is_required');
+      setCategoryError('_errors.This_field_is_required');
     } else {
-      setTypeError('');
+      setCategoryError('');
     }
     
     if (!descriptionValidity.valid) {
@@ -84,7 +84,7 @@ export function useCategoryCreate() {
       setFormError('_errors.No_netowrk_connection');
     } else if (!error) {
       setDialog(true);
-      setData({ name, type, description });
+      setData({ title, sub_category_id, description });
       setFetchStatus(FETCH_STATUSES.LOADING);
     }
   }
@@ -94,7 +94,7 @@ export function useCategoryCreate() {
      
       if (fetchStatus === FETCH_STATUSES.LOADING) {
         
-        const api = new CategoryRepository(adminToken);
+        const api = new ProductRepository(storeToken);
 
         api.create(data)
         .then(res=> {
@@ -108,7 +108,7 @@ export function useCategoryCreate() {
               const form = new FormData();
               form.append('photo', photo);
               
-              const api = new CategoryRepository(adminToken, null);
+              const api = new ProductRepository(storeToken, null);
               
               api.updatePhoto(res.body.data.id, form)
 
@@ -154,12 +154,12 @@ export function useCategoryCreate() {
 
               switch(error.name) {
 
-                case 'name':
-                  setNameError(error.message);
+                case 'title':
+                  setTitleError(error.message);
                   break;
 
-                case 'type':
-                  setTypeError(error.message);
+                case 'sub_category_id':
+                  setCategoryError(error.message);
                   break;
 
                 case 'description':
@@ -179,11 +179,12 @@ export function useCategoryCreate() {
           setFetchStatus(FETCH_STATUSES.PENDING);
           setFormError('_errors.Something_went_wrong');
         });
+
       } else if (dialog !== false) {
         setDialog(false);
       }
     }, 
-    [fetchStatus, dialog, adminToken, data, photo]
+    [fetchStatus, dialog, storeToken, data, photo]
   );
 
   return [
@@ -194,8 +195,8 @@ export function useCategoryCreate() {
     dialog, 
     formError, 
     formSuccess, 
-    nameError, 
-    typeError, 
+    titleError, 
+    categoryError, 
     descriptionError
   ];
 }

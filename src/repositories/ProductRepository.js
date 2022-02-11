@@ -3,6 +3,30 @@ import Fetch from "./Fetch";
 
 export default class ProductRepository extends Fetch {
 
+  create(formData) {
+    return this.apiFetch(
+      'product/create',
+      'POST',
+      JSON.stringify(formData)
+    );
+  }
+
+  update(id, formData) {
+    return this.apiFetch(
+      `product/${id}/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
+  updatePhoto(id, formData) {
+    return this.apiFetch(
+      `product/${id}/photo/update`,
+      'PUT',
+      formData
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `product/${id}`,

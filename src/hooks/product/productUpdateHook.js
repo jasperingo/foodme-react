@@ -1,20 +1,26 @@
+
 import { useEffect, useState } from "react";
-import CategoryRepository from "../../repositories/CategoryRepository";
+import { PRODUCT } from "../../context/actions/productActions";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
+import ProductRepository from "../../repositories/ProductRepository";
 import { useAppContext } from "../contextHook";
 
 
-export function useCategoryCreate() {
+export function useProductUpdate() {
 
   const { 
-    admin: { 
-      admin: {
-        adminToken
+    store: { 
+      store: {
+        storeToken
+      }
+    },
+    product: { 
+      productDispatch,
+      product: {
+        product
       }
     }
   } = useAppContext();
-
-  const [id, setId] = useState(0);
 
   const [data, setData] = useState(null);
 
@@ -28,9 +34,9 @@ export function useCategoryCreate() {
 
   const [formSuccess, setFormSuccess] = useState(null);
 
-  const [nameError, setNameError] = useState('');
+  const [titleError, setTitleError] = useState('');
 
-  const [typeError, setTypeError] = useState('');
+  const [categoryError, setCategoryError] = useState('');
 
   const [descriptionError, setDescriptionError] = useState('');
 
@@ -42,11 +48,11 @@ export function useCategoryCreate() {
   }
 
   function onSubmit(
-    name,
-    type,
+    title,
+    sub_category_id,
     description,
-    nameValidity,
-    typeValidity,
+    titleValidity,
+    categoryValidity,
     descriptionValidity
   ) {
     
@@ -59,20 +65,20 @@ export function useCategoryCreate() {
 
     setFormSuccess('');
     
-    if (!nameValidity.valid) {
+    if (!titleValidity.valid) {
       error = true;
-      setNameError('_errors.This_field_is_required');
+      setTitleError('_errors.This_field_is_required');
     } else {
-      setNameError('');
+      setTitleError('');
     }
 
-    if (!typeValidity.valid) {
+    if (!categoryValidity.valid) {
       error = true;
-      setTypeError('_errors.This_field_is_required');
+      setCategoryError('_errors.This_field_is_required');
     } else {
-      setTypeError('');
+      setCategoryError('');
     }
-    
+
     if (!descriptionValidity.valid) {
       error = true;
       setDescriptionError('_errors.This_field_is_required');
@@ -84,7 +90,7 @@ export function useCategoryCreate() {
       setFormError('_errors.No_netowrk_connection');
     } else if (!error) {
       setDialog(true);
-      setData({ name, type, description });
+      setData({ title, sub_category_id, description });
       setFetchStatus(FETCH_STATUSES.LOADING);
     }
   }
@@ -94,12 +100,12 @@ export function useCategoryCreate() {
      
       if (fetchStatus === FETCH_STATUSES.LOADING) {
         
-        const api = new CategoryRepository(adminToken);
+        const api = new ProductRepository(storeToken);
 
-        api.create(data)
+        api.update(product.id, data)
         .then(res=> {
 
-          if (res.status === 201) {
+          if (res.status === 200) {
             
             setFormSuccess(res.body.message);
             
@@ -108,21 +114,27 @@ export function useCategoryCreate() {
               const form = new FormData();
               form.append('photo', photo);
               
-              const api = new CategoryRepository(adminToken, null);
+              const api = new ProductRepository(storeToken, null);
               
-              api.updatePhoto(res.body.data.id, form)
+              api.updatePhoto(product.id, form)
 
               .then((res)=> {
           
                 if (res.status === 200) {
-
-                  setId(res.body.data.id);
           
                   setFormSuccess(res.body.message);
           
                   setPhotoUploaded(true);
-          
+
                   setFetchStatus(FETCH_STATUSES.PENDING);
+
+                  productDispatch({
+                    type: PRODUCT.FETCHED, 
+                    payload: {
+                      product: res.body.data, 
+                      fetchStatus: FETCH_STATUSES.DONE 
+                    }
+                  });
           
                 } else if (res.status === 400) {
                   
@@ -142,8 +154,17 @@ export function useCategoryCreate() {
               });
 
             } else {
-              setId(res.body.data.id);
+
               setFetchStatus(FETCH_STATUSES.PENDING);
+              
+              productDispatch({
+                type: PRODUCT.FETCHED, 
+                payload: {
+                  product: res.body.data, 
+                  fetchStatus: FETCH_STATUSES.DONE 
+                }
+              });
+
             }
 
           } else if (res.status === 400) {
@@ -155,11 +176,11 @@ export function useCategoryCreate() {
               switch(error.name) {
 
                 case 'name':
-                  setNameError(error.message);
+                  setTitleError(error.message);
                   break;
 
-                case 'type':
-                  setTypeError(error.message);
+                case 'sub_category_id':
+                  setCategoryError(error.message);
                   break;
 
                 case 'description':
@@ -183,19 +204,18 @@ export function useCategoryCreate() {
         setDialog(false);
       }
     }, 
-    [fetchStatus, dialog, adminToken, data, photo]
+    [fetchStatus, dialog, storeToken, productDispatch, data, photo, product]
   );
 
   return [
     onSubmit, 
     onPhotoChoose, 
     photoUploaded, 
-    id, 
     dialog, 
     formError, 
     formSuccess, 
-    nameError, 
-    typeError, 
+    titleError,
+    categoryError, 
     descriptionError
   ];
 }

@@ -10,6 +10,7 @@ import { CART } from "../../context/actions/cartActions";
 import { useAppContext } from "../../hooks/contextHook";
 import { useMoneyFormat } from "../../hooks/viewHook";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
+import AddButton from "../AddButton";
 import AlertDialog from "../dialog/AlertDialog";
 import LoadingDialog from "../dialog/LoadingDialog";
 import H4Heading from "../H4Heading";
@@ -262,9 +263,9 @@ export default function ProductProfile(
 
               { 
                 isStore && 
-                <Link to={`/product/${id}/update`} className="inline-block btn-color-primary p-1 rounded-md">
+                <Link to={`/product/${id}/update`}>
                   <span className="sr-only">{ t('_product.Edit_product') }</span>
-                  <Icon path={editIcon} className="w-7 h-7" />
+                  <Icon path={editIcon} className="w-7 h-7 text-color-primary" />
                 </Link>
               }
             </div>
@@ -274,6 +275,11 @@ export default function ProductProfile(
             <Icon path={categoryIcon} className="w-5 h-5" />
             <span>{ sub_category.name }, { sub_category.category.name }</span>
           </div>
+
+          { 
+            isStore && 
+            <AddButton text="_product.Add_product_variant" href={`/product-variant/create?product=${id}`} />
+          }
           
           <ul className="flex gap-2 overflow-x-auto mb-3">
             {
@@ -293,6 +299,17 @@ export default function ProductProfile(
           {
             variant && 
             <>
+              { 
+                isStore && 
+                <Link 
+                  to={`/product-variant/${variant.id}`}
+                  className="flex gap-1 items-center my-2 text-sm"
+                  >
+                  <Icon path={editIcon} className="w-5 h-5" />
+                  <span>{ t('_product.Edit_product_variant') }</span>
+                </Link>
+              }
+
               <div className="font-bold text-2xl text-color-primary mb-2 flex-grow">{ price }</div>
 
               <div className="flex gap-2 items-center flex-wrap mb-3">
@@ -349,7 +366,7 @@ export default function ProductProfile(
         <div className="md:p-2 md:shadow">
           <H4Heading text="_store.Store" />
           <Link 
-            to={`/store/${store.id}`} 
+            to={isStore ? '/profile' : `/store/${store.id}`} 
             className="flex gap-2 bg-color items-center hover:bg-color-gray-h md:block"
             >
             <img 
