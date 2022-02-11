@@ -73,19 +73,19 @@ export default function ProductUpdate() {
             [productsFetchStatus, productFetchStatus],
             ()=> (
               <>
-              <ProductForm 
-                categories={products}
-                product={product}
-                onSubmit={onSubmit}
-                onPhotoChoose={onPhotoChoose}
-                photoUploaded={photoUploaded}
-                dialog={dialog}
-                formError={formError}
-                formSuccess={formSuccess}
-                titleError={titleError}
-                categoryError={categoryError}
-                descriptionError={descriptionError}
-                />
+                <ProductForm 
+                  categories={products}
+                  product={product}
+                  onSubmit={onSubmit}
+                  onPhotoChoose={onPhotoChoose}
+                  photoUploaded={photoUploaded}
+                  dialog={dialog}
+                  formError={formError}
+                  formSuccess={formSuccess}
+                  titleError={titleError}
+                  categoryError={categoryError}
+                  descriptionError={descriptionError}
+                  />
 
                 <ProductDeleteForm
                   onSubmit={onDeleteSubmit}

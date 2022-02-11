@@ -42,6 +42,7 @@ import ProductUpdate from '../pages/Store/ProductUpdate';
 import ProductVariantCreate from '../pages/Store/ProductVariantCreate';
 import ProductVariantUpdate from '../pages/Store/ProductVariantUpdate';
 import Cart from '../pages/Store/Cart';
+import DiscountProductCreate from '../pages/Store/DiscountProductCreate';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -115,6 +116,7 @@ export default function StoreApp() {
           <Route path="/products" render={()=> authMiddleware() || <Products />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
+          <Route path="/discount/:ID/discount-product/create" render={()=> authMiddleware() || <DiscountProductCreate />} />
           <Route path="/discount/:ID/update" render={()=> authMiddleware() || <DiscountUpdate />} />
           <Route path="/discount/create" render={()=> authMiddleware() || <DiscountCreate />} />
           <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount />} />

@@ -4,6 +4,7 @@ import { editIcon, productIcon } from '../../assets/icons';
 import { useDiscountProductList } from '../../hooks/discount/discountProductListHook';
 import { useDateFormat, useHasMoreToFetchViaScroll, useMoneyFormat, useRenderListFooter } from '../../hooks/viewHook';
 import Discount from '../../models/Discount';
+import AddButton from '../AddButton';
 import EmptyList from '../EmptyList';
 import FetchMoreButton from '../FetchMoreButton';
 import Forbidden from '../Forbidden';
@@ -117,6 +118,8 @@ export default function DiscountProfile(
         <div className="container-x">
 
           <H4Heading color="text-color-gray" text="_product.Products" />
+
+          <AddButton text="_product.Add_product" href={`/discount/${id}/discount-product/create`} />
           
           <ScrollList
             data={products}

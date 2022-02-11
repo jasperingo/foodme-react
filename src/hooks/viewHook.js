@@ -34,6 +34,15 @@ export function useMoneyFormat(amount) {
   return <>&#8358; {amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</>;
 }
 
+export function useISODateString() {
+  return (date)=> {
+    if (!date) return '';
+    const d = new Date(date);
+    const s = d.toISOString();
+    return s.substring(0, s.length-8);
+  }
+}
+
 export function useDateFormat(date, type) {
 
   let format = 'hh:mma Do MMM YYYY';

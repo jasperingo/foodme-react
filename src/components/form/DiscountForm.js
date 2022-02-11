@@ -1,5 +1,6 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useISODateString } from '../../hooks/viewHook';
 import Discount from '../../models/Discount';
 import LoadingDialog from '../dialog/LoadingDialog';
 import FormButton from './FormButton';
@@ -44,7 +45,7 @@ export default function DiscountForm(
 
   const [valueMaximium, setValueMaximium] = useState();
 
-  const date = new Date();
+  const isoDate = useISODateString();
 
   function onFormSubmit(e) {
     e.preventDefault();
@@ -81,7 +82,7 @@ export default function DiscountForm(
   );
 
   useEffect(()=> { setValueConstraints(); });
-  
+
   return (
     <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x" noValidate>
 
@@ -153,9 +154,9 @@ export default function DiscountForm(
         ID="start-date-input" 
         label="_discount.Start_date" 
         required={true}
-        value={discount.start_date}
+        value={isoDate(discount.start_date)}
         type="datetime-local"
-        min={date.toISOString()}
+        min={isoDate(Date.now())}
         />
 
       <FormField 
@@ -164,9 +165,9 @@ export default function DiscountForm(
         ID="end-date-input" 
         label="_discount.End_date" 
         required={true}
-        value={discount.end_date}
+        value={isoDate(discount.end_date)}
         type="datetime-local"
-        min={date.toISOString()}
+        min={isoDate(Date.now())}
         />
       
       <FormButton text="_extra.Submit" />

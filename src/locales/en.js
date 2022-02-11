@@ -226,6 +226,7 @@ export const TRANSLATIONS_EN = {
   _discount: {
     Discount: 'Discount',
     Add_discount: 'Add discount',
+    Edit_discount: 'Edit discount',
     Discounts: 'Discounts',
     Discount_amount: 'Discount amount',
     Discount_value: 'Discount value',
