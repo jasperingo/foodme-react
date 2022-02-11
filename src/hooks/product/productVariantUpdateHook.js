@@ -4,9 +4,8 @@ import { PRODUCT } from "../../context/actions/productActions";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import ProductVariantRepository from "../../repositories/ProductVariantRepository";
 import { useAppContext } from "../contextHook";
-import { useURLQuery } from "../viewHook";
 
-export function useProductVariantCreate() {
+export function useProductVariantUpdate() {
 
   const { 
     store: { 
@@ -15,11 +14,12 @@ export function useProductVariantCreate() {
       }
     },
     product: {
-      productDispatch
+      productDispatch,
+      product: {
+        productVariant
+      }
     }
   } = useAppContext();
-
-  const product = useURLQuery().get('product');
 
   const [data, setData] = useState(null);
 
@@ -102,7 +102,7 @@ export function useProductVariantCreate() {
       setFormError('_errors.No_netowrk_connection');
     } else if (!error) {
       setDialog(true);
-      setData({ name, price, quantity, weight, available, product_id: product });
+      setData({ name, price, quantity, weight, available });
       setFetchStatus(FETCH_STATUSES.LOADING);
     }
   }
@@ -114,15 +114,15 @@ export function useProductVariantCreate() {
         
         const api = new ProductVariantRepository(storeToken);
 
-        api.create(data)
+        api.update(productVariant.id, data)
         .then(res=> {
 
-          if (res.status === 201) {
+          if (res.status === 200) {
             
             setFormSuccess(res.body.message);
 
             productDispatch({
-              type: PRODUCT.VARIANT_CREATED,
+              type: PRODUCT.VARIANT_UPDATED,
               payload: res.body.data
             });
             
@@ -174,7 +174,7 @@ export function useProductVariantCreate() {
         setDialog(false);
       }
     }, 
-    [fetchStatus, dialog, storeToken, data, productDispatch]
+    [productVariant, fetchStatus, dialog, storeToken, data, productDispatch]
   );
 
   return [

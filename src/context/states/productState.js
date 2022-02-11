@@ -13,6 +13,11 @@ const productState = {
   productLoading: true,
   productFetchStatus: FETCH_STATUSES.LOADING,
 
+  productVariant: null,
+  productVariantID: null,
+  productVariantLoading: true,
+  productVariantFetchStatus: FETCH_STATUSES.LOADING,
+
   reviews: [],
   reviewsPage: 1,
   reviewsLoading: true,

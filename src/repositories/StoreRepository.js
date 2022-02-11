@@ -131,9 +131,20 @@ export default class StoreRepository extends Fetch {
     );
   }
 
-  getOrdersList(id, page) {
+  getOrdersList(id, page, status) {
+
+    const params = new URLSearchParams();
+
+    params.append('page', page);
+
+    params.append('page_limit', Fetch.PAGE_LIMIT);
+
+    if (status) {
+      params.append('status', status);
+    }
+    
     return this.apiFetch(
-      `store/${id}/order/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      `store/${id}/order/list?${params.toString()}`,
       'GET'
     );
   }

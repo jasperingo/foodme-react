@@ -125,6 +125,7 @@ export const TRANSLATIONS_EN = {
     Cancel: 'Cancel',
     Confirm: 'Confirm',
     Submit: 'Submit',
+    Value: 'Value',
     All: 'All',
     Yes: 'Yes',
     No: 'No',
@@ -262,6 +263,8 @@ export const TRANSLATIONS_EN = {
     Increase_quantity: 'Increase quantity',
     Add_product_variant: 'Add product variant',
     Edit_product_variant: 'Edit product variant',
+    _product_delete_confirm: 'Are you sure you want to delete this product?',
+    _product_variant_delete_confirm: 'Are you sure you want to delete this product variant?'
   },
 
   _cart: {

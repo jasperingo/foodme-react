@@ -1,9 +1,9 @@
 import React from 'react';
-// import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { orderIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
-// import OrderFilter from '../../components/filter/OrderFilter';
+import OrderFilter from '../../components/filter/OrderFilter';
 import ScrollList from '../../components/list/ScrollList';
 import OrderItem from '../../components/list_item/OrderItem';
 import Loading from '../../components/Loading';
@@ -11,8 +11,8 @@ import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreOrderList } from '../../hooks/store/storeOrderListHook';
-import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
-// import Order from '../../models/Order';
+import { useHasMoreToFetchViaScroll, useRenderListFooter, useURLQuery } from '../../hooks/viewHook';
+import Order from '../../models/Order';
 
 
 export default function Orders() {
@@ -37,24 +37,24 @@ export default function Orders() {
     ordersNumberOfPages, 
     refetch,
     refresh,
-    //onStatusChange
+    onStatusChange
   ] = useStoreOrderList(storeToken);
 
-  // const history = useHistory()
+  const history = useHistory()
 
-  // const param = useURLQuery();
+  const param = useURLQuery();
 
-  // function change(value) {
-  //   param.set('status', value);
-  //   history.replace(`/orders?${param.toString()}`);
-  //   onStatusChange();
-  // }
+  function change(value) {
+    param.set('status', value);
+    history.replace(`/orders?${param.toString()}`);
+    onStatusChange();
+  }
 
   return (
     <section>
       <div className="container-x">
 
-        {/* <OrderFilter statuses={Order.getStatuses()} status={param.get('status')} onFilterChange={change} /> */}
+        <OrderFilter statuses={Order.getStatuses()} status={param.get('status')} onFilterChange={change} />
         
         <ScrollList
           data={orders}

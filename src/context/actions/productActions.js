@@ -15,11 +15,22 @@ export const PRODUCT = {
   UNFAVORITED: 'PRODUCT_UNFAVORITED',
 
   VARIANT_CREATED: 'PRODUCT_VARIANT_CREATED',
+  VARIANT_UPDATED: 'PRODUCT_VARIANT_UPDATED',
   VARIANT_DELETED: 'PRODUCT_VARIANT_DELETED',
+  VARIANT_FETCHED: 'PRODUCT_VARIANT_FETCHED',
+  VARIANT_UNFETCHED: 'PRODUCT_VARIANT_UNFETCHED',
+  VARIANT_FETCH_STATUS_CHANGED: 'PRODUCT_VARIANT_FETCH_STATUS_CHANGED',
 };
 
 export const getProductFetchStatusAction = (fetchStatus, id, loading) => ({
   type: PRODUCT.FETCH_STATUS_CHANGED,
+  payload: {
+    fetchStatus, id, loading
+  }
+});
+
+export const getProductVariantFetchStatusAction = (fetchStatus, id, loading) => ({
+  type: PRODUCT.VARIANT_FETCH_STATUS_CHANGED,
   payload: {
     fetchStatus, id, loading
   }

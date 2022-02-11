@@ -303,9 +303,9 @@ export default function ProductProfile(
                 isStore && 
                 <Link 
                   to={`/product-variant/${variant.id}`}
-                  className="flex gap-1 items-center my-2 text-sm"
+                  className="inline-flex gap-1 items-center my-2 text-sm btn-color-primary px-1 rounded"
                   >
-                  <Icon path={editIcon} className="w-5 h-5" />
+                  <Icon path={editIcon} className="w-4 h-4" />
                   <span>{ t('_product.Edit_product_variant') }</span>
                 </Link>
               }

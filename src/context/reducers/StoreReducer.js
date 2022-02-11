@@ -119,6 +119,17 @@ export default function StoreReducer (state, action) {
         discountsNumberOfPages: action.payload.numberOfPages,
         discounts: [...state.discounts, ...action.payload.list],
       };
+
+    case ORDER.LIST_UNFETCHED:
+    case ORDER.LIST_STATUS_FILTER_CHANGED:
+      return {
+        ...state,
+        ordersPage: 1,
+        ordersLoading: true,
+        ordersNumberOfPages: 0,
+        orders: storeState.orders,
+        ordersFetchStatus: storeState.ordersFetchStatus,
+      };
     
     case ORDER.LIST_FETCH_STATUS_CHANGED:
       return {

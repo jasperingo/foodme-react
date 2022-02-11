@@ -19,6 +19,13 @@ export default class ProductVariantRepository extends Fetch {
     );
   }
 
+  delete(id) {
+    return this.apiFetch(
+      `product-variant/${id}/delete`,
+      'DELETE',
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `product-variant/${id}`,

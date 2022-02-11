@@ -33,6 +33,32 @@ export default function ProductReducer (state, action) {
         productFetchStatus: action.payload.fetchStatus
       };
 
+    case PRODUCT.VARIANT_UNFETCHED:
+      return {
+        ...state,
+        productVariant: productState.productVariant,
+        productVariantID: productState.productVariantID,
+        productVariantLoading: productState.productVariantLoading,
+        productVariantFetchStatus: productState.productVariantFetchStatus
+      };
+    
+    case PRODUCT.VARIANT_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        productVariantID: action.payload.id,
+        productVariantLoading: action.payload.loading,
+        productVariantFetchStatus: action.payload.fetchStatus
+      };
+    
+    case PRODUCT.VARIANT_FETCHED:
+      return {
+        ...state,
+        productVariantLoading: false,
+        productVariant: action.payload.productVariant,
+        productVariantID: action.payload.productVariant.id,
+        productVariantFetchStatus: action.payload.fetchStatus
+      };
+
     case REVIEW.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
@@ -95,16 +121,45 @@ export default function ProductReducer (state, action) {
       };
 
     case PRODUCT.VARIANT_CREATED: 
+    if (!state.product) {
+      return state;
+    } else {
       return {
         ...state,
-        product: state.product ? 
-          { 
-            ...state.product, 
-            product_variants: [...state.product.product_variants, action.payload] 
-          } 
-          : 
-          state.product
+        product: { 
+          ...state.product, 
+          product_variants: [...state.product.product_variants, action.payload] 
+        } 
       };
+    }
+
+    case PRODUCT.VARIANT_UPDATED: 
+      if (!state.product) {
+        return state;
+      } else {
+        return {
+          ...state,
+          product: { 
+            ...state.product, 
+            product_variants: [...state.product.product_variants.map(i=> 
+              (i.id === action.payload.id) ? action.payload : i
+            )] 
+          } 
+        };
+      }
+
+    case PRODUCT.VARIANT_DELETED: 
+      if (!state.product) {
+        return state;
+      } else {
+        return {
+          ...state,
+          product: { 
+            ...state.product, 
+            product_variants: [...state.product.product_variants.filter(i=> i.id !== action.payload)] 
+          } 
+        };
+      }
       
     case PRODUCT.FAVORITED:
       return {

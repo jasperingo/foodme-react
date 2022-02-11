@@ -4,10 +4,12 @@ import { getOrdersListFetchStatusAction, ORDER } from "../../context/actions/ord
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
+import { useUpdateListFetchStatus, useURLQuery } from "../viewHook";
 
 
 export function useStoreOrderList(userToken) {
+
+  const statusParam = useURLQuery().get('status');
 
   const { 
     store: { 
@@ -25,12 +27,26 @@ export function useStoreOrderList(userToken) {
 
   const listStatusUpdater = useUpdateListFetchStatus();
 
+  const onStatusChange = useCallback(
+    ()=> {
+      storeDispatch({ type: ORDER.LIST_STATUS_FILTER_CHANGED, payload: { status: statusParam } });
+    },
+    [statusParam, storeDispatch]
+  );
+
   const refetch = useCallback(
     ()=> {
       if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
         storeDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [storeDispatch, ordersFetchStatus]
+  );
+
+  const refresh = useCallback(
+    ()=> {
+      storeDispatch({ type: ORDER.LIST_UNFETCHED });
+    },
+    [storeDispatch]
   );
   
   useEffect(
@@ -44,7 +60,7 @@ export function useStoreOrderList(userToken) {
         storeDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
 
         const api = new StoreRepository(userToken);
-        api.getOrdersList(store.id, ordersPage)
+        api.getOrdersList(store.id, ordersPage, statusParam)
         .then(res=> {
           
           if (res.status === 200) {
@@ -80,9 +96,9 @@ export function useStoreOrderList(userToken) {
         });
       }
     },
-    [store.id, orders, ordersPage, ordersLoading, ordersFetchStatus, userToken, storeDispatch, listStatusUpdater]
+    [store.id, statusParam, orders, ordersPage, ordersLoading, ordersFetchStatus, userToken, storeDispatch, listStatusUpdater]
   );
 
-  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch];
+  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch, refresh, onStatusChange];
 }
 

@@ -27,6 +27,13 @@ export default class ProductRepository extends Fetch {
     );
   }
 
+  delete(id) {
+    return this.apiFetch(
+      `product/${id}/delete`,
+      'DELETE',
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `product/${id}`,

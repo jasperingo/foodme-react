@@ -1,6 +1,7 @@
 
 import React from 'react';
 import Forbidden from '../../components/Forbidden';
+import ProductDeleteForm from '../../components/form/ProductDeleteForm';
 import ProductForm from '../../components/form/ProductForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
@@ -8,6 +9,7 @@ import Reload from '../../components/Reload';
 import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
+import { useProductDelete } from '../../hooks/product/productDeleteHook';
 import { useProductFetch } from '../../hooks/product/productFetchHook';
 import { useProductUpdate } from '../../hooks/product/productUpdateHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
@@ -51,6 +53,13 @@ export default function ProductUpdate() {
     descriptionError
   ] = useProductUpdate();
 
+  const [
+    onDeleteSubmit, 
+    deleteDialog, 
+    deleteFormSuccess, 
+    deleteFormError
+  ] = useProductDelete();
+
   function retryLoad() {
     refetch();
     refetchProducts();
@@ -63,6 +72,7 @@ export default function ProductUpdate() {
           useRenderOnDataFetched(
             [productsFetchStatus, productFetchStatus],
             ()=> (
+              <>
               <ProductForm 
                 categories={products}
                 product={product}
@@ -76,6 +86,14 @@ export default function ProductUpdate() {
                 categoryError={categoryError}
                 descriptionError={descriptionError}
                 />
+
+                <ProductDeleteForm
+                  onSubmit={onDeleteSubmit}
+                  dialog={deleteDialog}
+                  formError={deleteFormError}
+                  formSuccess={deleteFormSuccess}
+                  />
+              </>
             ),
             ()=> <Loading />,
             ()=> <Reload action={retryLoad} />,
