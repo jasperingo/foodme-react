@@ -2,6 +2,7 @@
 import React from 'react';
 import { cartIcon } from '../../assets/icons';
 import CartCheckOutOrSave from '../../components/cart/CartCheckOutOrSave';
+import CartCodeForm from '../../components/cart/CartCodeForm';
 import EmptyList from '../../components/EmptyList';
 import CartItem from '../../components/list_item/CartItem';
 import { useAppContext } from '../../hooks/contextHook';
@@ -28,7 +29,7 @@ export default function Cart() {
   return (
     <section>
 
-      {/* <CartCodeForm /> */}
+      <CartCodeForm />
 
       <div className="container-x">
         <div className="lg:flex lg:gap-4 lg:items-start">

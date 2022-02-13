@@ -1,11 +1,13 @@
 
 import React from 'react';
 import Forbidden from '../../components/Forbidden';
+import DiscountDeleteForm from '../../components/form/DiscountDeleteForm';
 import DiscountForm from '../../components/form/DiscountForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
+import { useDiscountDelete } from '../../hooks/discount/discountDeleteHook';
 import { useDiscountFetch } from '../../hooks/discount/discountFetchHook';
 import { useDiscountUpdate } from '../../hooks/discount/discountUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
@@ -46,6 +48,13 @@ export default function DiscountUpdate() {
     endDateError,
   ] = useDiscountUpdate();
 
+  const [
+    onDeleteSubmit, 
+    deleteDialog, 
+    deleteFormSuccess, 
+    deleteFormError
+  ] = useDiscountDelete();
+
   return (
     <section>
      <div className="container-x">
@@ -67,6 +76,13 @@ export default function DiscountUpdate() {
                   minAmountError={minAmountError}
                   startDateError={startDateError}
                   endDateError={endDateError}
+                  />
+                
+                <DiscountDeleteForm 
+                  onSubmit={onDeleteSubmit}
+                  dialog={deleteDialog}
+                  formError={deleteFormError}
+                  formSuccess={deleteFormSuccess}
                   />
               </>
             ),

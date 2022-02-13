@@ -8,6 +8,7 @@ import { useAppContext } from '../../hooks/contextHook';
 import { FETCH_STATUSES } from '../../repositories/Fetch';
 import CartItem from '../../components/list_item/CartItem';
 import { useHeader } from '../../hooks/headerHook';
+import CartCodeForm from '../../components/cart/CartCodeForm';
 
 
 export default function Cart() {
@@ -30,7 +31,7 @@ export default function Cart() {
   return (
     <section>
 
-      {/* <CartCodeForm /> */}
+      <CartCodeForm />
 
       <div className="container-x">
         <div className="lg:flex lg:gap-4 lg:items-start">

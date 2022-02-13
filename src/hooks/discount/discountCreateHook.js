@@ -61,10 +61,6 @@ export function useDiscountCreate() {
     setFormSuccess(null);
     
     let error = false;
-
-    setFormError('');
-
-    setFormSuccess('');
     
     if (!titleValidity.valid) {
       error = true;

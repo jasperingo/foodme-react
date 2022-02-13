@@ -119,7 +119,7 @@ export default function DiscountProfile(
 
           <H4Heading color="text-color-gray" text="_product.Products" />
 
-          <AddButton text="_product.Add_product" href={`/discount/${id}/discount-product/create`} />
+          <AddButton text="_product.Edit_product" href={`/discount/${id}/discount-product/create`} />
           
           <ScrollList
             data={products}
@@ -132,12 +132,12 @@ export default function DiscountProfile(
             )}
             footer={useRenderListFooter(
               productsFetchStatus,
-              ()=> <li key="product-footer"> <Loading /> </li>, 
-              ()=> <li key="product-footer"> <Reload action={refetch} /> </li>,
-              ()=> <li key="product-footer"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>,
-              ()=> <li key="product-footer"> <FetchMoreButton action={refetch} /> </li>,
-              ()=> <li key="product-footer"> <NotFound /> </li>,
-              ()=> <li key="product-footer"> <Forbidden /> </li>,
+              ()=> <li key="discount-product-footer"> <Loading /> </li>, 
+              ()=> <li key="discount-product-footer"> <Reload action={refetch} /> </li>,
+              ()=> <li key="discount-product-footer"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>,
+              ()=> <li key="discount-product-footer"> <FetchMoreButton action={refetch} /> </li>,
+              ()=> <li key="discount-product-footer"> <NotFound /> </li>,
+              ()=> <li key="discount-product-footer"> <Forbidden /> </li>,
             )}
             />
 

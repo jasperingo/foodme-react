@@ -6,7 +6,7 @@ import LoadingDialog from '../dialog/LoadingDialog';
 import FormButton from './FormButton';
 import FormMessage from './FormMessage';
 
-export default function ProductVariantDeleteForm({ onSubmit, dialog, formError, formSuccess, product }) {
+export default function DiscountDeleteForm({ onSubmit, dialog, formError, formSuccess }) {
 
   const history = useHistory();
 
@@ -16,7 +16,7 @@ export default function ProductVariantDeleteForm({ onSubmit, dialog, formError, 
     e.preventDefault();
 
     setConfirmDialog({
-      body: '_product._product_variant_delete_confirm',
+      body: '_discount._discount_delete_confirm',
       positiveButton: {
         text: '_extra.Yes',
         action() {
@@ -36,10 +36,10 @@ export default function ProductVariantDeleteForm({ onSubmit, dialog, formError, 
   useEffect(
     ()=> {
       if (formSuccess) {
-        history.push(`/product/${product}`);
+        history.push('/discounts');
       }
     }, 
-    [formSuccess, product, history]
+    [formSuccess, history]
   );
 
   return (

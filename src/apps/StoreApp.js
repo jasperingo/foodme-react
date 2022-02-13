@@ -9,10 +9,10 @@ import { useStoreAuthFetch } from '../hooks/store/storeAuthFetchHook';
 import { useCartCounter, useURLQuery } from '../hooks/viewHook';
 import { FETCH_STATUSES } from '../repositories/Fetch';
 import Splash from '../pages/Splash';
-// import AboutUs from '../pages/AboutUs';
-// import ContactUs from '../pages/ContactUs';
-// import PrivacyPolicy from '../pages/PrivacyPolicy';
-// import TermsOfService from '../pages/TermsOfService';
+import AboutUs from '../pages/AboutUs';
+import ContactUs from '../pages/ContactUs';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
+import TermsOfService from '../pages/TermsOfService';
 // import ForgotPassword from '../pages/ForgotPassword';
 // import ResetPassword from '../pages/ResetPassword';
 import LogIn from '../pages/Store/LogIn';
@@ -99,13 +99,14 @@ export default function StoreApp() {
         />
       <main className="pb-52">
         <Switch>
-          {/* 
+          
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
-        <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />*/}
+          
+          {/* <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />*/}
 
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
           <Route path="/product-variant/create" render={()=> authMiddleware() || <ProductVariantCreate />} />

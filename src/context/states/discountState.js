@@ -14,6 +14,12 @@ const discountState = {
   productsNumberOfPages: 0,
   productsFetchStatus: FETCH_STATUSES.LOADING,
 
+  discountProducts: [],
+  discountProductsPage: 1,
+  discountProductsLoading: true,
+  discountProductsNumberOfPages: 0,
+  discountProductsFetchStatus: FETCH_STATUSES.LOADING,
+
   discount: null,
   discountID: null,
   discountLoading: true,

@@ -233,7 +233,12 @@ export const TRANSLATIONS_EN = {
     Start_date: 'Start date',
     End_date: 'End date',
     Minimium_required_amount: 'Minimium required amount',
-    Minimium_required_quantity: 'Minimium required quantity'
+    Minimium_required_quantity: 'Minimium required quantity',
+    Add_discount_product: 'Add discount product',
+    Edit_discount_product: 'Edit discount product',
+    Add_to_discount: 'Add to discount',
+    Remove_from_discount: 'Remove from discount',
+    _discount_delete_confirm: 'Are you sure you want to delete this discount?'
   },
 
   _product: {

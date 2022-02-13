@@ -131,6 +131,13 @@ export default class StoreRepository extends Fetch {
     );
   }
 
+  getProductsWithDiscountList(id, discountId, page) {
+    return this.apiFetch(
+      `store/${id}/product/discount/${discountId}/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
   getOrdersList(id, page, status) {
 
     const params = new URLSearchParams();

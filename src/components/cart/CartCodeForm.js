@@ -1,50 +1,24 @@
 
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import SavedCartApi from '../../api/SavedCartApi';
-import { CART } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import AlertDialog, { LOADING_DIALOG } from './AlertDialog';
 
 export default function CartCodeForm() {
 
   const { t } = useTranslation();
 
-  const { 
-    cartDispatch
-  } = useAppContext();
+  // const { 
+  //   cartDispatch
+  // } = useAppContext();
 
   const input = useRef(null);
 
-  const [dialog, setDialog] = useState(null);
+  //const [dialog, setDialog] = useState(null);
 
-  const api = new SavedCartApi();
 
   function onFormSubmit(e) {
     e.preventDefault();
-
-    if (input.current.validity.valid) {
-      setDialog(LOADING_DIALOG);
-      api.get(input.current.value)
-        .then((res)=> {
-          cartDispatch({
-            type: CART.DUMPED,
-            payload: res.data
-          });
-          setDialog(null);
-        })
-        .catch(()=> {
-          setDialog({
-            body: '_errors.Something_went_wrong',
-            negativeButton: {
-              text: '_extra.Cancel',
-              action() {
-                setDialog(null);
-              }
-            }
-          });
-        });
-    }
+    alert("Loading... "+input.current.value);
+    
   }
 
   return (
@@ -60,7 +34,7 @@ export default function CartCodeForm() {
           />
         <button className="p-2 rounded btn-color-primary">{ t('_search.Search') }</button>
       </form>
-      { dialog && <AlertDialog dialog={dialog} /> }
+      {/* { dialog && <AlertDialog dialog={dialog} /> } */}
     </div>
   );
 }

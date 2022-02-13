@@ -34,35 +34,63 @@ export default function DiscountReducer (state, { type, payload }) {
         discountFetchStatus: payload.fetchStatus,
       };
 
-    // case PROMOTION.LIST_FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     promotions: {
-    //       ...state.promotions,
-    //       promotionsFetchStatus: action.payload
-    //     }
-    //   };
-    
-    // case PROMOTION.LIST_FETCHED :
-    //   let status = fetchUpdater(
-    //     state.promotions.promotionsPage, 
-    //     action.payload.promotionsNumberOfPages, 
-    //     state.promotions.promotions.length, 
-    //     action.payload.promotions.length
-    //   );
-      
-    //   state.promotions.promotions.pop();
 
-    //   return {
-    //     ...state,
-    //     promotions: {
-    //       promotionsFetchStatus: status,
-    //       promotionsPage: state.promotions.promotionsPage+1,
-    //       promotionsNumberOfPages: action.payload.promotionsNumberOfPages,
-    //       promotions: [...state.promotions.promotions, ...action.payload.promotions, null],
-    //     }
-    //   };
+    case DISCOUNT.PRODUCT_LIST_UNFETCHED:
+      return {
+        ...state,
+        discountProductsPage: 1,
+        discountProductsLoading: true,
+        discountProductsNumberOfPages: 0,
+        discountProducts: discountState.discountProducts,
+        discountProductsFetchStatus: discountState.discountProductsFetchStatus
+      };
+  
+    case DISCOUNT.PRODUCT_LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        discountProductsLoading: payload.loading,
+        discountProductsFetchStatus: payload.fetchStatus
+      };
+      
+    case DISCOUNT.PRODUCT_LIST_FETCHED:
+      return {
+        ...state,
+        discountProductsLoading: false,
+        discountProductsPage: state.discountProductsPage+1,
+        discountProductsFetchStatus: payload.fetchStatus,
+        discountProductsNumberOfPages: payload.numberOfPages,
+        discountProducts: [...state.discountProducts, ...payload.list],
+      };
+
+
+    case DISCOUNT.PRODUCT_CREATED:
+      return {
+        ...state,
+        products: [...state.products.map(i=> {
+          if (i.id === payload.discountProduct.product_id) {
+            return {
+              ...i,
+              discount_products: [payload.discountProduct]
+            }
+          }
+          return i;
+        })]
+      };
     
+    case DISCOUNT.PRODUCT_DELETED:
+      return {
+        ...state,
+        products: [...state.products.map(i=> {
+          if (i.discount_products.length > 0 && i.discount_products[0].id === payload.discountProductID) {
+            return {
+              ...i,
+              discount_products: []
+            }
+          }
+          return i;
+        })]
+      };
+
     case PRODUCT.LIST_UNFETCHED:
       return {
         ...state,
@@ -71,9 +99,9 @@ export default function DiscountReducer (state, { type, payload }) {
         productsNumberOfPages: 0,
         products: discountState.products,
         productsFetchStatus: discountState.productsFetchStatus
-      }
+      };
   
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
         productsLoading: payload.loading,
