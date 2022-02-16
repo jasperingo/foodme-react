@@ -69,21 +69,21 @@ export default function Wallet() {
 
   return (
     <section>
-        {
-          useRenderOnDataFetched(
-            transactionBalanceFetchStatus,
-            ()=> (
-              <>
-                <div className="container-x">
-                  <WalletAmount amount={transactionBalance} onSubmitWithdraw={withdraw} withdrawDialog={withdrawDialog} />
-                </div>
-                <StoreTransactionsList />
-              </>
-            ),
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-          )
-        }
+      {
+        useRenderOnDataFetched(
+          transactionBalanceFetchStatus,
+          ()=> (
+            <>
+              <div className="container-x">
+                <WalletAmount amount={transactionBalance} onSubmitWithdraw={withdraw} withdrawDialog={withdrawDialog} />
+              </div>
+              <StoreTransactionsList />
+            </>
+          ),
+          ()=> <Loading />,
+          ()=> <Reload action={refetch} />,
+        )
+      }
     </section>
   );
 }

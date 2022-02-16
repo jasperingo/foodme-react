@@ -44,6 +44,14 @@ export default class AdminRepository extends Fetch {
     );
   }
 
+  updateDeliveryFirmPassword(id, formData) {
+    return this.apiFetch(
+      `administrator/${id}/delivery-firm/password/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `administrator/${id}`,

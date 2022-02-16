@@ -8,10 +8,15 @@ import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLink';
+import { useHeader } from '../../hooks/headerHook';
 import { useStoreLogin } from '../../hooks/store/storeLoginHook';
 
 
 export default function LogIn({ guestMiddleware }) {
+
+  useHeader({ 
+    title: `Log in store - DailyNeeds`
+  });
 
   const nameInput = useRef(null);
 

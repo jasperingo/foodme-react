@@ -4,6 +4,8 @@ const deliveryFirmState = {
   
   deliveryFirm: null,
   deliveryFirmID: null,
+  deliveryFirmToken: null,
+  deliveryFirmAdminID: null,
   deliveryFirmLoading: true,
   deliveryFirmFetchStatus: FETCH_STATUSES.LOADING,
     
@@ -35,7 +37,11 @@ const deliveryFirmState = {
   transactionsPage: 1,
   transactionsLoading: true,
   transactionsNumberOfPages: 0,
-  transactionsFetchStatus: FETCH_STATUSES.LOADING
+  transactionsFetchStatus: FETCH_STATUSES.LOADING,
+
+  transactionBalance: null,
+  transactionBalanceLoading: true,
+  transactionBalanceFetchStatus: FETCH_STATUSES.LOADING,
 
 };
 

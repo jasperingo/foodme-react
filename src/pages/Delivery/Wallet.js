@@ -1,77 +1,90 @@
 
-import React, { useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import TransactionApi from '../../api/TransactionApi';
-import DeliveryApp from '../../apps/DeliveryApp';
-import { transactionIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import H4Heading from '../../components/H4Heading';
+import React from 'react';
 import Loading from '../../components/Loading';
+import TransactionList from '../../components/profile/section/TransactionList';
 import Reload from '../../components/Reload';
-import TransactionItem from '../../components/TransactionItem';
 import WalletAmount from '../../components/WalletAmount';
-import { FETCH_STATUSES, getTransactionsListFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
+import { useAppContext } from '../../hooks/contextHook';
+import { useDeliveryFirmTransactionBalance } from '../../hooks/delivery_firm/deliveryFirmTransactionBalanceHook';
+import { useDeliveryFirmTransactionList } from '../../hooks/delivery_firm/deliveryFirmTransactionListHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useTransactionWithdraw } from '../../hooks/transaction/transactionWithdrawHook';
+import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
-export default function Wallet() {
-  
+function DeliveryFirmTransactionsList() {
+
   const { 
-    user: { user }, 
-    transactions: {
-      transactions: {
-        transactions,
-        transactionsFetchStatus,
-        transactionsPage,
-        transactionsNumberOfPages
+    deliveryFirm: { 
+      deliveryFirm: {
+        deliveryFirmToken
       }
-    }, 
-    transactionsDispatch 
+    } 
   } = useAppContext();
-
-  useEffect(()=>{
-    if (transactionsFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new TransactionApi(user.api_token);
-      api.getListByDeliveryFirm(user.id, transactionsPage, transactionsDispatch);
-    }
-  });
-
-  function refetchTransactions() {
-    if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
-      transactionsDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  
+  const [
+    transactions, 
+    transactionsFetchStatus, 
+    transactionsPage, 
+    transactionsNumberOfPages, 
+    refetch
+  ] = useDeliveryFirmTransactionList(deliveryFirmToken);
 
   return (
-    <section className="flex-grow">
-      <div className="container-x">
+    <TransactionList
+      transactions={transactions}
+      transactionsFetchStatus={transactionsFetchStatus}
+      transactionsPage={transactionsPage}
+      transactionsNumberOfPages={transactionsNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
 
-        <WalletAmount appType={DeliveryApp.TYPE} />
 
-        <div>
-          <H4Heading text="_transaction.Transactions" />
-          <InfiniteScroll
-            dataLength={transactions.length}
-            next={refetchTransactions}
-            hasMore={useHasMoreToFetchViaScroll(transactionsPage, transactionsNumberOfPages, transactionsFetchStatus)}
-            >
-            <ul className="list-2-x">
-              { 
-                useListRender(
-                  transactions, 
-                  transactionsFetchStatus,
-                  (item, i)=> <TransactionItem key={`transaction-${i}`} transaction={item} />, 
-                  (k)=> <li key={k}> <Loading /> </li>, 
-                  (k)=> <li key={k}> <Reload action={refetchTransactions} /> </li>,
-                  (k)=> <li key={k}> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>, 
-                  (k)=> <li key={k}> <FetchMoreButton action={refetchTransactions} /> </li>,
-                )
-              }
-            </ul>
-          </InfiniteScroll>
-        </div>
-      </div>
+export default function Wallet() {
 
+  const { 
+    deliveryFirm: { 
+      deliveryFirm: {
+        deliveryFirm,
+        deliveryFirmToken
+      }
+    } 
+  } = useAppContext();
+
+  useHeader({ 
+    title: `${deliveryFirm.user.name} - Wallet`,
+    topNavPaths: ['/messages']
+  });
+
+  const [
+    transactionBalance, 
+    transactionBalanceFetchStatus, 
+    refetch
+  ] = useDeliveryFirmTransactionBalance(deliveryFirmToken);
+
+  const [
+    withdraw,
+    withdrawDialog
+  ] = useTransactionWithdraw(deliveryFirmToken);
+
+  return (
+    <section>
+      {
+        useRenderOnDataFetched(
+          transactionBalanceFetchStatus,
+          ()=> (
+            <>
+              <div className="container-x">
+                <WalletAmount amount={transactionBalance} onSubmitWithdraw={withdraw} withdrawDialog={withdrawDialog} />
+              </div>
+              <DeliveryFirmTransactionsList />
+            </>
+          ),
+          ()=> <Loading />,
+          ()=> <Reload action={refetch} />,
+        )
+      }
     </section>
   );
 }

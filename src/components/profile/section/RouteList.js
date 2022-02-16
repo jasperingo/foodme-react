@@ -21,7 +21,7 @@ export default function RouteList({ routes, routesFetchStatus, routesPage, route
           data={routes}
           nextPage={refetch}
           hasMore={useHasMoreToFetchViaScroll(routesPage, routesNumberOfPages, routesFetchStatus)}
-          className="list-x"
+          className="list-3-x"
           renderDataItem={(item)=> (
             <li key={`route-${item.id}`}> <DeliveryRouteItem route={item} /> </li>
           )}

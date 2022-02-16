@@ -9,6 +9,18 @@ import deliveryFirmState from "../states/deliveryFirmState";
 export default function DeliveryFirmReducer(state, { type, payload }) {
   
   switch (type) {  
+
+    case DELIVERY_FIRM.UNAUTHED:
+      return { ...deliveryFirmState };
+
+    case DELIVERY_FIRM.AUTHED:
+      return {
+        ...state,
+        deliveryFirmToken: payload.token,
+        deliveryFirm: payload.deliveryFirm,
+        deliveryFirmAdminID: payload.adminID,
+        deliveryFirmFetchStatus: payload.fetchStatus
+      };
     
     case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED:
       return {
@@ -89,6 +101,17 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
         reviews: [...state.reviews, ...payload.list],
       };
 
+    case ORDER.LIST_UNFETCHED:
+    case ORDER.LIST_STATUS_FILTER_CHANGED:
+      return {
+        ...state,
+        ordersPage: 1,
+        ordersLoading: true,
+        ordersNumberOfPages: 0,
+        orders: deliveryFirmState.orders,
+        ordersFetchStatus: deliveryFirmState.ordersFetchStatus,
+      };
+
     case ORDER.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
@@ -121,6 +144,29 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
         transactionsFetchStatus: payload.fetchStatus,
         transactionsNumberOfPages: payload.numberOfPages,
         transactions: [...state.transactions, ...payload.list],
+      };
+
+    case TRANSACTION.BALANCE_UNFETCHED:
+      return {
+        ...state,
+        transactionBalanceLoading: true,
+        transactionBalance: deliveryFirmState.transactionBalance,
+        transactionBalanceFetchStatus: deliveryFirmState.transactionBalanceFetchStatus
+      };
+
+    case TRANSACTION.BALANCE_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        transactionBalanceLoading: payload.loading,
+        transactionBalanceFetchStatus: payload.fetchStatus
+      };
+    
+    case TRANSACTION.BALANCE_FETCHED:
+      return {
+        ...state,
+        transactionBalanceLoading: false,
+        transactionBalance: payload.balance,
+        transactionBalanceFetchStatus: payload.fetchStatus
       };
 
     case REVIEW.CREATED:

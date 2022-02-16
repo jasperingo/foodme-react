@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import { STORE } from "../../context/actions/storeActions";
+import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
+import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
-import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useSaveStoreToken } from "./saveStoreTokenHook";
+import { useSaveDeliveryFirmToken } from "./saveDeliveryFirmTokenHook";
 
-export function useStoreCreate() {
+export function useDeliveryFirmCreate() {
 
   const { 
-    store: { storeDispatch } 
+    deliveryFirm: { deliveryFirmDispatch } 
   } = useAppContext();
 
-  const saveToken = useSaveStoreToken();
+  const saveToken = useSaveDeliveryFirmToken();
 
   const [data, setData] = useState(null);
 
@@ -20,8 +20,6 @@ export function useStoreCreate() {
   const [formError, setFormError] = useState(null);
 
   const [nameError, setNameError] = useState('');
-
-  const [categoryError, setCategoryError] = useState('');
 
   const [emailError, setEmailError] = useState('');
 
@@ -35,13 +33,12 @@ export function useStoreCreate() {
 
   function onSubmit(
     name, 
-    category, 
     email, 
     phone, 
     adminEmail,
     adminPassword, 
+
     nameValidity, 
-    categoryValidity, 
     emailValidity, 
     phoneValidity, 
     adminEmailValidity, 
@@ -57,13 +54,6 @@ export function useStoreCreate() {
       setNameError('_errors.This_field_is_required');
     } else {
       setNameError('');
-    }
-
-    if (!categoryValidity.valid) {
-      error = true;
-      setCategoryError('_errors.This_field_is_required');
-    } else {
-      setCategoryError('');
     }
 
     if (!emailValidity.valid) {
@@ -106,7 +96,6 @@ export function useStoreCreate() {
         name,
         email,
         phone_number: phone,
-        sub_category_id: category,
         administrator_email: adminEmail,
         administrator_password: adminPassword,
         administrator_password_confirmation: adminPassword
@@ -115,32 +104,31 @@ export function useStoreCreate() {
     }
   }
 
-
   useEffect(()=> {
 
     if (fetchStatus === FETCH_STATUSES.LOADING) {
       
-      const api = new StoreRepository();
+      const api = new DeliveryFirmRepository();
 
       api.create(data)
       .then(res=> {
-        
+
         if (res.status === 201) {
 
           setFetchStatus(FETCH_STATUSES.PENDING);
 
           saveToken(
-            res.body.data.store.id, 
+            res.body.data.delivery_firm.id, 
             res.body.data.api_token.token,
-            res.body.data.store.administrators[0].id
+            res.body.data.delivery_firm.administrators[0].id
           );
           
-          storeDispatch({
-            type: STORE.AUTHED, 
+          deliveryFirmDispatch({
+            type: DELIVERY_FIRM.AUTHED, 
             payload: { 
-              store: res.body.data.store, 
               token: res.body.data.api_token.token, 
-              adminID: res.body.data.store.administrators[0].id,
+              deliveryFirm: res.body.data.delivery_firm, 
+              adminID: res.body.data.delivery_firm.administrators[0].id,
               fetchStatus: FETCH_STATUSES.DONE 
             }
           });
@@ -155,10 +143,6 @@ export function useStoreCreate() {
 
               case 'name':
                 setNameError(error.message);
-                break;
-
-              case 'sub_cateogry_id':
-                setCategoryError(error.message);
                 break;
 
               case 'email':
@@ -179,9 +163,7 @@ export function useStoreCreate() {
                 break;
 
               default:
-
             }
-
           }
 
         } else {
@@ -198,8 +180,8 @@ export function useStoreCreate() {
       setDialog(false);
     }
 
-  }, [data, fetchStatus, dialog, storeDispatch, saveToken]);
+  }, [data, fetchStatus, dialog, deliveryFirmDispatch, saveToken]);
 
 
-  return [onSubmit, dialog, formError, nameError, categoryError, emailError, phoneError, adminEmailError, adminPasswordError];
+  return [onSubmit, dialog, formError, nameError, emailError, phoneError, adminEmailError, adminPasswordError];
 }

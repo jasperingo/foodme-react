@@ -1,92 +1,81 @@
 
-import React, { useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { useLocation } from 'react-router-dom';
-import OrderApi from '../../api/OrderApi';
-import DeliveryApp from '../../apps/DeliveryApp';
+import React from 'react';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { orderIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
+import OrderFilter from '../../components/filter/OrderFilter';
+import ScrollList from '../../components/list/ScrollList';
+import OrderItem from '../../components/list_item/OrderItem';
 import Loading from '../../components/Loading';
-import OrderItem from '../../components/OrderItem';
 import Reload from '../../components/Reload';
-import Tab from '../../components/Tab';
-import { FETCH_STATUSES, getOrdersListFetchStatusAction, ORDER } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
-
-const TAB_LINKS = [
-  { title : '_order.Processing', href: '' },
-  { title : '_order.Delivered', href: '/delivered' },
-  { title : '_order.In_transit', href: '/in-transit' }
-];
+import { useAppContext } from '../../hooks/contextHook';
+import { useDeliveryFirmOrderList } from '../../hooks/delivery_firm/deliveryFirmOrderListHook';
+import { useHeader } from '../../hooks/headerHook';
+import { useHasMoreToFetchViaScroll, useRenderListFooter, useURLQuery } from '../../hooks/viewHook';
+import Order from '../../models/Order';
 
 export default function Orders() {
 
-  const paths = useLocation().pathname.split('/');
-
-  const status = paths.length < 3 ? 'processing' : paths[paths.length-1];
-
   const { 
-    user: { user },
-    orders: {
-      orders: {
-        orders,
-        ordersStatus,
-        ordersFetchStatus,
-        ordersPage,
-        ordersNumberOfPages
+    deliveryFirm: { 
+      deliveryFirm: {
+        deliveryFirm,
+        deliveryFirmToken
       }
-    }, 
-    ordersDispatch 
+    } 
   } = useAppContext();
 
-  useEffect(()=>{
-    if (status !== ordersStatus) {
-      ordersDispatch({
-        type: ORDER.LIST_STATUS_FILTER_CHANGED,
-        payload: status
-      });
-    } else if (ordersFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new OrderApi();
-      api.getListByDeliveryFirm(user.id, ordersPage, ordersDispatch);
-    }
+  useHeader({
+    topNavPaths: ['/messages'],
+    title: `${deliveryFirm.user.name} - Orders`
   });
 
-  function refetchOrders() {
-    if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-      ordersDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING));
+  const [
+    orders, 
+    ordersFetchStatus, 
+    ordersPage, 
+    ordersNumberOfPages, 
+    refetch,
+    refresh,
+    onStatusChange
+  ] = useDeliveryFirmOrderList(deliveryFirmToken);
+
+  const history = useHistory()
+
+  const param = useURLQuery();
+
+  function change(value) {
+    param.set('status', value);
+    history.replace(`/orders?${param.toString()}`);
+    onStatusChange();
   }
 
   return (
     <section>
-      
       <div className="container-x">
 
-        <Tab items={ TAB_LINKS } keyPrefix="orders-tab" />
-      
-        <InfiniteScroll
-          dataLength={orders.length}
-          next={refetchOrders}
+        <OrderFilter statuses={Order.getStatuses()} status={param.get('status')} onFilterChange={change} />
+        
+        <ScrollList
+          data={orders}
+          nextPage={refetch}
+          refreshPage={refresh}
           hasMore={useHasMoreToFetchViaScroll(ordersPage, ordersNumberOfPages, ordersFetchStatus)}
-          >
-          <ul className="list-2-x">
-            { 
-              useListRender(
-                orders, 
-                ordersFetchStatus,
-                (item, i)=> <OrderItem key={`order-${i}`} order={item} href={`/order/${item.id}`} appType={DeliveryApp.TYPE} />, 
-                (k)=> <li key={k}> <Loading /> </li>, 
-                (k)=> <li key={k}> <Reload action={refetchOrders} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>, 
-                (k)=> <li key={k}> <FetchMoreButton action={refetchOrders} /> </li>,
-              )
-            }
-          </ul>
-        </InfiniteScroll>
+          className="list-2-x"
+          renderDataItem={(item)=> (
+            <OrderItem key={`order-${item.id}`} order={item} />
+          )}
+          footer={useRenderListFooter(
+            ordersFetchStatus,
+            ()=> <li key="order-footer"> <Loading /> </li>, 
+            ()=> <li key="order-footer"> <Reload action={refetch} /> </li>,
+            ()=> <li key="order-footer" className="col-span-2"> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>,
+            ()=> <li key="order-footer"> <FetchMoreButton action={refetch} /> </li>
+          )}
+          />
 
       </div>
-      
     </section>
   );
 }

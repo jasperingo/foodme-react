@@ -1,17 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { STORE } from "../../context/actions/storeActions";
+import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
+import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
-import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 
-export function useStoreWorkingHoursUpdate() {
+export function useDeliveryFirmWorkingHoursUpdate() {
 
   const { 
-    store: { 
-      storeDispatch,
-      store: {
-        store,
-        storeToken
+    deliveryFirm: { 
+      deliveryFirmDispatch,
+      deliveryFirm: {
+        deliveryFirm,
+        deliveryFirmToken
       } 
     } 
   } = useAppContext();
@@ -29,19 +29,19 @@ export function useStoreWorkingHoursUpdate() {
   
   const update = useCallback(
     () => {
-      const api = new StoreRepository(storeToken);
+      const api = new DeliveryFirmRepository(deliveryFirmToken);
       
-      api.updateWorkingHours(store.id, data)
+      api.updateWorkingHours(deliveryFirm.id, data)
       .then(res=> {
 
         if (res.status === 200) {
 
           setFormSuccess(res.body.message);
           
-          storeDispatch({
-            type: STORE.FETCHED, 
+          deliveryFirmDispatch({
+            type: DELIVERY_FIRM.FETCHED, 
             payload: { 
-              store: res.body.data, 
+              deliveryFirm: res.body.data, 
               fetchStatus: FETCH_STATUSES.DONE 
             }
           });
@@ -63,11 +63,11 @@ export function useStoreWorkingHoursUpdate() {
         setFetchStatus(FETCH_STATUSES.PENDING);
       });
     }, 
-    [data, store.id, storeToken, storeDispatch]
+    [data, deliveryFirm.id, deliveryFirmToken, deliveryFirmDispatch]
   );
 
   function onSubmit(workingHours) {
-
+    
     setFormError(null);
     setFormSuccess(null);
     

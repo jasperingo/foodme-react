@@ -17,18 +17,19 @@ import Order from '../../models/Order';
 
 export default function Orders() {
 
-  useHeader({
-    topNavPaths: ['/messages', '/cart'],
-    title: 'Orders - DailyNeeds'
-  });
-
   const { 
     store: { 
       store: {
+        store,
         storeToken
       }
     } 
   } = useAppContext();
+
+  useHeader({ 
+    title: `${store.user.name} - Orders`,
+    topNavPaths: ['/messages', '/cart']
+  });
 
   const [
     orders, 

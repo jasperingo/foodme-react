@@ -83,7 +83,7 @@ export default function AdminApp() {
   }
 
   function authMiddleware() {
-    return admin !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
+    return admin !== null ? null : <Redirect to={`/?redirect_to=${encodeURIComponent(location.pathname)}`} />
   }
 
   function guestMiddleware() {

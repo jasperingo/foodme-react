@@ -4,10 +4,12 @@ import { getOrdersListFetchStatusAction, ORDER } from "../../context/actions/ord
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
+import { useUpdateListFetchStatus, useURLQuery } from "../viewHook";
 
 
 export function useDeliveryFirmOrderList(userToken) {
+
+  const statusParam = useURLQuery().get('status');
 
   const { 
     deliveryFirm: { 
@@ -25,12 +27,26 @@ export function useDeliveryFirmOrderList(userToken) {
 
   const listStatusUpdater = useUpdateListFetchStatus();
 
+  const onStatusChange = useCallback(
+    ()=> {
+      deliveryFirmDispatch({ type: ORDER.LIST_STATUS_FILTER_CHANGED, payload: { status: statusParam } });
+    },
+    [statusParam, deliveryFirmDispatch]
+  );
+
   const refetch = useCallback(
     ()=> {
       if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
         deliveryFirmDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [deliveryFirmDispatch, ordersFetchStatus]
+  );
+
+  const refresh = useCallback(
+    ()=> {
+      deliveryFirmDispatch({ type: ORDER.LIST_UNFETCHED });
+    },
+    [deliveryFirmDispatch]
   );
   
   useEffect(
@@ -44,7 +60,7 @@ export function useDeliveryFirmOrderList(userToken) {
         deliveryFirmDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
 
         const api = new DeliveryFirmRepository(userToken);
-        api.getOrdersList(deliveryFirm.id, ordersPage)
+        api.getOrdersList(deliveryFirm.id, ordersPage, statusParam)
         .then(res=> {
           
           if (res.status === 200) {
@@ -82,6 +98,7 @@ export function useDeliveryFirmOrderList(userToken) {
     },
     [
       deliveryFirm.id, 
+      statusParam,
       orders, 
       ordersPage, 
       ordersLoading, 
@@ -92,6 +109,6 @@ export function useDeliveryFirmOrderList(userToken) {
     ]
   );
 
-  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch];
+  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch, refresh, onStatusChange];
 }
 

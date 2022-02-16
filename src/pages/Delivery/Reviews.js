@@ -1,66 +1,51 @@
 
-import React, { useEffect } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import ReviewApi from '../../api/ReviewApi';
-import { reviewIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import Loading from '../../components/Loading';
-import Reload from '../../components/Reload';
-import ReviewItem from '../../components/ReviewItem';
-import { FETCH_STATUSES, getReviewsListFetchStatusAction } from '../../context/AppActions';
-import { useAppContext } from '../../context/AppContext';
-import { useHasMoreToFetchViaScroll, useListRender } from '../../context/AppHooks';
+import React from 'react';
+import ReviewList from '../../components/profile/section/ReviewList';
+import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
+import { useAppContext } from '../../hooks/contextHook';
+import { useDeliveryFirmReviewList } from '../../hooks/delivery_firm/deliveryFirmReviewListHook';
+import { useHeader } from '../../hooks/headerHook';
 
 export default function Reviews() {
+
   const { 
-    user: { user }, 
-    reviews: {
-      reviews: {
-        reviews,
-        reviewsPage,
-        reviewsNumberOfPages,
-        reviewsFetchStatus,
+    deliveryFirm: { 
+      deliveryFirm: {
+        deliveryFirm,
+        deliveryFirmToken
       }
-    }, 
-    reviewsDispatch 
+    } 
   } = useAppContext();
 
-  useEffect(()=>{
-    if (reviewsFetchStatus === FETCH_STATUSES.LOADING) {
-      const api = new ReviewApi(user.api_token);
-      api.getListByStore(0, reviewsPage, reviewsDispatch);
-    }
+  useHeader({ 
+    title: `${deliveryFirm.user.name} - Reviews`,
+    headerTitle: "_review.Reviews"
   });
-
-  function refetchReviews() {
-    if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
-      reviewsDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING));
-  }
+  
+  const [
+    reviews, 
+    reviewsFetchStatus, 
+    reviewsPage, 
+    reviewsNumberOfPages, 
+    refetch
+  ] = useDeliveryFirmReviewList(deliveryFirmToken);
 
   return (
     <section className="flex-grow">
-      <div className="container-x">
-        <InfiniteScroll 
-          dataLength={reviews.length}
-          next={refetchReviews}
-          hasMore={useHasMoreToFetchViaScroll(reviewsPage, reviewsNumberOfPages, reviewsFetchStatus)}
-          >
-          <ul className="list-2-x">
-            { 
-              useListRender(
-                reviews,
-                reviewsFetchStatus,
-                (item, i)=> <ReviewItem key={`review-${i}`} review={item} />, 
-                (k)=> <li key={k}> <Loading /> </li>, 
-                (k)=> <li key={k}> <Reload action={refetchReviews} /> </li>,
-                (k)=> <li key={k}> <EmptyList text="_empty.No_reviews" icon={reviewIcon} /> </li>, 
-                (k)=> <li key={k}> <FetchMoreButton action={refetchReviews} /> </li>,
-              )
-            }
-          </ul>
-        </InfiniteScroll>
-      </div>
+     {
+        deliveryFirm.review_summary && 
+        <div className="container-x">
+          <ReviewRaterAndSummary summary={deliveryFirm.review_summary} />
+        </div>
+      }
+
+      <ReviewList 
+        reviews={reviews}
+        reviewsFetchStatus={reviewsFetchStatus}
+        reviewsPage={reviewsPage}
+        reviewsNumberOfPages={reviewsNumberOfPages}
+        refetch={refetch}
+        />
     </section>
   );
 }

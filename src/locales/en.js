@@ -19,14 +19,6 @@ export const TRANSLATIONS_EN = {
   Send: 'Send',
   Message: 'Message',
   Working_hours: 'Working hours',
-  Send_Us_A_Message: 'Send Us A Message',
-  contact_us_note_: `If you need a consulting regarding colaboration let us know, or maybe you have another question don't be shy, send us a message.`,
-
-  home: 'Home',
-  categories: 'Categories',
-  Categories: 'Categories',
-  cart: 'Cart',
-  account: 'Account',
 
 
   _user: {
@@ -309,6 +301,7 @@ export const TRANSLATIONS_EN = {
   _delivery: {
     Logistics: 'Logistics',
     Delivery_firm: 'Delivery firm',
+    Delivery_name: 'Delivery name',
     Delivery_firms: 'Delivery firms',
     Edit_delivery_firm: 'Edit delivery firm',
     Recent_delivery_firms: 'Recent delivery firms',
@@ -316,13 +309,18 @@ export const TRANSLATIONS_EN = {
     Delivery_method: 'Delivery method',
     Delivery_company: 'Delivery company',
     Delivery_address: 'Delivery address',
+    Door_delivery: 'Door delivery',
     Become_a_courier_partner: 'Become a courier partner',
     Route: 'Route',
     Routes: 'Routes',
-    Add_route: 'Add route',
     Delivery_route: 'Delivery route',
     Delivery_weights: 'Delivery weights',
-    Delivery_durations: 'Delivery durations'
+    Delivery_durations: 'Delivery durations',
+
+    Add_delivery_route: 'Add delivery route',
+    Edit_delivery_route: 'Edit delivery route',
+    Add_delivery_weight: 'Add delivery weight',
+
   },
 
   _order: {
@@ -389,6 +387,8 @@ export const TRANSLATIONS_EN = {
     Say_something: 'Say something',
     Message_store: 'Message store',
     Start_a_conversation: 'Start a conversation',
+    Send_Us_A_Message: 'Send Us A Message',
+    _contact_us_note: 'If you need a consulting regarding colaboration let us know, or maybe you have another question don\'t be shy, send us a message.',  
   },
   
   _empty: {

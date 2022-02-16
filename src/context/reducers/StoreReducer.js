@@ -67,7 +67,7 @@ export default function StoreReducer (state, action) {
         stores: [...state.stores, ...action.payload.list],
       };
 
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED :
+    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
         productsLoading: action.payload.loading,

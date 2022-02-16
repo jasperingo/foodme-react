@@ -277,6 +277,8 @@ export function useCustomerCreate() {
 
         if (res.status === 201) {
 
+          setFetchStatus(FETCH_STATUSES.PENDING);
+
           storeToken(res.body.data.customer.id, res.body.data.api_token.token);
           
           dispatch({
@@ -289,6 +291,8 @@ export function useCustomerCreate() {
           });
 
         } else if (res.status === 400) {
+
+          setFetchStatus(FETCH_STATUSES.PENDING);
           
           for (let error of res.body.data) {
 
@@ -327,10 +331,8 @@ export function useCustomerCreate() {
 
       })
       .catch(()=> {
-        setFormError('_errors.Something_went_wrong');
-      })
-      .finally(()=> {
         setFetchStatus(FETCH_STATUSES.PENDING);
+        setFormError('_errors.Something_went_wrong');
       });
 
     } else if (dialog !== false) {

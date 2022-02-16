@@ -156,7 +156,7 @@ export default function DiscountForm(
         required={true}
         value={isoDate(discount.start_date)}
         type="datetime-local"
-        min={isoDate(Date.now())}
+        min={isoDate(discount.start_date ?? Date.now())}
         />
 
       <FormField 
@@ -167,9 +167,9 @@ export default function DiscountForm(
         required={true}
         value={isoDate(discount.end_date)}
         type="datetime-local"
-        min={isoDate(Date.now())}
+        min={isoDate(discount.start_date ?? Date.now())}
         />
-      
+
       <FormButton text="_extra.Submit" />
 
       { dialog && <LoadingDialog /> }
