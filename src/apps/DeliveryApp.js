@@ -26,6 +26,7 @@ import DeliveryRoutes from '../pages/Delivery/DeliveryRoutes';
 import DeliveryRoute from '../pages/Delivery/DeliveryRoute';
 import DeliveryRouteCreate from '../pages/Delivery/DeliveryRouteCreate';
 import DeliveryRouteUpdate from '../pages/Delivery/DeliveryRouteUpdate';
+import DeliveryLinkRouteCreate from '../pages/Delivery/DeliveryLinkRouteCreate';
 // import AboutUs from '../pages/AboutUs';
 // import ContactUs from '../pages/ContactUs';
 // import PrivacyPolicy from '../pages/PrivacyPolicy';
@@ -99,6 +100,7 @@ export default function DeliveryApp() {
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} /> */}
           
           <Route path="/delivery-route/:ID/update" render={()=> authMiddleware() || <DeliveryRouteUpdate />} />
+          <Route path="/delivery-route/link/create" render={()=> authMiddleware() || <DeliveryLinkRouteCreate />} />
           <Route path="/delivery-route/create" render={()=> authMiddleware() || <DeliveryRouteCreate />} />
           <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
           <Route path="/delivery-routes" render={()=> authMiddleware() || <DeliveryRoutes />} />

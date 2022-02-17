@@ -1,6 +1,6 @@
 
 import { useCallback, useEffect } from "react";
-import { getRoutesListFetchStatusAction, ROUTE } from "../../context/actions/routeActions";
+import { DELIVERY_ROUTE, getDeliveryRoutesListFetchStatusAction } from "../../context/actions/deliveryRouteActions";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
@@ -28,7 +28,7 @@ export function useDeliveryFirmRouteList(userToken) {
   const refetch = useCallback(
     ()=> {
       if (routesFetchStatus !== FETCH_STATUSES.LOADING) 
-        deliveryFirmDispatch(getRoutesListFetchStatusAction(FETCH_STATUSES.LOADING, true));
+        deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.LOADING, true));
     },
     [deliveryFirmDispatch, routesFetchStatus]
   );
@@ -37,11 +37,11 @@ export function useDeliveryFirmRouteList(userToken) {
     ()=> {
       if (routesLoading && routesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
 
-        deliveryFirmDispatch(getRoutesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
 
       } else if (routesLoading && routesFetchStatus === FETCH_STATUSES.LOADING) {
 
-        deliveryFirmDispatch(getRoutesListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+        deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
         const api = new DeliveryFirmRepository(userToken);
         api.getRoutesList(deliveryFirm.id, routesPage)
@@ -49,7 +49,7 @@ export function useDeliveryFirmRouteList(userToken) {
           
           if (res.status === 200) {
             deliveryFirmDispatch({
-              type: ROUTE.LIST_FETCHED, 
+              type: DELIVERY_ROUTE.LIST_FETCHED, 
               payload: {
                 list: res.body.data, 
                 numberOfPages: res.body.pagination.number_of_pages,
@@ -63,18 +63,18 @@ export function useDeliveryFirmRouteList(userToken) {
             });
           } else if (res.status === 404) {
 
-            deliveryFirmDispatch(getRoutesListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
+            deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
 
           } else if (res.status === 403) {
 
-            deliveryFirmDispatch(getRoutesListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
+            deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
 
           } else {
             throw new Error();
           }
         })
         .catch(()=> {
-          deliveryFirmDispatch(getRoutesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+          deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
         });
       }
     },

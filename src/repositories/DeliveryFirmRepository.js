@@ -88,6 +88,13 @@ export default class DeliveryFirmRepository extends Fetch {
     );
   }
 
+  getBaseRoutesList(id, page) {
+    return this.apiFetch(
+      `delivery-firm/${id}/delivery-route/base/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      'GET'
+    );
+  }
+
   getReviewsList(id, page) {
     return this.apiFetch(
       `delivery-firm/${id}/review/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,

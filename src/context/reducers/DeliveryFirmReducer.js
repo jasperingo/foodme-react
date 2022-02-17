@@ -1,7 +1,7 @@
 import { DELIVERY_FIRM } from "../actions/deliveryFirmActions";
+import { DELIVERY_ROUTE } from "../actions/deliveryRouteActions";
 import { ORDER } from "../actions/orderActions";
 import { REVIEW } from "../actions/reviewActions";
-import { ROUTE } from "../actions/routeActions";
 import { TRANSACTION } from "../actions/transactionActions";
 import deliveryFirmState from "../states/deliveryFirmState";
 
@@ -67,14 +67,14 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
       };
 
     
-    case ROUTE.LIST_FETCH_STATUS_CHANGED :
+    case DELIVERY_ROUTE.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
         routesLoading: payload.loading,
         routesFetchStatus: payload.fetchStatus
       };
     
-    case ROUTE.LIST_FETCHED:
+    case DELIVERY_ROUTE.LIST_FETCHED:
       return {
         ...state,
         routesLoading: false,
@@ -84,7 +84,25 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
         routes: [...state.routes, ...payload.list],
       };
 
-    case REVIEW.LIST_FETCH_STATUS_CHANGED :
+    case DELIVERY_ROUTE.BASE_LIST_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        deliveryBaseRoutesLoading: payload.loading,
+        deliveryBaseRoutesFetchStatus: payload.fetchStatus
+      };
+    
+    case DELIVERY_ROUTE.BASE_LIST_FETCHED:
+      return {
+        ...state,
+        deliveryBaseRoutesLoading: false,
+        deliveryBaseRoutesPage: state.deliveryBaseRoutesPage+1,
+        deliveryBaseRoutesFetchStatus: payload.fetchStatus,
+        deliveryBaseRoutesNumberOfPages: payload.numberOfPages,
+        deliveryBaseRoutes: [...state.deliveryBaseRoutes, ...payload.list],
+      };
+
+
+    case REVIEW.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
         reviewsLoading: payload.loading,

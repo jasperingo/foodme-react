@@ -35,10 +35,17 @@ export default function DeliveryRoutes() {
       
       <div className="container-x">
 
-        <AddButton text="_delivery.Add_delivery_route" href="/delivery-route/create" />
+        <ul className="flex gap-2">
+          <li className="flex-grow">
+            <AddButton text="_delivery.Add_delivery_route" href="/delivery-route/create" />
+          </li>
+          <li className="flex-grow">
+            <AddButton text="_delivery.Add_delivery_link_route" href="/delivery-route/link/create" />
+          </li>
+        </ul>
 
       </div>
-
+      
       <RouteList 
         routes={routes}
         routesFetchStatus={routesFetchStatus}

@@ -60,7 +60,7 @@ export default function LogIn({ guestMiddleware }) {
           <FormField
             ref={emailInput} 
             ID="email-input" 
-            label="Email" 
+            label="_user.Administrator_email" 
             type="email"
             required={true}
             />
@@ -68,7 +68,7 @@ export default function LogIn({ guestMiddleware }) {
           <FormField 
             ref={passwordInput}
             ID="password-input" 
-            label="Password" 
+            label="_user.Administrator_password" 
             type="password" 
             required={true}
             minLength={6}

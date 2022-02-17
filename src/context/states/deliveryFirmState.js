@@ -20,6 +20,12 @@ const deliveryFirmState = {
   routesLoading: true,
   routesNumberOfPages: 0,
   routesFetchStatus: FETCH_STATUSES.LOADING,
+  
+  deliveryBaseRoutes: [],
+  deliveryBaseRoutesPage: 1,
+  deliveryBaseRoutesLoading: true,
+  deliveryBaseRoutesNumberOfPages: 0,
+  deliveryBaseRoutesFetchStatus: FETCH_STATUSES.LOADING,
 
   reviews: [],
   reviewsPage: 1,

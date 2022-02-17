@@ -305,6 +305,8 @@ export const TRANSLATIONS_EN = {
     Delivery_firms: 'Delivery firms',
     Edit_delivery_firm: 'Edit delivery firm',
     Recent_delivery_firms: 'Recent delivery firms',
+    Origin_location: 'Origin location',
+    Destination_location: 'Destination location',
     Delivery_fee: 'Delivery fee',
     Delivery_method: 'Delivery method',
     Delivery_company: 'Delivery company',
@@ -319,6 +321,7 @@ export const TRANSLATIONS_EN = {
 
     Add_delivery_route: 'Add delivery route',
     Edit_delivery_route: 'Edit delivery route',
+    Add_delivery_link_route: 'Add delivery link route',
     Add_delivery_weight: 'Add delivery weight',
 
   },
