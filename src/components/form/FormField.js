@@ -3,6 +3,7 @@ import Icon from '@mdi/react';
 import React, { useState, forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { visibilityIcon, visibilityOffIcon } from '../../assets/icons';
+import FormLabel from './FormLabel';
 
 const FormField = forwardRef(function ({ ID, label, type, error, value = '', required, minLength, maxLength, step, min, max, tip }, ref) {
 
@@ -20,7 +21,7 @@ const FormField = forwardRef(function ({ ID, label, type, error, value = '', req
 
   return (
     <div className="mb-4">
-      <label htmlFor={ID} className="sr-only">{ t(label) }</label>
+      <FormLabel ID={ID} label={label} required={required} />
       <input 
         ref={ ref }
         id={ ID }

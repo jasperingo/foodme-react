@@ -19,7 +19,7 @@ import Search from '../pages/Customer/Search';
 import Store from '../pages/Customer/Store';
 import Product from '../pages/Customer/Product';
 import Messages from '../pages/Customer/Messages';
-import ForgotPassword from '../pages/Customer/ForgotPassword';
+import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Customer/Profile';
 import Addresses from '../pages/Customer/Addresses';
@@ -126,7 +126,7 @@ export default function CustomerApp() {
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
           <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
-          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword customer={true} />} />
           <Route path="/cart" render={()=> <Cart />} />
           <Route path="/search" render={()=> <Search />} /> 
           <Route path="/discount/:ID" render={()=> <Discount />} />
@@ -140,7 +140,7 @@ export default function CustomerApp() {
           <Route path="/" render={()=> <Home />} />
         </Switch>
       </main>
-      <Footer />
+      <Footer registerHref="/register" loginHref="/login" />
     </>
   );
 }

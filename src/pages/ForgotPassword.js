@@ -1,14 +1,14 @@
 
 import React, { useRef } from 'react';
-import FormButton from '../../components/form/FormButton';
-import FormField from '../../components/form/FormField';
-import FormTopTip from '../../components/form/FormTopTip';
-import { useHeader } from '../../hooks/headerHook';
-import LoadingDialog from '../../components/dialog/LoadingDialog';
-import { usePasswordResetCreate } from '../../hooks/password_reset/passwordResetCreateHook';
-import FormMessage from '../../components/form/FormMessage';
+import FormButton from '../components/form/FormButton';
+import FormField from '../components/form/FormField';
+import FormTopTip from '../components/form/FormTopTip';
+import { useHeader } from '../hooks/headerHook';
+import LoadingDialog from '../components/dialog/LoadingDialog';
+import { usePasswordResetCreate } from '../hooks/password_reset/passwordResetCreateHook';
+import FormMessage from '../components/form/FormMessage';
 
-export default function ForgotPassword() {
+export default function ForgotPassword({ customer, administrator }) {
 
   useHeader({ 
     title: 'Forgot password - DailyNeeds',
@@ -17,11 +17,11 @@ export default function ForgotPassword() {
 
   const emailInput = useRef(null);
 
-  const [onSubmit, dialog, formError, formSuccess] = usePasswordResetCreate({ customer: true });
+  const [onSubmit, dialog, formError, formSuccess] = usePasswordResetCreate({ customer, administrator });
 
   function onFormSubmit(e) {
     e.preventDefault();
-    onSubmit(emailInput.current.value, emailInput.current.validity);
+    onSubmit(emailInput.current.value, undefined, emailInput.current.validity);
   }
   
   return (

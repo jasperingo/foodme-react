@@ -1,8 +1,19 @@
 import { useEffect, useState } from "react";
+import { TRANSACTION } from "../../context/actions/transactionActions";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import TransactionRepository from "../../repositories/TransactionRepository";
+import { useAppContext } from "../contextHook";
 
-export function useTransactionWithdraw(userToken) {
+export function useTransactionWithdraw(userToken, { store, deliveryFirm }) {
+
+  const { 
+    store: { 
+      storeDispatch
+    },
+    deliveryFirm: { 
+      deliveryFirmDispatch
+    }
+  } = useAppContext();
 
   const [data, setData] = useState(null);
 
@@ -14,22 +25,24 @@ export function useTransactionWithdraw(userToken) {
 
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
-  function onSubmit(amount) {
-
-    console.log(amount)
+  function onSubmit(amount, amountValidity) {
     
-    // setFormError(null);
-    // setFormSuccess(null);
+    setFormError(null);
+    setFormSuccess(null);
 
-    // if (amount === '') {
-    //   setFormError('_errors.This_field_is_invalid');
-    // } else if (!window.navigator.onLine) {
-    //   setFormError('_errors.No_netowrk_connection');
-    // } else {
-    //   setDialog(true);
-    setData({ amount: Number(amount) });
-    //   setFetchStatus(FETCH_STATUSES.LOADING);
-    // }
+    if (!amountValidity.valid) {
+      if (amountValidity.rangeUnderflow) {
+        setFormError('_errors._Minimium_withdrawal');
+      } else if (amountValidity.rangeOverflow) {
+        setFormError('_errors._Maximium_withdrawal');
+      } else {
+        setFormError('_errors.This_field_is_required');
+      }
+    } else {
+      setDialog(true);
+      setData({ amount: Number(amount) });
+      setFetchStatus(FETCH_STATUSES.LOADING);
+    }
   }
 
   useEffect(
@@ -39,14 +52,24 @@ export function useTransactionWithdraw(userToken) {
 
         const api = new TransactionRepository(userToken);
 
-        api.create(data)
+        api.withdraw(data)
         .then(res=> {
 
           if (res.status === 201) {
             
             setFormSuccess(res.body.message);
             
-            
+            if (store) {
+              storeDispatch({
+                type: TRANSACTION.BALANCE_WITHDRAWN, 
+                payload: data.amount
+              });
+            } else if (deliveryFirm) {
+              deliveryFirmDispatch({
+                type: TRANSACTION.BALANCE_WITHDRAWN,
+                payload: data.amount
+              });
+            }
 
           } else if (res.status === 400) {
 
@@ -69,7 +92,7 @@ export function useTransactionWithdraw(userToken) {
       }
 
     }, 
-    [data, userToken, fetchStatus, dialog]
+    [data, store, deliveryFirm, userToken, fetchStatus, dialog, storeDispatch, deliveryFirmDispatch]
   );
 
   return [onSubmit, dialog, formError, formSuccess];

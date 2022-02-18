@@ -3,9 +3,9 @@ import { FETCH_STATUSES } from "../../repositories/Fetch";
 import PasswordResetRepository from "../../repositories/PasswordResetRepository";
 
 
-export function usePasswordResetCreate({ administrator }) {
+export function usePasswordResetCreate({ administrator, customer, store, deliveryFirm }) {
 
-  const [email, setEmail] = useState(null);
+  const [data, setData] = useState(null);
 
   const [dialog, setDialog] = useState(false);
 
@@ -15,16 +15,16 @@ export function usePasswordResetCreate({ administrator }) {
 
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
   
-  function onSubmit(email, emailValidity) {
+  function onSubmit(email, name, emailValidity, nameValidity) {
 
     setFormError(null);
     setFormSuccess(null);
-    
-    if (!emailValidity.valid) {
-      setFormError('_errors.This_field_is_required');
+
+    if (!emailValidity.valid || (nameValidity && !nameValidity.valid)) {
+      setFormError('_errors.Fill_form_correctly');
     } else {
       setDialog(true);
-      setEmail({ email });
+      setData((store || deliveryFirm) ? { name, administrator_email: email } : { email });
       setFetchStatus(FETCH_STATUSES.LOADING);
     }
   }
@@ -39,9 +39,15 @@ export function usePasswordResetCreate({ administrator }) {
         let request;
 
         if (administrator) {
-          request = api.createForAdministrator(email);
+          request = api.createForAdministrator(data);
+        } else if (store) {
+          request = api.createForStore(data);
+        } else if (deliveryFirm) {
+          request = api.createForDeliveryFirm(data);
+        } else if (customer) {
+          request = api.createForCustomer(data);
         } else {
-          request = api.createForCustomer(email);
+          request = Promise.reject();
         }
 
         request
@@ -71,7 +77,7 @@ export function usePasswordResetCreate({ administrator }) {
         setDialog(false);
       }
     }, 
-    [email, administrator, fetchStatus, dialog]
+    [data, administrator, store, deliveryFirm, customer, fetchStatus, dialog]
   );
   
   return [onSubmit, dialog, formError, formSuccess];

@@ -67,6 +67,14 @@ export default class StoreRepository extends Fetch {
     );
   }
 
+  updateRecommended(id, formData) {
+    return this.apiFetch(
+      `store/${id}/recommended/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `store/${id}`,

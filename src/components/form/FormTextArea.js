@@ -1,6 +1,7 @@
 
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import FormLabel from './FormLabel';
 
 const FormTextArea = forwardRef(function({ ID, label, value, error, required, minLength, maxLength }, ref) {
 
@@ -10,7 +11,7 @@ const FormTextArea = forwardRef(function({ ID, label, value, error, required, mi
 
   return (
     <div className="mb-4">
-      <label htmlFor={ID} className="sr-only">{ t(label) }</label>
+      <FormLabel ID={ID} label={label} required={required} />
       <textarea 
         ref={ ref }
         id={ ID }

@@ -92,7 +92,7 @@ export default function Product() {
           ()=> (
             <ProductProfile 
               product={product} 
-              isCustomer={false} 
+              isAdmin={true}
               />
           ),
           ()=> <div className="container-x"> <Loading /> </div>,

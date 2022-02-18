@@ -6,6 +6,7 @@ import FormField from '../components/form/FormField';
 import FormMessage from '../components/form/FormMessage';
 import FormTopTip from '../components/form/FormTopTip';
 import { useHeader } from '../hooks/headerHook';
+import { usePasswordResetCreate } from '../hooks/password_reset/passwordResetCreateHook';
 
 export default function ForgotBusinessPassword({ store, deliveryFirm }) {
 
@@ -18,21 +19,16 @@ export default function ForgotBusinessPassword({ store, deliveryFirm }) {
 
   const emailInput = useRef(null);
 
-  const [onSubmit, dialog, formError, formSuccess] = [
-    function() {
-      alert('Yes')
-    }
-
-  ];
+  const [onSubmit, dialog, formError, formSuccess] = usePasswordResetCreate({ store, deliveryFirm });
 
   function onFormSubmit(e) {
     e.preventDefault();
     onSubmit(
-      nameInput.current.value,
       emailInput.current.value, 
+      nameInput.current.value,
       
+      emailInput.current.validity,
       nameInput.current.validity,
-      emailInput.current.validity
     );
   }
   

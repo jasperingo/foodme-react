@@ -27,6 +27,14 @@ export default class ProductRepository extends Fetch {
     );
   }
 
+  updateRecommended(id, formData) {
+    return this.apiFetch(
+      `product/${id}/recommended/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
   delete(id) {
     return this.apiFetch(
       `product/${id}/delete`,

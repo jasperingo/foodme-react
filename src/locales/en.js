@@ -154,6 +154,7 @@ export const TRANSLATIONS_EN = {
     Let_go_to_refresh: 'Let go to refresh',
     Pull_to_refresh: 'Pull to refresh',
     Variation: 'Variation',
+    Recommended: 'Recommended',
 
     Approved: 'Approved',
     Process: 'Process',
@@ -272,7 +273,9 @@ export const TRANSLATIONS_EN = {
     Add_product_variant: 'Add product variant',
     Edit_product_variant: 'Edit product variant',
     _product_delete_confirm: 'Are you sure you want to delete this product?',
-    _product_variant_delete_confirm: 'Are you sure you want to delete this product variant?'
+    _product_variant_delete_confirm: 'Are you sure you want to delete this product variant?',
+
+    Recommended_product: 'Recommended product',
   },
 
   _cart: {
@@ -441,6 +444,7 @@ export const TRANSLATIONS_EN = {
     Credentials_are_incorrect: 'Credentials are incorrect',
     This_field_is_required: 'This field is required',
     This_field_is_invalid: 'This field is invalid',
+    Fill_form_correctly: 'Please fill this form correctly',
     Email_already_exists: 'Email already exists',
     Empty_working_hours_list: 'You have not added any working hour yet',
     invalid_working_hours_list: 'Your working hours contain an invalid value',

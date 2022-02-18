@@ -42,7 +42,8 @@ import PrivacyPolicy from '../pages/PrivacyPolicy';
 import ContactUs from '../pages/ContactUs';
 import AboutUs from '../pages/AboutUs';
 import ResetPassword from '../pages/ResetPassword';
-import ForgotPassword from '../pages/Admin/ForgotPassword';
+import ForgotPassword from '../pages/ForgotPassword';
+import ProductUpdate from '../pages/Admin/ProductUpdate';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -107,6 +108,7 @@ export default function AdminApp() {
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount />} />
+          <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />
           <Route path="/product/:ID" render={()=> authMiddleware() || <Product />} />
           <Route path="/delivery-firm/:ID/update" render={()=> authMiddleware() || <DeliveryFirmUpdate />} />
           <Route path="/delivery-firm/:ID" render={()=> authMiddleware() || <DeliveryFirm />} />
@@ -131,11 +133,11 @@ export default function AdminApp() {
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
-          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword administrator={true} />} />
           <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>
-      <Footer />
+      <Footer loginHref="/" />
     </>
   );
 }

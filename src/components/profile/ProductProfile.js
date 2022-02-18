@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { categoryIcon, editIcon, favoritedIcon, favoriteIcon, notFoundIcon, weightIcon } from "../../assets/icons";
+import { categoryIcon, editIcon, favoritedIcon, favoriteIcon, notFoundIcon, recommendedIcon, weightIcon } from "../../assets/icons";
 import { CART } from "../../context/actions/cartActions";
 import { useAppContext } from "../../hooks/contextHook";
 import { useMoneyFormat } from "../../hooks/viewHook";
@@ -21,6 +21,7 @@ export default function ProductProfile(
   { 
     isCustomer, 
     isStore,
+    isAdmin,
     onFavoriteSubmit,
     onUnfavoriteSubmit,
     customerToken,
@@ -30,6 +31,7 @@ export default function ProductProfile(
       title,
       description,
       sub_category,
+      recommended,
       favorites,
       store,
       product_variants
@@ -262,7 +264,7 @@ export default function ProductProfile(
               }
 
               { 
-                isStore && 
+                (isStore || isAdmin) && 
                 <Link to={`/product/${id}/update`}>
                   <span className="sr-only">{ t('_product.Edit_product') }</span>
                   <Icon path={editIcon} className="w-7 h-7 text-color-primary" />
@@ -275,6 +277,14 @@ export default function ProductProfile(
             <Icon path={categoryIcon} className="w-5 h-5" />
             <span>{ sub_category.name }, { sub_category.category.name }</span>
           </div>
+
+          {
+            recommended && 
+            <div className="flex gap-1 items-center text-color-primary text-sm mb-3">
+              <Icon path={recommendedIcon} className="w-5 h-5" />
+              <span>{ t('_product.Recommended_product') }</span>
+            </div>
+          }
 
           { 
             isStore && 

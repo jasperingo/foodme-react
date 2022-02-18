@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { useTranslation } from 'react-i18next';
+import FormLabel from './FormLabel';
 
 export default function FormButtonField({ onButtonClick, ID, label, error, value, tip }) {
 
@@ -10,7 +11,7 @@ export default function FormButtonField({ onButtonClick, ID, label, error, value
 
   return (
     <div className="mb-4">
-      <label htmlFor={ID} className="sr-only">{ t(label) }</label>
+      <FormLabel ID={ID} label={label} required={true} />
       <button 
         id={ ID }
         onClick={ onButtonClick }

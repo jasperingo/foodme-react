@@ -13,8 +13,8 @@ import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import TermsOfService from '../pages/TermsOfService';
-// import ForgotPassword from '../pages/ForgotPassword';
-// import ResetPassword from '../pages/ResetPassword';
+import ForgotBusinessPassword from '../pages/ForgotBusinessPassword';
+import ResetPassword from '../pages/ResetPassword';
 import LogIn from '../pages/Store/LogIn';
 import Register from '../pages/Store/Register';
 import AccountMenu from '../pages/Store/AccountMenu';
@@ -105,8 +105,8 @@ export default function StoreApp() {
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
           
-          {/* <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
-          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} />*/}
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword store={true} />} />
 
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
           <Route path="/product-variant/create" render={()=> authMiddleware() || <ProductVariantCreate />} />
@@ -138,7 +138,7 @@ export default function StoreApp() {
           <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>
-      <Footer />
+      <Footer registerHref="/register" loginHref="/" />
     </>
   );
 }

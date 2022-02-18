@@ -2,18 +2,16 @@
 import React from 'react';
 import Forbidden from '../../components/Forbidden';
 import RecommendForm from '../../components/form/RecommendForm';
-import UserStatusForm from '../../components/form/UserStatusForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useStoreFetch } from '../../hooks/store/storeFetchHook';
-import { useStoreRecommendedUpdate } from '../../hooks/store/storeRecommendedUpdateHook';
-import { useStoreStatusUpdate } from '../../hooks/store/storeStatusUpdateHook';
+import { useProductFetch } from '../../hooks/product/productFetchHook';
+import { useProductRecommendedUpdate } from '../../hooks/product/productRecommendedUpdateHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
-export default function StoreUpdate() {
+export default function ProductUpdate() {
 
   const {
     admin: { 
@@ -24,23 +22,15 @@ export default function StoreUpdate() {
   } = useAppContext();
 
   const [
-    store, 
-    storeFetchStatus, 
+    product, 
+    productFetchStatus, 
     refetch
-  ] = useStoreFetch(adminToken);
+  ] = useProductFetch(adminToken);
 
   useHeader({ 
-    title: `${store?.user.name ?? 'Loading...'} - Store`,
-    headerTitle: '_store.Edit_store'
+    title: `${product?.title ?? 'Loading...'} - Product`,
+    headerTitle: '_product.Edit_product',
   });
-
-  const [
-    onSubmit,
-    dialog, 
-    formError, 
-    formSuccess, 
-    statusError
-  ] = useStoreStatusUpdate(store?.id, adminToken);
 
   const [
     recommendedOnSubmit,
@@ -48,27 +38,18 @@ export default function StoreUpdate() {
     recommendedFormError, 
     recommendedFormSuccess, 
     recommendedValueError
-  ] = useStoreRecommendedUpdate(store?.id, adminToken);
-
+  ] = useProductRecommendedUpdate(product?.id, adminToken);
+ 
   return (
     <section>
       <div className="container-x">
         {
           useRenderOnDataFetched(
-            storeFetchStatus,
+            productFetchStatus,
             ()=> (
               <>
-                <UserStatusForm 
-                  status={store.user.status} 
-                  onSubmit={onSubmit}
-                  dialog={dialog}
-                  formError={formError}
-                  formSuccess={formSuccess}
-                  statusError={statusError}
-                  />
-                
                 <RecommendForm 
-                  recommended={store.recommended}
+                  recommended={product.recommended}
                   onSubmit={recommendedOnSubmit}
                   dialog={recommendedDialog}
                   formError={recommendedFormError}

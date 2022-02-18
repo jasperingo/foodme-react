@@ -34,11 +34,11 @@ import DeliveryWeightCreate from '../pages/Delivery/DeliveryWeightCreate';
 import DeliveryWeightUpdate from '../pages/Delivery/DeliveryWeightUpdate';
 import Messages from '../pages/Delivery/Messages';
 import ForgotBusinessPassword from '../pages/ForgotBusinessPassword';
-// import AboutUs from '../pages/AboutUs';
-// import ContactUs from '../pages/ContactUs';
-// import PrivacyPolicy from '../pages/PrivacyPolicy';
-// import TermsOfService from '../pages/TermsOfService';
-// import ResetPassword from '../pages/ResetPassword';
+import ResetPassword from '../pages/ResetPassword';
+import AboutUs from '../pages/AboutUs';
+import ContactUs from '../pages/ContactUs';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
+import TermsOfService from '../pages/TermsOfService';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -94,13 +94,13 @@ export default function DeliveryApp() {
         />
       <main className="pb-52">
         <Switch>
-          {/* 
+          
           <Route path="/terms-of-service" render={()=> authMiddleware() || <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> authMiddleware() || <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> authMiddleware() || <ContactUs />} />
-          <Route path="/about-us" render={()=> authMiddleware() || <AboutUs />} /> 
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> */}
+          <Route path="/about-us" render={()=> authMiddleware() || <AboutUs />} />
 
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword deliveryFirm={true} />} />
           
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
@@ -129,7 +129,7 @@ export default function DeliveryApp() {
           <Route path="/" render={()=>  guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} /> 
         </Switch>
       </main>
-      <Footer />
+      <Footer registerHref="/register" loginHref="/" />
     </>
   );
 }

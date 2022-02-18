@@ -1,6 +1,7 @@
 
 import React, { forwardRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import FormLabel from './FormLabel';
 
 const FormSelect = forwardRef(function ({ ID, label, error, value = '', options = [], required, onChange }, ref) {
 
@@ -10,7 +11,7 @@ const FormSelect = forwardRef(function ({ ID, label, error, value = '', options 
   
   return (
     <div className="mb-4">
-      <label htmlFor={ID} className="sr-only">{ t(label) }</label>
+      <FormLabel ID={ID} label={label} required={required} />
       <select 
         ref={ ref }
         id={ ID }

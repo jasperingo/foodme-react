@@ -64,9 +64,11 @@ export default function Wallet() {
 
   const [
     withdraw,
-    withdrawDialog
-  ] = useTransactionWithdraw(storeToken);
-
+    withdrawDialog,
+    withdrawFormError, 
+    withdrawFormSuccess
+  ] = useTransactionWithdraw(storeToken, { store: true });
+  
   return (
     <section>
       {
@@ -75,7 +77,13 @@ export default function Wallet() {
           ()=> (
             <>
               <div className="container-x">
-                <WalletAmount amount={transactionBalance} onSubmitWithdraw={withdraw} withdrawDialog={withdrawDialog} />
+                <WalletAmount 
+                  amount={transactionBalance} 
+                  onSubmitWithdraw={withdraw} 
+                  withdrawDialog={withdrawDialog} 
+                  withdrawFormError={withdrawFormError}
+                  withdrawFormSuccess={withdrawFormSuccess}
+                  />
               </div>
               <StoreTransactionsList />
             </>

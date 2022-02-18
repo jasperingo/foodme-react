@@ -2,10 +2,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMoneyFormat } from '../hooks/viewHook';
-import LoadingDialog from './dialog/LoadingDialog';
 import WithdrawDialog from './dialog/WithdrawDialog';
 
-export default function WalletAmount({ amount, onSubmitWithdraw, withdrawDialog }) {
+export default function WalletAmount({ amount, onSubmitWithdraw, withdrawDialog, withdrawFormError, withdrawFormSuccess }) {
 
   const { t } = useTranslation();
 
@@ -18,9 +17,17 @@ export default function WalletAmount({ amount, onSubmitWithdraw, withdrawDialog 
         <button className="btn-color-primary rounded-full p-2" onClick={()=> setDialog(true)}>{ t('_transaction.Withdraw') }</button>
       </div>
 
-      { withdrawDialog && <LoadingDialog /> }
-
-      { dialog && <WithdrawDialog amount={amount} sendIt={onSubmitWithdraw} closeIt={()=> setDialog(false)} /> }
+      { 
+        dialog && 
+        <WithdrawDialog 
+          amount={amount} 
+          sendIt={onSubmitWithdraw} 
+          dialog={withdrawDialog} 
+          closeIt={()=> setDialog(false)} 
+          formError={withdrawFormError}
+          formSuccess={withdrawFormSuccess}
+          /> 
+        }
     </div>
   );
 }

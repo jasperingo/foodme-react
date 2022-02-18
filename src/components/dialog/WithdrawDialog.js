@@ -1,43 +1,28 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import FormField from '../form/FormField';
 import FormMessage from '../form/FormMessage';
 import AlertDialogDualButton from './AlertDialogDualButton';
 import Dialog from './Dialog';
+import LoadingDialog from './LoadingDialog';
 
-export default function WithdrawDialog({ amount, sendIt, closeIt }) {
+export default function WithdrawDialog({ amount, formError, formSuccess, dialog, sendIt, closeIt }) {
   
   const amountInput = useRef(null);
 
-  const [formError, setFormError] = useState(null);
-
   function onFormSubmit(e) {
     e.preventDefault()
-    validateWithdraw();
-  }
-
-  function validateWithdraw() {
-    
-    if (!amountInput.current.validity.valid) {
-      if (amountInput.current.validity.rangeUnderflow) {
-        setFormError('_errors._Minimium_withdrawal');
-      } else if (amountInput.current.validity.rangeOverflow) {
-        setFormError('_errors._Maximium_withdrawal');
-      } else {
-        setFormError('_errors.This_field_is_required');
-      }
-    } else {
-      setFormError('');
-      sendIt(amountInput.current.value);
-    }
-
+    sendIt(amountInput.current.value, amountInput.current.validity);
   }
 
   return (
+    dialog ?
+    <LoadingDialog />
+    :
     <Dialog>
       <form method="POST" action="" onSubmit={onFormSubmit} className="p-4 pt-8" noValidate>
 
-        <FormMessage error={formError} />
+        <FormMessage error={formError} success={formSuccess} />
         
         <FormField 
           ref={amountInput}
@@ -52,7 +37,7 @@ export default function WithdrawDialog({ amount, sendIt, closeIt }) {
 
         <AlertDialogDualButton
           onBad={closeIt}
-          onGood={validateWithdraw}
+          onGood={onFormSubmit}
           />
 
       </form>
