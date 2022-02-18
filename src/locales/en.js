@@ -174,8 +174,17 @@ export const TRANSLATIONS_EN = {
 
     Opening: 'Opening',
     Closing: 'Closing',
-    Day: 'Day',
     Pick_day_of_the_week: 'Pick day of the week',
+
+    Minimium: 'Minimium',
+    Maximium: 'Maximium',
+    Fee: 'Fee',
+
+    Minute: 'Minute',
+    Hour: 'Hour',
+    Day: 'Day',
+    Week: 'Week',
+    Month: 'Month',
 
   },
 
@@ -312,6 +321,8 @@ export const TRANSLATIONS_EN = {
     Delivery_company: 'Delivery company',
     Delivery_address: 'Delivery address',
     Door_delivery: 'Door delivery',
+    Origin_route_door_delivery: 'Origin route door delivery',
+    Destination_route_door_delivery: 'Destination route door delivery',
     Become_a_courier_partner: 'Become a courier partner',
     Route: 'Route',
     Routes: 'Routes',
@@ -322,7 +333,10 @@ export const TRANSLATIONS_EN = {
     Add_delivery_route: 'Add delivery route',
     Edit_delivery_route: 'Edit delivery route',
     Add_delivery_link_route: 'Add delivery link route',
+    Edit_delivery_link_route: 'Edit delivery link route',
     Add_delivery_weight: 'Add delivery weight',
+    Add_delivery_duration: 'Add delivery duration',
+    Edit_delivery_duration: 'Edit delivery duration',
 
   },
 

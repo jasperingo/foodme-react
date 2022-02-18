@@ -58,10 +58,6 @@ export function useProductVariantCreate() {
     setFormSuccess(null);
     
     let error = false;
-
-    setFormError('');
-
-    setFormSuccess('');
     
     if (!nameValidity.valid) {
       error = true;

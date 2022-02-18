@@ -13,7 +13,7 @@ export default function ProductVariantCreate() {
   const history = useHistory();
 
   if (!product) {
-    history.replace('/');
+    history.replace('/products');
   }
 
   useHeader({ 

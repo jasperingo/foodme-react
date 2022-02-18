@@ -11,9 +11,25 @@ export default class DeliveryRouteRepository extends Fetch {
     );
   }
 
+  createLink(formData) {
+    return this.apiFetch(
+      'delivery-route/link/create',
+      'POST',
+      JSON.stringify(formData)
+    );
+  }
+
   update(id, formData) {
     return this.apiFetch(
       `delivery-route/${id}/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
+  updateLink(id, formData) {
+    return this.apiFetch(
+      `delivery-route/${id}/link/update`,
       'PUT',
       JSON.stringify(formData)
     );

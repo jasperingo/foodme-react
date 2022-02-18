@@ -34,6 +34,61 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
         deliveryRouteFetchStatus: payload.fetchStatus
       };
 
+
+    case DELIVERY_ROUTE.DURATION_UNFETCHED:
+      return {
+        ...state,
+        deliveryDuration: deliveryRouteState.deliveryDuration,
+        deliveryDurationID: deliveryRouteState.deliveryDurationID,
+        deliveryDurationLoading: deliveryRouteState.deliveryDurationLoading,
+        deliveryDurationFetchStatus: deliveryRouteState.deliveryDurationFetchStatus
+      };
+
+    case DELIVERY_ROUTE.DURATION_FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        deliveryDurationID: payload.id,
+        deliveryDurationLoading: payload.loading,
+        deliveryDurationFetchStatus: payload.fetchStatus
+      };
+
+    case DELIVERY_ROUTE.DURATION_FETCHED:
+      return {
+        ...state,
+        deliveryDurationLoading: false,
+        deliveryDuration: payload.deliveryDuration,
+        deliveryDurationID: String(payload.deliveryDuration.id),
+        deliveryDurationFetchStatus: payload.fetchStatus
+      };
+
+    case DELIVERY_ROUTE.DURATION_CREATED: 
+      if (!state.deliveryRoute) {
+        return state;
+      } else {
+        return {
+          ...state,
+          deliveryRoute: {
+            ...state.deliveryRoute,
+            delivery_route_durations: [...state.deliveryRoute.delivery_route_durations, payload]
+          }
+        };
+      }
+    
+    case DELIVERY_ROUTE.DURATION_UPDATED:
+      if (!state.deliveryRoute) {
+        return state;
+      } else {
+        return {
+          ...state,
+          deliveryRoute: { 
+            ...state.deliveryRoute, 
+            delivery_route_durations: [...state.deliveryRoute.delivery_route_durations.map(i=> 
+              (i.id === payload.id) ? payload : i
+            )] 
+          } 
+        };
+      }
+
     default:
       return state;
   }

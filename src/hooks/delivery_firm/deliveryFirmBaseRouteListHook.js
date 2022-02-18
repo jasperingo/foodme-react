@@ -7,13 +7,14 @@ import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
 
-export function useDeliveryFirmBaseRouteList(userToken) {
+export function useDeliveryFirmBaseRouteList() {
 
   const { 
     deliveryFirm: {
       deliveryFirmDispatch,
       deliveryFirm: {
         deliveryFirm,
+        deliveryFirmToken,
         deliveryBaseRoutes,
         deliveryBaseRoutesPage,
         deliveryBaseRoutesLoading,
@@ -43,7 +44,7 @@ export function useDeliveryFirmBaseRouteList(userToken) {
 
         deliveryFirmDispatch(getDeliveryBaseRoutesListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
-        const api = new DeliveryFirmRepository(userToken);
+        const api = new DeliveryFirmRepository(deliveryFirmToken);
         api.getBaseRoutesList(deliveryFirm.id, deliveryBaseRoutesPage)
         .then(res=> {
           
@@ -86,7 +87,7 @@ export function useDeliveryFirmBaseRouteList(userToken) {
       deliveryBaseRoutesPage, 
       deliveryBaseRoutesLoading, 
       deliveryBaseRoutesFetchStatus, 
-      userToken, 
+      deliveryFirmToken, 
       deliveryFirmDispatch, 
       listStatusUpdater
     ]

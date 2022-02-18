@@ -11,6 +11,13 @@ export const DELIVERY_ROUTE = {
   BASE_LIST_FETCHED: 'DELIVERY_BASE_ROUTES_FETCHED',
   BASE_LIST_UNFETCHED: 'DELIVERY_BASE_ROUTES_UNFETCHED',
   BASE_LIST_FETCH_STATUS_CHANGED: 'DELIVERY_BASE_ROUTES_FETCH_STATUS_CHANGED',
+
+  DURATION_CREATED: 'DELIVERY_ROUTE_DURATION_CREATED',
+  DURATION_UPDATED: 'DELIVERY_ROUTE_DURATION_UPDATED',
+  DURATION_DELETED: 'DELIVERY_ROUTE_DURATION_DELETED',
+  DURATION_FETCHED: 'DELIVERY_ROUTE_DURATION_FETCHED',
+  DURATION_UNFETCHED: 'DELIVERY_ROUTE_DURATION_UNFETCHED',
+  DURATION_FETCH_STATUS_CHANGED: 'DELIVERY_ROUTE_DURATION_FETCH_STATUS_CHANGED',
 };
 
 export const getDeliveryRouteFetchStatusAction = (fetchStatus, id, loading) => ({
@@ -33,3 +40,11 @@ export const getDeliveryBaseRoutesListFetchStatusAction = (fetchStatus, loading)
     fetchStatus, loading
   }
 });
+
+export const getDeliveryRouteDurationFetchStatusAction = (fetchStatus, id, loading) => ({
+  type: DELIVERY_ROUTE.DURATION_FETCH_STATUS_CHANGED,
+  payload: {
+    fetchStatus, id, loading
+  }
+});
+

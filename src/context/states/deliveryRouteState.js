@@ -11,7 +11,12 @@ const deliveryRouteState = {
   deliveryRoute: null,
   deliveryRouteID: null,
   deliveryRouteLoading: true,
-  deliveryRouteFetchStatus: FETCH_STATUSES.LOADING
+  deliveryRouteFetchStatus: FETCH_STATUSES.LOADING,
+
+  deliveryDuration: null,
+  deliveryDurationID: null,
+  deliveryDurationLoading: true,
+  deliveryDurationFetchStatus: FETCH_STATUSES.LOADING
   
 };
 

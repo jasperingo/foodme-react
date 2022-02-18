@@ -46,7 +46,8 @@ import {
   mdiKey,
   mdiBank,
   mdiAlert as mdiWarn,
-  mdiScaleBalance
+  mdiScaleBalance,
+  mdiCancel
 
 } from '@mdi/js';
 
@@ -96,6 +97,8 @@ export const leftRightIcon = mdiArrowLeftRightBold;
 export const passwordIcon = mdiKey;
 export const bankAccountIcon = mdiBank;
 export const weightIcon = mdiScaleBalance;
+
+export const cancelIcon = mdiCancel;
 
 export const notFoundIcon = mdiWarn;
 
