@@ -19,6 +19,13 @@ export default class DeliveryRouteDurationRepository extends Fetch {
     );
   }
 
+  delete(id) {
+    return this.apiFetch(
+      `delivery-route-duration/${id}/delete`,
+      'DELETE'
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `delivery-route-duration/${id}`,

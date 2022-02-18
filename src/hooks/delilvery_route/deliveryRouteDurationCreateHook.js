@@ -5,6 +5,7 @@ import DeliveryRouteDurationRepository from "../../repositories/DeliveryRouteDur
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 import { useURLQuery } from "../viewHook";
+import { useDeliveryRouteDurationValidation } from "./deliveryRouteDurationValidationHook";
 
 export function useDeliveryRouteDurationCreate() {
 
@@ -39,6 +40,8 @@ export function useDeliveryRouteDurationCreate() {
 
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
+  const validator = useDeliveryRouteDurationValidation();
+
   function onSubmit(
     minimium,
     maximium,
@@ -54,40 +57,18 @@ export function useDeliveryRouteDurationCreate() {
     setFormError(null);
     setFormSuccess(null);
     
-    let error = false;
-    
-    if (!minValidity.valid) {
-      error = true;
-      setMinError('_errors.This_field_is_required');
-    } else {
-      setMinError('');
-    }
+    const [
+      error, 
+      minError, 
+      maxError, 
+      feeError, 
+      unitError
+    ] = validator(minimium, maximium, minValidity, maxValidity, feeValidity, unitValidity);
 
-    if (!maxValidity.valid) {
-      error = true;
-      setMaxError('_errors.This_field_is_required');
-    } else {
-      setMaxError('');
-    }
-
-    if (!feeValidity.valid) {
-      error = true;
-      setFeeError('_errors.This_field_is_required');
-    } else {
-      setFeeError('');
-    }
-    
-    if (!unitValidity.valid) {
-      error = true;
-      setUnitError('_errors.This_field_is_required');
-    } else {
-      setUnitError('');
-    }
-
-    if (!error && Number(minimium) >= Number(maximium)) {
-      error = true;
-      setMinError('_errors.This_field_is_invalid');
-    }
+    setMinError(minError);
+    setMaxError(maxError);
+    setFeeError(feeError);
+    setUnitError(unitError);
 
     if (!window.navigator.onLine) {
       setFormError('_errors.No_netowrk_connection');

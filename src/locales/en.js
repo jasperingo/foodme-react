@@ -338,6 +338,7 @@ export const TRANSLATIONS_EN = {
     Add_delivery_duration: 'Add delivery duration',
     Edit_delivery_duration: 'Edit delivery duration',
 
+    _delivery_duration_delete_confirm: 'Are you sure you want to delete this delivery duration?'
   },
 
   _order: {

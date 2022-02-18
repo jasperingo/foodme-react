@@ -4,6 +4,7 @@ import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
 import DeliveryRouteDurationRepository from "../../repositories/DeliveryRouteDurationRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useDeliveryRouteDurationValidation } from "./deliveryRouteDurationValidationHook";
 
 export function useDeliveryRouteDurationUpdate() {
 
@@ -39,6 +40,8 @@ export function useDeliveryRouteDurationUpdate() {
 
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
+  const validator = useDeliveryRouteDurationValidation();
+
   function onSubmit(
     minimium,
     maximium,
@@ -54,41 +57,19 @@ export function useDeliveryRouteDurationUpdate() {
     setFormError(null);
     setFormSuccess(null);
     
-    let error = false;
+    const [
+      error, 
+      minError, 
+      maxError, 
+      feeError, 
+      unitError
+    ] = validator(minimium, maximium, minValidity, maxValidity, feeValidity, unitValidity);
+
+    setMinError(minError);
+    setMaxError(maxError);
+    setFeeError(feeError);
+    setUnitError(unitError);
     
-    if (!minValidity.valid) {
-      error = true;
-      setMinError('_errors.This_field_is_required');
-    } else {
-      setMinError('');
-    }
-
-    if (!maxValidity.valid) {
-      error = true;
-      setMaxError('_errors.This_field_is_required');
-    } else {
-      setMaxError('');
-    }
-
-    if (!feeValidity.valid) {
-      error = true;
-      setFeeError('_errors.This_field_is_required');
-    } else {
-      setFeeError('');
-    }
-    
-    if (!unitValidity.valid) {
-      error = true;
-      setUnitError('_errors.This_field_is_required');
-    } else {
-      setUnitError('');
-    }
-
-    if (!error && Number(minimium) >= Number(maximium)) {
-      error = true;
-      setMinError('_errors.This_field_is_invalid');
-    }
-
     if (!window.navigator.onLine) {
       setFormError('_errors.No_netowrk_connection');
     } else if (!error) {
@@ -105,7 +86,7 @@ export function useDeliveryRouteDurationUpdate() {
         
         const api = new DeliveryRouteDurationRepository(deliveryFirmToken);
 
-        api.create(deliveryDuration.id, data)
+        api.update(deliveryDuration.id, data)
         .then(res=> {
 
           if (res.status === 200) {
@@ -115,7 +96,7 @@ export function useDeliveryRouteDurationUpdate() {
             setFetchStatus(FETCH_STATUSES.PENDING);
 
             deliveryRouteDispatch({
-              type: DELIVERY_ROUTE.DURATION_CREATED,
+              type: DELIVERY_ROUTE.DURATION_UPDATED,
               payload: res.body.data
             });
             

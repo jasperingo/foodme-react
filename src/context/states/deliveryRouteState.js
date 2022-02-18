@@ -16,7 +16,12 @@ const deliveryRouteState = {
   deliveryDuration: null,
   deliveryDurationID: null,
   deliveryDurationLoading: true,
-  deliveryDurationFetchStatus: FETCH_STATUSES.LOADING
+  deliveryDurationFetchStatus: FETCH_STATUSES.LOADING,
+
+  deliveryWeight: null,
+  deliveryWeightID: null,
+  deliveryWeightLoading: true,
+  deliveryWeightFetchStatus: FETCH_STATUSES.LOADING
   
 };
 
