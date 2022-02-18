@@ -56,6 +56,7 @@ export const TRANSLATIONS_EN = {
     Manage_your_account: 'Manage your account',
     _log_out_confirm_message: 'Are you sure you want to log out?',
     _forgot_password_instruction: 'To reset your password, enter your email address',
+    _forgot_password_instruction_for_business: 'To reset your password, enter the name of your store or delivery firm and your administrator email address',
     _forgot_password_success: 'An link has been sent to your email, click on the link to finish resetting your password, it expires in 15 minutes',
     _reset_password_instruction: 'Enter your new password, use a password you will not forget',
     _reset_password_success: 'Your password has been reset successfully, you can now log in with your new password',
@@ -335,10 +336,14 @@ export const TRANSLATIONS_EN = {
     Add_delivery_link_route: 'Add delivery link route',
     Edit_delivery_link_route: 'Edit delivery link route',
     Add_delivery_weight: 'Add delivery weight',
+    Edit_delivery_weight: 'Edit delivery weight',
     Add_delivery_duration: 'Add delivery duration',
     Edit_delivery_duration: 'Edit delivery duration',
 
-    _delivery_duration_delete_confirm: 'Are you sure you want to delete this delivery duration?'
+    _delivery_route_delete_confirm: 'Are you sure you want to delete this delivery route?',
+    _delivery_duration_delete_confirm: 'Are you sure you want to delete this delivery duration?',
+    _delivery_weight_delete_confirm: 'Are you sure you want to delete this delivery weight?',
+
   },
 
   _order: {

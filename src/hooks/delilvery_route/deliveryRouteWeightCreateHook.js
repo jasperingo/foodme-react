@@ -1,13 +1,13 @@
 
 import { useEffect, useState } from "react";
 import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
-import DeliveryRouteDurationRepository from "../../repositories/DeliveryRouteDurationRepository";
+import DeliveryRouteWeightRepository from "../../repositories/DeliveryRouteWeightRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 import { useURLQuery } from "../viewHook";
-import { useDeliveryRouteDurationValidation } from "./deliveryRouteDurationValidationHook";
+import { useDeliveryRouteWeightValidation } from "./deliveryRouteWeightValidationHook";
 
-export function useDeliveryRouteDurationCreate() {
+export function useDeliveryRouteWeightCreate() {
 
   const { 
     deliveryFirm: { 
@@ -34,24 +34,20 @@ export function useDeliveryRouteDurationCreate() {
 
   const [maxError, setMaxError] = useState('');
 
-  const [unitError, setUnitError] = useState('');
-
   const [feeError, setFeeError] = useState('');
 
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
-  const validator = useDeliveryRouteDurationValidation();
+  const validator = useDeliveryRouteWeightValidation();
 
   function onSubmit(
     minimium,
     maximium,
     fee,
-    unit,
 
     minValidity,
     maxValidity,
-    feeValidity,
-    unitValidity
+    feeValidity
   ) {
     
     setFormError(null);
@@ -62,19 +58,17 @@ export function useDeliveryRouteDurationCreate() {
       minError, 
       maxError, 
       feeError, 
-      unitError
-    ] = validator(minimium, maximium, minValidity, maxValidity, feeValidity, unitValidity);
+    ] = validator(minimium, maximium, minValidity, maxValidity, feeValidity);
 
     setMinError(minError);
     setMaxError(maxError);
     setFeeError(feeError);
-    setUnitError(unitError);
 
     if (!window.navigator.onLine) {
       setFormError('_errors.No_netowrk_connection');
     } else if (!error) {
       setDialog(true);
-      setData({ minimium, maximium, fee, unit, delivery_route_id: route });
+      setData({ minimium, maximium, fee, delivery_route_id: route });
       setFetchStatus(FETCH_STATUSES.LOADING);
     }
   }
@@ -84,7 +78,7 @@ export function useDeliveryRouteDurationCreate() {
      
       if (fetchStatus === FETCH_STATUSES.LOADING) {
         
-        const api = new DeliveryRouteDurationRepository(deliveryFirmToken);
+        const api = new DeliveryRouteWeightRepository(deliveryFirmToken);
 
         api.create(data)
         .then(res=> {
@@ -96,7 +90,7 @@ export function useDeliveryRouteDurationCreate() {
             setFetchStatus(FETCH_STATUSES.PENDING);
 
             deliveryRouteDispatch({
-              type: DELIVERY_ROUTE.DURATION_CREATED,
+              type: DELIVERY_ROUTE.WEIGHT_CREATED,
               payload: res.body.data
             });
             
@@ -114,10 +108,6 @@ export function useDeliveryRouteDurationCreate() {
 
                 case 'maximium':
                   setMaxError(error.message);
-                  break;
-
-                case 'unit':
-                  setUnitError(error.message);
                   break;
 
                 case 'fee':
@@ -156,7 +146,7 @@ export function useDeliveryRouteDurationCreate() {
     formSuccess, 
     minError, 
     maxError, 
-    unitError,
     feeError
   ];
 }
+

@@ -43,7 +43,7 @@ function RouteList({ onCancel, onItemSelected, title, routes, routesFetchStatus,
         <div className="flex gap-2 mt-4 items-center">
           <H4Heading text={title} />
           <div className="flex-grow text-right">
-            <button onClick={onCancel} className="inline-flex gap-2 items-center">
+            <button onClick={onCancel} className="inline-flex gap-2 items-center text-red-500">
               <span>{ t('_extra.Cancel') }</span>
               <Icon path={cancelIcon} className="w-5 h-5" />
             </button>

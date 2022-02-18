@@ -1,11 +1,11 @@
 
 import { useEffect, useState } from "react";
 import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
-import DeliveryRouteDurationRepository from "../../repositories/DeliveryRouteDurationRepository";
+import DeliveryRouteRepository from "../../repositories/DeliveryRouteRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
-export function useDeliveryRouteDurationDelete() {
+export function useDeliveryRouteDelete() {
 
   const {
     deliveryFirm: { 
@@ -16,7 +16,7 @@ export function useDeliveryRouteDurationDelete() {
     deliveryRoute : { 
       deliveryRouteDispatch,
       deliveryRoute: {
-        deliveryDuration
+        deliveryRoute
       } 
     }
   } = useAppContext();
@@ -39,15 +39,15 @@ export function useDeliveryRouteDurationDelete() {
   useEffect(
     ()=> {
       if (fetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new DeliveryRouteDurationRepository(deliveryFirmToken);
+        const api = new DeliveryRouteRepository(deliveryFirmToken);
 
-        api.delete(deliveryDuration.id)
+        api.delete(deliveryRoute.id)
         .then(res=> {
 
           if (res.status === 200) {
 
             setFormSuccess(res.body.message);
-            deliveryRouteDispatch({ type: DELIVERY_ROUTE.DURATION_DELETED, payload: deliveryDuration.id });
+            deliveryRouteDispatch({ type: DELIVERY_ROUTE.UNFETCHED });
 
           } else {
             throw new Error();
@@ -65,7 +65,7 @@ export function useDeliveryRouteDurationDelete() {
         setDialog(false);
       }
     },
-    [deliveryDuration, deliveryFirmToken, fetchStatus, dialog, deliveryRouteDispatch]
+    [deliveryRoute, deliveryFirmToken, fetchStatus, dialog, deliveryRouteDispatch]
   )
 
 

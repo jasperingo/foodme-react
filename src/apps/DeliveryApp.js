@@ -31,14 +31,14 @@ import DeliveryLinkRouteUpdate from '../pages/Delivery/DeliveryLinkRouteUpdate';
 import DeliveryDurationCreate from '../pages/Delivery/DeliveryDurationCreate';
 import DeliveryDurationUpdate from '../pages/Delivery/DeliveryDurationUpdate';
 import DeliveryWeightCreate from '../pages/Delivery/DeliveryWeightCreate';
+import DeliveryWeightUpdate from '../pages/Delivery/DeliveryWeightUpdate';
+import Messages from '../pages/Delivery/Messages';
+import ForgotBusinessPassword from '../pages/ForgotBusinessPassword';
 // import AboutUs from '../pages/AboutUs';
 // import ContactUs from '../pages/ContactUs';
 // import PrivacyPolicy from '../pages/PrivacyPolicy';
 // import TermsOfService from '../pages/TermsOfService';
-// import Messages from '../pages/Delivery/Messages';
 // import ResetPassword from '../pages/ResetPassword';
-// import ForgotPassword from '../pages/ForgotPassword';
-// import AddressAdd from '../pages/AddressAdd';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -99,10 +99,12 @@ export default function DeliveryApp() {
           <Route path="/privacy-policy" render={()=> authMiddleware() || <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> authMiddleware() || <ContactUs />} />
           <Route path="/about-us" render={()=> authMiddleware() || <AboutUs />} /> 
-          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
-          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword />} /> */}
+          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> */}
+
+          <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword deliveryFirm={true} />} />
           
+          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/delivery-route-weight/:ID/update" render={()=> authMiddleware() || <DeliveryWeightUpdate />} />
           <Route path="/delivery-route-weight/create" render={()=> authMiddleware() || <DeliveryWeightCreate />} />
           <Route path="/delivery-route-duration/:ID/update" render={()=> authMiddleware() || <DeliveryDurationUpdate />} />
           <Route path="/delivery-route-duration/create" render={()=> authMiddleware() || <DeliveryDurationCreate />} />

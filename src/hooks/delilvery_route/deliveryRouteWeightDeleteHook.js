@@ -1,13 +1,13 @@
 
 import { useEffect, useState } from "react";
 import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
-import DeliveryRouteDurationRepository from "../../repositories/DeliveryRouteDurationRepository";
+import DeliveryRouteWeightRepository from "../../repositories/DeliveryRouteWeightRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
-export function useDeliveryRouteDurationDelete() {
+export function useDeliveryRouteWeightDelete() {
 
-  const {
+  const { 
     deliveryFirm: { 
       deliveryFirm: {
         deliveryFirmToken
@@ -16,12 +16,12 @@ export function useDeliveryRouteDurationDelete() {
     deliveryRoute : { 
       deliveryRouteDispatch,
       deliveryRoute: {
-        deliveryDuration
+        deliveryWeight
       } 
     }
   } = useAppContext();
 
-  const [dialog, setDialog] = useState(null);
+  const [dialog, setDialog] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
@@ -29,25 +29,33 @@ export function useDeliveryRouteDurationDelete() {
 
   const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
 
-  function onSubmit() {
+  function onSubmit() { 
     setDialog(true);
     setFormError(null);
     setFormSuccess(null);
     setFetchStatus(FETCH_STATUSES.LOADING);
   }
-
+  
   useEffect(
     ()=> {
+     
       if (fetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new DeliveryRouteDurationRepository(deliveryFirmToken);
+        
+        const api = new DeliveryRouteWeightRepository(deliveryFirmToken);
 
-        api.delete(deliveryDuration.id)
+        api.delete(deliveryWeight.id)
         .then(res=> {
 
           if (res.status === 200) {
-
+            
             setFormSuccess(res.body.message);
-            deliveryRouteDispatch({ type: DELIVERY_ROUTE.DURATION_DELETED, payload: deliveryDuration.id });
+
+            setFetchStatus(FETCH_STATUSES.PENDING);
+
+            deliveryRouteDispatch({
+              type: DELIVERY_ROUTE.WEIGHT_DELETED,
+              payload: deliveryWeight.id
+            });
 
           } else {
             throw new Error();
@@ -55,19 +63,22 @@ export function useDeliveryRouteDurationDelete() {
           
         })
         .catch(()=> {
-          setFormError('_errors.Something_went_wrong');
-        })
-        .finally(()=> {
           setFetchStatus(FETCH_STATUSES.PENDING);
+          setFormError('_errors.Something_went_wrong');
         });
 
       } else if (dialog !== false) {
         setDialog(false);
       }
-    },
-    [deliveryDuration, deliveryFirmToken, fetchStatus, dialog, deliveryRouteDispatch]
-  )
+    }, 
+    [fetchStatus, dialog, deliveryFirmToken, deliveryWeight, deliveryRouteDispatch]
+  );
 
-
-  return [onSubmit, dialog, formSuccess, formError];
+  return [
+    onSubmit, 
+    dialog, 
+    formSuccess,
+    formError
+  ];
 }
+

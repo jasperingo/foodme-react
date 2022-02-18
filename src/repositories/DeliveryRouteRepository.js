@@ -35,6 +35,13 @@ export default class DeliveryRouteRepository extends Fetch {
     );
   }
 
+  delete(id) {
+    return this.apiFetch(
+      `delivery-route/${id}/delete`,
+      'DELETE'
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `delivery-route/${id}`,

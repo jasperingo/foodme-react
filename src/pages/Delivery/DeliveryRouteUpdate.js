@@ -1,6 +1,7 @@
 
 import React from 'react';
 import DeliveryRouteForm from '../../components/form/DeliveryRouteForm';
+import DeleteForm from '../../components/form/DeleteForm';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import { useLocationList } from '../../hooks/address/locationListHook';
@@ -9,6 +10,7 @@ import { useDeliveryRouteFetch } from '../../hooks/delilvery_route/deliveryRoute
 import { useDeliveryRouteUpdate } from '../../hooks/delilvery_route/deliveryRoutetUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useRenderOnDataFetched } from '../../hooks/viewHook';
+import { useDeliveryRouteDelete } from '../../hooks/delilvery_route/deliveryRouteDeleteHook';
 
 export default function DeliveryRouteUpdate() {
 
@@ -47,6 +49,13 @@ export default function DeliveryRouteUpdate() {
     doorDeliveryError,
   ] = useDeliveryRouteUpdate();
 
+  const [
+    deleteOnSubmit, 
+    deleteDialog, 
+    deleteFormSuccess, 
+    deleteFormError
+  ] = useDeliveryRouteDelete();
+
   function retryLoad() {
     retry();
     refetch();
@@ -59,17 +68,28 @@ export default function DeliveryRouteUpdate() {
           useRenderOnDataFetched(
             [locationsFetchStatus, deliveryRouteFetchStatus],
             ()=> (
-              <DeliveryRouteForm 
-                deliveryRoute={deliveryRoute}
-                locations={locations}
-                onSubmit={onSubmit}
-                dialog={dialog}
-                formError={formError}
-                formSuccess={formSuccess}
-                stateError={stateError} 
-                cityError={cityError}
-                doorDeliveryError={doorDeliveryError}
-                />
+              <>
+                <DeliveryRouteForm 
+                  deliveryRoute={deliveryRoute}
+                  locations={locations}
+                  onSubmit={onSubmit}
+                  dialog={dialog}
+                  formError={formError}
+                  formSuccess={formSuccess}
+                  stateError={stateError} 
+                  cityError={cityError}
+                  doorDeliveryError={doorDeliveryError}
+                  />
+                
+                <DeleteForm 
+                  confirmMessage="_delivery._delivery_route_delete_confirm"
+                  redirect="/delivery-routes"
+                  onSubmit={deleteOnSubmit} 
+                  dialog={deleteDialog}
+                  formSuccess={deleteFormSuccess}
+                  formError={deleteFormError}
+                  />
+              </>
             ),
             ()=> <Loading />,
             ()=> <Reload action={retryLoad} />
