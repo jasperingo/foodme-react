@@ -1,30 +1,27 @@
 import { CUSTOMER } from "../actions/customerActions";
 import { DELIVERY_FIRM } from "../actions/deliveryFirmActions";
 import { ORDER } from "../actions/orderActions";
+import { STATISTICS } from "../actions/statisticsActions";
 import { STORE } from "../actions/storeActions";
-
 
 export default function DashboardReducer (state, { type, payload }) {
   
   switch (type) {  
     
-    // case STATISTICS.FETCH_STATUS_CHANGED :
-    //   return {
-    //     ...state,
-    //     statistics: {
-    //       ...state.statistics,
-    //       statisticsFetchStatus: action.payload
-    //     }
-    //   };
+    case STATISTICS.FETCH_STATUS_CHANGED:
+      return {
+        ...state,
+        statisticsLoading: payload.loading,
+        statisticsFetchStatus: payload.fetchStatus
+      };
     
-    // case STATISTICS.FETCHED :
-    //   return {
-    //     ...state,
-    //     statistics: {
-    //       statistics: action.payload, 
-    //       statisticsFetchStatus: FETCH_STATUSES.DONE,
-    //     }
-    //   };
+    case STATISTICS.FETCHED:
+      return {
+        ...state,
+        statisticsLoading: false,
+        statistics: payload.statistics, 
+        statisticsFetchStatus: payload.fetchStatus
+      };
     
     
     case ORDER.LIST_FETCH_STATUS_CHANGED:

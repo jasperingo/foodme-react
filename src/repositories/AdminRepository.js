@@ -59,4 +59,11 @@ export default class AdminRepository extends Fetch {
     );
   }
 
+  getStatistics() {
+    return this.apiFetch(
+      'administrator/statistics',
+      'GET'
+    );
+  }
+
 }

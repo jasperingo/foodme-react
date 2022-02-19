@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { deliveryIcon, orderIcon, storeIcon, userIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
@@ -15,82 +16,64 @@ import { useAppContext } from '../../hooks/contextHook';
 import { useDashboardCustomerList } from '../../hooks/dashboard/dashboardCustomerListHook';
 import { useDashboardDeliveryFirmList } from '../../hooks/dashboard/dashboardDeliveryFirmListHook';
 import { useDashboardOrderList } from '../../hooks/dashboard/dashboardOrderListHook';
+import { useDashboardStatistics } from '../../hooks/dashboard/dashboardStatisticsHook';
 import { useDashboardStoreList } from '../../hooks/dashboard/dashboardStoreListHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderListFooter } from '../../hooks/viewHook';
+import { useMoneyFormat, useRenderListFooter, useRenderOnDataFetched } from '../../hooks/viewHook';
 import { FETCH_STATUSES } from '../../repositories/Fetch';
 
 
-// function StatisticsData({ number, text, amount }) {
+function StatisticsData({ number, text, amount }) {
 
-//   const { t } = useTranslation();
+  const { t } = useTranslation();
 
-//   const _amount = useMoneyFormat(amount || 0);
+  const _amount = useMoneyFormat(amount || 0);
 
-//   return (
-//     <li className="flex-grow w-1/3 md:w-1/4">
-//       <div className="shadow p-3 rounded">
-//         { number && <div className="font-bold">{ number }</div> }
-//         { amount && <div className="font-bold">{ _amount }</div> }
-//         <div className="text-sm">{ t(text) }</div>
-//       </div>
-//     </li>
-//   );
-// }
+  return (
+    <li className="flex-grow w-1/3 md:w-1/4">
+      <div className="shadow p-3 rounded">
+        { number && <div className="font-bold">{ number }</div> }
+        { amount && <div className="font-bold">{ _amount }</div> }
+        <div className="text-sm">{ t(text) }</div>
+      </div>
+    </li>
+  );
+}
 
-// function Statistics() {
+function Statistics() {
   
-//   const {
-//     user: { user },
-//     dashboard: {
-//       statistics: {
-//         statistics,
-//         statisticsFetchStatus
-//       }
-//     },
-//     dashboardDispatch
-//   } = useAppContext();
+  const [
+    statistics, 
+    statisticsFetchStatus, 
+    refetch
+  ] = useDashboardStatistics();
 
-//   useEffect(()=> {
-//     if (statisticsFetchStatus === FETCH_STATUSES.LOADING) {
-//       const api = new AdminApi(user.api_token);
-//       api.getStatistics(dashboardDispatch);
-//     }
-//   });
-
-//   function refetchStatistics() {
-//     if (statisticsFetchStatus !== FETCH_STATUSES.LOADING) 
-//       dashboardDispatch(getStatisticsFetchStatusAction(FETCH_STATUSES.LOADING));
-//   }
-
-
-//   return(
-//     <div className="my-4">
-//       <H3 text="_extra.Statistics" />
-//       <ul className="flex gap-2 flex-wrap mb-8 md:gap-4">
-//         { 
-//           useDataRender(
-//             statistics, 
-//             statisticsFetchStatus,
-//             ()=> (
-//               <>
-//                 <StatisticsData number={statistics.customers_number} text="_user.Customers" />
-//                 <StatisticsData number={statistics.stores_number} text="_store.Stores" />
-//                 <StatisticsData number={statistics.delivery_firms_number} text="_delivery.Delivery_firms" />
-//                 <StatisticsData number={statistics.categories_number} text="_category.Categories" />
-//                 <StatisticsData number={statistics.orders_number} text="_order.Orders" />
-//                 <StatisticsData amount={statistics.earnings_total} text="_transaction.Earnings" />
-//               </>
-//             ),
-//             ()=> <li> <Loading /> </li>, 
-//             ()=> <li> <Reload action={refetchStatistics} /> </li>,
-//           )
-//         }
-//       </ul>
-//     </div>
-//   );
-// }
-
+  return(
+    <div className="my-4">
+      <H4Heading text="_extra.Statistics" />
+      <ul className="flex gap-2 flex-wrap mb-8 md:gap-4">
+        { 
+          useRenderOnDataFetched(
+            statisticsFetchStatus,
+            ()=> (
+              <>
+                <StatisticsData number={statistics.number_of_customers} text="_user.Customers" />
+                <StatisticsData number={statistics.number_of_stores} text="_store.Stores" />
+                <StatisticsData number={statistics.number_of_delivery_firms} text="_delivery.Delivery_firms" />
+                <StatisticsData number={statistics.number_of_categories} text="_category.Categories" />
+                <StatisticsData number={statistics.number_of_products} text="_product.Products" />
+                <StatisticsData number={statistics.number_of_orders} text="_order.Orders" />
+                <StatisticsData amount={statistics.total_earnings} text="_transaction.Earnings" />
+              </>
+            ),
+            ()=> <li> <Loading /> </li>, 
+            ()=> <li> <Reload action={refetch} /> </li>,
+          )
+        }
+      </ul>
+    </div>
+  );
+}
 
 function DeliveryFirms() {
 
@@ -218,6 +201,7 @@ export default function Dashboard() {
   const {
     dashboard: {
       dashboard: {
+        statisticsFetchStatus,
         storesFetchStatus,
         customersFetchStatus,
         ordersFetchStatus
@@ -229,9 +213,14 @@ export default function Dashboard() {
     <section>
       <div className="container-x">
         
-        {/* <Statistics /> */}
+        <Statistics />
 
-        <Orders />
+        { 
+          (statisticsFetchStatus  === FETCH_STATUSES.DONE || 
+            statisticsFetchStatus === FETCH_STATUSES.EMPTY) 
+          &&
+          <Orders />
+        }
 
         { 
           (ordersFetchStatus === FETCH_STATUSES.DONE || 
