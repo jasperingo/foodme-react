@@ -66,7 +66,7 @@ export default function Wallet() {
   const [
     withdraw,
     withdrawDialog
-  ] = useTransactionWithdraw(deliveryFirmToken);
+  ] = useTransactionWithdraw(deliveryFirmToken, { deliveryFirm: true });
 
   return (
     <section>

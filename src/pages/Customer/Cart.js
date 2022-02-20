@@ -1,7 +1,6 @@
 
 import React from 'react';
 import EmptyList from '../../components/EmptyList';
-//import CartCodeForm from '../../components/CartCodeForm';
 import CartCheckOutOrSave from '../../components/cart/CartCheckOutOrSave';
 import { cartIcon } from '../../assets/icons';
 import { useAppContext } from '../../hooks/contextHook';

@@ -133,10 +133,12 @@ export default function TransactionProfile(
     });
   }
 
-
   const btns = [];
 
-  if (canCancel && status === Transaction.STATUS_PENDING) {
+  if (
+    canCancel && status === Transaction.STATUS_PENDING && 
+    (type === Transaction.TYPE_WITHDRAWAL || type === Transaction.TYPE_REFUND)
+  ) {
     btns.push({
       text: '_extra.Cancel',
       color: 'btn-color-red',
@@ -144,7 +146,10 @@ export default function TransactionProfile(
     });
   }
   
-  if (canProcessAndDecline && status === Transaction.STATUS_PENDING) {
+  if (
+    canProcessAndDecline && status === Transaction.STATUS_PENDING && 
+    (type === Transaction.TYPE_WITHDRAWAL || type === Transaction.TYPE_REFUND)
+  ) {
     btns.push(
       {
         text: '_extra.Process',

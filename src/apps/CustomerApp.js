@@ -45,6 +45,9 @@ import { useAppContext } from '../hooks/contextHook';
 import { useCartCounter, useURLQuery } from '../hooks/viewHook';
 import CartDeliveryMethod from '../pages/Customer/CartDeliveryMethod';
 import DeliveryRoute from '../pages/Customer/DeliveryRoute';
+import CartDeliveryRoutes from '../pages/Customer/CartDeliveryRoutes';
+import CartDiscounts from '../pages/Customer/CartDiscounts';
+import CartDeliveryAddress from '../pages/Customer/CartDeliveryAddress';
 
 
 const HEADER_NAV_LINKS = [
@@ -107,6 +110,9 @@ export default function CustomerApp() {
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
           
+          <Route path="/cart/discounts" render={()=> authMiddleware() || <CartDiscounts />} />
+          <Route path="/cart/delivery-routes" render={()=> authMiddleware() || <CartDeliveryRoutes />} />
+          <Route path="/cart/delivery-address" render={()=> authMiddleware() || <CartDeliveryAddress />} />
           <Route path="/cart/delivery-method" render={()=> authMiddleware() || <CartDeliveryMethod />} />
           
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={customerToken} canCancel={true} />} />

@@ -5,7 +5,25 @@ import { useTranslation } from 'react-i18next';
 import { visibilityIcon, visibilityOffIcon } from '../../assets/icons';
 import FormLabel from './FormLabel';
 
-const FormField = forwardRef(function ({ ID, label, type, error, value = '', required, minLength, maxLength, step, min, max, tip }, ref) {
+const FormField = forwardRef(function (
+    { 
+      ID, 
+      label, 
+      type, 
+      error, 
+      value = '', 
+      hideLabel, 
+      required, 
+      minLength, 
+      maxLength, 
+      step, 
+      min, 
+      max, 
+      tip,
+      className
+    }, 
+    ref
+  ) {
 
   const { t } = useTranslation();
 
@@ -20,8 +38,8 @@ const FormField = forwardRef(function ({ ID, label, type, error, value = '', req
   }
 
   return (
-    <div className="mb-4">
-      <FormLabel ID={ID} label={label} required={required} />
+    <div className={`mb-4 ${className}`}>
+      <FormLabel ID={ID} label={label} required={required} hide={hideLabel} />
       <input 
         ref={ ref }
         id={ ID }

@@ -28,5 +28,13 @@ export default class OrderRepository extends Fetch {
     );
   }
 
+  getRouteSuggestion(formData) {
+    return this.apiFetch(
+      `order/route/suggest`,
+      'POST',
+      JSON.stringify(formData)
+    );
+  }
+
 }
 

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { CART } from '../../context/actions/cartActions';
 import { useAppContext } from '../../hooks/contextHook';
+import { useSavedCartItemsToCartItems } from '../../hooks/saved_cart/savedCartItemsToCartItemsHook';
 import { useCopyText, useDateFormat } from '../../hooks/viewHook';
 import { FETCH_STATUSES } from '../../repositories/Fetch';
 import AlertDialog from '../dialog/AlertDialog';
@@ -27,11 +28,11 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
 
   const copy = useCopyText();
 
-  const cartItems = [];
-
   const [alertDialog, setAlertDialog] = useState(null);
   
   const [loadingDialog, setLoadingDialog] = useState(null);
+
+  const convertToCartItems = useSavedCartItemsToCartItems();
 
   function copyCode() {
 
@@ -98,26 +99,7 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
 
   function openCartConfirm() {
 
-    let itemsUnavailable = 0;
-
-    for (let item of saved_cart_items) {
-
-      if (
-        !item.product_variant.available || 
-        item.product_variant.quantity < item.quantity || 
-        item.product_variant.quantity === 0
-      ) {
-        itemsUnavailable++;
-        continue;
-      }
-
-      cartItems.push({
-        quantity: item.quantity,
-        product_variant: item.product_variant,
-        amount: (item.product_variant.price * item.quantity),
-        product: item.product_variant.product
-      });
-    }
+    const [cart, itemsUnavailable] = convertToCartItems(saved_cart_items);
 
     if (itemsUnavailable > 0) {
 
@@ -126,7 +108,7 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
         positiveButton: {
           text: '_extra.Yes',
           action() {
-            openCart();
+            openCart(cart);
           }
         },
         negativeButton: {
@@ -138,11 +120,11 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
       });
 
     } else {
-      openCart();
+      openCart(cart);
     }
   }
 
-  function openCart() {
+  function openCart(cartItems) {
     cartDispatch({
       type: CART.ITEMS_REPLACED,
       payload: {

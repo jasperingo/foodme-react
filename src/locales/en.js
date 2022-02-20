@@ -155,6 +155,7 @@ export const TRANSLATIONS_EN = {
     Pull_to_refresh: 'Pull to refresh',
     Variation: 'Variation',
     Recommended: 'Recommended',
+    Select: 'Select',
 
     Approved: 'Approved',
     Process: 'Process',
@@ -247,6 +248,7 @@ export const TRANSLATIONS_EN = {
     Edit_discount_product: 'Edit discount product',
     Add_to_discount: 'Add to discount',
     Remove_from_discount: 'Remove from discount',
+    Product_discounts: 'Product discounts',
     _discount_delete_confirm: 'Are you sure you want to delete this discount?'
   },
 
@@ -331,12 +333,16 @@ export const TRANSLATIONS_EN = {
     Delivery_company: 'Delivery company',
     Delivery_address: 'Delivery address',
     Door_delivery: 'Door delivery',
+    _door_delivery_note: 'A delivery firm will bring your order to your preferred delivery address.',
+    Pick_up: 'Pick up',
+    _pick_up_delivery_note: 'You will go to the store you ordered from and pick up your order',
     Origin_route_door_delivery: 'Origin route door delivery',
     Destination_route_door_delivery: 'Destination route door delivery',
     Become_a_courier_partner: 'Become a courier partner',
     Route: 'Route',
     Routes: 'Routes',
     Delivery_route: 'Delivery route',
+    Delivery_routes: 'Delivery routes',
     Delivery_weights: 'Delivery weights',
     Delivery_durations: 'Delivery durations',
 
@@ -354,6 +360,8 @@ export const TRANSLATIONS_EN = {
     _delivery_route_delete_confirm: 'Are you sure you want to delete this delivery route?',
     _delivery_duration_delete_confirm: 'Are you sure you want to delete this delivery duration?',
     _delivery_weight_delete_confirm: 'Are you sure you want to delete this delivery weight?',
+
+    Weight_fee: 'Weight fee',
 
   },
 
@@ -469,6 +477,9 @@ export const TRANSLATIONS_EN = {
     _Minimium_withdrawal: 'Can\'t withdraw 1000 and below',
     _Maximium_withdrawal: 'Can\'t withdraw more than your balance',
     Cart_could_not_be_saved: 'Cart could not be saved',
+    Cart_not_found: 'Cart could not be found',
+    Cart_code_is_invalid: 'Enter a valid cart code',
+    Cart_delivery_routes_error: 'An error occured while getting delivery firms suggestion, please try again.',
     Your_withdrawal_could_not_be_processed: 'Your withdrawal could not be processed'
   },
 
