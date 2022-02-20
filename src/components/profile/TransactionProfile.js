@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransactionStatus, useTransactionType } from '../../hooks/transaction/transactionViewHook';
 import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
@@ -8,6 +8,8 @@ import ProfileHeaderText from './ProfileHeaderText';
 import UserDescList from '../UserDescList';
 import User from '../../models/User';
 import Transaction from '../../models/Transaction';
+import LoadingDialog from '../dialog/LoadingDialog';
+import AlertDialog from '../dialog/AlertDialog';
 
 export default function TransactionProfile(
   { 
@@ -23,16 +25,88 @@ export default function TransactionProfile(
       created_at, 
       user, 
       order 
-    } 
+    },
+    onUpdateStatusSubmit
   }
 ) {
 
   const { t } = useTranslation();
 
+  const [dialog, setDialog] = useState(null);
+
+  const [loadingDialog, setLoadingDialog] = useState(false);
+
   const [theStatus] = useTransactionStatus(status);
 
+  function onError(message) {
+    setLoadingDialog(false);
+    setDialog({
+      body: message,
+      positiveButton: {
+        text: '_extra.Done',
+        action() {
+          setDialog(null);
+        }
+      }
+    });
+  }
+
+  const onCancelResponse = {
+
+    onSuccess() {
+      setLoadingDialog(false);
+      setDialog({
+        body: '_transaction.Transaction_cancelled',
+        positiveButton: {
+          text: '_extra.Done',
+          action() {
+            setDialog(null);
+          }
+        }
+      });
+    },
+
+    onError: onError
+
+  };
+
+  const onDeclineResponse = {
+
+    onSuccess() {
+      setLoadingDialog(false);
+      setDialog({
+        body: '_transaction.Transaction_declined',
+        positiveButton: {
+          text: '_extra.Done',
+          action() {
+            setDialog(null);
+          }
+        }
+      });
+    },
+
+    onError: onError
+
+  };
+
   function onCancelClicked() {
-    console.log('Cancel...')
+    setDialog({
+      body: '_transaction._confirm_cancel_transaction',
+      positiveButton: {
+        text: '_extra.Yes',
+        action() {
+          setDialog(null);
+          setLoadingDialog(true);
+          onUpdateStatusSubmit(Transaction.STATUS_CANCELLED, onCancelResponse);
+        }
+      },
+      negativeButton: {
+        text: '_extra.No',
+        action() {
+          setDialog(null);
+        }
+      },
+    });
   }
 
   function onProcessClicked() {
@@ -40,12 +114,29 @@ export default function TransactionProfile(
   }
 
   function onDeclineClicked() {
-    console.log('Decline...')
+    setDialog({
+      body: '_transaction._confirm_decline_transaction',
+      positiveButton: {
+        text: '_extra.Yes',
+        action() {
+          setDialog(null);
+          setLoadingDialog(true);
+          onUpdateStatusSubmit(Transaction.STATUS_DECLINED, onDeclineResponse);
+        }
+      },
+      negativeButton: {
+        text: '_extra.No',
+        action() {
+          setDialog(null);
+        }
+      },
+    });
   }
+
 
   const btns = [];
 
-  if (canCancel) {
+  if (canCancel && status === Transaction.STATUS_PENDING) {
     btns.push({
       text: '_extra.Cancel',
       color: 'btn-color-red',
@@ -142,6 +233,10 @@ export default function TransactionProfile(
       <UserDescList 
         users={links} 
         />
+
+      { dialog && <AlertDialog dialog={dialog} /> }
+
+      { loadingDialog && <LoadingDialog /> }
     </div>
   );
 }

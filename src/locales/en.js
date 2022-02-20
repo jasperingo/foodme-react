@@ -188,6 +188,11 @@ export const TRANSLATIONS_EN = {
     Week: 'Week',
     Month: 'Month',
 
+    Processed: 'Processed',
+    Transported: 'Transported',
+    Delivered: 'Delivered',
+    Pending: 'Pending',
+
   },
 
   _search: {
@@ -223,7 +228,8 @@ export const TRANSLATIONS_EN = {
     store__Num: '{{ num }} stores',
     store__Count: '{{ count }} store',
     store__Count_plural: '{{ count }} stores',
-    Promotions: 'Promotions',
+    
+    Store_status: 'Store status'
   },
 
   _discount: {
@@ -334,6 +340,8 @@ export const TRANSLATIONS_EN = {
     Delivery_weights: 'Delivery weights',
     Delivery_durations: 'Delivery durations',
 
+    Delivery_firm_status: 'Delivery firm status',
+
     Add_delivery_route: 'Add delivery route',
     Edit_delivery_route: 'Edit delivery route',
     Add_delivery_link_route: 'Add delivery link route',
@@ -350,7 +358,7 @@ export const TRANSLATIONS_EN = {
   },
 
   _order: {
-    Reorder: 'Reorder',
+    Ordered: 'Ordered',
     Pending: 'Pending',
     Declined: 'Declined',
     Cancelled: 'Cancelled',
@@ -393,6 +401,8 @@ export const TRANSLATIONS_EN = {
     Payment: 'Payment',
     Payment_method: 'Payment method',
     Payment_details: 'Payment details',
+    Payment_status: 'Payment status',
+    Refund_status: 'Refund status',
     Earnings: 'Earnings',
     Account: 'Account',
     Account_name: 'Account name',
@@ -403,7 +413,14 @@ export const TRANSLATIONS_EN = {
     Bank_account: 'Bank account',
     Withdrawal_account: 'Withdrawal account',
     Change_withdrawal_account: 'Change withdrawal account',
-    Your_withdrawal_is_being_processed: 'Your withdrawal is being processed'
+    Your_withdrawal_is_being_processed: 'Your withdrawal is being processed',
+
+    Transaction_cancelled: 'This transaction has been cancelled',
+    Transaction_declined: 'This transaction has been declined',
+
+    _confirm_cancel_transaction: 'Are you sure you want to cancel this transaction?',
+    _confirm_decline_transaction: 'Are you sure you want to decline this transaction?',
+
   },
 
   _message: {

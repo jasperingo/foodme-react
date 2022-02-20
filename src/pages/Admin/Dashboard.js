@@ -66,8 +66,8 @@ function Statistics() {
                 <StatisticsData amount={statistics.total_earnings} text="_transaction.Earnings" />
               </>
             ),
-            ()=> <li> <Loading /> </li>, 
-            ()=> <li> <Reload action={refetch} /> </li>,
+            ()=> <li className="flex-grow"> <Loading /> </li>, 
+            ()=> <li className="flex-grow"> <Reload action={refetch} /> </li>,
           )
         }
       </ul>

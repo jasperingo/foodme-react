@@ -56,7 +56,7 @@ export default function ProductProfile(
   
   const [dialog, setDialog] = useState(null);
 
-  const [loadingDialog, setLoadingDialog] = useState(null);
+  const [loadingDialog, setLoadingDialog] = useState(false);
 
   const [quantity, setQuantity] = useState(1);
 

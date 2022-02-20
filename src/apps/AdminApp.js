@@ -35,7 +35,7 @@ import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
 import Product from '../pages/Admin/Product';
 import Discount from '../pages/Admin/Discount';
 import Order from '../pages/Admin/Order';
-import Transaction from '../pages/Admin/Transaction';
+import Transaction from '../pages/Transaction';
 import DeliveryRoute from '../pages/Admin/DeliveryRoute';
 import TermsOfService from '../pages/TermsOfService';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
@@ -63,7 +63,8 @@ export default function AdminApp() {
   const { 
     admin: { 
       admin: {
-        admin
+        admin,
+        adminToken
       }
     } 
   } = useAppContext();
@@ -105,7 +106,7 @@ export default function AdminApp() {
           <Route path="/about-us" render={()=> <AboutUs />} /> 
 
           <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
-          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={adminToken} canProcessAndDecline={true} />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount />} />
           <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />

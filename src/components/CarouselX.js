@@ -67,7 +67,7 @@ export default function CarouselX({ items }) {
 
             <div className="absolute z-10 bottom-0 text-center w-full p-4 text-white">
               <p className="font-bold text-3xl">{ item.title }</p>
-              <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+              {/* <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p> */}
             </div>
 
           </div>

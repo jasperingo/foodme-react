@@ -61,6 +61,8 @@ export function useReviewCreate({ product, store, deliveryFirm }) {
         } else if (deliveryFirm) {
           data.delivery_firm = deliveryFirm;
           request = api.createForDeliveryFirm(data);
+        } else {
+          request = Promise.reject();
         }
 
         request

@@ -19,7 +19,7 @@ import WorkingHoursUpdate from '../pages/Delivery/WorkingHoursUpdate';
 import WithdrawalAccountUpdate from '../pages/Delivery/WithdrawalAccountUpdate';
 import PasswordUpdate from '../pages/Delivery/PasswordUpdate';
 import Wallet from '../pages/Delivery/Wallet';
-import Transaction from '../pages/Delivery/Transaction';
+import Transaction from '../pages/Transaction';
 import Orders from '../pages/Delivery/Orders';
 import Order from '../pages/Delivery/Order';
 import DeliveryRoutes from '../pages/Delivery/DeliveryRoutes';
@@ -58,7 +58,8 @@ export default function DeliveryApp() {
   const { 
     deliveryFirm: { 
       deliveryFirm: {
-        deliveryFirm
+        deliveryFirm,
+        deliveryFirmToken
       }
     } 
   } = useAppContext();
@@ -116,7 +117,7 @@ export default function DeliveryApp() {
           <Route path="/delivery-routes" render={()=> authMiddleware() || <DeliveryRoutes />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
-          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={deliveryFirmToken} canCancel={true} />} />
           <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/settings/withdrawal-account" render={()=> authMiddleware() || <WithdrawalAccountUpdate />} />

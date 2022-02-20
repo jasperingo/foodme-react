@@ -11,6 +11,14 @@ export default class TransactionRepository extends Fetch {
     );
   }
 
+  updateStatus(id, formData) {
+    return this.apiFetch(
+      `transaction/${id}/status/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
+
   get(id) {
     return this.apiFetch(
       `transaction/${id}`,

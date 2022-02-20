@@ -24,7 +24,7 @@ import WithdrawalAccountUpdate from '../pages/Store/WithdrawalAccountUpdate';
 import AddressUpdate from '../pages/Store/AddressUpdate';
 import WorkingHoursUpdate from '../pages/Store/WorkingHoursUpdate';
 import Wallet from '../pages/Store/Wallet';
-import Transaction from '../pages/Store/Transaction';
+import Transaction from '../pages/Transaction';
 import SavedCarts from '../pages/Store/SavedCarts';
 import SavedCart from '../pages/Store/SavedCart';
 import Reviews from '../pages/Store/Reviews';
@@ -63,7 +63,8 @@ export default function StoreApp() {
   const { 
     store: { 
       store: {
-        store
+        store,
+        storeToken
       }
     } 
   } = useAppContext();
@@ -126,7 +127,7 @@ export default function StoreApp() {
           <Route path="/reviews" render={()=> authMiddleware() || <Reviews />} />
           <Route path="/saved-cart/:ID" render={()=> authMiddleware() || <SavedCart />} />
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
-          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={storeToken} canCancel={true} />} />
           <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
           <Route path="/settings/working-hours" render={()=> authMiddleware() || <WorkingHoursUpdate />} />
           <Route path="/settings/address" render={()=> authMiddleware() || <AddressUpdate />} />

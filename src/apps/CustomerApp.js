@@ -30,7 +30,7 @@ import SavedCarts from '../pages/Customer/SavedCarts';
 import Order from '../pages/Customer/Order';
 import Orders from '../pages/Customer/Orders';
 import Transactions from '../pages/Customer/Transactions';
-import Transaction from '../pages/Customer/Transaction';
+import Transaction from '../pages/Transaction';
 import PasswordUpdate from '../pages/Customer/PasswordUpdate';
 import WithdrawalAccountUpdate from '../pages/Customer/WithdrawalAccountUpdate';
 import SavedCart from '../pages/Customer/SavedCart';
@@ -65,7 +65,8 @@ export default function CustomerApp() {
     customer: { 
       customer: {
         customer: {
-          customer
+          customer,
+          customerToken
         }
       } 
     } 
@@ -108,7 +109,7 @@ export default function CustomerApp() {
           
           <Route path="/cart/delivery-method" render={()=> authMiddleware() || <CartDeliveryMethod />} />
           
-          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction />} />
+          <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={customerToken} canCancel={true} />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
