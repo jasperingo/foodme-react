@@ -16,12 +16,10 @@ export function useSavedCartItemsToCartItems()  {
         itemsUnavailable++;
         continue;
       }
-
+      
       cartItems.push({
         quantity: item.quantity,
-        product_variant: item.product_variant,
-        amount: (item.product_variant.price * item.quantity),
-        product: item.product_variant.product
+        product_variant: item.product_variant
       });
     }
 

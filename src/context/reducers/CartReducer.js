@@ -13,7 +13,6 @@ export default function CartReducer (state, { type, payload }) {
       } else {
         const qty = item.quantity + payload.item.quantity;
         if (qty <= item.product_variant.quantity) {
-          item.amount += payload.item.amount;
           item.quantity += payload.item.quantity;
         }
       }
@@ -38,7 +37,6 @@ export default function CartReducer (state, { type, payload }) {
         if (item.product_variant.id === payload.item.product_variant.id) {
           const qty = item.quantity + payload.quantity;
           if (qty <= item.product_variant.quantity) {
-            item.amount += payload.amount;
             item.quantity += payload.quantity;
           }
         }
@@ -80,8 +78,14 @@ export default function CartReducer (state, { type, payload }) {
         ...state,
         cart: {
           ...state.cart,
-          ...payload
-        }
+          delivery_firm_id: payload.delivery_firm_id,
+          delivery_route_id: payload.delivery_route_id,
+        },
+        cartItems: [...state.cartItems.map(i=> ({
+          ...i,
+          delivery_duration_id: payload.delivery_duration_id,
+          delivery_weight_id: payload.delivery_weights.find(x=> x.product_variant_id === i.product_variant.id).delivery_weight_id
+        }))]
       };
 
     default:

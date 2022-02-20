@@ -86,17 +86,15 @@ export default function CartCheckOutOrSave({ saveOnly }) {
   return (
     <div className="lg:my-2 lg:w-80 lg:py-10 lg:px-4 lg:shadow lg:rounded">
       <div className="flex items-center mb-2">
-        <strong className="font-normal text-sm flex-grow">{ t('_extra.Total') }: </strong>
-        <span className="font-bold text-lg">{ useMoneyFormat(cartItems.reduce((sum, i)=> sum + i.amount, 0)) }</span>
+        <span className="text-sm flex-grow">{ t('_extra.Total') }: </span>
+        <span className="font-bold text-lg">
+          { 
+            useMoneyFormat(
+              cartItems.reduce((sum, i)=> sum + (i.product_variant.price * i.quantity), 0)
+            ) 
+          }
+        </span>
       </div>
-
-      {/* {
-        !saveOnly &&
-        <FormTextArea 
-          ID="order-note-input"
-          label="_order.Order_note"
-          />
-      } */}
       
       {
         !saveOnly && 

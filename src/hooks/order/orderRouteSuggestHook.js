@@ -20,11 +20,11 @@ export function useOrderRouteSuggest() {
     } 
   } = useAppContext();
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState([]);
 
   const [error, setError] = useState(null);
 
-  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const load = useCallback(()=> { setError(null); setIsLoading(true); }, []);
 
@@ -36,7 +36,7 @@ export function useOrderRouteSuggest() {
           const api = new OrderRepository(customerToken);
           
           const res = await api.getRouteSuggestion({
-            store_id: cartItems[0].product.store.id,
+            store_id: cartItems[0].product_variant.product.store.id,
             customer_address_id: cart.customer_address_id,
             order_items: cartItems.map(i=> (
               {

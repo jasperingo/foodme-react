@@ -10,7 +10,7 @@ import { FETCH_STATUSES } from '../../repositories/Fetch';
 import AlertDialog from '../dialog/AlertDialog';
 import QuantityChooser from '../QuantityChooser';
 
-export default function CartItem({ cartItem: { quantity, amount, product, product_variant } }) {
+export default function CartItem({ cartItem: { quantity, product_variant } }) {
 
   const { t } = useTranslation();
 
@@ -67,16 +67,16 @@ export default function CartItem({ cartItem: { quantity, amount, product, produc
   return (
     <li>
       <div className="mb-5 lg:flex lg:shadow">
-        <div className="flex lg:flex-grow">
+        <div className="flex gap-2 lg:flex-grow">
           <img 
-            src={ product.photo.href } 
-            alt={ product.title } 
+            src={ product_variant.product.photo.href } 
+            alt={ product_variant.product.title } 
             className="w-20 h-20 border rounded block md:w-32 md:h-32" 
             />
-          <div className="flex-grow pl-2">
-            <div className="mb-1">{ product.title }</div>
+          <div className="flex-grow">
+            <div className="mb-1">{ product_variant.product.title }</div>
             <div className="mb-1 text-color-primary">{ t('_extra.Variation') }: { product_variant.name }</div>
-            <div className="font-bold mb-1">{ useMoneyFormat(amount) }</div>
+            <div className="font-bold mb-1">{ useMoneyFormat(product_variant.price * quantity) }</div>
           </div>
         </div>
         <div className="flex gap-2 py-2 items-center lg:px-5 lg:gap-5">

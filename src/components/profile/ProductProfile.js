@@ -79,12 +79,13 @@ export default function ProductProfile(
 
     const item = {
       quantity,
-      product_variant: variant,
-      amount: (variant.price * quantity),
-      product: { id, photo, title, store }
+      product_variant: {
+        ...variant, 
+        product: { id, photo, title, store }
+      }
     };
 
-    if (cartItems.length > 0 && cartItems[0].product.store.id !== store.id) {
+    if (cartItems.length > 0 && cartItems[0].product_variant.product.store.id !== store.id) {
 
       setDialog({
         body: '_cart._cart_item_store_conflict_resolve_confirm',

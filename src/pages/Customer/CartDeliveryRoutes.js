@@ -21,10 +21,8 @@ function RouteDuration({ onSelect, duration: { id, minimium, maximium, fee, unit
   return (
     <li className="mb-3">
       <div className="flex flex-wrap gap-2">
-        <div>
-          <span>{ minimium } - { maximium } { t(unitText(unit)) } </span> 
-          <span className="bg-color-gray text-sm p-1 rounded">+ { useMoneyFormat(fee) }</span>
-        </div>
+        <div>{ minimium } - { maximium } { t(unitText(unit)) }</div>
+        <div className="bg-color-gray text-sm p-1 rounded">+ { useMoneyFormat(fee) }</div>
         <button onClick={()=> onSelect(id)} className="btn-color-primary px-2 rounded">{ t('_extra.Select') }</button>
       </div>
     </li>
@@ -53,10 +51,12 @@ function DeliveryFirmAndPricesItem({ onSelect, delivery }) {
     <li className="mb-4">
       <div className="md:p-2 md:shadow md:rounded">
         <div className="flex gap-2 items-center mb-1">
-          <img src={delivery.delivery_firm.user.photo.href} alt="no" width="100" height="100" className="w-10 h-10 rounded" />
-          <div>{ delivery.delivery_firm.user.name }</div>
+          <img src={delivery.delivery_firm.user.photo.href} alt="no" width="100" height="100" className="w-12 h-12 rounded" />
+          <div>
+            <div>{ delivery.delivery_firm.user.name }</div>
+            <div className="font-bold mb-1">{ t('_delivery.Weight_fee') }: { useMoneyFormat(weightFee) }</div>
+          </div>
         </div>
-        <div className="font-bold mb-1">{ t('_delivery.Weight_fee') }: { useMoneyFormat(weightFee) }</div>
         <ul>
           {
             delivery.route_durations.map(i=> (
