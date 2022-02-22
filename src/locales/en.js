@@ -226,6 +226,7 @@ export const TRANSLATIONS_EN = {
     Stores_on_Dailyneeds: 'Stores on Dailyneeds',
     Become_a_store_partner : 'Become a store partner',
     Store_category: 'Store category',
+    Store_sub_category: 'Store sub category',
     Store_categories: 'Store categories',
     store__Num: '{{ num }} stores',
     store__Count: '{{ count }} store',

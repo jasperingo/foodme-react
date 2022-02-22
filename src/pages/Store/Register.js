@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { storeIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
@@ -29,6 +29,8 @@ function RegisterForm({ guestMiddleware, stores }) {
   const adminEmailInput = useRef(null);
 
   const adminPasswordInput = useRef(null);
+
+  const [category, setCategory] = useState(null);
 
   const [
     onSubmit, 
@@ -80,12 +82,20 @@ function RegisterForm({ guestMiddleware, stores }) {
             />
 
           <FormSelect  
-            ref={categoryInput}
-            error={categoryError}
             ID="category-input" 
             label="_store.Store_category"
             required={true}
-            options={stores.flatMap(i=> i.sub_categories).map(i=> ({ key: i.id, value: i.name }))}
+            options={stores.map(i=> ({ key: i.id, value: i.name }))}
+            onChange={(e)=> setCategory(e.target.value)}
+            />
+
+          <FormSelect  
+            ref={categoryInput}
+            error={categoryError}
+            ID="sub-category-input" 
+            label="_store.Store_sub_category"
+            required={true}
+            options={stores.find(i=> i.id === Number(category))?.sub_categories.map(i=> ({ key: i.id, value: i.name }))}
             />
 
           <FormField 
