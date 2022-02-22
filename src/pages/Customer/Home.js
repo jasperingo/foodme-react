@@ -40,7 +40,7 @@ function Categories({ categories, categoriesFetchStatus, refetch }) {
   const { t } = useTranslation();
 
   return (
-    <div className="bg-color-gray lg:my-2">
+    <div className="bg-black lg:my-2">
       <div className="container-x border pt-2 pb-4 border-transparent">
         <h3 className="font-bold my-2">{ t('_category.Categories') }</h3>
         <SingleList
