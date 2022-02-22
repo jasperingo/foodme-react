@@ -223,6 +223,8 @@ export const TRANSLATIONS_EN = {
     Stores: 'Stores',
     Edit_store: 'Edit store',
     Store_name: 'Store name',
+    Store_email: 'Store email',
+    Store_phone_number: 'Store phone number',
     Recent_stores: 'Recent stores',
     Stores_on_Dailyneeds: 'Stores on Dailyneeds',
     Become_a_store_partner : 'Become a store partner',

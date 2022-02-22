@@ -17,7 +17,7 @@ function ContactUsData({ param, value, href }) {
       <dd>
         { 
           href ? 
-          <a href={href}>{ value }</a>
+          <a href={href} title={href}>{ value }</a>
           : 
           <span>{ value }</span>
         }
@@ -80,7 +80,7 @@ export default function ContactUs() {
 
           <div className="bg-color-gray rounded p-4 pb-1 my-4">
             <dl>
-              <ContactUsData param="_user.Phone_number" value="+234806470889" href="tel:+234806470889" />
+              <ContactUsData param="_user.Phone_number" value="+2348064709889" href="tel:+2348064709889" />
               <ContactUsData param="_user.Email" value="dailyneeds785@gmail.com" href="mailto:dailyneeds785@gmail.com" />
               <ContactUsData param="_user.Working_hours" value="Monday - Sunday: 24/7" />
             </dl>

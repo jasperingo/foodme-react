@@ -73,7 +73,7 @@ function RegisterForm({ guestMiddleware, stores }) {
 
           <FormMessage error={formError} />
 
-          <div className="md:flex gap-2 items-start">
+          <div className="md:flex gap-4 items-start">
 
             <fieldset className="md:w-1/2">
 
@@ -81,7 +81,7 @@ function RegisterForm({ guestMiddleware, stores }) {
                 ref={nameInput}
                 error={nameError}
                 ID="name-input" 
-                label="_user.Name" 
+                label="_store.Store_name" 
                 required={true}
                 />
 
@@ -106,7 +106,7 @@ function RegisterForm({ guestMiddleware, stores }) {
                 ref={emailInput}
                 error={emailError}
                 ID="email-input" 
-                label="_user.Email" 
+                label="_store.Store_email" 
                 type="email"
                 required={true}
                 />
@@ -115,7 +115,7 @@ function RegisterForm({ guestMiddleware, stores }) {
                 ref={phoneInput}
                 error={phoneError}
                 ID="phone-input" 
-                label="_user.Phone_number" 
+                label="_store.Store_phone_number" 
                 type="tel"
                 required={true}
                 />
@@ -143,6 +143,11 @@ function RegisterForm({ guestMiddleware, stores }) {
                 required={true}
                 minLength={6}
                 />
+                
+              <div className="text-sm bg-color-gray p-2 rounded">
+                <span>Don't have a dailyneeds account? </span>
+                <a href="/register?app=0" className="text-blue-500">Create a dailyneeds account</a>
+              </div>
 
             </fieldset>
 
