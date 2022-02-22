@@ -1,8 +1,11 @@
 
-import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
+import EmptyList from '../../components/EmptyList';
+import SingleList from '../../components/list/SingleList';
+import { categoryIcon } from '../../assets/icons';
 import { useStoreFetch } from '../../hooks/store/storeFetchHook';
 import NotFound from '../../components/NotFound';
 import Forbidden from '../../components/Forbidden';
@@ -20,9 +23,13 @@ import { useHeader } from '../../hooks/headerHook';
 import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
 import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
 import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
+import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
+import { useRenderListFooter } from '../../hooks/viewHook';
+import H4Heading from '../../components/H4Heading';
 
 const NAV_LINKS = [
-  { title : '_product.Products', href: '' },
+  { title : '_extra.Menu', href: '' },
+  { title : '_product.Products', href: '/products' },
   { title : '_extra.Reviews', href: '/reviews' },
   { title : '_discount.Discounts', href: '/discounts' }
 ];
@@ -116,7 +123,7 @@ function StoreReviewsList() {
   );
 }
 
-function StoreProductsList() {
+function StoreProductsList({ menu }) {
 
   const {
     customer: {
@@ -137,19 +144,67 @@ function StoreProductsList() {
   ] = useStoreProductList(customerToken);
   
   return (
-    <ProductList 
-      products={products}
-      productsFetchStatus={productsFetchStatus}
-      productsPage={productsPage}
-      productsNumberOfPages={productsNumberOfPages}
-      refetch={refetch}
-      />
+    <>
+      <div className="container-x">
+        <H4Heading text={menu.name} />
+      </div>
+      
+      <ProductList 
+        products={products}
+        productsFetchStatus={productsFetchStatus}
+        productsPage={productsPage}
+        productsNumberOfPages={productsNumberOfPages}
+        refetch={refetch}
+        />
+    </>
+  );
+}
+
+function StoreProductCategoriesList({ onSelect }) {
+
+  const [
+    products, 
+    productsFetchStatus, 
+    refetchProducts
+  ] = useProductCategoryList(true);
+
+  return (
+    <div>
+      <div className="container-x">
+        <SingleList
+          data={products}
+          className="grid grid-cols-3 gap-2 p-1"
+          renderDataItem={(item)=> (
+            <li key={`category-${item.id}`}>
+              <button className="block shadow" onClick={()=> onSelect(item)}>
+                <img 
+                  src={item.photo.href} 
+                  alt={item.name} 
+                  width="100" 
+                  height="100" 
+                  className="w-full mb-1 h-20 block mx-auto rounded lg:h-52 lg:w-full lg:mb-1"
+                  />
+                <div className="truncate overflow-ellipsis">{ item.name }</div>
+              </button>
+            </li>
+          )}
+          footer={useRenderListFooter(
+            productsFetchStatus,
+            ()=> <li key="category-footer" className="col-span-3"> <Loading /> </li>, 
+            ()=> <li key="category-footer" className="col-span-3"> <Reload action={refetchProducts} /> </li>,
+            ()=> <li key="category-footer" className="col-span-3"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
+          )}
+          />
+      </div>
+    </div>
   );
 }
 
 export default function Store() {
 
   const match = useRouteMatch();
+
+  const history = useHistory();
 
   const {
     customer: {
@@ -174,6 +229,13 @@ export default function Store() {
     topNavPaths: ['/cart', '/search']
   });
 
+  const [menu, setMenu] = useState({ name: '_extra.All' });
+
+  function onMenuChoosen(value) {
+    setMenu(value);
+    history.push(`${match.url}/products`);
+  }
+
   return (
     <section>
 
@@ -195,7 +257,8 @@ export default function Store() {
         <Switch>
           <Route path={`${match.url}/discounts`} render={()=> <StoreDiscountsList />} />
           <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList ratings={store.rating} />} />
-          <Route path={match.url} render={()=> <StoreProductsList />} />
+          <Route path={`${match.url}/products`} render={()=> <StoreProductsList menu={menu} />} />
+          <Route path={match.url} render={()=> <StoreProductCategoriesList onSelect={onMenuChoosen} />} />
         </Switch>
       }
 

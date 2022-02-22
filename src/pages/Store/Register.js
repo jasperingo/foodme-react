@@ -67,74 +67,86 @@ function RegisterForm({ guestMiddleware, stores }) {
 
       <div className="container-x">
 
-        <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x" noValidate>
+        <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-2-x" noValidate>
 
           <AuthFormHeader icon={storeIcon} text="_user.Join_us" />
 
           <FormMessage error={formError} />
 
-          <FormField 
-            ref={nameInput}
-            error={nameError}
-            ID="name-input" 
-            label="_user.Name" 
-            required={true}
-            />
+          <div className="md:flex gap-2 items-start">
 
-          <FormSelect  
-            ID="category-input" 
-            label="_store.Store_category"
-            required={true}
-            options={stores.map(i=> ({ key: i.id, value: i.name }))}
-            onChange={(e)=> setCategory(e.target.value)}
-            />
+            <fieldset className="md:w-1/2">
 
-          <FormSelect  
-            ref={categoryInput}
-            error={categoryError}
-            ID="sub-category-input" 
-            label="_store.Store_sub_category"
-            required={true}
-            options={stores.find(i=> i.id === Number(category))?.sub_categories.map(i=> ({ key: i.id, value: i.name }))}
-            />
+              <FormField 
+                ref={nameInput}
+                error={nameError}
+                ID="name-input" 
+                label="_user.Name" 
+                required={true}
+                />
 
-          <FormField 
-            ref={emailInput}
-            error={emailError}
-            ID="email-input" 
-            label="_user.Email" 
-            type="email"
-            required={true}
-            />
+              <FormSelect  
+                ID="category-input" 
+                label="_store.Store_category"
+                required={true}
+                options={stores.map(i=> ({ key: i.id, value: i.name }))}
+                onChange={(e)=> setCategory(e.target.value)}
+                />
 
-          <FormField 
-            ref={phoneInput}
-            error={phoneError}
-            ID="phone-input" 
-            label="_user.Phone_number" 
-            type="tel"
-            required={true}
-            />
+              <FormSelect  
+                ref={categoryInput}
+                error={categoryError}
+                ID="sub-category-input" 
+                label="_store.Store_sub_category"
+                required={true}
+                options={stores.find(i=> i.id === Number(category))?.sub_categories.map(i=> ({ key: i.id, value: i.name }))}
+                />
 
-          <FormField 
-            ref={adminEmailInput}
-            error={adminEmailError}
-            ID="admin-email-input" 
-            label="_user.Administrator_email" 
-            type="email" 
-            required={true}
-            tip="_user._admin_email_registration_tip"
-            />
+              <FormField 
+                ref={emailInput}
+                error={emailError}
+                ID="email-input" 
+                label="_user.Email" 
+                type="email"
+                required={true}
+                />
 
-          <FormField 
-            ref={adminPasswordInput}
-            error={adminPasswordError}
-            ID="admin-password-input" 
-            label="_user.Administrator_password" 
-            type="password" 
-            required={true}
-            minLength={6}
-            />
+              <FormField 
+                ref={phoneInput}
+                error={phoneError}
+                ID="phone-input" 
+                label="_user.Phone_number" 
+                type="tel"
+                required={true}
+                />
+
+            </fieldset>
+
+            <fieldset  className="md:w-1/2">
+
+              <FormField 
+                ref={adminEmailInput}
+                error={adminEmailError}
+                ID="admin-email-input" 
+                label="_user.Administrator_email" 
+                type="email" 
+                required={true}
+                tip="_user._admin_email_registration_tip"
+                />
+
+              <FormField 
+                ref={adminPasswordInput}
+                error={adminPasswordError}
+                ID="admin-password-input" 
+                label="_user.Administrator_password" 
+                type="password" 
+                required={true}
+                minLength={6}
+                />
+
+            </fieldset>
+
+          </div>
 
           <RegistrationAgreementLink />
 

@@ -112,6 +112,10 @@
     @apply my-10 max-w-md mx-auto sm:px-4 sm:pb-2 sm:pt-6 sm:rounded sm:shadow;
   }
 
+  .form-2-x {
+    @apply my-10 max-w-2xl mx-auto sm:px-4 sm:pb-2 sm:pt-6 sm:rounded sm:shadow;
+  }
+
   @variants hover {
     .bg-color-gray-h {
       @apply bg-gray-200 dark:bg-gray-700;

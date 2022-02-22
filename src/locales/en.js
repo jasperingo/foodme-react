@@ -157,6 +157,7 @@ export const TRANSLATIONS_EN = {
     Variation: 'Variation',
     Recommended: 'Recommended',
     Select: 'Select',
+    Menu: 'Menu',
 
     Approved: 'Approved',
     Process: 'Process',

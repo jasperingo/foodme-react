@@ -56,9 +56,9 @@ function Categories({ categories, categoriesFetchStatus, refetch }) {
           )}
           footer={useRenderListFooter(
             categoriesFetchStatus,
-            ()=> <li key="categories-footer" className="col-span-3"> <Loading /> </li>, 
-            ()=> <li key="categories-footer" className="col-span-3"> <Reload action={refetch} /> </li>,
-            ()=> <li key="categories-footer" className="col-span-3"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
+            ()=> <li key="categories-footer" className="col-span-3 md:grid-cols-4"> <Loading /> </li>, 
+            ()=> <li key="categories-footer" className="col-span-3 md:grid-cols-4"> <Reload action={refetch} /> </li>,
+            ()=> <li key="categories-footer" className="col-span-3 md:grid-cols-4"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
           )}
           />
       </div>
