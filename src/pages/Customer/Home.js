@@ -10,12 +10,12 @@ import CategoryItem from '../../components/list_item/CategoryItem';
 import CarouselX from '../../components/CarouselX';
 import SingleList from '../../components/list/SingleList';
 import { categoryIcon, productIcon, storeIcon } from '../../assets/icons';
-import { useHomeCategoryList } from '../../hooks/home/homeCategoryListHook';
 import { useHomeStoreList } from '../../hooks/home/homeStoreListHook';
 import { useHomeProductList } from '../../hooks/home/homeProductListHook';
 import { useRenderListFooter } from '../../hooks/viewHook';
 import { FETCH_STATUSES } from '../../repositories/Fetch';
 import { useHeader } from '../../hooks/headerHook';
+import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 
 const CAROUSEL_IMGS = [
   {
@@ -45,7 +45,7 @@ function Categories({ categories, categoriesFetchStatus, refetch }) {
         <h3 className="font-bold my-2">{ t('_category.Categories') }</h3>
         <SingleList
           data={categories}
-          className="grid gap-4 grid-cols-3"
+          className="grid gap-4 grid-cols-3 md:grid-cols-4"
           renderDataItem={(item, i)=> (
             <CategoryItem 
               key={`category-${item.id}`} 
@@ -124,7 +124,7 @@ export default function Home() {
     categories, 
     categoriesFetchStatus, 
     refetchCategories
-  ] = useHomeCategoryList();
+  ] = useStoreCategoryList();
 
   const [
     stores, 

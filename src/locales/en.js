@@ -91,6 +91,7 @@ export const TRANSLATIONS_EN = {
     Available: 'Available',
     Dashboard: 'Dashboard',
     Contact_us: 'Contact us',
+    Contact_us_on: 'Contact us on',
     About_us: 'About us',
     Privacy_policy: 'Privacy policy',
     Terms_of_service: 'Terms of service',

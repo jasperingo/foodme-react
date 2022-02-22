@@ -1,9 +1,12 @@
 
 import Icon from '@mdi/react';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { nextIcon, prevIcon } from '../assets/icons';
 
 export default function CarouselX({ items }) {
+
+  const { t } = useTranslation();
   
   const INTERVAL = 5000;
 
@@ -66,8 +69,15 @@ export default function CarouselX({ items }) {
             />
 
             <div className="absolute z-10 bottom-0 text-center w-full p-4 text-white">
-              <p className="font-bold text-3xl">{ item.title }</p>
-              {/* <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p> */}
+              <p className="font-bold text-3xl my-4">{ item.title }</p>
+              <a 
+                href="https://fb.com" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="bg-white py-2 px-4 rounded text-black"
+                >
+                { t('_extra.Contact_us_on') } Facebook 
+              </a>
             </div>
 
           </div>
