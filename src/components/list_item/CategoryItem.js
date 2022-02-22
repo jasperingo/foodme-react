@@ -20,7 +20,7 @@ export default function CategoryItem({ canEdit, category, index, sub, path, grid
           alt={category.name} 
           width="100" 
           height="100" 
-          className={`${grid ? 'w-full' : 'w-20'} h-20 block mx-auto rounded lg:h-52 lg:w-full lg:mb-1`}
+          className={`${grid ? 'w-full mb-1' : 'w-20'} h-20 block mx-auto rounded lg:h-52 lg:w-full lg:mb-1`}
           />
         <div className={`flex-grow truncate overflow-ellipsis ${iconColor}`}>{ category.name }</div>
       </Link>
