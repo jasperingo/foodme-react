@@ -10,7 +10,7 @@ import { FETCH_STATUSES } from '../../repositories/Fetch';
 import AlertDialog from '../dialog/AlertDialog';
 import QuantityChooser from '../QuantityChooser';
 
-export default function CartItem({ cartItem: { quantity, product_variant } }) {
+export default function CartItem({ notEditable, cartItem: { quantity, product_variant } }) {
 
   const { t } = useTranslation();
 
@@ -71,26 +71,33 @@ export default function CartItem({ cartItem: { quantity, product_variant } }) {
           <img 
             src={ product_variant.product.photo.href } 
             alt={ product_variant.product.title } 
-            className="w-20 h-20 border rounded block md:w-32 md:h-32" 
+            className="w-20 border rounded block md:w-32" 
             />
           <div className="flex-grow">
             <div className="mb-1">{ product_variant.product.title }</div>
             <div className="mb-1 text-color-primary">{ t('_extra.Variation') }: { product_variant.name }</div>
             <div className="font-bold mb-1">{ useMoneyFormat(product_variant.price * quantity) }</div>
+            {
+              notEditable && 
+              <div className="mb-1">QTY: { quantity }</div>
+            }
           </div>
         </div>
-        <div className="flex gap-2 py-2 items-center lg:px-5 lg:gap-5">
-          <div className="flex-grow">
-            <QuantityChooser 
-              quantity={quantity}
-              onQuantityChanged={onQuantityButtonClicked}
-              />
+        {
+          !notEditable && 
+          <div className="flex gap-2 py-2 items-center lg:px-5 lg:gap-5">
+            <div className="flex-grow">
+              <QuantityChooser 
+                quantity={quantity}
+                onQuantityChanged={onQuantityButtonClicked}
+                />
+            </div>
+            <button onClick={onRemoveClicked}>
+              <Icon path={deleteIcon} className="w-6 h-6 text-color-primary" />
+              <span className="sr-only">{ t('_cart.Remove_cart_item') }</span>
+            </button>
           </div>
-          <button onClick={onRemoveClicked}>
-            <Icon path={deleteIcon} className="w-6 h-6 text-color-primary" />
-            <span className="sr-only">{ t('_cart.Remove_cart_item') }</span>
-          </button>
-        </div>
+        }
       </div>
       { dialog && <AlertDialog dialog={dialog} /> }
     </li>

@@ -15,7 +15,8 @@ import { useStoreLogin } from '../../hooks/store/storeLoginHook';
 export default function LogIn({ guestMiddleware }) {
 
   useHeader({ 
-    title: `Log in store - DailyNeeds`
+    title: `Log in store - DailyNeeds`,
+    headerTitle: '_user.Log_in',
   });
 
   const nameInput = useRef(null);

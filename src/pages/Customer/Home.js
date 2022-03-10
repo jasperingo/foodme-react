@@ -56,9 +56,9 @@ function Categories({ categories, categoriesFetchStatus, refetch }) {
           )}
           footer={useRenderListFooter(
             categoriesFetchStatus,
-            ()=> <li key="categories-footer" className="col-span-3 md:grid-cols-4"> <Loading /> </li>, 
-            ()=> <li key="categories-footer" className="col-span-3 md:grid-cols-4"> <Reload action={refetch} /> </li>,
-            ()=> <li key="categories-footer" className="col-span-3 md:grid-cols-4"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
+            ()=> <li key="categories-footer" className="col-span-3 md:col-span-4"> <Loading /> </li>, 
+            ()=> <li key="categories-footer" className="col-span-3 md:col-span-4"> <Reload action={refetch} /> </li>,
+            ()=> <li key="categories-footer" className="col-span-3 md:col-span-4"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
           )}
           />
       </div>
@@ -81,9 +81,9 @@ function Stores({ stores, storesFetchStatus, refetch }) {
           )}
           footer={useRenderListFooter(
             storesFetchStatus,
-            ()=> <li key="stores-footer"> <Loading /> </li>, 
-            ()=> <li key="stores-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="stores-footer"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>
+            ()=> <li key="stores-footer" className="list-x-col-span"> <Loading /> </li>, 
+            ()=> <li key="stores-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+            ()=> <li key="stores-footer" className="list-x-col-span"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>
           )}
           />
     </div>
@@ -105,9 +105,9 @@ function Products({ products, productsFetchStatus, refetch }) {
           )}
           footer={useRenderListFooter(
             productsFetchStatus,
-            ()=> <li key="products-footer"> <Loading /> </li>, 
-            ()=> <li key="products-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="products-footer"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>
+            ()=> <li key="products-footer" className="list-x-col-span"> <Loading /> </li>, 
+            ()=> <li key="products-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+            ()=> <li key="products-footer" className="list-x-col-span"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>
           )}
           />
     </div>

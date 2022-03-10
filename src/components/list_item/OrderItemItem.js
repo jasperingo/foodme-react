@@ -69,11 +69,11 @@ export default function OrderItemItem(
   return (
     <li>
       <div className="mb-5 md:shadow">
-        <div className="flex">
+        <div className="flex md:block md:pb-2">
           <img 
             src={photo.href}
             alt={title} 
-            className="w-20 h-20 border rounded block md:w-32 md:h-32" 
+            className="w-20 border rounded block md:w-full md:h-full" 
             />
           <div className="flex-grow pl-2">
             <div className="mb-1">{ title }</div>

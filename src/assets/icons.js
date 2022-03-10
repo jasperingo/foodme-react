@@ -49,6 +49,8 @@ import {
   mdiScaleBalance,
   mdiCancel,
   mdiMicrophone,
+  mdiHomeMapMarker,
+  mdiMapMarkerRadius
 
 } from '@mdi/js';
 
@@ -104,4 +106,6 @@ export const cancelIcon = mdiCancel;
 
 export const notFoundIcon = mdiWarn;
 
+export const doorDeliveryIcon = mdiHomeMapMarker;
+export const pickUpDeliveryIcon = mdiMapMarkerRadius;
 

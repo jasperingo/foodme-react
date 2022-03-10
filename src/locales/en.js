@@ -157,7 +157,9 @@ export const TRANSLATIONS_EN = {
     Variation: 'Variation',
     Recommended: 'Recommended',
     Select: 'Select',
+    Deselect: 'Deselect',
     Menu: 'Menu',
+    Continue: 'Continue',
 
     Approved: 'Approved',
     Process: 'Process',
@@ -240,6 +242,7 @@ export const TRANSLATIONS_EN = {
 
   _discount: {
     Discount: 'Discount',
+    Discount_offers: 'Discount offers',
     Add_discount: 'Add discount',
     Edit_discount: 'Edit discount',
     Discounts: 'Discounts',
@@ -304,6 +307,7 @@ export const TRANSLATIONS_EN = {
     Cart_has_been_opened: 'Cart has been opened',
     Check_out: 'Check out',
     Remove_cart_item: 'Remove cart item',
+    Cart_summary: 'Cart summary',
     _num_products_are_available: '{{ count }} product is unavailable, do you still want to proceed?',
     _num_products_are_available_plural: '{{ count }} products are unavailable, do you still want to proceed?',
     _cart_item_store_conflict_resolve_confirm: 'Your cart contains products form a different store, do you want to clear your cart and add this product?',
@@ -389,6 +393,7 @@ export const TRANSLATIONS_EN = {
     Ordered_from: 'Ordered from',
     Order_details: 'Order details',
     Order_items: 'Order items',
+    Order_placed: 'Order placed',
     item__Num: '{{ count }} item',
     item__Num_plural: '{{ count }} items',
     Placed_on: 'Placed on',
@@ -397,7 +402,14 @@ export const TRANSLATIONS_EN = {
     Delivery_information: 'Delivery information',
     Recent_orders: 'Recent orders',
     Track_order: 'Track order',
-    Filter_order_by_status: 'Filter order by status'
+    Filter_order_by_status: 'Filter order by status',
+    Your_order_have_been_placed: 'Your order have been placed',
+    View_my_order: 'View my order',
+
+    _place_order_confirm: 'You have confirmed that everything is okay an you want to place this order?',
+    _order_needs_vendor_acceptance: 'Your order have to be accepted by the vendors before it can then be processed',
+    _cancel_order_confirm: 'Are you sure you want to cancel this order?',
+    _order_cancelled: 'Your order has been cancelled.'
   },
 
   _transaction: {
@@ -433,6 +445,9 @@ export const TRANSLATIONS_EN = {
 
     _confirm_cancel_transaction: 'Are you sure you want to cancel this transaction?',
     _confirm_decline_transaction: 'Are you sure you want to decline this transaction?',
+    
+    Pay_on_delivery: 'Pay on delivery',
+    Pay_with_paystack: 'Pay with paystack',
 
   },
 
@@ -464,6 +479,7 @@ export const TRANSLATIONS_EN = {
     No_delivery_duration: 'No delivery duration',
     List_is_empty: 'List is empty',
     Your_cart_is_empty: 'Your cart is empty',
+    No_delivery_suggestion_for_cart: 'No delivery firm is available to fulfill your order, please try pick up delivery',
   },
 
   _errors: {
@@ -485,6 +501,9 @@ export const TRANSLATIONS_EN = {
     Cart_not_found: 'Cart could not be found',
     Cart_code_is_invalid: 'Enter a valid cart code',
     Cart_delivery_routes_error: 'An error occured while getting delivery firms suggestion, please try again.',
+    Cart_discount_error: 'An error occured while getting discount offers, please try again.',
+    Order_cart_error: 'An error occured while placing your order, please try again.',
+    Order_status_update_error: 'An error occured while updating your order status, please try again.',
     Your_withdrawal_could_not_be_processed: 'Your withdrawal could not be processed'
   },
 

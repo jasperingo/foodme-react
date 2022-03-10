@@ -43,10 +43,10 @@ import ProductVariantCreate from '../pages/Store/ProductVariantCreate';
 import ProductVariantUpdate from '../pages/Store/ProductVariantUpdate';
 import Cart from '../pages/Store/Cart';
 import DiscountProductCreate from '../pages/Store/DiscountProductCreate';
+import Home from '../pages/Store/Home';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
-  { href: '/register', exclude: true },
   { title : '_product.Products', icon: productIcon, href: '/products' },
   { title : '_order.Orders', icon: orderIcon, href: '/orders' },
   { title: '_discount.Discounts', icon: discountIcon, href: '/discounts' },
@@ -85,7 +85,7 @@ export default function StoreApp() {
   }
 
   function authMiddleware() {
-    return store !== null ? null : <Redirect to={`/?redirect_to=${encodeURIComponent(location.pathname)}`} />
+    return store !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
   }
 
   function guestMiddleware() {
@@ -136,7 +136,8 @@ export default function StoreApp() {
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
-          <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
+          <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
+          <Route path="/" render={()=> guestMiddleware() || <Home />} />
         </Switch>
       </main>
       <Footer registerHref="/register" loginHref="/" />

@@ -1,14 +1,16 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Redirect, useHistory } from 'react-router-dom';
+import { doorDeliveryIcon, pickUpDeliveryIcon } from '../../assets/icons';
 import { CART } from '../../context/actions/cartActions';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import Order from '../../models/Order';
 
 
-function MethodItem({ type, title, summary, onClick }) {
+function MethodItem({ icon, type, title, summary, onClick }) {
 
   const { t } = useTranslation();
 
@@ -16,10 +18,13 @@ function MethodItem({ type, title, summary, onClick }) {
     <li className="mb-4">
       <button 
         onClick={()=> onClick(type)} 
-        className="block w-full border p-2 rounded text-left hover:bg-color-gray-h"
+        className="flex gap-2 items-center w-full border p-2 rounded text-left hover:bg-color-gray-h"
         >
-        <span className="w-full inline-block font-bold text-color-primary">{ t(title) }</span>
-        <span className="w-full inline-block text-sm">{ t(summary) }</span>
+        <Icon path={icon} className="w-20 h-20 text-color-primary" />
+        <div>
+          <span className="w-full inline-block font-bold text-color-primary">{ t(title) }</span>
+          <span className="w-full inline-block text-sm">{ t(summary) }</span>
+        </div>
       </button>
     </li>
   );
@@ -68,6 +73,7 @@ export default function CartDeliveryMethod() {
 
         <ul className="py-4 max-w-lg mx-auto">
           <MethodItem 
+            icon={doorDeliveryIcon}
             type={Order.DELIVERY_METHOD_DOOR}
             title="_delivery.Door_delivery" 
             summary="_delivery._door_delivery_note" 
@@ -75,6 +81,7 @@ export default function CartDeliveryMethod() {
             />
 
           <MethodItem 
+            icon={pickUpDeliveryIcon}
             type={Order.DELIVERY_METHOD_STORE}
             title="_delivery.Pick_up" 
             summary="_delivery._pick_up_delivery_note" 

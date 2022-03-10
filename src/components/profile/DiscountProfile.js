@@ -132,12 +132,12 @@ export default function DiscountProfile(
             )}
             footer={useRenderListFooter(
               productsFetchStatus,
-              ()=> <li key="discount-product-footer"> <Loading /> </li>, 
-              ()=> <li key="discount-product-footer"> <Reload action={refetch} /> </li>,
-              ()=> <li key="discount-product-footer"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>,
-              ()=> <li key="discount-product-footer"> <FetchMoreButton action={refetch} /> </li>,
-              ()=> <li key="discount-product-footer"> <NotFound /> </li>,
-              ()=> <li key="discount-product-footer"> <Forbidden /> </li>,
+              ()=> <li key="discount-product-footer" className="list-x-col-span"> <Loading /> </li>, 
+              ()=> <li key="discount-product-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+              ()=> <li key="discount-product-footer" className="list-x-col-span"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>,
+              ()=> <li key="discount-product-footer" className="list-x-col-span"> <FetchMoreButton action={refetch} /> </li>,
+              ()=> <li key="discount-product-footer" className="list-x-col-span"> <NotFound /> </li>,
+              ()=> <li key="discount-product-footer" className="list-x-col-span"> <Forbidden /> </li>,
             )}
             />
 

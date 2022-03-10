@@ -48,6 +48,8 @@ import DeliveryRoute from '../pages/Customer/DeliveryRoute';
 import CartDeliveryRoutes from '../pages/Customer/CartDeliveryRoutes';
 import CartDiscounts from '../pages/Customer/CartDiscounts';
 import CartDeliveryAddress from '../pages/Customer/CartDeliveryAddress';
+import CartSummary from '../pages/Customer/CartSummary';
+import CartDone from '../pages/Customer/CartDone';
 
 
 const HEADER_NAV_LINKS = [
@@ -110,6 +112,8 @@ export default function CustomerApp() {
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
           
+          <Route path="/cart/done/:ID" render={()=> authMiddleware() || <CartDone />} />
+          <Route path="/cart/summary" render={()=> authMiddleware() || <CartSummary />} />
           <Route path="/cart/discounts" render={()=> authMiddleware() || <CartDiscounts />} />
           <Route path="/cart/delivery-routes" render={()=> authMiddleware() || <CartDeliveryRoutes />} />
           <Route path="/cart/delivery-address" render={()=> authMiddleware() || <CartDeliveryAddress />} />

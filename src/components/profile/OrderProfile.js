@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import H4Heading from '../H4Heading';
 import ProfileDetailsText from './ProfileDetailsText';
@@ -9,12 +9,46 @@ import { useOrderStatus } from '../../hooks/order/orderViewHook';
 import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
 import OrderItemItem from '../list_item/OrderItemItem';
 import Order from '../../models/Order';
+import AlertDialog from '../dialog/AlertDialog';
+import LoadingDialog from '../dialog/LoadingDialog';
+import { useOrderStatusUpdate } from '../../hooks/order/orderStatusUpdateHook';
 
 export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm }) {
   
   const { t } = useTranslation();
 
   const [theStatus] = useOrderStatus(order.status);
+
+  const [dialog, setDialog] = useState(null);
+
+  const [cancelSend, cancelSuccess, cancelisLoading, cancelError] = useOrderStatusUpdate();
+
+  useEffect(
+    ()=> {
+      if (cancelSuccess)
+        setDialog({
+          body: '_order._order_cancelled',
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+
+      if (cancelError) 
+        setDialog({
+          body: cancelError,
+          negativeButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+    },
+    [cancelSuccess, cancelError]
+  );
 
   const usersLinks = [
     {
@@ -69,7 +103,22 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   }
 
   function onCancelClicked() {
-    console.log('Cancel...')
+    setDialog({
+      body: '_order._cancel_order_confirm',
+      positiveButton: {
+        text: '_extra.Yes',
+        action() {
+          setDialog(null);
+          cancelSend(Order.STATUS_CANCELLED);
+        }
+      },
+      negativeButton: {
+        text: '_extra.No',
+        action() {
+          setDialog(null);
+        }
+      },
+    });
   }
 
   function onAcceptClicked() {
@@ -114,14 +163,17 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
       body: order.payment_method
     },
     {
-      title: '_transaction.Payment_status',
-      body: order.payment_status
-    },
-    {
       title: '_store.Store_status',
       body: order.store_status
     }
   ];
+
+  if (order.payment_status) {
+    details.push({
+      title: '_transaction.Payment_status',
+      body: order.payment_status
+    });
+  }
   
   if (order.delivery_firm_status) {
     details.push({
@@ -188,6 +240,10 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
           </ul>
         </div>
       </div>
+
+      { dialog && <AlertDialog dialog={dialog} /> }
+        
+      { cancelisLoading && <LoadingDialog /> }
     </>
   );
 }

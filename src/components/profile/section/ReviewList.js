@@ -27,12 +27,12 @@ export default function ReviewList({ reviews, reviewsFetchStatus, reviewsPage, r
           )}
           footer={useRenderListFooter(
             reviewsFetchStatus,
-            ()=> <li key="review-footer"> <Loading /> </li>, 
-            ()=> <li key="review-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="review-footer"> <EmptyList text="_empty.No_review" icon={reviewIcon} /> </li>,
-            ()=> <li key="review-footer"> <FetchMoreButton action={refetch} /> </li>,
-            ()=> <li key="review-footer"> <NotFound /> </li>,
-            ()=> <li key="review-footer"> <Forbidden /> </li>,
+            ()=> <li key="review-footer" className="list-x-col-span"> <Loading /> </li>, 
+            ()=> <li key="review-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+            ()=> <li key="review-footer" className="list-x-col-span"> <EmptyList text="_empty.No_review" icon={reviewIcon} /> </li>,
+            ()=> <li key="review-footer" className="list-x-col-span"> <FetchMoreButton action={refetch} /> </li>,
+            ()=> <li key="review-footer" className="list-x-col-span"> <NotFound /> </li>,
+            ()=> <li key="review-footer" className="list-x-col-span"> <Forbidden /> </li>,
           )}
           />
 

@@ -25,7 +25,7 @@ import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
 import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
 import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
 import { useRenderListFooter } from '../../hooks/viewHook';
-import H4Heading from '../../components/H4Heading';
+import SelectFilter from '../../components/filter/SelectFilter';
 
 const NAV_LINKS = [
   { title : '_extra.Menu', href: '' },
@@ -123,7 +123,7 @@ function StoreReviewsList() {
   );
 }
 
-function StoreProductsList({ menu }) {
+function StoreProductsListList() {
 
   const {
     customer: {
@@ -142,21 +142,38 @@ function StoreProductsList({ menu }) {
     productsNumberOfPages, 
     refetch
   ] = useStoreProductList(customerToken);
-  
+
   return (
-    <>
-      <div className="container-x">
-        <H4Heading text={menu.name} />
-      </div>
-      
-      <ProductList 
-        products={products}
-        productsFetchStatus={productsFetchStatus}
-        productsPage={productsPage}
-        productsNumberOfPages={productsNumberOfPages}
-        refetch={refetch}
-        />
-    </>
+    <ProductList 
+      products={products}
+      productsFetchStatus={productsFetchStatus}
+      productsPage={productsPage}
+      productsNumberOfPages={productsNumberOfPages}
+      refetch={refetch}
+      />
+  );
+}
+
+function StoreProductsList({ menu }) {
+
+  const [
+    categories, 
+    categoriesFetchStatus, 
+    refetchCategories
+  ] = useProductCategoryList(true);
+  
+  return useRenderOnDataFetched(
+    categoriesFetchStatus,
+    ()=> (
+      <>
+        <div className="container-x">
+          <SelectFilter options={categories.map(i=> i.name)} value={menu} onFilterChange={()=> alert(99934)} /> 
+        </div>
+        <StoreProductsListList />
+      </>
+    ),
+    ()=> <Loading />,
+    ()=> <Reload action={refetchCategories} />,
   );
 }
 
@@ -173,10 +190,10 @@ function StoreProductCategoriesList({ onSelect }) {
       <div className="container-x">
         <SingleList
           data={products}
-          className="grid grid-cols-3 gap-2 p-1"
+          className="grid grid-cols-3 gap-4 p-1"
           renderDataItem={(item)=> (
             <li key={`category-${item.id}`}>
-              <button className="block shadow" onClick={()=> onSelect(item)}>
+              <button className="block shadow" onClick={()=> onSelect(item.name)}>
                 <img 
                   src={item.photo.href} 
                   alt={item.name} 
@@ -184,7 +201,7 @@ function StoreProductCategoriesList({ onSelect }) {
                   height="100" 
                   className="w-full mb-1 h-20 block mx-auto rounded lg:h-52 lg:w-full lg:mb-1"
                   />
-                <div className="truncate overflow-ellipsis">{ item.name }</div>
+                <div className="p-1 truncate overflow-ellipsis">{ item.name }</div>
               </button>
             </li>
           )}
@@ -229,7 +246,7 @@ export default function Store() {
     topNavPaths: ['/cart', '/search']
   });
 
-  const [menu, setMenu] = useState({ name: '_extra.All' });
+  const [menu, setMenu] = useState('_extra.All');
 
   function onMenuChoosen(value) {
     setMenu(value);

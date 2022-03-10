@@ -66,10 +66,10 @@ export default function CartDeliveryAddress() {
 
   const footer = useRenderListFooter(
     addressesFetchStatus,
-    ()=> <li key="addresses-footer"> <Loading /> </li>, 
-    ()=> <li key="addresses-footer"> <Reload action={refetch} /> </li>,
-    ()=> <li key="addresses-footer" className="col-span-2"> <EmptyList text="_empty.No_address" icon={locationIcon} /> </li>
-  )
+    ()=> <li key="addresses-footer" className="list-2-x-col-span"> <Loading /> </li>, 
+    ()=> <li key="addresses-footer" className="list-2-x-col-span"> <Reload action={refetch} /> </li>,
+    ()=> <li key="addresses-footer" className="list-2-x-col-span"> <EmptyList text="_empty.No_address" icon={locationIcon} /> </li>
+  );
 
   if (cartItems.length === 0) {
     return <Redirect to="/cart" />

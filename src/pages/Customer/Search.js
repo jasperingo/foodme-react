@@ -63,7 +63,7 @@ function SubCategoryFilter({ categories, subCategory, onFilterChange }) {
         }
       </select>
     </form>
-  )
+  );
 }
 
 function ProductList() {

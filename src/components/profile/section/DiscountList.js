@@ -27,12 +27,12 @@ export default function DiscountList({ discounts, discountsFetchStatus, discount
           )}
           footer={useRenderListFooter(
             discountsFetchStatus,
-            ()=> <li key="discount-footer"> <Loading /> </li>, 
-            ()=> <li key="discount-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="discount-footer"> <EmptyList text="_empty.No_discount" icon={discountIcon} /> </li>,
-            ()=> <li key="discount-footer"> <FetchMoreButton action={refetch} /> </li>,
-            ()=> <li key="discount-footer"> <NotFound /> </li>,
-            ()=> <li key="discount-footer"> <Forbidden /> </li>,
+            ()=> <li key="discount-footer" className="list-x-col-span"> <Loading /> </li>, 
+            ()=> <li key="discount-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+            ()=> <li key="discount-footer" className="list-x-col-span"> <EmptyList text="_empty.No_discount" icon={discountIcon} /> </li>,
+            ()=> <li key="discount-footer" className="list-x-col-span"> <FetchMoreButton action={refetch} /> </li>,
+            ()=> <li key="discount-footer" className="list-x-col-span"> <NotFound /> </li>,
+            ()=> <li key="discount-footer" className="list-x-col-span"> <Forbidden /> </li>,
           )}
           />
 

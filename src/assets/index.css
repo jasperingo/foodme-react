@@ -104,6 +104,18 @@
     @apply py-2 md:grid md:grid-cols-3 md:gap-4;
   }
 
+  .list-x-col-span {
+    @apply md:col-span-3 lg:col-span-5;
+  }
+
+  .list-2-x-col-span {
+    @apply md:col-span-2;
+  }
+
+  .list-3-x-col-span {
+    @apply md:col-span-3;
+  }
+
   .category-list {
     @apply md:grid md:grid-cols-3 md:gap-4;
   }
