@@ -14,7 +14,8 @@ import { useHeader } from '../../hooks/headerHook';
 export default function Register({ guestMiddleware }) {
 
   useHeader({ 
-    title: `Register delivery firm - DailyNeeds`
+    title: 'Register delivery firm - DailyNeeds',
+    headerTitle: '_user.Register',
   });
 
   const nameInput = useRef(null);

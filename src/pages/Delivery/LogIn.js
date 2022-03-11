@@ -14,7 +14,8 @@ import { useHeader } from '../../hooks/headerHook';
 export default function LogIn({ guestMiddleware }) {
 
   useHeader({ 
-    title: `Log in delivery firm - DailyNeeds`
+    title: 'Log in delivery firm - DailyNeeds',
+    headerTitle: '_user.Log_in',
   });
 
   const nameInput = useRef(null);

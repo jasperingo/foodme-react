@@ -138,7 +138,7 @@ export default function AdminApp() {
           <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
         </Switch>
       </main>
-      <Footer loginHref="/" />
+      <Footer noRegister={true} />
     </>
   );
 }

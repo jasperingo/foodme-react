@@ -37,6 +37,7 @@ export function useOrderStatusUpdate() {
       return;
     }
 
+    setError(null);
     setIsLoading(true);
 
     try {

@@ -140,7 +140,7 @@ export default function StoreApp() {
           <Route path="/" render={()=> guestMiddleware() || <Home />} />
         </Switch>
       </main>
-      <Footer registerHref="/register" loginHref="/" />
+      <Footer />
     </>
   );
 }

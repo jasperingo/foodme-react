@@ -373,6 +373,8 @@ export const TRANSLATIONS_EN = {
 
     Weight_fee: 'Weight fee',
 
+    Add_your_delivery_locations: 'Add your delivery locations',
+
   },
 
   _order: {
@@ -412,7 +414,9 @@ export const TRANSLATIONS_EN = {
     _order_needs_vendor_acceptance: 'Your order have to be accepted by the vendors before it can then be processed',
     _cancel_order_confirm: 'Are you sure you want to cancel this order?',
     _decline_order_confirm: 'Are you sure you want to decline this order?',
-    _order_cancelled: 'Your order has been cancelled.'
+    _order_cancelled: 'Your order has been cancelled.',
+    _order_accepted: 'This order has been accepted.',
+    _order_declined: 'This order has been declined.',
   },
 
   _transaction: {
@@ -509,6 +513,7 @@ export const TRANSLATIONS_EN = {
     Cart_discount_error: 'An error occured while getting discount offers, please try again.',
     Order_cart_error: 'An error occured while placing your order, please try again.',
     Order_status_update_error: 'An error occured while updating your order status, please try again.',
+    Order_business_status_update_error: 'An error occured while updating this order status, please try again.',
     Your_withdrawal_could_not_be_processed: 'Your withdrawal could not be processed'
   },
 

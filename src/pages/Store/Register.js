@@ -172,7 +172,7 @@ function RegisterForm({ guestMiddleware, stores }) {
 export default function Register({ guestMiddleware }) {
 
   useHeader({ 
-    title: `Register store - DailyNeeds`,
+    title: 'Register store - DailyNeeds',
     headerTitle: '_user.Register',
   });
 

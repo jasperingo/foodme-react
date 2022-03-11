@@ -39,6 +39,7 @@ import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import TermsOfService from '../pages/TermsOfService';
+import Home from '../pages/Delivery/Home';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -80,7 +81,7 @@ export default function DeliveryApp() {
   }
 
   function authMiddleware() {
-    return deliveryFirm !== null ? null : <Redirect to={`/?redirect_to=${encodeURIComponent(location.pathname)}`} />
+    return deliveryFirm !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
   }
 
   function guestMiddleware() {
@@ -127,10 +128,11 @@ export default function DeliveryApp() {
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=>  guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
-          <Route path="/" render={()=>  guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} /> 
+          <Route path="/login" render={()=>  guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} /> 
+          <Route path="/" render={()=>  guestMiddleware() || <Home />} /> 
         </Switch>
       </main>
-      <Footer registerHref="/register" loginHref="/" />
+      <Footer />
     </>
   );
 }

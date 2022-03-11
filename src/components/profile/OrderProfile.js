@@ -12,6 +12,7 @@ import Order from '../../models/Order';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
 import { useOrderStatusUpdate } from '../../hooks/order/orderStatusUpdateHook';
+import { useStoreStatusUpdate } from '../../hooks/order/orderStoreStatusUpdateHook';
 
 export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm }) {
   
@@ -22,6 +23,14 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   const [dialog, setDialog] = useState(null);
 
   const [cancelSend, cancelSuccess, cancelisLoading, cancelError] = useOrderStatusUpdate();
+
+  const [
+    storeStatusSend, 
+    storeStatusSuccess, 
+    storeStatusIsLoading, 
+    storeStatusError, 
+    storeStatusSuccessMessage
+  ] = useStoreStatusUpdate();
 
   useEffect(
     ()=> {
@@ -48,6 +57,33 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
         });
     },
     [cancelSuccess, cancelError]
+  );
+
+  useEffect(
+    ()=> {
+      if (storeStatusSuccess)
+        setDialog({
+          body: storeStatusSuccessMessage,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+
+      if (storeStatusError) 
+        setDialog({
+          body: storeStatusError,
+          negativeButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+    },
+    [storeStatusSuccess, storeStatusError, storeStatusSuccessMessage]
   );
 
   const usersLinks = [
@@ -122,7 +158,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   }
 
   function onAcceptClicked() {
-    console.log('Accept...')
+    storeStatusSend(Order.STORE_STATUS_ACCEPTED);
   }
 
   function onDeclineClicked() {
@@ -258,7 +294,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
 
       { dialog && <AlertDialog dialog={dialog} /> }
         
-      { cancelisLoading && <LoadingDialog /> }
+      { (cancelisLoading || storeStatusIsLoading) && <LoadingDialog /> }
     </>
   );
 }
