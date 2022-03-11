@@ -45,7 +45,7 @@ function ChooseDiscountProductItem(
 
   return (
     <li>
-      <div className="flex gap-2 md:shadow">
+      <div className="flex gap-2 mb-4 md:shadow">
         <img 
           width="200"
           height="200"

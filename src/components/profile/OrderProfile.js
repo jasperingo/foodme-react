@@ -126,7 +126,22 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   }
 
   function onDeclineClicked() {
-    console.log('Decline...')
+    setDialog({
+      body: '_order._decline_order_confirm',
+      positiveButton: {
+        text: '_extra.Yes',
+        action() {
+          setDialog(null);
+          
+        }
+      },
+      negativeButton: {
+        text: '_extra.No',
+        action() {
+          setDialog(null);
+        }
+      },
+    });
   }
 
   const details = [

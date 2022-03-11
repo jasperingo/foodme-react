@@ -266,9 +266,9 @@ export default function ProductProfile(
 
               { 
                 (isStore || isAdmin) && 
-                <Link to={`/product/${id}/update`}>
-                  <span className="sr-only">{ t('_product.Edit_product') }</span>
+                <Link to={`/product/${id}/update`} className="flex items-center gap-2">
                   <Icon path={editIcon} className="w-7 h-7 text-color-primary" />
+                  <span className="sr-only lg:not-sr-only text-color-primary">{ t('_product.Edit_product') }</span>
                 </Link>
               }
             </div>
@@ -314,7 +314,7 @@ export default function ProductProfile(
                 isStore && 
                 <Link 
                   to={`/product-variant/${variant.id}`}
-                  className="inline-flex gap-1 items-center my-2 text-sm btn-color-primary px-1 rounded"
+                  className="inline-flex gap-1 items-center my-2 text-sm btn-color-primary p-1 rounded"
                   >
                   <Icon path={editIcon} className="w-4 h-4" />
                   <span>{ t('_product.Edit_product_variant') }</span>

@@ -80,7 +80,7 @@ export const TRANSLATIONS_EN = {
     City: 'City',
     Save_address: 'Save address',
     Edit_working_hours: 'Edit working hours',
-
+    Create_your_account: 'Create your account',
 
   },
 
@@ -266,6 +266,7 @@ export const TRANSLATIONS_EN = {
     Add_product: 'Add product',
     Edit_product: 'Edit product',
     Related_products: 'Related products',
+    Add_your_products: 'Add your products',
     Products_on_Dailyneeds: 'Products on Dailyneeds',
     Product_category: 'Product category',
     Product_categories: 'Product categories',
@@ -405,10 +406,12 @@ export const TRANSLATIONS_EN = {
     Filter_order_by_status: 'Filter order by status',
     Your_order_have_been_placed: 'Your order have been placed',
     View_my_order: 'View my order',
+    Receive_and_fulfill_orders: 'Receive and fulfill orders',
 
     _place_order_confirm: 'You have confirmed that everything is okay an you want to place this order?',
     _order_needs_vendor_acceptance: 'Your order have to be accepted by the vendors before it can then be processed',
     _cancel_order_confirm: 'Are you sure you want to cancel this order?',
+    _decline_order_confirm: 'Are you sure you want to decline this order?',
     _order_cancelled: 'Your order has been cancelled.'
   },
 
@@ -448,6 +451,8 @@ export const TRANSLATIONS_EN = {
     
     Pay_on_delivery: 'Pay on delivery',
     Pay_with_paystack: 'Pay with paystack',
+
+    Get_paid_securely_and_fast: 'Get paid securely and fast',
 
   },
 

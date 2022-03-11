@@ -10,7 +10,7 @@ export default function AddButton({ text, href }) {
   const { t } = useTranslation();
 
   return (
-    <div className="py-5">
+    <div className="py-2">
       <Link
         to={href}
         className="flex items-center gap-2 border rounded p-2 w-full hover:bg-color-gray-h"

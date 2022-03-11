@@ -144,7 +144,7 @@ function RegisterForm({ guestMiddleware, stores }) {
                 minLength={6}
                 />
                 
-              <div className="text-sm bg-color-gray p-2 rounded">
+              <div className="text-sm bg-color-gray p-2 rounded mb-4">
                 <span>Don't have a dailyneeds account? </span>
                 <a href="/register?app=0" className="text-blue-500">Create a dailyneeds account</a>
               </div>
