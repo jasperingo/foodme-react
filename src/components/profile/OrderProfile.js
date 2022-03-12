@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePaystackPayment } from 'react-paystack';
 import H4Heading from '../H4Heading';
 import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeaderText from './ProfileHeaderText';
@@ -15,15 +16,29 @@ import { useOrderStatusUpdate } from '../../hooks/order/orderStatusUpdateHook';
 import { useStoreStatusUpdate } from '../../hooks/order/orderStoreStatusUpdateHook';
 import { useDeliveryFirmStatusUpdate } from '../../hooks/order/orderDeliveryFirmStatusUpdateHook';
 
+const publicKey = 'pk_live_04d616e6eb4432d9cfde76934e2bf9fa7a288272';
+
 export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm }) {
   
   const { t } = useTranslation();
+
+  const paystack = usePaystackPayment({
+    publicKey,
+    reference: order.reference,
+    email: order.customer.user.email,
+    amount: order.total * 100
+  });
 
   const [theStatus] = useOrderStatus(order.status);
 
   const [dialog, setDialog] = useState(null);
 
-  const [cancelSend, cancelSuccess, cancelisLoading, cancelError] = useOrderStatusUpdate();
+  const [
+    cancelSend, 
+    cancelSuccess, 
+    cancelisLoading, 
+    cancelError
+  ] = useOrderStatusUpdate();
 
   const [
     storeStatusSend, 
@@ -147,6 +162,14 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   }
   
   const buttons = [];
+
+  if (order.payment_status !== Order.PAYMENT_STATUS_APPROVED && order.payment_status !== Order.PAYMENT_STATUS_PENDING) {
+    buttons.push({
+      text: '_transaction.Pay_with_paystack',
+      color: 'btn-color-blue',
+      action: ()=> paystack(()=> alert("done"), ()=> alert("Closed"))
+    });
+  }
 
   if (isCustomer && order.status === Order.STATUS_PENDING) {
     buttons.push({
@@ -324,6 +347,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
                   isCustomer={isCustomer}
                   isDeliveryFirm={isDeliveryFirm}
                   orderStatus={order.status}
+                  deliveryMethod={order.delivery_method}
                   />
               ))
             }

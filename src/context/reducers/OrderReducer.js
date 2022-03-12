@@ -69,7 +69,24 @@ export default function OrderReducer (state, action) {
         ordersFetchStatus: orderState.ordersFetchStatus,
         orderStatus: action.payload.status
       };
-  
+      
+    case ORDER.ITEM_UPDATED:
+      return {
+        ...state,
+        order: {
+          ...state.order,
+          status: action.payload.orderItem.order.status,
+          order_items: state.order.order_items.map(i=> {
+            if (i.id === action.payload.orderItem.id) {
+              delete action.payload.orderItem.order;
+              return action.payload.orderItem;
+            } else {
+              return i;
+            }
+          })
+        }
+      };
+
     default:
       return state;
   }
