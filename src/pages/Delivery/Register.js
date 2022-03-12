@@ -3,6 +3,7 @@ import React, { useRef } from 'react';
 import { deliveryIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
+import CreateAppAccountLink from '../../components/form/CreateAppAccountLink';
 import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
@@ -57,64 +58,76 @@ export default function Register({ guestMiddleware }) {
     );
   }
 
-  
-
   return guestMiddleware() || (
     <section>
 
       <div className="container-x">
 
-        <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x" noValidate>
+        <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-2-x" noValidate>
 
           <AuthFormHeader icon={deliveryIcon} text="_user.Join_us" />
 
           <FormMessage error={formError} />
 
-          <FormField
-            ref={nameInput}
-            error={nameError}
-            ID="name-input" 
-            label="_user.Name" 
-            required={true}
-            />
+          <div className="md:flex gap-4 items-start">
 
-          <FormField 
-            ref={emailInput}
-            error={emailError}
-            ID="email-input" 
-            label="_user.Email" 
-            type="email"
-            required={true}
-            />
+            <fieldset className="md:w-1/2">
 
-          <FormField 
-            ref={phoneInput}
-            error={phoneError}
-            ID="phone-input" 
-            label="_user.Phone_number" 
-            type="tel"
-            required={true}
-            />
+              <FormField
+                ref={nameInput}
+                error={nameError}
+                ID="name-input" 
+                label="_user.Name" 
+                required={true}
+                />
 
-          <FormField 
-            ref={adminEmailInput}
-            error={adminEmailError}
-            ID="admin-email-input" 
-            label="_user.Administrator_email" 
-            type="email" 
-            required={true}
-            tip="_user._admin_email_registration_tip"
-            />
+              <FormField 
+                ref={emailInput}
+                error={emailError}
+                ID="email-input" 
+                label="_user.Email" 
+                type="email"
+                required={true}
+                />
 
-          <FormField 
-            ref={adminPasswordInput}
-            error={adminPasswordError}
-            ID="admin-password-input" 
-            label="_user.Administrator_password" 
-            type="password" 
-            required={true}
-            minLength={6}
-            />
+              <FormField 
+                ref={phoneInput}
+                error={phoneError}
+                ID="phone-input" 
+                label="_user.Phone_number" 
+                type="tel"
+                required={true}
+                />
+
+            </fieldset>
+
+            <fieldset className="md:w-1/2">
+
+              <FormField 
+                ref={adminEmailInput}
+                error={adminEmailError}
+                ID="admin-email-input" 
+                label="_user.Administrator_email" 
+                type="email" 
+                required={true}
+                tip="_user._admin_email_registration_tip"
+                />
+
+              <FormField 
+                ref={adminPasswordInput}
+                error={adminPasswordError}
+                ID="admin-password-input" 
+                label="_user.Administrator_password" 
+                type="password" 
+                required={true}
+                minLength={6}
+                />
+
+              <CreateAppAccountLink />
+
+            </fieldset>
+
+          </div>
 
           <RegistrationAgreementLink />
 

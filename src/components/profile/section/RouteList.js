@@ -27,12 +27,12 @@ export default function RouteList({ routes, routesFetchStatus, routesPage, route
           )}
           footer={useRenderListFooter(
             routesFetchStatus,
-            ()=> <li key="route-footer"> <Loading /> </li>, 
-            ()=> <li key="route-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="route-footer"> <EmptyList text="_empty.No_route" icon={routeIcon} /> </li>,
-            ()=> <li key="route-footer"> <FetchMoreButton action={refetch} /> </li>,
-            ()=> <li key="route-footer"> <NotFound /> </li>,
-            ()=> <li key="route-footer"> <Forbidden /> </li>,
+            ()=> <li key="route-footer" className="list-3-x-col-span"> <Loading /> </li>, 
+            ()=> <li key="route-footer" className="list-3-x-col-span"> <Reload action={refetch} /> </li>,
+            ()=> <li key="route-footer" className="list-3-x-col-span"> <EmptyList text="_empty.No_route" icon={routeIcon} /> </li>,
+            ()=> <li key="route-footer" className="list-3-x-col-span"> <FetchMoreButton action={refetch} /> </li>,
+            ()=> <li key="route-footer" className="list-3-x-col-span"> <NotFound /> </li>,
+            ()=> <li key="route-footer" className="list-3-x-col-span"> <Forbidden /> </li>,
           )}
           />
 

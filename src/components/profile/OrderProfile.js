@@ -13,6 +13,7 @@ import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
 import { useOrderStatusUpdate } from '../../hooks/order/orderStatusUpdateHook';
 import { useStoreStatusUpdate } from '../../hooks/order/orderStoreStatusUpdateHook';
+import { useDeliveryFirmStatusUpdate } from '../../hooks/order/orderDeliveryFirmStatusUpdateHook';
 
 export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm }) {
   
@@ -31,6 +32,14 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
     storeStatusError, 
     storeStatusSuccessMessage
   ] = useStoreStatusUpdate();
+
+  const [
+    deliveryFirmStatusSend, 
+    deliveryFirmStatusSuccess, 
+    deliveryFirmStatusIsLoading, 
+    deliveryFirmStatusError, 
+    deliveryFirmStatusSuccessMessage
+  ] = useDeliveryFirmStatusUpdate();
 
   useEffect(
     ()=> {
@@ -84,6 +93,33 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
         });
     },
     [storeStatusSuccess, storeStatusError, storeStatusSuccessMessage]
+  );
+
+  useEffect(
+    ()=> {
+      if (deliveryFirmStatusSuccess)
+        setDialog({
+          body: deliveryFirmStatusSuccessMessage,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+
+      if (deliveryFirmStatusError) 
+        setDialog({
+          body: deliveryFirmStatusError,
+          negativeButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+    },
+    [deliveryFirmStatusSuccess, deliveryFirmStatusError, deliveryFirmStatusSuccessMessage]
   );
 
   const usersLinks = [
@@ -158,7 +194,8 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   }
 
   function onAcceptClicked() {
-    storeStatusSend(Order.STORE_STATUS_ACCEPTED);
+    if (isStore) storeStatusSend(Order.STORE_STATUS_ACCEPTED);
+    else if (isDeliveryFirm) deliveryFirmStatusSend(Order.DELIVERY_FIRM_STATUS_ACCEPTED);
   }
 
   function onDeclineClicked() {
@@ -168,7 +205,8 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
         text: '_extra.Yes',
         action() {
           setDialog(null);
-          
+          if (isStore) storeStatusSend(Order.STORE_STATUS_DECLINED);
+          else if (isDeliveryFirm) deliveryFirmStatusSend(Order.DELIVERY_FIRM_STATUS_DECLINED);
         }
       },
       negativeButton: {
@@ -282,9 +320,10 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
                 <OrderItemItem 
                   key={`order-item-${item.id}`} 
                   item={item} 
-                  isCustomer={isCustomer}
                   isStore={isStore}
+                  isCustomer={isCustomer}
                   isDeliveryFirm={isDeliveryFirm}
+                  orderStatus={order.status}
                   />
               ))
             }
@@ -294,7 +333,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
 
       { dialog && <AlertDialog dialog={dialog} /> }
         
-      { (cancelisLoading || storeStatusIsLoading) && <LoadingDialog /> }
+      { (cancelisLoading || storeStatusIsLoading || deliveryFirmStatusIsLoading) && <LoadingDialog /> }
     </>
   );
 }

@@ -27,6 +27,13 @@ export default class OrderRepository extends Fetch {
     );
   }
 
+  updateDeliveryFirmStatus(id, formData) {
+    return this.apiFetch(
+      `order/${id}/delivery-firm-status/update`,
+      'PUT',
+      JSON.stringify(formData)
+    );
+  }
 
   get(id) {
     return this.apiFetch(

@@ -27,12 +27,12 @@ export default function TransactionList({  transactions, transactionsFetchStatus
           )}
           footer={useRenderListFooter(
             transactionsFetchStatus,
-            ()=> <li key="transactions-footer"> <Loading /> </li>, 
-            ()=> <li key="transactions-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="transactions-footer" className="col-span-2"> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>,
-            ()=> <li key="transactions-footer"> <FetchMoreButton action={refetch} /> </li>,
-            ()=> <li key="transactions-footer"> <NotFound /> </li>,
-            ()=> <li key="transactions-footer"> <Forbidden /> </li>,
+            ()=> <li key="transactions-footer" className="list-2-x-col-span"> <Loading /> </li>, 
+            ()=> <li key="transactions-footer" className="list-2-x-col-span"> <Reload action={refetch} /> </li>,
+            ()=> <li key="transactions-footer" className="list-2-x-col-span"> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>,
+            ()=> <li key="transactions-footer" className="list-2-x-col-span"> <FetchMoreButton action={refetch} /> </li>,
+            ()=> <li key="transactions-footer" className="list-2-x-col-span"> <NotFound /> </li>,
+            ()=> <li key="transactions-footer" className="list-2-x-col-span"> <Forbidden /> </li>,
           )}
           />
 

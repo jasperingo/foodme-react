@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
+import Order from '../../models/Order';
 import Dialog from '../dialog/Dialog';
 
 function TrackDialogItem({ date, text }) {
@@ -56,6 +57,7 @@ export default function OrderItemItem(
         product: { photo, title } 
       } 
     },
+    orderStatus,
     isCustomer, 
     isStore, 
     isDeliveryFirm
@@ -86,21 +88,21 @@ export default function OrderItemItem(
               </button>
 
               {
-                isStore &&
+                (isStore && orderStatus === Order.STATUS_PROCESSING) &&
                 <button onClick={()=> console.log('Processing')} className="btn-color-primary px-2 rounded">
                   { t('_extra.Processed') }
                 </button>
               }
 
               {
-                isDeliveryFirm &&
+                (isDeliveryFirm && processed_at !== null) &&
                 <button onClick={()=> console.log('Transporting')} className="btn-color-primary px-2 rounded">
                   { t('_extra.Transported') }
                 </button>
               }
 
               {
-                isCustomer &&
+                (isCustomer && delivered_at !== null) &&
                 <button onClick={()=> console.log('Delivered')} className="btn-color-primary px-2 rounded">
                   { t('_extra.Delivered') }
                 </button>

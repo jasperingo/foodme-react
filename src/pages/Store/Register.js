@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import { storeIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
+import CreateAppAccountLink from '../../components/form/CreateAppAccountLink';
 import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
@@ -122,7 +123,7 @@ function RegisterForm({ guestMiddleware, stores }) {
 
             </fieldset>
 
-            <fieldset  className="md:w-1/2">
+            <fieldset className="md:w-1/2">
 
               <FormField 
                 ref={adminEmailInput}
@@ -144,10 +145,7 @@ function RegisterForm({ guestMiddleware, stores }) {
                 minLength={6}
                 />
                 
-              <div className="text-sm bg-color-gray p-2 rounded mb-4">
-                <span>Don't have a dailyneeds account? </span>
-                <a href="/register?app=0" className="text-blue-500">Create a dailyneeds account</a>
-              </div>
+              <CreateAppAccountLink />
 
             </fieldset>
 

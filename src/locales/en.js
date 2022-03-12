@@ -46,6 +46,8 @@ export const TRANSLATIONS_EN = {
     Log_out: 'Log out',
     Register: 'Register',
     Dont_have_an_account: 'Dont have an account',
+    Create_a_dailyneeds_account: 'Create a dailyneeds account',
+    Dont_have_a_dailyneeds_account: 'Don\'t have a dailyneeds account?',
     Already_have_an_account: 'Already have an account',
     By_registering_you_agree_to_our: 'By registering you agree to our',
     _admin_email_registration_tip: 'Enter your DailyNeeds account email, if you haven\'t created a DailyNeeds account, please create one before you continue.',
