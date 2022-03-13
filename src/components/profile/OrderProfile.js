@@ -163,7 +163,13 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   
   const buttons = [];
 
-  if (order.payment_status !== Order.PAYMENT_STATUS_APPROVED && order.payment_status !== Order.PAYMENT_STATUS_PENDING) {
+  if (
+    (isCustomer || isStore || isDeliveryFirm) && 
+    order.status !== Order.STATUS_CANCELLED &&
+    order.status !== Order.STATUS_DECLINED &&
+    order.payment_status !== Order.PAYMENT_STATUS_APPROVED && 
+    order.payment_status !== Order.PAYMENT_STATUS_PENDING
+  ) {
     buttons.push({
       text: '_transaction.Pay_with_paystack',
       color: 'btn-color-blue',

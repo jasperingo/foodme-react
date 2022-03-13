@@ -239,7 +239,8 @@ export const TRANSLATIONS_EN = {
     store__Count: '{{ count }} store',
     store__Count_plural: '{{ count }} stores',
     
-    Store_status: 'Store status'
+    Store_status: 'Store status',
+    Recommended_stores: 'Recommended stores',
   },
 
   _discount: {

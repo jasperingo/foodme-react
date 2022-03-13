@@ -48,7 +48,7 @@ import {
   mdiAlert as mdiWarn,
   mdiScaleBalance,
   mdiCancel,
-  mdiMicrophone,
+  mdiBullhorn,
   mdiHomeMapMarker,
   mdiMapMarkerRadius
 
@@ -100,7 +100,7 @@ export const leftRightIcon = mdiArrowLeftRightBold;
 export const passwordIcon = mdiKey;
 export const bankAccountIcon = mdiBank;
 export const weightIcon = mdiScaleBalance;
-export const recommendedIcon = mdiMicrophone;
+export const recommendedIcon = mdiBullhorn;
 
 export const cancelIcon = mdiCancel;
 

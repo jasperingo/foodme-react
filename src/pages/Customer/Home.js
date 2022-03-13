@@ -72,7 +72,7 @@ function Stores({ stores, storesFetchStatus, refetch }) {
 
   return (
     <div className="container-x py-2">
-      <h3 className="font-bold my-2">{ t('_store.Stores') }</h3>
+      <h3 className="font-bold my-2">{ t('_store.Recommended_stores') }</h3>
       <SingleList
           data={stores}
           className="list-x"

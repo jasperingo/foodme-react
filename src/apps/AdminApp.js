@@ -44,10 +44,10 @@ import AboutUs from '../pages/AboutUs';
 import ResetPassword from '../pages/ResetPassword';
 import ForgotPassword from '../pages/ForgotPassword';
 import ProductUpdate from '../pages/Admin/ProductUpdate';
+import Home from '../pages/Admin/Home';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
-  { href: '/register', exclude: true },
   { title : '_extra.Dashboard', icon: dashboardIcon, href: '/dashboard' },
   { title : '_order.Orders', icon: orderIcon, href: '/orders' },
   { title : '_transaction.Transactions', icon: transactionIcon, href: '/transactions' },
@@ -85,7 +85,7 @@ export default function AdminApp() {
   }
 
   function authMiddleware() {
-    return admin !== null ? null : <Redirect to={`/?redirect_to=${encodeURIComponent(location.pathname)}`} />
+    return admin !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
   }
 
   function guestMiddleware() {
@@ -135,7 +135,8 @@ export default function AdminApp() {
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword administrator={true} />} />
-          <Route path="/" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
+          <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
+          <Route path="/" render={()=> guestMiddleware() || <Home />} />
         </Switch>
       </main>
       <Footer noRegister={true} />

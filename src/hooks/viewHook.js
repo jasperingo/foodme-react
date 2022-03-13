@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { useLocation } from 'react-router-dom';
 import User from '../models/User';
+import WorkingHour from '../models/WorkingHour';
 import { FETCH_STATUSES } from "../repositories/Fetch";
 import { useAppContext } from './contextHook';
 
@@ -22,6 +23,31 @@ export function useUserStatus(status) {
   }
 }
 
+export function useWorkingHoursDay() {
+  return function (day) {
+    switch(day) {
+
+      case WorkingHour.DAY_SUNDAY:
+        return '_extra.Sunday'
+        case WorkingHour.DAY_MONDAY:
+        return '_extra.Monday'
+        case WorkingHour.DAY_TUESDAY:
+        return '_extra.Tuesday'
+        case WorkingHour.DAY_WEDNESDAY:
+        return '_extra.Wednesday'
+        case WorkingHour.DAY_THURSDAY:
+        return '_extra.Thursday'
+        case WorkingHour.DAY_FRIDAY:
+        return '_extra.Friday'
+      case WorkingHour.DAY_SATURDAY:
+        return '_extra.Saturday';
+  
+      default:
+        return day;
+    }
+  }
+}
+
 export function useURLQuery() {
   return new URLSearchParams(useLocation().search);
 }
@@ -40,6 +66,27 @@ export function useISODateString() {
     const d = new Date(date);
     const s = d.toISOString();
     return s.substring(0, s.length-8);
+  }
+}
+
+export function useDateFormatter() {
+
+  return function (date, type) {
+    let format = 'hh:mma Do MMM YYYY';
+
+    if (type?.time === true) {
+      format = 'hh:mma';
+    }
+
+    if (type?.date === true) {
+      format = 'Do MMM YYYY';
+    }
+
+    if (type?.addDate === true) {
+      date = new Date(`October 13, 2014 ${date}`);
+    }
+    
+    return moment(date).format(format);
   }
 }
 

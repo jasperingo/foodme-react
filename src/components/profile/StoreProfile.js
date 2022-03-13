@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { categoryIcon, checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, recommendedIcon, reviewIcon } from '../../assets/icons';
-import { useDateFormat } from '../../hooks/viewHook';
+import { useDateFormat, useDateFormatter, useWorkingHoursDay } from '../../hooks/viewHook';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
 import ProfileDetailsText from './ProfileDetailsText';
@@ -32,6 +32,12 @@ export default function StoreProfile(
 ) {
 
   const { t } = useTranslation();
+
+  const workingDayText = useWorkingHoursDay();
+
+  const dateFormat = useDateFormatter();
+
+  const workingHourFormatOpts = { time: true, addDate: true };
 
   const details = [
     {
@@ -73,12 +79,15 @@ export default function StoreProfile(
       {
         icon: dateIcon,
         data: date
-      },
-      {
-        icon: recommendedIcon,
-        data: recommended ? t('_extra.Yes') : t('_extra.No')
       }
     );
+  }
+
+  if (recommended) {
+    details.push({
+      icon: recommendedIcon,
+      data: t('_extra.Recommended')
+    });
   }
 
   const links = [
@@ -117,8 +126,8 @@ export default function StoreProfile(
           <ProfileDetailsText
             details={
               working_hours.map(i=> ({
-                title: i.day,
-                body: `${i.opening} - ${i.closing}`
+                title: workingDayText(i.day),
+                body: `${dateFormat(i.opening, workingHourFormatOpts)} - ${dateFormat(i.closing, workingHourFormatOpts)}`
               }))
               }
             />

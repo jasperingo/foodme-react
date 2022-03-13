@@ -52,12 +52,12 @@ export default function Stores() {
           )}
           footer={useRenderListFooter(
             storesFetchStatus,
-            ()=> <li key="store-footer"> <Loading /> </li>, 
-            ()=> <li key="store-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="store-footer"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>,
-            ()=> <li key="store-footer"> <FetchMoreButton action={refetch} /> </li>,
-            ()=> <li key="store-footer"> <NotFound /> </li>,
-            ()=> <li key="store-footer"> <Forbidden /> </li>,
+            ()=> <li key="store-footer" className="list-x-col-span"> <Loading /> </li>, 
+            ()=> <li key="store-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+            ()=> <li key="store-footer" className="list-x-col-span"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>,
+            ()=> <li key="store-footer" className="list-x-col-span"> <FetchMoreButton action={refetch} /> </li>,
+            ()=> <li key="store-footer" className="list-x-col-span"> <NotFound /> </li>,
+            ()=> <li key="store-footer" className="list-x-col-span"> <Forbidden /> </li>,
           )}
           />
 

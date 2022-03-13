@@ -94,10 +94,10 @@ function DeliveryFirms() {
         )}
         footer={useRenderListFooter(
           deliveryFirmsFetchStatus,
-          ()=> <li key="delivery-firm-footer"> <Loading /> </li>, 
-          ()=> <li key="delivery-firm-footer"> <Reload action={refetch} /> </li>,
-          ()=> <li key="delivery-firm-footer"> <EmptyList text="_empty.No_delivery_firm" icon={deliveryIcon} /> </li>,
-          ()=> <li key="delivery-firm-footer"> <FetchMoreButton action={refetch} /> </li>
+          ()=> <li key="delivery-firm-footer" className="list-x-col-span"> <Loading /> </li>, 
+          ()=> <li key="delivery-firm-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+          ()=> <li key="delivery-firm-footer" className="list-x-col-span"> <EmptyList text="_empty.No_delivery_firm" icon={deliveryIcon} /> </li>,
+          ()=> <li key="delivery-firm-footer" className="list-x-col-span"> <FetchMoreButton action={refetch} /> </li>
         )}
         />
     </div>
@@ -123,10 +123,10 @@ function Stores() {
         )}
         footer={useRenderListFooter(
           storesFetchStatus,
-          ()=> <li key="store-footer"> <Loading /> </li>, 
-          ()=> <li key="store-footer"> <Reload action={refetch} /> </li>,
-          ()=> <li key="store-footer"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>,
-          ()=> <li key="store-footer"> <FetchMoreButton action={refetch} /> </li>
+          ()=> <li key="store-footer" className="list-x-col-span"> <Loading /> </li>, 
+          ()=> <li key="store-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+          ()=> <li key="store-footer" className="list-x-col-span"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>,
+          ()=> <li key="store-footer" className="list-x-col-span"> <FetchMoreButton action={refetch} /> </li>
         )}
         />
     </div>
@@ -146,16 +146,16 @@ function Customers() {
       <H4Heading text="_user.Recent_customers" href="/customers" />
       <SingleList
         data={customers}
-        className="list-x"
+        className="list-3-x"
         renderDataItem={(item)=> (
           <CustomerItem key={`customer-${item.id}`} customer={item} />
         )}
         footer={useRenderListFooter(
           customersFetchStatus,
-          ()=> <li key="customer-footer"> <Loading /> </li>, 
-          ()=> <li key="customer-footer"> <Reload action={refetch} /> </li>,
-          ()=> <li key="customer-footer"> <EmptyList text="_empty.No_customer" icon={userIcon} /> </li>,
-          ()=> <li key="customer-footer"> <FetchMoreButton action={refetch} /> </li>,
+          ()=> <li key="customer-footer" className="list-3-x-col-span"> <Loading /> </li>, 
+          ()=> <li key="customer-footer" className="list-3-x-col-span"> <Reload action={refetch} /> </li>,
+          ()=> <li key="customer-footer" className="list-3-x-col-span"> <EmptyList text="_empty.No_customer" icon={userIcon} /> </li>,
+          ()=> <li key="customer-footer" className="list-3-x-col-span"> <FetchMoreButton action={refetch} /> </li>,
         )}
         />
     </div>
@@ -182,10 +182,10 @@ function Orders() {
         )}
         footer={useRenderListFooter(
           ordersFetchStatus,
-          ()=> <li key="order-footer"> <Loading /> </li>, 
-          ()=> <li key="order-footer"> <Reload action={refetch} /> </li>,
-          ()=> <li key="order-footer" className="col-span-2"> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>,
-          ()=> <li key="order-footer"> <FetchMoreButton action={refetch} /> </li>
+          ()=> <li key="order-footer" className="list-2-x-col-span"> <Loading /> </li>, 
+          ()=> <li key="order-footer" className="list-2-x-col-span"> <Reload action={refetch} /> </li>,
+          ()=> <li key="order-footer" className="list-2-x-col-span"> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>,
+          ()=> <li key="order-footer" className="list-2-x-col-span"> <FetchMoreButton action={refetch} /> </li>
         )}
         />
     </div>
