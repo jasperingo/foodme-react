@@ -153,6 +153,17 @@ export function useUpdateListFetchStatus() {
   }
 }
 
+export function useListFooter() {
+
+  return function (values) {
+    for(const v of values) {
+      if (v.canRender) {
+        return v.render();
+      }
+    }
+  }
+}
+
 export function useRenderOnDataFetched(
   status, 
   viewCallback, 

@@ -88,6 +88,13 @@ export default class StoreRepository extends Fetch {
       'GET'
     );
   }
+
+  getRecommendedList() {
+    return this.apiFetch(
+      `store/recommended/list?page_limit=${Fetch.PAGE_LIMIT_BIG}`,
+      'GET'
+    );
+  }
   
   getRandomList() {
     return this.apiFetch(

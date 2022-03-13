@@ -18,18 +18,26 @@ export default function HomeReducer (state, action) {
         categories: action.payload.list, 
         categoriesFetchStatus: action.payload.fetchStatus,
       };
-    
-    case STORE.LIST_FETCH_STATUS_CHANGED:
+
+    case STORE.LIST_FETCH_ERROR_CHANGED:
       return {
         ...state,
-        storesFetchStatus: action.payload
+        storesLoading: false,
+        storesError: action.payload.error
+      }
+    
+    case STORE.LIST_FETCHING:
+      return {
+        ...state,
+        storesLoading: true
       };
     
     case STORE.LIST_FETCHED:
       return {
         ...state,
         stores: action.payload.list,
-        storesFetchStatus: action.payload.fetchStatus,
+        storesLoading: false,
+        storesLoaded: true,
       };
 
     case PRODUCT.LIST_FETCH_STATUS_CHANGED:

@@ -6,6 +6,9 @@ const homeState = {
   categoriesFetchStatus: FETCH_STATUSES.LOADING,
   
   stores: [],
+  storesError: null,
+  storesLoaded: false,
+  storesLoading: false,
   storesFetchStatus: FETCH_STATUSES.LOADING,
 
   products: [],

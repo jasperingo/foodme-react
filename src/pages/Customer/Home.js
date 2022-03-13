@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Reload from '../../components/Reload';
 import Loading from '../../components/Loading';
@@ -10,12 +10,13 @@ import CategoryItem from '../../components/list_item/CategoryItem';
 import CarouselX from '../../components/CarouselX';
 import SingleList from '../../components/list/SingleList';
 import { categoryIcon, productIcon, storeIcon } from '../../assets/icons';
-import { useHomeStoreList } from '../../hooks/home/homeStoreListHook';
 import { useHomeProductList } from '../../hooks/home/homeProductListHook';
-import { useRenderListFooter } from '../../hooks/viewHook';
+import { useListFooter, useRenderListFooter } from '../../hooks/viewHook';
 import { FETCH_STATUSES } from '../../repositories/Fetch';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
+import { useHomeRecommendedStoreList } from '../../hooks/home/homeRecommendedStoreListHook';
+import { useAppContext } from '../../hooks/contextHook';
 
 const CAROUSEL_IMGS = [
   {
@@ -66,10 +67,28 @@ function Categories({ categories, categoriesFetchStatus, refetch }) {
   );
 }
 
-function Stores({ stores, storesFetchStatus, refetch }) {
+function Stores() {
 
   const { t } = useTranslation();
 
+  const listFooter = useListFooter();
+
+  const [
+    fetch, 
+    stores, 
+    storesLoading, 
+    storesError, 
+    storesLoaded, 
+    retryFetch
+  ] = useHomeRecommendedStoreList();
+
+  useEffect(
+    function() { 
+      fetch() 
+    },
+    [fetch]
+  );
+  
   return (
     <div className="container-x py-2">
       <h3 className="font-bold my-2">{ t('_store.Recommended_stores') }</h3>
@@ -79,12 +98,38 @@ function Stores({ stores, storesFetchStatus, refetch }) {
           renderDataItem={(item)=> (
             <li key={`store-${item.id}`}> <StoreItem store={item} /> </li>
           )}
-          footer={useRenderListFooter(
-            storesFetchStatus,
-            ()=> <li key="stores-footer" className="list-x-col-span"> <Loading /> </li>, 
-            ()=> <li key="stores-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
-            ()=> <li key="stores-footer" className="list-x-col-span"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>
-          )}
+          footer={listFooter([
+            {
+              canRender: storesLoading,
+              render() { 
+                return ( 
+                  <li key="stores-footer" className="list-x-col-span"> 
+                    <Loading /> 
+                  </li> 
+                ); 
+              },
+            }, 
+            {
+              canRender: storesError !== null,
+              render() { 
+                return (
+                  <li key="stores-footer" className="list-x-col-span"> 
+                    <Reload action={retryFetch} /> 
+                  </li> 
+                );
+              },
+            },
+            {
+              canRender: storesLoaded && stores.length === 0,
+              render() { 
+                return (
+                  <li key="stores-footer" className="list-x-col-span"> 
+                    <EmptyList text="_empty.No_store" icon={storeIcon} /> 
+                  </li> 
+                );
+              }
+            }
+          ])}
           />
     </div>
   );
@@ -98,27 +143,33 @@ function Products({ products, productsFetchStatus, refetch }) {
     <div className="container-x py-2">
       <h3 className="font-bold my-2">{ t('_product.Products') }</h3>
       <SingleList
-          data={products}
-          className="list-x"
-          renderDataItem={(item)=> (
-            <li key={`product-${item.id}`}> <ProductItem product={item} /> </li>
-          )}
-          footer={useRenderListFooter(
-            productsFetchStatus,
-            ()=> <li key="products-footer" className="list-x-col-span"> <Loading /> </li>, 
-            ()=> <li key="products-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
-            ()=> <li key="products-footer" className="list-x-col-span"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>
-          )}
-          />
+        data={products}
+        className="list-x"
+        renderDataItem={(item)=> (
+          <li key={`product-${item.id}`}> <ProductItem product={item} /> </li>
+        )}
+        footer={useRenderListFooter(
+          productsFetchStatus,
+          ()=> <li key="products-footer" className="list-x-col-span"> <Loading /> </li>, 
+          ()=> <li key="products-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
+          ()=> <li key="products-footer" className="list-x-col-span"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>
+        )}
+        />
     </div>
   );
 }
 
 export default function Home() {
 
-  useHeader({
-    topNavPaths: ['/cart', '/search']
-  });
+  useHeader({ topNavPaths: ['/cart', '/search'] });
+
+  const { 
+    home: {
+      home: {
+        storesLoaded,
+      } 
+    }
+  } = useAppContext();
 
   const [
     categories, 
@@ -127,16 +178,10 @@ export default function Home() {
   ] = useStoreCategoryList();
 
   const [
-    stores, 
-    storesFetchStatus, 
-    refetchStores
-  ] = useHomeStoreList(categoriesFetchStatus === FETCH_STATUSES.DONE);
-
-  const [
     products, 
     productsFetchStatus,
     refetchProducts
-  ] = useHomeProductList(storesFetchStatus === FETCH_STATUSES.DONE);
+  ] = useHomeProductList(storesLoaded);
 
   return (
     <section>
@@ -153,15 +198,11 @@ export default function Home() {
 
       {
         categoriesFetchStatus === FETCH_STATUSES.DONE &&
-        <Stores 
-          stores={stores}
-          storesFetchStatus={storesFetchStatus}
-          refetch={refetchStores}
-          />
+        <Stores />
       }
 
       {
-        storesFetchStatus === FETCH_STATUSES.DONE &&
+        storesLoaded &&
         <Products 
           products={products}
           productsFetchStatus={productsFetchStatus}
