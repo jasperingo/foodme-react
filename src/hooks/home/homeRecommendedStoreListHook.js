@@ -21,7 +21,7 @@ export function useHomeRecommendedStoreList() {
   const retryFetch = useCallback(
     function() { 
       homeDispatch({ 
-        type: STORE.LIST_FETCH_ERROR_CHANGED, 
+        type: STORE.LIST_ERROR_CHANGED, 
         payload: { error: null } 
       }) ;
     },
@@ -35,7 +35,7 @@ export function useHomeRecommendedStoreList() {
 
       if (!window.navigator.onLine) {
         homeDispatch({
-          type: STORE.LIST_FETCH_ERROR_CHANGED,
+          type: STORE.LIST_ERROR_CHANGED,
           payload: {
             error: NetworkErrorCodes.NO_NETWORK_CONNECTION
           }
@@ -61,7 +61,7 @@ export function useHomeRecommendedStoreList() {
         
       } catch {
         homeDispatch({
-          type: STORE.LIST_FETCH_ERROR_CHANGED,
+          type: STORE.LIST_ERROR_CHANGED,
           payload: {
             error: NetworkErrorCodes.UNKNOWN_ERROR
           }

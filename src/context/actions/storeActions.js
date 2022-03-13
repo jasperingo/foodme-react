@@ -12,7 +12,7 @@ export const STORE = {
   LIST_FETCH_STATUS_CHANGED: 'STORES_FETCH_STATUS_CHANGED',
 
   LIST_FETCHING: 'STORES_FETCHING',
-  LIST_FETCH_ERROR_CHANGED: 'STORES_FETCH_FAILED',
+  LIST_ERROR_CHANGED: 'STORES_FETCH_FAILED',
 };
 
 export const getStoreFetchStatusAction = (fetchStatus, id, loading) => ({
