@@ -9,7 +9,7 @@ export default function ProfileHeaderText({ text, links=[], buttons=[] }) {
   const actions = links.concat(buttons);
 
   return (
-    <div className="my-4 flex items-center flex-wrap gap-2">
+    <div className="my-4 flex items-center flex-wrap gap-4">
       <h3 className="flex-grow font-bold text-3xl">{ text }</h3> 
       <ul className="flex flex-wrap gap-2 mt-2">
         {

@@ -10,13 +10,13 @@ import CategoryItem from '../../components/list_item/CategoryItem';
 import CarouselX from '../../components/CarouselX';
 import SingleList from '../../components/list/SingleList';
 import { categoryIcon, productIcon, storeIcon } from '../../assets/icons';
-import { useHomeProductList } from '../../hooks/home/homeProductListHook';
 import { useListFooter, useRenderListFooter } from '../../hooks/viewHook';
 import { FETCH_STATUSES } from '../../repositories/Fetch';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 import { useHomeRecommendedStoreList } from '../../hooks/home/homeRecommendedStoreListHook';
 import { useAppContext } from '../../hooks/contextHook';
+import { useHomeRecommendedProductList } from '../../hooks/home/homeRecommendedProductListHook';
 
 const CAROUSEL_IMGS = [
   {
@@ -135,25 +135,69 @@ function Stores() {
   );
 }
 
-function Products({ products, productsFetchStatus, refetch }) {
+function Products() {
   
   const { t } = useTranslation();
 
+  const listFooter = useListFooter();
+
+  const [
+    fetch, 
+    products, 
+    productsLoading, 
+    productsError, 
+    productsLoaded, 
+    retryFetch
+  ] = useHomeRecommendedProductList();
+
+  useEffect(
+    function() { 
+      fetch() 
+    },
+    [fetch]
+  );
+  
   return (
     <div className="container-x py-2">
-      <h3 className="font-bold my-2">{ t('_product.Products') }</h3>
+      <h3 className="font-bold my-2">{ t('_product.Recommended_products') }</h3>
       <SingleList
         data={products}
         className="list-x"
         renderDataItem={(item)=> (
           <li key={`product-${item.id}`}> <ProductItem product={item} /> </li>
         )}
-        footer={useRenderListFooter(
-          productsFetchStatus,
-          ()=> <li key="products-footer" className="list-x-col-span"> <Loading /> </li>, 
-          ()=> <li key="products-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
-          ()=> <li key="products-footer" className="list-x-col-span"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>
-        )}
+        footer={listFooter([
+          {
+            canRender: productsLoading,
+            render() { 
+              return ( 
+                <li key="product-footer" className="list-x-col-span"> 
+                  <Loading /> 
+                </li> 
+              ); 
+            },
+          }, 
+          {
+            canRender: productsError !== null,
+            render() { 
+              return (
+                <li key="product-footer" className="list-x-col-span"> 
+                  <Reload action={retryFetch} /> 
+                </li> 
+              );
+            },
+          },
+          {
+            canRender: productsLoaded && products.length === 0,
+            render() { 
+              return (
+                <li key="product-footer" className="list-x-col-span"> 
+                  <EmptyList text="_empty.No_product" icon={productIcon} /> 
+                </li> 
+              );
+            }
+          }
+        ])}
         />
     </div>
   );
@@ -177,11 +221,6 @@ export default function Home() {
     refetchCategories
   ] = useStoreCategoryList();
 
-  const [
-    products, 
-    productsFetchStatus,
-    refetchProducts
-  ] = useHomeProductList(storesLoaded);
 
   return (
     <section>
@@ -203,11 +242,7 @@ export default function Home() {
 
       {
         storesLoaded &&
-        <Products 
-          products={products}
-          productsFetchStatus={productsFetchStatus}
-          refetch={refetchProducts}
-          />
+        <Products />
       }
 
     </section>

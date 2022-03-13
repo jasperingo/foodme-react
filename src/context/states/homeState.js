@@ -9,10 +9,11 @@ const homeState = {
   storesError: null,
   storesLoaded: false,
   storesLoading: false,
-  storesFetchStatus: FETCH_STATUSES.LOADING,
 
   products: [],
-  productsFetchStatus: FETCH_STATUSES.LOADING
+  productsError: null,
+  productsLoaded: false,
+  productsLoading: false,
   
 };
 

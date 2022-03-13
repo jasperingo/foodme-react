@@ -35,22 +35,30 @@ export default function HomeReducer (state, action) {
     case STORE.LIST_FETCHED:
       return {
         ...state,
-        stores: action.payload.list,
-        storesLoading: false,
         storesLoaded: true,
+        storesLoading: false,
+        stores: action.payload.list
       };
 
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
+    case PRODUCT.LIST_ERROR_CHANGED:
       return {
         ...state,
-        productsFetchStatus: action.payload
+        productsLoading: false,
+        productsError: action.payload.error
       };
+
+    case PRODUCT.LIST_FETCHING:
+        return {
+          ...state,
+          productsLoading: true
+        };
     
     case PRODUCT.LIST_FETCHED:
       return {
         ...state,
+        productsLoaded: true,
+        productsLoading: false,
         products: action.payload.list,
-        productsFetchStatus: action.payload.fetchStatus,
       };
 
     default:

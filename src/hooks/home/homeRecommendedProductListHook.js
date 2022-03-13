@@ -1,31 +1,31 @@
 import { useCallback, useMemo } from 'react';
-import { STORE } from '../../context/actions/storeActions';
+import { PRODUCT } from '../../context/actions/productActions';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
-import StoreRepository from '../../repositories/StoreRepository';
+import ProductRepository from '../../repositories/ProductRepository';
 import { useAppContext } from '../contextHook';
 
-export function useHomeRecommendedStoreList() {
+export function useHomeRecommendedProductList() {
 
   const { 
     home: { 
       homeDispatch,
       home: {
-        stores,
-        storesError,
-        storesLoaded,
-        storesLoading,
+        products,
+        productsError,
+        productsLoaded,
+        productsLoading,
       } 
     }
   } = useAppContext();
 
-  const api = useMemo(function(){ return new StoreRepository(); }, []);
+  const api = useMemo(function() { return new ProductRepository(); }, []);
 
   const retryFetch = useCallback(
     function() { 
       homeDispatch({ 
-        type: STORE.LIST_ERROR_CHANGED, 
+        type: PRODUCT.LIST_ERROR_CHANGED, 
         payload: { error: null } 
-      }) ;
+      });
     },
     [homeDispatch]
   );
@@ -33,11 +33,11 @@ export function useHomeRecommendedStoreList() {
   const fetch = useCallback(
     async function() {
       
-      if (storesLoaded || storesLoading || storesError !== null) return;
+      if (productsLoaded || productsLoading || productsError !== null) return;
 
       if (!window.navigator.onLine) {
         homeDispatch({
-          type: STORE.LIST_ERROR_CHANGED,
+          type: PRODUCT.LIST_ERROR_CHANGED,
           payload: {
             error: NetworkErrorCodes.NO_NETWORK_CONNECTION
           }
@@ -45,7 +45,7 @@ export function useHomeRecommendedStoreList() {
         return;
       }
 
-      homeDispatch({ type: STORE.LIST_FETCHING });
+      homeDispatch({ type: PRODUCT.LIST_FETCHING });
 
       try {
         
@@ -53,7 +53,7 @@ export function useHomeRecommendedStoreList() {
 
         if (res.status === 200) {
           homeDispatch({
-            type: STORE.LIST_FETCHED, 
+            type: PRODUCT.LIST_FETCHED, 
             payload: { list: res.body.data }
           });
         } else {
@@ -62,15 +62,15 @@ export function useHomeRecommendedStoreList() {
         
       } catch {
         homeDispatch({
-          type: STORE.LIST_ERROR_CHANGED,
+          type: PRODUCT.LIST_ERROR_CHANGED,
           payload: {
             error: NetworkErrorCodes.UNKNOWN_ERROR
           }
         });
       }
     },
-    [api, storesLoaded, storesLoading, storesError, homeDispatch]
+    [api, productsLoaded, productsLoading, productsError, homeDispatch]
   );
 
-  return [fetch, stores, storesLoading, storesError, storesLoaded, retryFetch];
+  return [fetch, products, productsLoading, productsError, productsLoaded, retryFetch];
 }

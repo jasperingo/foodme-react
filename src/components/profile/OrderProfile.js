@@ -184,10 +184,13 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
       action: onCancelClicked
     });
   }
-
+  
   if (
-      (isStore && order.store_status === Order.STORE_STATUS_PENDING) || 
-      (isDeliveryFirm && order.delivery_firm_status === Order.DELIVERY_FIRM_STATUS_PENDING)
+      order.status === Order.STATUS_PENDING && 
+      (
+        (isStore && order.store_status === Order.STORE_STATUS_PENDING) || 
+        (isDeliveryFirm && order.delivery_firm_status === Order.DELIVERY_FIRM_STATUS_PENDING)
+      )
   ) {
     buttons.push(
       {

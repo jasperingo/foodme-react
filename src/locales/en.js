@@ -296,6 +296,7 @@ export const TRANSLATIONS_EN = {
     _product_variant_delete_confirm: 'Are you sure you want to delete this product variant?',
 
     Recommended_product: 'Recommended product',
+    Recommended_products: 'Recommended products',
   },
 
   _cart: {

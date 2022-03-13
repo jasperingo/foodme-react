@@ -49,6 +49,13 @@ export default class ProductRepository extends Fetch {
     );
   }
 
+  getRecommendedList() {
+    return this.apiFetch(
+      `product/recommended/list?page_limit=${Fetch.PAGE_LIMIT_BIG}`,
+      'GET'
+    );
+  }
+
   getRandomList() {
     return this.apiFetch(
       `product/random/list?page_limit=${Fetch.PAGE_LIMIT_BIG}`,

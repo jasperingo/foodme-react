@@ -68,10 +68,10 @@ export default function Orders() {
           )}
           footer={useRenderListFooter(
             ordersFetchStatus,
-            ()=> <li key="order-footer"> <Loading /> </li>, 
-            ()=> <li key="order-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="order-footer" className="col-span-2"> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>,
-            ()=> <li key="order-footer"> <FetchMoreButton action={refetch} /> </li>
+            ()=> <li key="order-footer" className="list-2-x-col-span"> <Loading /> </li>, 
+            ()=> <li key="order-footer" className="list-2-x-col-span"> <Reload action={refetch} /> </li>,
+            ()=> <li key="order-footer" className="list-2-x-col-span"> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>,
+            ()=> <li key="order-footer" className="list-2-x-col-span"> <FetchMoreButton action={refetch} /> </li>
           )}
           />
 
