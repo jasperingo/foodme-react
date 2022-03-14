@@ -1,5 +1,4 @@
 
-
 export function useTransactionStatus(status) {
 
   let theStatus, statusColor;
@@ -60,6 +59,32 @@ export function useTransactionType(type) {
 
     default:
       return '_transaction.Payment';
+  }
+}
+
+export function useTransactionTypeText() {
+
+  return function(type) {
+    switch(type) {
+
+      case 'withdrawal':
+        return '_transaction.Withdrawal';
+  
+      case 'deposit':
+        return '_transaction.Deposit';
+  
+      case 'income':
+        return '_transaction.Income';
+  
+      case 'charge':
+        return '_transaction.Charge';
+  
+      case 'refund':
+        return '_transaction.Refund';
+  
+      default:
+        return '_transaction.Payment';
+    }
   }
 }
 

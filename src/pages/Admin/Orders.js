@@ -32,12 +32,16 @@ export default function Orders() {
     onStatusChange
   ] = useOrderList();
 
-  const history = useHistory()
+  const history = useHistory();
 
   const param = useURLQuery();
 
   function change(value) {
-    param.set('status', value);
+    if (value)
+      param.set('status', value);
+    else 
+      param.delete('status');
+    
     history.replace(`/orders?${param.toString()}`);
     onStatusChange();
   }
@@ -46,7 +50,11 @@ export default function Orders() {
     <section>
       <div className="container-x">
 
-        <OrderFilter statuses={Order.getStatuses()} status={param.get('status')} onFilterChange={change} />
+        <OrderFilter 
+          onFilterChange={change} 
+          status={param.get('status')} 
+          statuses={Order.getStatuses()} 
+          />
         
         <ScrollList
           data={orders}

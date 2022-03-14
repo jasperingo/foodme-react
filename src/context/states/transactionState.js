@@ -13,6 +13,7 @@ const transactionState = {
 
   transactions: [],
   transactionsPage: 1,
+  transactionsType: null,
   transactionsLoading: true,
   transactionsNumberOfPages: 0,
   transactionsFetchStatus: FETCH_STATUSES.LOADING,

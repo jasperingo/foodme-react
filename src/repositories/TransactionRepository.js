@@ -26,9 +26,20 @@ export default class TransactionRepository extends Fetch {
     );
   }
   
-  getList(page) {
+  getList(page, type) {
+
+    const params = new URLSearchParams();
+
+    params.append('page', page);
+
+    params.append('page_limit', Fetch.PAGE_LIMIT);
+
+    if (type) {
+      params.append('type', type);
+    }
+
     return this.apiFetch(
-      `transaction/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      `transaction/list?${params.toString()}`,
       'GET'
     );
   }

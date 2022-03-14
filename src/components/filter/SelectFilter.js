@@ -9,7 +9,7 @@ export default function SelectFilter({ label, options, value, onFilterChange }) 
   const { t } = useTranslation();
 
   return (
-    <form className="flex gap-2 items-center my-2">
+    <div className="flex gap-2 items-center my-2">
       <Icon path={filterIcon} className="w-6 h-6" />
       <label htmlFor="order-filter" className="sr-only">{ t(label) }</label>
       <select 
@@ -25,6 +25,6 @@ export default function SelectFilter({ label, options, value, onFilterChange }) 
           ) 
         }
       </select>
-    </form>
+    </div>
   );
 }

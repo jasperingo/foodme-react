@@ -12,7 +12,7 @@ export default function OrderFilter({ statuses, status, onFilterChange }) {
   const statusText = useOrderStatusText();
 
   return (
-    <form className="flex gap-2 items-center my-2">
+    <div className="flex gap-2 items-center my-2">
       <Icon path={filterIcon} className="w-6 h-6" />
       <label htmlFor="order-filter" className="sr-only">{ t('_order.Filter_order_by_status') }</label>
       <select 
@@ -28,7 +28,7 @@ export default function OrderFilter({ statuses, status, onFilterChange }) {
           ) 
         }
       </select>
-    </form>
+    </div>
   );
 }
 

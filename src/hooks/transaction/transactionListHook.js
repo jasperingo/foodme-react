@@ -18,6 +18,7 @@ export function useTransactionList() {
       transactionDispatch,
       transaction: {
         transactions,
+        transactionsType,
         transactionsPage,
         transactionsLoading,
         transactionsNumberOfPages,
@@ -28,6 +29,16 @@ export function useTransactionList() {
 
   const listStatusUpdater = useUpdateListFetchStatus();
 
+  const onTypeFilterChange = useCallback(
+    function(type) {
+      if (type !== transactionsType)
+        transactionDispatch({ 
+          type: TRANSACTION.LIST_TYPE_FILTER_CHANGED, 
+          payload: { status: type } 
+        });
+    },
+    [transactionsType, transactionDispatch]
+  );
 
   const refetch = useCallback(
     ()=> {
@@ -55,7 +66,7 @@ export function useTransactionList() {
         transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
         const api = new TransactionRepository(adminToken);
-        api.getList(transactionsPage)
+        api.getList(transactionsPage, transactionsType)
         .then(res=> {
           
           if (res.status === 200) {
@@ -89,11 +100,19 @@ export function useTransactionList() {
       transactionsPage, 
       transactionsLoading, 
       transactionsFetchStatus, 
+      transactionsType,
       transactionDispatch, 
       listStatusUpdater
     ]
   );
 
-
-  return [transactions, transactionsFetchStatus, transactionsPage, transactionsNumberOfPages, refetch, refresh];
+  return [
+    transactions, 
+    transactionsFetchStatus, 
+    transactionsPage, 
+    transactionsNumberOfPages, 
+    refetch, 
+    refresh, 
+    onTypeFilterChange
+  ];
 }

@@ -15,6 +15,17 @@ export default function TransactionReducer (state, action) {
         transactionsFetchStatus: transactionState.transactionsFetchStatus,
       };
 
+    case TRANSACTION.LIST_TYPE_FILTER_CHANGED:
+      return {
+        ...state,
+        transactionsPage: 1,
+        transactionsLoading: true,
+        transactionsNumberOfPages: 0,
+        transactions: transactionState.transactions,
+        transactionsFetchStatus: transactionState.transactionsFetchStatus,
+        transactionsType: action.payload.status
+      };
+
     case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
       return {
         ...state,
