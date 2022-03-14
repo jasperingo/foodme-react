@@ -1,7 +1,6 @@
 import { ORDER } from "../actions/orderActions";
 import orderState from "../states/orderState";
 
-
 export default function OrderReducer (state, action) {
   
   switch (action.type) {
@@ -14,6 +13,17 @@ export default function OrderReducer (state, action) {
         ordersNumberOfPages: 0,
         orders: orderState.orders,
         ordersFetchStatus: orderState.ordersFetchStatus,
+      };
+
+    case ORDER.LIST_STATUS_FILTER_CHANGED:
+      return {
+        ...state,
+        ordersPage: 1,
+        ordersLoading: true,
+        ordersNumberOfPages: 0,
+        orders: orderState.orders,
+        ordersFetchStatus: orderState.ordersFetchStatus,
+        orderStatus: action.payload.status
       };
 
     case ORDER.LIST_FETCH_STATUS_CHANGED:
@@ -57,17 +67,6 @@ export default function OrderReducer (state, action) {
         order: action.payload.order, 
         orderID: action.payload.order.id, 
         orderFetchStatus: action.payload.fetchStatus,
-      };
-
-    case ORDER.LIST_STATUS_FILTER_CHANGED:
-      return {
-        ...state,
-        ordersPage: 1,
-        ordersLoading: true,
-        ordersNumberOfPages: 0,
-        orders: orderState.orders,
-        ordersFetchStatus: orderState.ordersFetchStatus,
-        orderStatus: action.payload.status
       };
       
     case ORDER.ITEM_UPDATED:

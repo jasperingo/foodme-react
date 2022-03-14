@@ -1,6 +1,11 @@
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const homeState = {
+
+  promotions: [],
+  promotionsError: null,
+  promotionsLoaded: false,
+  promotionsLoading: false,
   
   categories: [],
   categoriesFetchStatus: FETCH_STATUSES.LOADING,

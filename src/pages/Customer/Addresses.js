@@ -35,7 +35,7 @@ export default function Addresses() {
     addressesFetchStatus,
     refetch,
     refresh
-  ] = useAddressList(customer, customerToken);
+  ] = useAddressList(customer.user, customerToken);
 
   return (
     <section>

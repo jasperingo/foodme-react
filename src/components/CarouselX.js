@@ -24,27 +24,29 @@ export default function CarouselX({ items }) {
     setCurrent(c=> c-1 < 0 ? (items.length-1) : c-1);
   }
 
-  useEffect(()=> {
+  useEffect(
+    function() {
 
-    let timeoutHandler = null;
+      let timeoutHandler = null;
 
-    function changeCurrent() {
+      function changeCurrent() {
 
-      if (!navUsed) setCurrent(c=> c+1 >= items.length ? 0 : c+1);
-  
-      setNavUsed(false);
-  
-      timeoutHandler = setTimeout(changeCurrent, INTERVAL);
-    }
+        if (!navUsed) setCurrent(c=> c+1 >= items.length ? 0 : c+1);
     
-    timeoutHandler = setTimeout(changeCurrent, INTERVAL);
+        setNavUsed(false);
+    
+        timeoutHandler = setTimeout(changeCurrent, INTERVAL);
+      }
+      
+      timeoutHandler = setTimeout(changeCurrent, INTERVAL);
 
-    return function clean() {
-      clearTimeout(timeoutHandler)
-    }
+      return function() {
+        clearTimeout(timeoutHandler)
+      }
 
-  }, [navUsed, items.length]);
-
+    }, 
+    [navUsed, items.length]
+  );
 
   return (
     <div className="my-4 relative h-52 overflow-x-hidden md:h-96">
@@ -60,23 +62,26 @@ export default function CarouselX({ items }) {
 
       {
         items.map((item, i)=> (
-          <div key={i} className={`w-full transition-all absolute top-0 ${i !== current ? '-right-full' : 'right-0'}`}>
+          <div 
+            key={`promotion-${item.id}`} 
+            className={`w-full transition-all absolute top-0 ${i !== current ? '-right-full' : 'right-0'}`}
+            >
             
             <img
               className="block w-full h-52 rounded filter brightness-75 md:h-96"
-              src={`/photos${item.photo}`}
+              src={item.photo.href}
               alt={item.title}
             />
 
             <div className="absolute z-10 bottom-0 text-center w-full p-4 text-white">
               <p className="font-bold text-3xl my-4">{ item.title }</p>
               <a 
-                href="https://fb.com" 
+                href={item.link} 
                 target="_blank" 
                 rel="noreferrer" 
                 className="bg-white py-2 px-4 rounded text-black"
                 >
-                { t('_extra.Contact_us_on') } Facebook 
+                { t('_extra.Contact_us_on') } { item.link_type } 
               </a>
             </div>
 

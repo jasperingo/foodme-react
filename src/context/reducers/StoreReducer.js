@@ -1,3 +1,4 @@
+import { CATEGORY } from "../actions/categoryActions";
 import { DISCOUNT } from "../actions/discountActions";
 import { ORDER } from "../actions/orderActions";
 import { PRODUCT } from "../actions/productActions";
@@ -65,6 +66,38 @@ export default function StoreReducer (state, action) {
         storesFetchStatus: action.payload.fetchStatus,
         storesNumberOfPages: action.payload.numberOfPages,
         stores: [...state.stores, ...action.payload.list],
+      };
+
+    case CATEGORY.PRODUCTS_LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        productCategoriesLoading: false,
+        productCategoriesError: action.payload.error
+      }
+    
+    case CATEGORY.PRODUCTS_LIST_FETCHING:
+      return {
+        ...state,
+        productCategoriesLoading: true
+      };
+    
+    case CATEGORY.PRODUCTS_LIST_FETCHED:
+      return {
+        ...state,
+        productCategoriesLoaded: true,
+        productCategoriesLoading: false,
+        productCategories: action.payload.list
+      };
+
+    case PRODUCT.LIST_SUB_CATEGORY_FILTER_CHANGED:
+      return {
+        ...state,
+        productsPage: 1,
+        productsLoading: true,
+        productsNumberOfPages: 0,
+        products: storeState.products,
+        productsFetchStatus: storeState.productsFetchStatus,
+        productsSubCategory: action.payload.status
       };
 
     case PRODUCT.LIST_FETCH_STATUS_CHANGED:

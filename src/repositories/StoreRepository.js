@@ -124,10 +124,28 @@ export default class StoreRepository extends Fetch {
       'GET'
     );
   }
-
-  getProductsList(id, page) {
+  
+  getProductCategoryList(id) {
     return this.apiFetch(
-      `store/${id}/product/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,
+      `store/${id}/category/product/list`,
+      'GET'
+    );
+  }
+
+  getProductsList(id, page, subCategory) {
+
+    const params = new URLSearchParams();
+
+    params.append('page', page);
+
+    params.append('page_limit', Fetch.PAGE_LIMIT);
+
+    if (subCategory) {
+      params.append('sub_category_id', subCategory);
+    }
+    
+    return this.apiFetch(
+      `store/${id}/product/list?${params.toString()}`,
       'GET'
     );
   }

@@ -14,12 +14,17 @@ export const storeState = {
   storesLoading: true,
   storesNumberOfPages: 0,
   storesFetchStatus: FETCH_STATUSES.LOADING,
-
-
+  
+  productCategories: [],
+  productCategoriesError: null,
+  productCategoriesLoaded: false,
+  productCategoriesLoading: false,
+  
   products: [],
   productsPage: 1,
   productsLoading: true,
   productsNumberOfPages: 0,
+  productsSubCategory: null,
   productsFetchStatus: FETCH_STATUSES.LOADING,
 
   reviews: [],
@@ -54,6 +59,4 @@ export const storeState = {
 
 };
 
-
 export default storeState;
-

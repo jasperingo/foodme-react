@@ -6,7 +6,6 @@ import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 import { useUpdateListFetchStatus } from "../viewHook";
 
-
 export function useStoreProductList(userToken) {
 
   const { 
@@ -19,12 +18,23 @@ export function useStoreProductList(userToken) {
         productsPage,
         productsLoading,
         productsNumberOfPages,
+        productsSubCategory
       } 
     }
   } = useAppContext();
 
   const listStatusUpdater = useUpdateListFetchStatus();
 
+  const onStatusChange = useCallback(
+    function(subCategory) {
+      storeDispatch({ 
+        type: PRODUCT.LIST_SUB_CATEGORY_FILTER_CHANGED, 
+        payload: { status: subCategory } 
+      });
+    },
+    [storeDispatch]
+  );
+  
   const refetch = useCallback(
     ()=> {
       if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
@@ -44,10 +54,11 @@ export function useStoreProductList(userToken) {
         storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
         
         const api = new StoreRepository(userToken);
-        api.getProductsList(store.id, productsPage)
+        api.getProductsList(store.id, productsPage, productsSubCategory)
         .then(res=> {
           
           if (res.status === 200) {
+
             storeDispatch({
               type: PRODUCT.LIST_FETCHED, 
               payload: {
@@ -61,10 +72,15 @@ export function useStoreProductList(userToken) {
                 ),
               }
             });
+
           } else if (res.status === 404) {
+
             storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
+
           } else if (res.status === 403) {
+
             storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
+
           } else {
             throw new Error();
           }
@@ -74,9 +90,18 @@ export function useStoreProductList(userToken) {
         });
       }
     },
-    [store.id, products, productsPage, productsLoading, productsFetchStatus, userToken, storeDispatch, listStatusUpdater]
+    [
+      store.id, 
+      products, 
+      productsPage, 
+      productsLoading, 
+      productsFetchStatus, 
+      productsSubCategory,
+      userToken,
+      storeDispatch, 
+      listStatusUpdater
+    ]
   );
 
-  return [products, productsFetchStatus, productsPage, productsNumberOfPages, refetch];
+  return [products, productsFetchStatus, productsPage, productsNumberOfPages, refetch, onStatusChange];
 }
-

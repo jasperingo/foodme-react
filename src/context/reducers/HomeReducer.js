@@ -1,10 +1,32 @@
 import { CATEGORY } from "../actions/categoryActions";
 import { PRODUCT } from "../actions/productActions";
+import { PROMOTION } from "../actions/promotionActions";
 import { STORE } from "../actions/storeActions";
 
 export default function HomeReducer (state, action) {
   
   switch (action.type) {  
+
+    case PROMOTION.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        promotionsLoading: false,
+        promotionsError: action.payload.error
+      }
+    
+    case PROMOTION.LIST_FETCHING:
+      return {
+        ...state,
+        promotionsLoading: true
+      };
+    
+    case PROMOTION.LIST_FETCHED:
+      return {
+        ...state,
+        promotionsLoaded: true,
+        promotionsLoading: false,
+        promotions: action.payload.list
+      };
     
     case CATEGORY.LIST_FETCH_STATUS_CHANGED:
       return {

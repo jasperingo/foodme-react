@@ -21,7 +21,7 @@ export default function SelectFilter({ label, options, value, onFilterChange }) 
         <option value="">{ t('_extra.All') }</option>
         {
           options.map(s=> 
-            <option key={`filter-option-${s}`} value={s}>{ s }</option>
+            <option key={`filter-option-${s.value}`} value={s.value}>{ s.text }</option>
           ) 
         }
       </select>

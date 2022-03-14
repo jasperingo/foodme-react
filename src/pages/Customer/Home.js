@@ -17,28 +17,18 @@ import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook
 import { useHomeRecommendedStoreList } from '../../hooks/home/homeRecommendedStoreListHook';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHomeRecommendedProductList } from '../../hooks/home/homeRecommendedProductListHook';
+import { useHomePromotionList } from '../../hooks/home/homePromotionListHook';
 
-const CAROUSEL_IMGS = [
-  {
-    title: 'Buy food',
-    photo: '/home/burger.jpg'
-  },{
-    title: 'Instant delivery',
-    photo: '/home/delivery.jpg'
-  }, 
-  {
-    title: 'Buy medicine',
-    photo: '/home/drugs.jpg'
-  },
-  {
-    title: 'Buy drinks',
-    photo: '/home/drink.jpg'
-  }
-];
 
-function Categories({ categories, categoriesFetchStatus, refetch }) {
+function Categories() {
 
   const { t } = useTranslation();
+
+  const [
+    categories, 
+    categoriesFetchStatus, 
+    refetchCategories
+  ] = useStoreCategoryList();
 
   return (
     <div className="bg-color-gray lg:my-2">
@@ -58,7 +48,7 @@ function Categories({ categories, categoriesFetchStatus, refetch }) {
           footer={useRenderListFooter(
             categoriesFetchStatus,
             ()=> <li key="categories-footer" className="col-span-3 md:col-span-4"> <Loading /> </li>, 
-            ()=> <li key="categories-footer" className="col-span-3 md:col-span-4"> <Reload action={refetch} /> </li>,
+            ()=> <li key="categories-footer" className="col-span-3 md:col-span-4"> <Reload action={refetchCategories} /> </li>,
             ()=> <li key="categories-footer" className="col-span-3 md:col-span-4"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
           )}
           />
@@ -203,6 +193,43 @@ function Products() {
   );
 }
 
+function Promotions() {
+
+  const [
+    fetch, 
+    promotions, 
+    promotionsLoading, 
+    promotionsError, 
+    promotionsLoaded, 
+    retryFetch
+  ] = useHomePromotionList();
+
+  useEffect(
+    function() { 
+      fetch() 
+    },
+    [fetch]
+  );
+  
+  return (
+    <div className="container-x">
+      {
+        promotionsLoaded && 
+        <CarouselX items={promotions} />
+      }
+
+      {
+        promotionsLoading && <Loading />
+      }
+
+      {
+        promotionsError !== null &&
+        <Reload action={retryFetch} />
+      }
+    </div>
+  );
+}
+
 export default function Home() {
 
   useHeader({ topNavPaths: ['/cart', '/search'] });
@@ -211,32 +238,29 @@ export default function Home() {
     home: {
       home: {
         storesLoaded,
+        promotionsLoaded,
+      } 
+    },
+    category: { 
+      category: {
+        storesFetchStatus
       } 
     }
   } = useAppContext();
-
-  const [
-    categories, 
-    categoriesFetchStatus, 
-    refetchCategories
-  ] = useStoreCategoryList();
 
 
   return (
     <section>
 
-      <div className="container-x">
-        <CarouselX items={CAROUSEL_IMGS} />
-      </div>
-
-      <Categories 
-        categories={categories}
-        categoriesFetchStatus={categoriesFetchStatus}
-        refetch={refetchCategories}
-        />
+      <Promotions />
 
       {
-        categoriesFetchStatus === FETCH_STATUSES.DONE &&
+        promotionsLoaded && 
+        <Categories />
+      }
+
+      {
+        storesFetchStatus === FETCH_STATUSES.DONE &&
         <Stores />
       }
 
@@ -248,5 +272,3 @@ export default function Home() {
     </section>
   );
 }
-
-

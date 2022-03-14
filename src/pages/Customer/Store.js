@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
@@ -9,7 +9,7 @@ import { categoryIcon } from '../../assets/icons';
 import { useStoreFetch } from '../../hooks/store/storeFetchHook';
 import NotFound from '../../components/NotFound';
 import Forbidden from '../../components/Forbidden';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
+import { useListFooter, useRenderOnDataFetched, useURLQuery } from '../../hooks/viewHook';
 import ProductList from '../../components/profile/section/ProductList';
 import { useStoreProductList } from '../../hooks/store/storeProductListHook';
 import { useAppContext } from '../../hooks/contextHook';
@@ -23,9 +23,9 @@ import { useHeader } from '../../hooks/headerHook';
 import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
 import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
 import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
-import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
-import { useRenderListFooter } from '../../hooks/viewHook';
 import SelectFilter from '../../components/filter/SelectFilter';
+import { useStoreProductCategoryList } from '../../hooks/store/storeProductCategoryListHook';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 const NAV_LINKS = [
   { title : '_extra.Menu', href: '' },
@@ -33,7 +33,6 @@ const NAV_LINKS = [
   { title : '_extra.Reviews', href: '/reviews' },
   { title : '_discount.Discounts', href: '/discounts' }
 ];
-
 
 function StoreDiscountsList() {
 
@@ -132,7 +131,12 @@ function StoreProductsListList() {
           customerToken
         }
       } 
-    } 
+    },
+    store: {
+      store: {
+        productsSubCategory
+      } 
+    }
   } = useAppContext();
 
   const [
@@ -140,9 +144,20 @@ function StoreProductsListList() {
     productsFetchStatus, 
     productsPage, 
     productsNumberOfPages, 
-    refetch
+    refetch,
+    onStatusChange
   ] = useStoreProductList(customerToken);
 
+  const param = useURLQuery();
+
+  useEffect(
+    function() {
+      if (param.get('sub_category') !== productsSubCategory)
+        onStatusChange(param.get('sub_category'));
+    },
+    [param, productsSubCategory, onStatusChange]
+  );
+  
   return (
     <ProductList 
       products={products}
@@ -154,46 +169,97 @@ function StoreProductsListList() {
   );
 }
 
-function StoreProductsList({ menu }) {
+function StoreProductsList() {
 
   const [
+    fetch, 
     categories, 
-    categoriesFetchStatus, 
-    refetchCategories
-  ] = useProductCategoryList(true);
+    categoriesLoading, 
+    categoriesError, 
+    , 
+    retryFetchCategories
+  ] = useStoreProductCategoryList();
+
+  const param = useURLQuery();
+
+  const history = useHistory();
+
+  const match = useRouteMatch();
+
+  useEffect(fetch, [fetch]);
   
-  return useRenderOnDataFetched(
-    categoriesFetchStatus,
-    ()=> (
-      <>
-        <div className="container-x">
-          <SelectFilter options={categories.map(i=> i.name)} value={menu} onFilterChange={()=> alert(99934)} /> 
-        </div>
-        <StoreProductsListList />
-      </>
-    ),
-    ()=> <Loading />,
-    ()=> <Reload action={refetchCategories} />,
+  function onFilterChange(value) {
+    if (value)
+      param.set('sub_category', value);
+    else 
+      param.delete('sub_category');
+    
+    history.replace(`${match.url}?${param.toString()}`);
+  }
+  
+  if (categoriesLoading) {
+    return <Loading />;
+  }
+
+  if (categoriesError === NetworkErrorCodes.UNKNOWN_ERROR) {
+    return <Reload action={retryFetchCategories} />;
+  }
+
+  if (categoriesError === NetworkErrorCodes.NOT_FOUND) {
+    return <NotFound />;
+  }
+
+  if (categoriesError === NetworkErrorCodes.FORBIDDEN) {
+    return <Forbidden />;
+  }
+
+  return (
+    <>
+      <div className="container-x">
+        <SelectFilter 
+          onFilterChange={onFilterChange} 
+          value={param.get('sub_category')} 
+          options={categories.flatMap(i=> i.sub_categories).map(i=> ({ text: i.name, value: i.id }))} 
+          /> 
+      </div>
+      <StoreProductsListList />
+    </>
   );
 }
 
-function StoreProductCategoriesList({ onSelect }) {
+function StoreProductCategoriesList({ url }) {
+
+  const listFooter = useListFooter();
+
+  const history = useHistory();
+
+  const param = useURLQuery();
 
   const [
-    products, 
-    productsFetchStatus, 
-    refetchProducts
-  ] = useProductCategoryList(true);
+    fetch, 
+    productCategories, 
+    productCategoriesLoading, 
+    productCategoriesError, 
+    productCategoriesLoaded, 
+    retryFetch
+  ] = useStoreProductCategoryList();
+
+  useEffect(fetch, [fetch]);
+
+  function onFilterChange(value) {
+    param.set('sub_category', value);
+    history.push(`${url}/products?${param.toString()}`);
+  }
 
   return (
     <div>
       <div className="container-x">
         <SingleList
-          data={products}
+          data={productCategories.flatMap(i=> i.sub_categories)}
           className="grid grid-cols-3 gap-4 p-1"
           renderDataItem={(item)=> (
             <li key={`category-${item.id}`}>
-              <button className="block shadow" onClick={()=> onSelect(item.name)}>
+              <button className="block shadow" onClick={()=> onFilterChange(item.id)}>
                 <img 
                   src={item.photo.href} 
                   alt={item.name} 
@@ -205,12 +271,56 @@ function StoreProductCategoriesList({ onSelect }) {
               </button>
             </li>
           )}
-          footer={useRenderListFooter(
-            productsFetchStatus,
-            ()=> <li key="category-footer" className="col-span-3"> <Loading /> </li>, 
-            ()=> <li key="category-footer" className="col-span-3"> <Reload action={refetchProducts} /> </li>,
-            ()=> <li key="category-footer" className="col-span-3"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
-          )}
+          footer={listFooter([
+            {
+              canRender: productCategoriesLoading,
+              render() { 
+                return ( 
+                  <li key="category-footer" className="col-span-3"> <Loading /> </li>
+                ); 
+              },
+            }, 
+            {
+              canRender: productCategoriesError === NetworkErrorCodes.UNKNOWN_ERROR,
+              render() { 
+                return (
+                  <li key="category-footer" className="col-span-3">
+                    <Reload action={retryFetch} /> 
+                  </li> 
+                );
+              },
+            },
+            {
+              canRender: productCategoriesError === NetworkErrorCodes.NOT_FOUND,
+              render() { 
+                return (
+                  <li key="category-footer" className="col-span-3">
+                    <NotFound />
+                  </li> 
+                );
+              },
+            },
+            {
+              canRender: productCategoriesError === NetworkErrorCodes.FORBIDDEN,
+              render() { 
+                return (
+                  <li key="category-footer" className="col-span-3">
+                    <Forbidden />
+                  </li> 
+                );
+              },
+            },
+            {
+              canRender: productCategoriesLoaded && productCategories.length === 0,
+              render() { 
+                return (
+                  <li key="category-footer" className="col-span-3">
+                    <EmptyList text="_empty.No_category" icon={categoryIcon} /> 
+                  </li> 
+                );
+              }
+            }
+          ])}
           />
       </div>
     </div>
@@ -220,8 +330,6 @@ function StoreProductCategoriesList({ onSelect }) {
 export default function Store() {
 
   const match = useRouteMatch();
-
-  const history = useHistory();
 
   const {
     customer: {
@@ -246,13 +354,6 @@ export default function Store() {
     topNavPaths: ['/cart', '/search']
   });
 
-  const [menu, setMenu] = useState('_extra.All');
-
-  function onMenuChoosen(value) {
-    setMenu(value);
-    history.push(`${match.url}/products`);
-  }
-
   return (
     <section>
 
@@ -274,8 +375,8 @@ export default function Store() {
         <Switch>
           <Route path={`${match.url}/discounts`} render={()=> <StoreDiscountsList />} />
           <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList ratings={store.rating} />} />
-          <Route path={`${match.url}/products`} render={()=> <StoreProductsList menu={menu} />} />
-          <Route path={match.url} render={()=> <StoreProductCategoriesList onSelect={onMenuChoosen} />} />
+          <Route path={`${match.url}/products`} render={()=> <StoreProductsList />} />
+          <Route path={match.url} render={()=> <StoreProductCategoriesList url={match.url} />} />
         </Switch>
       }
 
