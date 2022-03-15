@@ -1,10 +1,14 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
+import LoadingDialog from '../../components/dialog/LoadingDialog';
 import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import FormPhotoField from '../../components/form/FormPhotoField';
 import { useHeader } from '../../hooks/headerHook';
+import { usePromotionCreate } from '../../hooks/promotion/promotionCreateHook';
+import { usePromotionPhotoUpdate } from '../../hooks/promotion/promotionPhotoUpdateHook';
 
 export default function PromotionCreate() {
 
@@ -22,10 +26,55 @@ export default function PromotionCreate() {
   const amountInput = useRef(null);
 
   const durationInput = useRef(null);
+
+  const history = useHistory();
+
+  const [
+    onSubmit,
+    id, 
+    loading, 
+    formError,
+    titleError, 
+    linkError, 
+    linkTypeError,
+    amountError,
+    durationError
+  ] = usePromotionCreate();
+
+  const [
+    submit,
+    photo,
+    setPhoto,
+    photoLoading,
+    photoUploaded,
+    photoFormError
+  ] = usePromotionPhotoUpdate();
+
+  useEffect(
+    function() {
+      if (id > 0 && photo !== null && !photoUploaded && photoFormError === null)
+        submit(id);
+      else if (id > 0) 
+        history.push(`/promotion/${id}`);
+    }, 
+    [id, photo, photoUploaded, photoFormError, history, submit]
+  );
   
   function onFormSubmit(e) {
     e.preventDefault();
-    alert('form submitted');
+    onSubmit(
+      titleInput.current.value,
+      linkInput.current.value,
+      linkTypeInput.current.value,
+      amountInput.current.value,
+      durationInput.current.value,
+
+      titleInput.current.validity,
+      linkInput.current.validity,
+      linkTypeInput.current.validity,
+      amountInput.current.validity,
+      durationInput.current.validity
+    );
   }
 
   return (
@@ -33,21 +82,18 @@ export default function PromotionCreate() {
       <div className="container-x">
         <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x" noValidate>
 
-          <FormMessage 
-            // error={formError} 
-            // success={formSuccess} 
-            /> 
+          <FormMessage error={formError || photoFormError} /> 
 
           <FormPhotoField 
             alt="Add promotion" 
             src="/photos/default.jpg"
-            // onChoose={onPhotoChoose}
-            // uploaded={photoUploaded}
+            onChoose={setPhoto}
+            uploaded={photoUploaded}
             />
 
           <FormField 
             ref={ titleInput }
-            // error={ nameError }
+            error={ titleError }
             ID="title-input" 
             label="_extra.Title" 
             required={true}
@@ -55,7 +101,7 @@ export default function PromotionCreate() {
 
           <FormField 
             ref={ linkInput }
-            // error={ nameError }
+            error={ linkError }
             type="url"
             ID="link-input" 
             label="_extra.Link" 
@@ -64,7 +110,7 @@ export default function PromotionCreate() {
 
           <FormField 
             ref={ linkTypeInput }
-            // error={ nameError }
+            error={ linkTypeError }
             ID="link-type-input" 
             label="_extra.Link_type" 
             required={true}
@@ -72,7 +118,7 @@ export default function PromotionCreate() {
 
           <FormField 
             ref={ amountInput }
-            // error={ nameError }
+            error={ amountError }
             type="number"
             step="0.01"
             ID="amount-input" 
@@ -82,16 +128,16 @@ export default function PromotionCreate() {
 
           <FormField 
             ref={ durationInput }
-            // error={ nameError }
+            error={ durationError }
             type="number"
             ID="duration-input" 
-            label="_extra.Duration" 
+            label="_extra.Duration__days" 
             required={true}
             />
 
           <FormButton text="_extra.Submit" />
 
-          {/* { dialog && <LoadingDialog dialog={dialog} /> } */}
+          { (loading || photoLoading) && <LoadingDialog /> }
 
         </form>
       </div>

@@ -7,14 +7,14 @@ export default function PromotionItem({ item }) {
     <li>
       <Link 
         to={`/promotion/${item.id}`} 
-        className="border flex gap-2 items-center mb-4 hover:bg-color-gray-h"
+        className="border flex gap-2 items-center mb-4 rounded hover:bg-color-gray-h"
         >
         <img 
           width={100}
           height={100}
           alt={item.title}
           src={item.photo.href}
-          className="w-24 h-24"
+          className="w-24 h-24 rounded-tl rounded-bl"
           />
         <div>
           <div className="font-bold mb-1">{ item.title }</div>

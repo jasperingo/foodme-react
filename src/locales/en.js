@@ -165,6 +165,7 @@ export const TRANSLATIONS_EN = {
     Link: 'Link',
     Link_type: 'Link type',
     Duration: 'Duration',
+    Duration__days: 'Duration (days)',
 
     Approved: 'Approved',
     Process: 'Process',
