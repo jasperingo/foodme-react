@@ -101,6 +101,7 @@ export const passwordIcon = mdiKey;
 export const bankAccountIcon = mdiBank;
 export const weightIcon = mdiScaleBalance;
 export const recommendedIcon = mdiBullhorn;
+export const promotionIcon = mdiBullhorn;
 
 export const cancelIcon = mdiCancel;
 

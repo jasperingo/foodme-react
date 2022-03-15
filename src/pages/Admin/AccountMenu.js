@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { adminIcon, categoryIcon, deliveryIcon, passwordIcon, storeIcon, userIcon } from '../../assets/icons';
+import { adminIcon, categoryIcon, deliveryIcon, passwordIcon, promotionIcon, storeIcon, userIcon } from '../../assets/icons';
 import AccountMenuView from '../../components/AccountMenuView';
 import { useAdminLogOut } from '../../hooks/admin/adminLogOutHook';
 import { useAppContext } from '../../hooks/contextHook';
@@ -12,6 +12,7 @@ const MENU_ITEMS = [
   { text: '_store.Stores', icon: storeIcon, href: '/stores'},
   { text: '_delivery.Delivery_firms', icon: deliveryIcon, href: '/delivery-firms'},
   { text: '_category.Categories', icon: categoryIcon, href: '/categories' },
+  { text: '_promotion.Promotions', icon: promotionIcon, href: '/promotions' },
   { text: '_user.Password', icon: passwordIcon, href: '/settings/password'},
 ];
 

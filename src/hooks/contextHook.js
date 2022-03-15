@@ -14,6 +14,7 @@ import HeaderReducer from "../context/reducers/HeaderReducer";
 import HomeReducer from "../context/reducers/HomeReducer";
 import OrderReducer from "../context/reducers/OrderReducer";
 import ProductReducer from "../context/reducers/ProductReducer";
+import PromotionReducer from "../context/reducers/PromotionReducer";
 import SavedCartReducer from "../context/reducers/SavedCartReducer";
 import SearchReducer from "../context/reducers/SearchReducer";
 import StoreReducer from "../context/reducers/StoreReducer";
@@ -33,6 +34,7 @@ import headerState from "../context/states/headerState";
 import homeState from "../context/states/homeState";
 import orderState from "../context/states/orderState";
 import productState from "../context/states/productState";
+import promotionState from "../context/states/promotionState";
 import savedCartState from "../context/states/savedCartState";
 import searchState from "../context/states/searchState";
 import storeState from "../context/states/storeState";
@@ -79,6 +81,8 @@ export function useAppContextValues() {
   const [deliveryFirm, deliveryFirmDispatch] = useReducer(DeliveryFirmReducer, deliveryFirmState);
 
   const [deliveryRoute, deliveryRouteDispatch] = useReducer(DeliveryRouteReducer, deliveryRouteState);
+
+  const [promotion, promotionDispatch] = useReducer(PromotionReducer, promotionState);
 
 
   return {
@@ -176,6 +180,11 @@ export function useAppContextValues() {
     deliveryRoute: {
       deliveryRoute, 
       deliveryRouteDispatch
+    },
+
+    promotion: {
+      promotion, 
+      promotionDispatch
     },
 
   }

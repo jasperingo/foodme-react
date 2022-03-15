@@ -45,6 +45,9 @@ import ResetPassword from '../pages/ResetPassword';
 import ForgotPassword from '../pages/ForgotPassword';
 import ProductUpdate from '../pages/Admin/ProductUpdate';
 import Home from '../pages/Admin/Home';
+import Promotions from '../pages/Admin/Promotions';
+import Promotion from '../pages/Admin/Promotion';
+import PromotionCreate from '../pages/Admin/PromotionCreate';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -105,6 +108,9 @@ export default function AdminApp() {
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
 
+          <Route path="/promotion/create" render={()=> authMiddleware() || <PromotionCreate />} />
+          <Route path="/promotion/:ID" render={()=> authMiddleware() || <Promotion />} />
+          <Route path="/promotions" render={()=> authMiddleware() || <Promotions />} />
           <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={adminToken} canProcessAndDecline={true} />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />

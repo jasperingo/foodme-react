@@ -162,6 +162,9 @@ export const TRANSLATIONS_EN = {
     Deselect: 'Deselect',
     Menu: 'Menu',
     Continue: 'Continue',
+    Link: 'Link',
+    Link_type: 'Link type',
+    Duration: 'Duration',
 
     Approved: 'Approved',
     Process: 'Process',
@@ -465,6 +468,13 @@ export const TRANSLATIONS_EN = {
     Pay_with_paystack: 'Pay with paystack',
 
     Get_paid_securely_and_fast: 'Get paid securely and fast',
+
+  },
+
+  _promotion: {
+    Promotion: 'Promotion',
+    Promotions: 'Promotions',
+    Add_promotion: 'Add promotion',
 
   },
 
