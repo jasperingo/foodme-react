@@ -153,6 +153,12 @@ export function useUpdateListFetchStatus() {
   }
 }
 
+export function useLoadOnListScroll() {
+  return function(page, numberOfPages, error, scrollCount=5) {
+    return page % scrollCount !== 0 && page <= numberOfPages && error !== null;
+  }
+}
+
 export function useListFooter() {
 
   return function (values) {

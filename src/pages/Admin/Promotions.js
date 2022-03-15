@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { promotionIcon } from '../../assets/icons';
 import AddButton from '../../components/AddButton';
 import EmptyList from '../../components/EmptyList';
+import FetchMoreButton from '../../components/FetchMoreButton';
 import SingleList from '../../components/list/SingleList';
 import PromotionItem from '../../components/list_item/PromotionItem';
 import Loading from '../../components/Loading';
@@ -10,7 +11,7 @@ import Reload from '../../components/Reload';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useHeader } from '../../hooks/headerHook';
 import { usePromotionList } from '../../hooks/promotion/promotionListHook';
-import { useListFooter } from '../../hooks/viewHook';
+import { useListFooter, useLoadOnListScroll } from '../../hooks/viewHook';
 
 export default function Promotions() {
 
@@ -21,17 +22,26 @@ export default function Promotions() {
 
   const listFooter = useListFooter();
 
+  const loadOnScroll = useLoadOnListScroll();
+
   const [
     fetch, 
     promotions, 
     promotionsLoading, 
     promotionsError, 
     promotionsLoaded, 
+    promotionsPage,
+    promotionsNumberOfPages,
     retryFetch
   ] = usePromotionList();
 
-  useEffect(fetch, [fetch]);
-
+  useEffect(
+    function() {
+      if (!promotionsLoaded) fetch();
+    }, 
+    [promotionsLoaded, fetch]
+  );
+  
   return (
     <section>
       <div className="container-x">
@@ -40,7 +50,8 @@ export default function Promotions() {
         
         <SingleList
           data={promotions}
-          // nextPage={refetch}
+          nextPage={fetch}
+          hasMore={loadOnScroll(promotionsPage, promotionsNumberOfPages, promotionsError)}
           className="list-2-x"
           renderDataItem={(item)=> (
             <PromotionItem key={`promotion-${item.id}`} item={item} />
@@ -55,6 +66,16 @@ export default function Promotions() {
                   </li> 
                 ); 
               },
+            },
+            {
+              canRender: promotionsPage <= promotionsNumberOfPages,
+              render() {
+                return (
+                  <li key="promotion-footer" className="list-2-x-col-span"> 
+                    <FetchMoreButton action={fetch} /> 
+                  </li> 
+                );
+              }
             },
             {
               canRender: promotionsError === NetworkErrorCodes.UNKNOWN_ERROR,

@@ -19,6 +19,20 @@ export default class PromotionRepository extends Fetch {
     );
   }
 
+  delete(id) {
+    return this.apiFetch(
+      `promotion/${id}/delete`,
+      'DELETE',
+    );
+  }
+
+  get(id) {
+    return this.apiFetch(
+      `promotion/${id}`,
+      'GET'
+    );
+  }
+
   getList(page) {
     return this.apiFetch(
       `promotion/list?page=${page}&page_limit=${Fetch.PAGE_LIMIT}`,

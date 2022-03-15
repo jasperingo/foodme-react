@@ -166,6 +166,8 @@ export const TRANSLATIONS_EN = {
     Link_type: 'Link type',
     Duration: 'Duration',
     Duration__days: 'Duration (days)',
+    Created_on: 'Created on',
+    Expiring_on: 'Expiring on',
 
     Approved: 'Approved',
     Process: 'Process',
@@ -477,6 +479,7 @@ export const TRANSLATIONS_EN = {
     Promotions: 'Promotions',
     Add_promotion: 'Add promotion',
 
+    _delete_promotion_confirm: 'Are you sure you want to delete this promotion?'
   },
 
   _message: {

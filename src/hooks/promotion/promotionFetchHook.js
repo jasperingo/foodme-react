@@ -4,18 +4,16 @@ import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import PromotionRepository from '../../repositories/PromotionRepository';
 import { useAppContext } from '../contextHook';
 
-export function usePromotionList() {
+export function usePromotionFetch() {
 
   const { 
     promotion: { 
       promotionDispatch,
       promotion: {
-        promotions,
-        promotionsPage,
-        promotionsError,
-        promotionsLoaded,
-        promotionsLoading,
-        promotionsNumberOfPages
+        promotion,
+        promotionID,
+        promotionError,
+        promotionLoading
       } 
     },
     admin: { 
@@ -27,56 +25,61 @@ export function usePromotionList() {
 
   const api = useMemo(function() { return new PromotionRepository(adminToken); }, [adminToken]);
 
-  const retryFetch = useCallback(
-    function() { 
-      promotionDispatch({ 
-        type: PROMOTION.LIST_ERROR_CHANGED, 
-        payload: { error: null } 
-      }) ;
+  const unfetch = useCallback(
+    function() {
+      promotionDispatch({ type: PROMOTION.UNFETCHED });
     },
     [promotionDispatch]
   );
-  
+
   const fetch = useCallback(
-    async function() {
-      
-      if (promotionsLoading || promotionsError !== null) return;
+    async function(ID) {
+
+      if (promotionLoading) return;
 
       if (!window.navigator.onLine) {
         promotionDispatch({
-          type: PROMOTION.LIST_ERROR_CHANGED,
+          type: PROMOTION.ERROR_CHANGED,
           payload: {
+            id: ID,
             error: NetworkErrorCodes.NO_NETWORK_CONNECTION
           }
         });
         return;
       }
 
-      promotionDispatch({ type: PROMOTION.LIST_FETCHING });
+      promotionDispatch({ type: PROMOTION.FETCHING });
 
       try {
-        
-        const res = await api.getList(promotionsPage);
+
+        const res = await api.get(ID);
 
         if (res.status === 200) {
           promotionDispatch({
-            type: PROMOTION.LIST_FETCHED, 
-            payload: { 
-              list: res.body.data,
-              numberOfPages: res.body.pagination.number_of_pages,
+            type: PROMOTION.FETCHED, 
+            payload: { promotion: res.body.data }
+          });
+        } else if (res.status === 404) {
+          promotionDispatch({
+            type: PROMOTION.ERROR_CHANGED,
+            payload: {
+              id: ID,
+              error: NetworkErrorCodes.NOT_FOUND
             }
           });
         } else if (res.status === 401) {
           promotionDispatch({
-            type: PROMOTION.LIST_ERROR_CHANGED,
+            type: PROMOTION.ERROR_CHANGED,
             payload: {
+              id: ID,
               error: NetworkErrorCodes.UNAUTHORIZED
             }
           });
         } else if (res.status === 403) {
           promotionDispatch({
-            type: PROMOTION.LIST_ERROR_CHANGED,
+            type: PROMOTION.ERROR_CHANGED,
             payload: {
+              id: ID,
               error: NetworkErrorCodes.FORBIDDEN
             }
           });
@@ -86,24 +89,23 @@ export function usePromotionList() {
         
       } catch {
         promotionDispatch({
-          type: PROMOTION.LIST_ERROR_CHANGED,
+          type: PROMOTION.ERROR_CHANGED,
           payload: {
+            id: ID,
             error: NetworkErrorCodes.UNKNOWN_ERROR
           }
         });
       }
     },
-    [api, promotionsPage, promotionsLoading, promotionsError, promotionDispatch]
+    [promotionLoading, api, promotionDispatch]
   );
 
   return [
-    fetch, 
-    promotions, 
-    promotionsLoading, 
-    promotionsError, 
-    promotionsLoaded, 
-    promotionsPage,
-    promotionsNumberOfPages,
-    retryFetch
+    fetch,
+    promotion,
+    promotionLoading,
+    promotionError,
+    promotionID,
+    unfetch
   ];
 }

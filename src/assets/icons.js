@@ -50,7 +50,8 @@ import {
   mdiCancel,
   mdiBullhorn,
   mdiHomeMapMarker,
-  mdiMapMarkerRadius
+  mdiMapMarkerRadius,
+  mdiLink
 
 } from '@mdi/js';
 
@@ -110,3 +111,4 @@ export const notFoundIcon = mdiWarn;
 export const doorDeliveryIcon = mdiHomeMapMarker;
 export const pickUpDeliveryIcon = mdiMapMarkerRadius;
 
+export const linkIcon = mdiLink;
