@@ -472,6 +472,8 @@ export const TRANSLATIONS_EN = {
 
     Get_paid_securely_and_fast: 'Get paid securely and fast',
 
+    _payment_being_confirmed: 'Your payment is being confirmed.',
+
   },
 
   _promotion: {

@@ -72,7 +72,7 @@ export default function CartDeliveryAddress() {
   );
 
   if (cartItems.length === 0) {
-    return <Redirect to="/cart" />
+    return <Redirect to="/" />
   }
   
   function onSelect(value) {

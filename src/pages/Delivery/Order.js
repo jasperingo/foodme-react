@@ -36,7 +36,7 @@ export default function Order() {
       {
         useRenderOnDataFetched(
           orderFetchStatus,
-          ()=> <OrderProfile order={order} isDeliveryFirm={true} />,
+          ()=> <OrderProfile order={order} isDeliveryFirm={true} userToken={deliveryFirmToken} />,
           ()=> <div className="container-x"> <Loading /> </div>,
           ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
           ()=> <div className="container-x"> <NotFound /> </div>,

@@ -6,9 +6,11 @@ import { Redirect } from 'react-router-dom';
 import AlertDialog from '../../components/dialog/AlertDialog';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
 import CartItem from '../../components/list_item/CartItem';
+import PayWithPaystack from '../../components/PayWithPaystack';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useOrderCreate } from '../../hooks/order/orderCreateHook';
+import { useOrderPaymentTransactionFetch } from '../../hooks/order/orderPaymentTransactionFetchHook';
 import { useMoneyFormatter } from '../../hooks/viewHook';
 import Order from '../../models/Order';
 
@@ -36,25 +38,49 @@ export default function CartSummary() {
 
   const history = useHistory();
 
-  const [orderSend, orderSuccess, orderIsLoading, orderError, orderId] = useOrderCreate();
-  
   const { 
     cart: {
       cart: {
         cart,
         cartItems
       } 
-    }
+    },
+    customer: {
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    } 
   } = useAppContext();
+
+  const [
+    orderSend, 
+    orderSuccess,
+    orderIsLoading, 
+    orderError, 
+    order
+  ] = useOrderCreate();
+
+  const [
+    transactionSend,
+    transaction,
+    transactionLoading,
+    transactionSuccess,
+    transactionError
+  ] = useOrderPaymentTransactionFetch(customerToken);
 
   const [dialog, setDialog] = useState(null);
 
   useEffect(
-    ()=> {
-      if (orderSuccess)
-        history.push(`/cart/done/${orderId}`);
-
-      if (orderError) 
+    function() {
+      if (orderSuccess && order.payment_method === Order.PAYMENT_METHOD_CASH)
+        history.push(`/cart/done/${order.id}`);
+      else if (orderSuccess && order.payment_method === Order.PAYMENT_METHOD_CASHLESS && !transactionSuccess)
+        transactionSend(order);
+      else if (orderSuccess && order.payment_method === Order.PAYMENT_METHOD_CASHLESS && transactionError)
+        history.push(`/cart/done/${order.id}`);
+      else if (orderError) 
         setDialog({
           body: orderError,
           negativeButton: {
@@ -65,12 +91,11 @@ export default function CartSummary() {
           },
         });
     },
-    [history, orderSuccess, orderError, orderId]
+    [history, orderSuccess, orderError, order, transactionSuccess, transactionError, transactionSend]
   );
 
-
   if (cartItems.length === 0) {
-    return <Redirect to="/cart" />
+    return <Redirect to="/" />
   }
 
   const discountTotal = cart.discount_total;
@@ -81,14 +106,14 @@ export default function CartSummary() {
 
   const totalPlusDeliveryTotal = deliveryTotal + total;
 
-  function payOnDelivery() {
+  function placeOrder(paymentMethod) {
     setDialog({
       body: '_order._place_order_confirm',
       positiveButton: {
         text: '_extra.Yes',
         action() {
           setDialog(null);
-          orderSend(Order.PAYMENT_METHOD_CASH);
+          orderSend(paymentMethod);
         }
       },
       negativeButton: {
@@ -129,20 +154,36 @@ export default function CartSummary() {
         <ul>
           <li>
             <button 
-              onClick={payOnDelivery}
+              onClick={()=> placeOrder(Order.PAYMENT_METHOD_CASH)}
               className="btn-color-primary w-full p-2 rounded my-2" 
               >
               { t('_transaction.Pay_on_delivery') }
             </button>
           </li>
           <li>
-            <button className="btn-color-blue w-full p-2 rounded my-2">{ t('_transaction.Pay_with_paystack') }</button>
+            <button 
+              onClick={()=> placeOrder(Order.PAYMENT_METHOD_CASHLESS)}
+              className="btn-color-blue w-full p-2 rounded my-2"
+              >
+              { t('_transaction.Pay_with_paystack') }
+            </button>
           </li>
         </ul>
         
         { dialog && <AlertDialog dialog={dialog} /> }
         
-        { orderIsLoading && <LoadingDialog /> }
+        { (orderIsLoading || transactionLoading) && <LoadingDialog /> }
+
+        { 
+          transactionSuccess && 
+          <PayWithPaystack 
+            amount={transaction.amount}
+            email={transaction.user.email}
+            reference={transaction.reference}
+            onClose={()=> history.push(`/cart/done/${order.id}`)}
+            onDone={()=> history.push(`/cart/done/${order.id}`)}
+            />
+        }
       </div>
     </section>
   );

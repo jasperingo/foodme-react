@@ -165,7 +165,7 @@ export default function CartDiscounts() {
   }
   
   if (cartItems.length === 0) {
-    return <Redirect to="/cart" />
+    return <Redirect to="/" />
   }
   
   return (

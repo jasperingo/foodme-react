@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { CART } from '../../context/actions/cartActions';
 import OrderRepository from '../../repositories/OrderRepository';
 import { useAppContext } from '../contextHook';
 
@@ -7,7 +6,6 @@ export function useOrderCreate() {
 
   const {
     cart: {
-      cartDispatch,
       cart: {
         cart,
         cartItems
@@ -22,7 +20,7 @@ export function useOrderCreate() {
     } 
   } = useAppContext();
 
-  const [id, setId] = useState(0);
+  const [order, setOrder] = useState(null);
 
   const [error, setError] = useState(null);
 
@@ -70,9 +68,8 @@ export function useOrderCreate() {
 
       if (res.status === 201) {
         
-        setId(res.body.data.id);
+        setOrder(res.body.data);
         setSuccess(true);
-        cartDispatch({ type: CART.EMPTIED });
         
       } else if (res.status === 400) {
 
@@ -88,6 +85,6 @@ export function useOrderCreate() {
     }
   }
 
-  return [send, success, isLoading, error, id];
+  return [send, success, isLoading, error, order];
 }
 

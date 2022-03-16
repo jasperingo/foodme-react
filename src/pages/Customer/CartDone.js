@@ -1,10 +1,12 @@
 
 import Icon from '@mdi/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { checkIcon } from '../../assets/icons';
+import { CART } from '../../context/actions/cartActions';
+import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 
 export default function CartDone() {
@@ -18,6 +20,17 @@ export default function CartDone() {
   const { ID } = useParams();
 
   const { t } = useTranslation();
+
+  const {
+    cart: {
+      cartDispatch 
+    }
+  } = useAppContext();
+  
+  useEffect(
+    function() { cartDispatch({ type: CART.EMPTIED }); },
+    [cartDispatch]
+  );
 
   return (
     <section>

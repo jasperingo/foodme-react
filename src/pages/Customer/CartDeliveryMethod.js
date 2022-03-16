@@ -50,7 +50,7 @@ export default function CartDeliveryMethod() {
   const history = useHistory();
 
   if (cartItems.length === 0) {
-    return <Redirect to="/cart" />
+    return <Redirect to="/" />
   }
 
   function onSelect(value) {

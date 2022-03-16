@@ -2,6 +2,14 @@
 import Fetch from "./Fetch";
 
 export default class TransactionRepository extends Fetch {
+
+  createPayment(formData) {
+    return this.apiFetch(
+      'transaction/payment/create',
+      'POST',
+      JSON.stringify(formData)
+    );
+  }
  
   withdraw(formData) {
     return this.apiFetch(

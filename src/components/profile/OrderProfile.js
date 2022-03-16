@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePaystackPayment } from 'react-paystack';
 import H4Heading from '../H4Heading';
 import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeaderText from './ProfileHeaderText';
@@ -15,23 +14,18 @@ import LoadingDialog from '../dialog/LoadingDialog';
 import { useOrderStatusUpdate } from '../../hooks/order/orderStatusUpdateHook';
 import { useStoreStatusUpdate } from '../../hooks/order/orderStoreStatusUpdateHook';
 import { useDeliveryFirmStatusUpdate } from '../../hooks/order/orderDeliveryFirmStatusUpdateHook';
+import { useOrderPaymentTransactionFetch } from '../../hooks/order/orderPaymentTransactionFetchHook';
+import PayWithPaystack from '../PayWithPaystack';
 
-const publicKey = 'pk_live_04d616e6eb4432d9cfde76934e2bf9fa7a288272';
-
-export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm }) {
+export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm, userToken }) {
   
   const { t } = useTranslation();
-
-  const paystack = usePaystackPayment({
-    publicKey,
-    reference: order.reference,
-    email: order.customer.user.email,
-    amount: order.total * 100
-  });
 
   const [theStatus] = useOrderStatus(order.status);
 
   const [dialog, setDialog] = useState(null);
+
+  const [showPay, setShowPay] = useState(false);
 
   const [
     cancelSend, 
@@ -55,6 +49,14 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
     deliveryFirmStatusError, 
     deliveryFirmStatusSuccessMessage
   ] = useDeliveryFirmStatusUpdate();
+
+  const [
+    transactionSend,
+    transaction,
+    transactionLoading,
+    transactionSuccess,
+    transactionError
+  ] = useOrderPaymentTransactionFetch(userToken);
 
   useEffect(
     ()=> {
@@ -136,6 +138,25 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
     },
     [deliveryFirmStatusSuccess, deliveryFirmStatusError, deliveryFirmStatusSuccessMessage]
   );
+  
+  useEffect(
+    ()=> {
+      if (transactionSuccess)
+        setShowPay(true);
+
+      if (transactionError) 
+        setDialog({
+          body: transactionError,
+          negativeButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+    },
+    [transactionSuccess, transactionError]
+  );
 
   const usersLinks = [
     {
@@ -167,13 +188,17 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
     (isCustomer || isStore || isDeliveryFirm) && 
     order.status !== Order.STATUS_CANCELLED &&
     order.status !== Order.STATUS_DECLINED &&
-    order.payment_status !== Order.PAYMENT_STATUS_APPROVED && 
-    order.payment_status !== Order.PAYMENT_STATUS_PENDING
+    order.payment_status !== Order.PAYMENT_STATUS_APPROVED
   ) {
     buttons.push({
       text: '_transaction.Pay_with_paystack',
       color: 'btn-color-blue',
-      action: ()=> paystack(()=> alert("done"), ()=> alert("Closed"))
+      action() {
+        if (transaction === null) 
+          transactionSend(order);
+        else 
+          setShowPay(true);
+      }
     });
   }
 
@@ -221,7 +246,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
         action() {
           setDialog(null);
         }
-      },
+      }
     });
   }
 
@@ -365,8 +390,30 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
       </div>
 
       { dialog && <AlertDialog dialog={dialog} /> }
+
+      { 
+        showPay &&
+        <PayWithPaystack 
+          amount={transaction.amount}
+          email={transaction.user.email}
+          reference={transaction.reference}
+          onClose={()=> setShowPay(false)}
+          onDone={()=> {
+            setShowPay(false);
+            setDialog({
+              body: '_transaction._payment_being_confirmed',
+              negativeButton: {
+                text: '_extra.Done',
+                action() {
+                  setDialog(null);
+                }
+              }
+            });
+          }}
+          />
+      }
         
-      { (cancelisLoading || storeStatusIsLoading || deliveryFirmStatusIsLoading) && <LoadingDialog /> }
+      { (cancelisLoading || storeStatusIsLoading || deliveryFirmStatusIsLoading || transactionLoading) && <LoadingDialog /> }
     </>
   );
 }

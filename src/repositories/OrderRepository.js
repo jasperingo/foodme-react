@@ -60,6 +60,13 @@ export default class OrderRepository extends Fetch {
     );
   }
 
+  getPaymentTransaction(id) {
+    return this.apiFetch(
+      `order/${id}/transaction/payment/pending`,
+      'GET'
+    );
+  }
+
   getRouteSuggestion(formData) {
     return this.apiFetch(
       `order/route/suggest`,
