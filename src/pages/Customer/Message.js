@@ -1,67 +1,207 @@
 
-import Icon from '@mdi/react';
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { checkIcon, sendIcon } from '../../assets/icons';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { messageIcon } from '../../assets/icons';
+import EmptyList from '../../components/EmptyList';
+import FetchMoreButton from '../../components/FetchMoreButton';
+import MessageForm from '../../components/form/MessageForm';
+import ScrollList from '../../components/list/ScrollList';
+import MessageItem from '../../components/list_item/MessageItem';
+import Loading from '../../components/Loading';
+import MessageHeader from '../../components/profile/MessageHeader';
+import Reload from '../../components/Reload';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import { useAppContext } from '../../hooks/contextHook';
+import { useMessageChatFetch } from '../../hooks/message/messageChatFetchHook';
+import { useMessageMessgeList } from '../../hooks/message/messageMessageListHook';
+import { useListFooter } from '../../hooks/viewHook';
 
+function List({ newMessage, messageReceived }) {
 
-function MessageItem({ from, content, date, status }) {
+  const { ID } = useParams();
+
+  const listFooter = useListFooter();
+
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customer,
+          customerToken
+        }
+      } 
+    } 
+  } = useAppContext();
+
+  const [
+    messagesFetch, 
+    messagesOnResponse,
+    messages, 
+    messagesLoading, 
+    messagesError, 
+    messagesLoaded, 
+    messagesEnded,
+    messagesRetryFetch,
+    onSendMessage
+  ] = useMessageMessgeList(customerToken);
+
+  useEffect(
+    function() {
+      if (!messagesEnded) messagesFetch(ID);
+    },
+    [ID, messagesEnded, messagesFetch]
+  );
+
+  useEffect(
+    function() {
+      return messagesOnResponse();
+    },
+    [messagesOnResponse]
+  );
+
+  useEffect(
+    function() {
+      if (newMessage !== null) {
+        onSendMessage(newMessage, customer.id);
+        messageReceived();
+      }
+    },
+    [customer.id, newMessage, messageReceived, onSendMessage]
+  );
 
   return (
-    <li className={`px-2 py-4 flex ${from===0 && 'justify-end'}`}>
-      <div className={`p-2 rounded-lg border ${from===0 ? 'border-yellow-500' : 'border-black'}`} style={{maxWidth: '80%'}}>
-        <div>{ content }</div>
-        <div className="flex justify-end gap-2">
-          <Icon path={checkIcon} className="w-5 h-5 text-blue-500" />
-          <span className="text-color-gray">{ date }</span>
-        </div>
-      </div>
-    </li>
+    <div className="container-x">
+
+      <ScrollList
+        data={messages}
+        nextPage={messagesFetch}
+        hasMore={!messagesEnded}
+        inverse={true}
+        renderDataItem={(item, index)=> (
+          <MessageItem 
+            key={`message-${index}-${item.id}`}
+            message={item}
+            index={index}
+            userId={customer.id}
+            />
+        )}
+        footer={listFooter([
+          {
+            canRender: messagesLoading,
+            render() { 
+              return ( 
+                <li key="message-footer"> 
+                  <Loading /> 
+                </li> 
+              ); 
+            },
+          },
+          {
+            canRender: !messagesEnded,
+            render() {
+              return (
+                <li key="message-footer"> 
+                  <FetchMoreButton action={messagesFetch} /> 
+                </li> 
+              );
+            }
+          },
+          {
+            canRender: messagesError === NetworkErrorCodes.UNKNOWN_ERROR,
+            render() { 
+              return (
+                <li key="message-footer"> 
+                  <Reload action={messagesRetryFetch} /> 
+                </li> 
+              );
+            },
+          },
+          {
+            canRender: messagesLoaded && messages.length === 0,
+            render() { 
+              return (
+                <li key="message-footer"> 
+                  <EmptyList text="_empty.No_message" icon={messageIcon} /> 
+                </li> 
+              );
+            }
+          }
+        ])}
+        />
+    </div>
   );
 }
 
 export default function Message() {
 
-  const { t } = useTranslation();
+  const { ID } = useParams();
+
+  const [newMessage, setNewMessage] = useState(null);
+
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    } 
+  } = useAppContext();
+
+  const [
+    fetch, 
+    onResponse,
+    chat, 
+    chatLoading, 
+    chatError,
+    chatID,
+    unfetch
+  ] = useMessageChatFetch(customerToken);
+
+  useEffect(
+    function() {
+      if ((chat !== null || chatError !== null) && String(chatID) !== ID) 
+        unfetch();
+      else if (chat === null && chatError === null)
+        fetch(ID);
+    },
+    [ID, chat, chatError, chatID, fetch, unfetch]
+  );
+
+  useEffect(
+    function() {
+      return onResponse(ID);
+    },
+    [ID, onResponse]
+  );
 
   return (
     <section className="flex-grow">
-      <div className="bg-color-primary p-2 flex items-center gap-2">
-        <img src="/photos/about-delivery.jpg" alt="Gift" width="50" height="50" className="w-12 h-12 rounded-full" />
-        <div className="text-xl text-white">Jobs market place</div>
-      </div>
 
-      <div className="container-x">
-        <ul>
-          <MessageItem 
-            from={1}
-            content="Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
-            sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-            Ut enim ad minim veniam."
-            date="20 June 2021"
-            />
-          <MessageItem 
-            from={0}
-            content="Lorem ipsum dolor sit amet, consectetur adipisicing elit?"
-            date="20 June 2021"
-            />
-        </ul>
-      </div>
+      {
+        chatLoading &&
+        <Loading />
+      }
 
-      <form 
-        onSubmit={(e)=> e.preventDefault()} 
-        className="w-full px-4 bg-color flex gap-2 fixed z-10 border-t bottom-0 left-0 py-3"
-        >
-        <textarea 
-          style={{minHeight: '40px'}}
-          placeholder={ t('_message.Say_something') }
-          className="h-10 rounded-3xl px-4 py-2 bg-color-gray outline-none flex-grow max-h-60" 
-        ></textarea>
-        <button className="w-10 h-10 rounded-full btn-color-primary inline-flex justify-center items-center">
-          <span className="sr-only">{ t('_message.Send') }</span>
-          <Icon path={sendIcon} className="w-6 h-6" />
-        </button>
-      </form>
+      {
+        chatError === NetworkErrorCodes.UNKNOWN_ERROR &&
+        <Reload action={fetch} />
+      }
+
+      {
+        chat !== null &&
+        <>
+          <MessageHeader recipient={ID} chat={chat} />
+
+          <List newMessage={newMessage} messageReceived={()=> setNewMessage(null)} />
+
+          <MessageForm 
+            onSend={(text)=> {
+              setNewMessage(text);
+            }}
+            />
+        </>
+      }
     </section>
   );
 }

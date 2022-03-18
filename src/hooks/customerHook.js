@@ -4,6 +4,8 @@ import CustomerRepository from "../repositories/CustomerRepository";
 import { FETCH_STATUSES } from "../repositories/Fetch";
 import { useWithdrawalAccountValidation } from "./bankHook";
 import { useAppContext } from "./contextHook";
+import { useMessageFetch } from "./message/messageFetchHook";
+import { useMessageUnreceivedCountFetch } from "./message/messageUnreceivedCountFetchHook";
 
 const CUSTOMER_ID = 'customer_id';
 const CUSTOMER_TOKEN = 'customer_token';
@@ -20,6 +22,10 @@ export function useAuthCustomerFetch() {
   const { 
     customer: { dispatch } 
   } = useAppContext();
+
+  const newMessage = useMessageFetch();
+
+  const messageCount = useMessageUnreceivedCountFetch();
 
   const [done, setDone] = useState(FETCH_STATUSES.LOADING);
 
@@ -50,6 +56,10 @@ export function useAuthCustomerFetch() {
 
             setDone(FETCH_STATUSES.DONE);
 
+            messageCount(customerToken);
+
+            newMessage(customerToken);
+
           } else if (res.status === 401) {
             window.localStorage.removeItem(CUSTOMER_ID);
             window.localStorage.removeItem(CUSTOMER_TOKEN);
@@ -65,7 +75,7 @@ export function useAuthCustomerFetch() {
         setDone(FETCH_STATUSES.DONE);
       }
     },
-    [done, dispatch]
+    [done, dispatch, messageCount, newMessage]
   )
   
   return [done, retry];
@@ -89,6 +99,8 @@ export function useCustomerLogin() {
   const { 
     customer: { dispatch } 
   } = useAppContext();
+
+  const messageCount = useMessageUnreceivedCountFetch();
 
   const storeToken = useStoreCustomerToken();
 
@@ -141,6 +153,8 @@ export function useCustomerLogin() {
               }
             });
 
+            messageCount(res.body.data.api_token.token);
+
           } else if (res.status === 401) {
             setFormError('_errors.Credentials_are_incorrect');
           } else {
@@ -160,7 +174,7 @@ export function useCustomerLogin() {
       }
 
     }, 
-    [data, fetchStatus, dialog, dispatch, storeToken]
+    [data, fetchStatus, dialog, dispatch, storeToken, messageCount]
   );
 
   return [onSubmit, dialog, formError];

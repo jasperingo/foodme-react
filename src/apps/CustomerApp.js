@@ -50,12 +50,13 @@ import CartDiscounts from '../pages/Customer/CartDiscounts';
 import CartDeliveryAddress from '../pages/Customer/CartDeliveryAddress';
 import CartSummary from '../pages/Customer/CartSummary';
 import CartDone from '../pages/Customer/CartDone';
+import { useMessageUnreceivedCounter } from '../hooks/message/messageUnreceivedCounterHook';
 
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
   { title : '_category.Categories', icon: categoryIcon, href: '/categories' },
-  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: ()=> 0 },
+  { title : '_message.Messages', icon: messageIcon, href: '/messages', useCounter: useMessageUnreceivedCounter },
   { title : '_user.Account', icon: userIcon, href: '/account' }
 ];
 

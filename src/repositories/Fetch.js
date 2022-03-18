@@ -13,7 +13,9 @@ export const FETCH_STATUSES = {
 
 export default class Fetch {
 
-  static API_URL = 'https://shoppa-app-api.herokuapp.com/api/';
+  static API_DOMAIN = 'https://shoppa-app-api.herokuapp.com/';
+
+  static API_URL = `${Fetch.API_DOMAIN}api/`;
 
   static FILE_CONTENT_TYPE = 'multipart/form-data';
 

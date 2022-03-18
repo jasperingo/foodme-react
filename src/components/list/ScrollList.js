@@ -4,12 +4,26 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import RefreshPull from './RefreshPull';
 import RefreshRelease from './RefreshRelease';
 
-export default function ScrollList({ data, hasMore, nextPage, refreshPage, className, renderDataItem, footer }) {
+export default function ScrollList({ data, hasMore, nextPage, refreshPage, inverse, className, renderDataItem, footer }) {
+
+  function makeList() {
+    let list = [];
+    
+    if (inverse)
+      for(let i=data.length-1; i>-1; i--) 
+        list.push(data[i]);
+    else 
+      list = data;
+
+    return list.map((item, i)=> renderDataItem(item, i));
+  }
+
   return (
     <InfiniteScroll
       dataLength={data.length}
       next={nextPage}
       hasMore={hasMore}
+      inverse={inverse}
       pullDownToRefresh={refreshPage !== undefined}
       pullDownToRefreshContent={<RefreshPull />}
       releaseToRefreshContent={<RefreshRelease />}
@@ -17,7 +31,7 @@ export default function ScrollList({ data, hasMore, nextPage, refreshPage, class
       refreshFunction={refreshPage}
       >
       <ul className={className}>
-        { data.map((item, i)=> renderDataItem(item, i)) }
+        { makeList() }
         { footer }
       </ul>
     </InfiniteScroll>

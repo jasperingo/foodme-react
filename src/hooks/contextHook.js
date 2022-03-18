@@ -12,6 +12,7 @@ import DeliveryRouteReducer from "../context/reducers/DeliveryRouteReducer";
 import DiscountReducer from "../context/reducers/DiscountReducer";
 import HeaderReducer from "../context/reducers/HeaderReducer";
 import HomeReducer from "../context/reducers/HomeReducer";
+import MessageReducer from "../context/reducers/MessageReducer";
 import OrderReducer from "../context/reducers/OrderReducer";
 import ProductReducer from "../context/reducers/ProductReducer";
 import PromotionReducer from "../context/reducers/PromotionReducer";
@@ -32,6 +33,7 @@ import deliveryRouteState from "../context/states/deliveryRouteState";
 import discountState from "../context/states/discountState";
 import headerState from "../context/states/headerState";
 import homeState from "../context/states/homeState";
+import messageState from "../context/states/messageState";
 import orderState from "../context/states/orderState";
 import productState from "../context/states/productState";
 import promotionState from "../context/states/promotionState";
@@ -83,6 +85,8 @@ export function useAppContextValues() {
   const [deliveryRoute, deliveryRouteDispatch] = useReducer(DeliveryRouteReducer, deliveryRouteState);
 
   const [promotion, promotionDispatch] = useReducer(PromotionReducer, promotionState);
+
+  const [message, messageDispatch] = useReducer(MessageReducer, messageState);
 
 
   return {
@@ -185,6 +189,11 @@ export function useAppContextValues() {
     promotion: {
       promotion, 
       promotionDispatch
+    },
+
+    message: {
+      message, 
+      messageDispatch
     },
 
   }
