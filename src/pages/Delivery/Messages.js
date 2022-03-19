@@ -1,16 +1,23 @@
 
 import React from 'react';
+import MessagesList from '../../components/profile/MessagesList';
+import { useAppContext } from '../../hooks/contextHook';
 
 export default function Messages() {
 
+  const { 
+    deliveryFirm: { 
+      deliveryFirm: {
+        deliveryFirm,
+        deliveryFirmToken
+      }
+    } 
+  } = useAppContext();
+
   return (
-    <section>
-
-      <div className="container-x">
-          Messages....
-      </div>
-
-    </section>
+    <MessagesList 
+      userId={deliveryFirm.user.id}
+      userToken={deliveryFirmToken}
+      />
   );
 }
-

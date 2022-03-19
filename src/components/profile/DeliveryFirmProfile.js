@@ -15,6 +15,7 @@ export default function DeliveryFirmProfile(
     deliveryFirm: {
       id,
       user: {
+        id: uid,
         photo, 
         name,  
         phone_number, 
@@ -73,7 +74,7 @@ export default function DeliveryFirmProfile(
 
   const links = [
     {
-      href: `/messages/${id}`,
+      href: `/messages/${uid}`,
       title: '_message.Message',
       icon: messageIcon
     }

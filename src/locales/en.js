@@ -90,6 +90,7 @@ export const TRANSLATIONS_EN = {
     Name: 'Name',
     Type: 'Type',
     Home: 'Home',
+    Back: 'Back',
     Available: 'Available',
     Dashboard: 'Dashboard',
     Contact_us: 'Contact us',

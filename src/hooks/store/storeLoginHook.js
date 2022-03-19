@@ -3,6 +3,8 @@ import { STORE } from "../../context/actions/storeActions";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
+import { useMessageFetch } from "../message/messageFetchHook";
+import { useMessageUnreceivedCountFetch } from "../message/messageUnreceivedCountFetchHook";
 import { useSaveStoreToken } from "./saveStoreTokenHook";
 
 
@@ -11,6 +13,10 @@ export function useStoreLogin() {
   const { 
     store: { storeDispatch } 
   } = useAppContext();
+  
+  const newMessage = useMessageFetch();
+
+  const messageCount = useMessageUnreceivedCountFetch();
 
   const saveToken = useSaveStoreToken();
 
@@ -68,6 +74,10 @@ export function useStoreLogin() {
               }
             });
 
+            messageCount(res.body.data.api_token.token);
+
+            newMessage(res.body.data.api_token.token, res.body.data.store.user.id);
+
           } else if (res.status === 401) {
             setFormError('_errors.Credentials_are_incorrect');
           } else {
@@ -87,7 +97,7 @@ export function useStoreLogin() {
       }
 
     }, 
-    [data, fetchStatus, dialog, storeDispatch, saveToken]
+    [data, fetchStatus, dialog, storeDispatch, saveToken, newMessage, messageCount]
   );
 
   return [onSubmit, dialog, formError];

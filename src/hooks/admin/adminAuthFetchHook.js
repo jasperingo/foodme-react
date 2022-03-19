@@ -3,6 +3,8 @@ import { ADMIN } from "../../context/actions/adminActions";
 import AdminRepository from "../../repositories/AdminRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useMessageFetch } from "../message/messageFetchHook";
+import { useMessageUnreceivedCountFetch } from "../message/messageUnreceivedCountFetchHook";
 import { ADMIN_ID, ADMIN_TOKEN } from "./adminConstants";
 
 
@@ -11,6 +13,10 @@ export function useAdminAuthFetch() {
   const { 
     admin: { adminDispatch } 
   } = useAppContext();
+
+  const newMessage = useMessageFetch();
+
+  const messageCount = useMessageUnreceivedCountFetch();
 
   const [done, setDone] = useState(FETCH_STATUSES.LOADING);
 
@@ -45,6 +51,10 @@ export function useAdminAuthFetch() {
 
             setDone(FETCH_STATUSES.DONE);
 
+            messageCount(adminToken);
+
+            newMessage(adminToken, res.body.data.application.id);
+
           } else if (res.status === 401) {
             window.localStorage.removeItem(ADMIN_ID);
             window.localStorage.removeItem(ADMIN_TOKEN);
@@ -61,7 +71,7 @@ export function useAdminAuthFetch() {
         setDone(FETCH_STATUSES.DONE);
       }
     },
-    [done, adminDispatch]
+    [done, adminDispatch, messageCount, newMessage]
   )
   
   return [done, retry];

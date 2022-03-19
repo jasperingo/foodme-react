@@ -3,6 +3,8 @@ import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useMessageFetch } from "../message/messageFetchHook";
+import { useMessageUnreceivedCountFetch } from "../message/messageUnreceivedCountFetchHook";
 import { useSaveDeliveryFirmToken } from "./saveDeliveryFirmTokenHook";
 
 
@@ -11,6 +13,10 @@ export function useDeliveryFirmLogin() {
   const { 
     deliveryFirm: { deliveryFirmDispatch } 
   } = useAppContext();
+
+  const messageCount = useMessageUnreceivedCountFetch();
+  
+  const newMessage = useMessageFetch();
 
   const saveToken = useSaveDeliveryFirmToken();
 
@@ -68,6 +74,10 @@ export function useDeliveryFirmLogin() {
               }
             });
 
+            messageCount(res.body.data.api_token.token);
+
+            newMessage(res.body.data.api_token.token, res.body.data.delivery_firm.user.id);
+
           } else if (res.status === 401) {
             setFormError('_errors.Credentials_are_incorrect');
           } else {
@@ -87,7 +97,7 @@ export function useDeliveryFirmLogin() {
       }
 
     }, 
-    [data, fetchStatus, dialog, deliveryFirmDispatch, saveToken]
+    [data, fetchStatus, dialog, deliveryFirmDispatch, saveToken, newMessage, messageCount]
   );
 
   return [onSubmit, dialog, formError];

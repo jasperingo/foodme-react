@@ -1,6 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { MESSAGE } from '../../context/actions/messageActions';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import Message from '../../models/Message';
 import MessageRepository from '../../repositories/MessageRepository';
 import { useAppContext } from '../contextHook';
 
@@ -18,7 +19,24 @@ export function useMessageChatFetch(userToken) {
     }
   } = useAppContext();
 
-  const api = useMemo(function() { return new MessageRepository(userToken); }, [userToken]);
+  const api = useMemo(function() { return MessageRepository.getInstance(userToken); }, [userToken]);
+
+  const onChatRead = useCallback(
+    function() {
+      if (chat !== null) {
+        messageDispatch({
+          type: MESSAGE.CHAT_READ,
+          payload: { 
+            chatId: chat.id,
+            deliveryStatus: Message.DELIVERY_STATUS_DELIVERED
+          }
+        });
+        
+        api.updateMessageDeliveryStatus(chatID);
+      }
+    },
+    [chat, chatID, api, messageDispatch]
+  );
 
   const unfetch = useCallback(
     function() { 
@@ -80,6 +98,7 @@ export function useMessageChatFetch(userToken) {
     chatLoading, 
     chatError,
     chatID,
-    unfetch
+    unfetch,
+    onChatRead
   ];
 }

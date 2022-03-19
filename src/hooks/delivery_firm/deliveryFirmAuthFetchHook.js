@@ -3,6 +3,8 @@ import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useMessageFetch } from "../message/messageFetchHook";
+import { useMessageUnreceivedCountFetch } from "../message/messageUnreceivedCountFetchHook";
 import { DELIVERY_FIRM_ADMIN_ID, DELIVERY_FIRM_ID, DELIVERY_FIRM_TOKEN } from "./deliveryFirmConstants";
 
 
@@ -11,6 +13,10 @@ export function useDeliveryFirmAuthFetch() {
   const { 
     deliveryFirm: { deliveryFirmDispatch } 
   } = useAppContext();
+
+  const newMessage = useMessageFetch();
+
+  const messageCount = useMessageUnreceivedCountFetch();
 
   const [done, setDone] = useState(FETCH_STATUSES.LOADING);
 
@@ -47,6 +53,10 @@ export function useDeliveryFirmAuthFetch() {
 
             setDone(FETCH_STATUSES.DONE);
 
+            messageCount(deliveryFirmToken);
+
+            newMessage(deliveryFirmToken, res.body.data.user.id);
+
           } else if (res.status === 401) {
             window.localStorage.removeItem(DELIVERY_FIRM_ID);
             window.localStorage.removeItem(DELIVERY_FIRM_TOKEN);
@@ -64,7 +74,7 @@ export function useDeliveryFirmAuthFetch() {
         setDone(FETCH_STATUSES.DONE);
       }
     },
-    [done, deliveryFirmDispatch]
+    [done, deliveryFirmDispatch, messageCount, newMessage]
   )
   
   return [done, retry];

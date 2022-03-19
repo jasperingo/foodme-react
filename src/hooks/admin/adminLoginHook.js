@@ -3,6 +3,8 @@ import { ADMIN } from "../../context/actions/adminActions";
 import AdminRepository from "../../repositories/AdminRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useMessageFetch } from "../message/messageFetchHook";
+import { useMessageUnreceivedCountFetch } from "../message/messageUnreceivedCountFetchHook";
 import { useSaveAdminToken } from "./saveAdminTokenHook";
 
 
@@ -11,6 +13,10 @@ export function useAdminLogin() {
   const { 
     admin: { adminDispatch } 
   } = useAppContext();
+
+  const newMessage = useMessageFetch();
+
+  const messageCount = useMessageUnreceivedCountFetch();
 
   const saveToken = useSaveAdminToken();
 
@@ -63,6 +69,10 @@ export function useAdminLogin() {
               }
             });
 
+            messageCount(res.body.data.api_token.token);
+
+            newMessage(res.body.data.api_token.token, res.body.data.administrator.application.id);
+
           } else if (res.status === 401) {
             setFormError('_errors.Credentials_are_incorrect');
           } else {
@@ -82,7 +92,7 @@ export function useAdminLogin() {
       }
 
     }, 
-    [data, fetchStatus, dialog, adminDispatch, saveToken]
+    [data, fetchStatus, dialog, adminDispatch, saveToken, newMessage, messageCount]
   );
 
   return [onSubmit, dialog, formError]

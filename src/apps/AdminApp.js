@@ -13,7 +13,7 @@ import LogIn from '../pages/Admin/LogIn';
 import Dashboard from '../pages/Admin/Dashboard';
 import Orders from '../pages/Admin/Orders';
 import Transactions from '../pages/Admin/Transactions';
-import Messages from '../pages/Admin/Messages';
+import Chats from '../pages/Admin/Chats';
 import AccountMenu from '../pages/Admin/AccountMenu';
 import Profile from '../pages/Admin/Profile';
 import PasswordUpdate from '../pages/Admin/PasswordUpdate';
@@ -135,7 +135,7 @@ export default function AdminApp() {
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
-          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> 

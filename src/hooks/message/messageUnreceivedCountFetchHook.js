@@ -13,7 +13,7 @@ export function useMessageUnreceivedCountFetch() {
 
   return function(userToken) {
 
-    const api = new MessageRepository(userToken);
+    const api = MessageRepository.getInstance(userToken);
 
     api.onGetUnreceivedCount((response)=> {
       if (response.data) {

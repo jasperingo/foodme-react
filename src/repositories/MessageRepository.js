@@ -3,68 +3,91 @@ import Fetch from "./Fetch";
 
 export default class MessageRepository {
 
-  static socket = null;
+  static repo = null;
+
+  socket = null;
 
   constructor(apiToken = null) {
-    MessageRepository.createSocket(apiToken);
+    this.socket = io(Fetch.API_DOMAIN, {
+      extraHeaders: {
+        Authorization: `Bearer ${apiToken}`
+      }
+    });
   }
 
-  static createSocket(apiToken = null) {
-    if (this.socket === null) {
-      this.socket = io(Fetch.API_DOMAIN, {
-        extraHeaders: {
-          Authorization: `Bearer ${apiToken}`
-        }
-      });
-    }
+  static getInstance(apiToken = null) {
+    if (this.repo === null)
+      this.repo = new MessageRepository(apiToken);
+    
+    return this.repo;
+  }
+
+  closeSocket() {
+    this.socket.disconnect();
+    this.socket = null;
   }
 
   getUnreceivedCount() {
-    MessageRepository.socket.emit('unreceived_messages_count');
+    this.socket.emit('unreceived_messages_count');
   }
 
   onGetUnreceivedCount(listener) {
-    MessageRepository.socket.once('unreceived_messages_count', listener);
+    this.socket.once('unreceived_messages_count', listener);
   }
 
   onGetMessage(listener) {
-    MessageRepository.socket.on('message', listener);
-    return function() {
-      MessageRepository.socket.off('message', listener);
-    }
+    this.socket.on('message', listener);
+    return (function() {
+      this.socket.off('message', listener);
+    }).bind(this);
   }
 
   getMessageRecipients(lastDate) {
-    MessageRepository.socket.emit('message_recipients', lastDate, Fetch.PAGE_LIMIT_BIG);
+    this.socket.emit('message_recipients', lastDate, Fetch.PAGE_LIMIT_BIG);
   }
 
   onGetMessageRecipients(listener) {
-    MessageRepository.socket.on('message_recipients', listener);
-    return function() {
-      MessageRepository.socket.off('message_recipients', listener);
-    }
+    this.socket.on('message_recipients', listener);
+    return (function() {
+      this.socket.off('message_recipients', listener);
+    }).bind(this);
   }
 
   getMessageRecipient(id) {
-    MessageRepository.socket.emit('message_recipient', id);
+    this.socket.emit('message_recipient', id);
   }
 
   onGetMessageRecipient(listener) {
-    MessageRepository.socket.on('message_recipient', listener);
-    return function() {
-      MessageRepository.socket.off('message_recipient', listener);
-    }
+    this.socket.on('message_recipient', listener);
+    return (function() {
+      this.socket.off('message_recipient', listener);
+    }).bind(this);
   }
 
   getMessages(id, lastDate) {
-    MessageRepository.socket.emit('messages', id, lastDate, Fetch.PAGE_LIMIT_BIG);
+    this.socket.emit('messages', id, lastDate, Fetch.PAGE_LIMIT_BIG);
   }
 
   onGetMessages(listener) {
-    MessageRepository.socket.on('messages', listener);
-    return function() {
-      MessageRepository.socket.off('messages', listener);
-    }
+    this.socket.on('messages', listener);
+    return (function() {
+      this.socket.off('messages', listener);
+    }).bind(this);
+  }
+
+  createMessage(receiverId, content) {
+    this.socket.emit('message', receiverId, content);
+  }
+
+  onMessageCreated(listener) {
+    this.socket.on('message_created', listener);
+    return (function() {
+      this.socket.off('message_created', listener);
+    }).bind(this);
+  }
+
+  updateMessageDeliveryStatus(receiverId) {
+    this.socket.emit('messages_update_delivery_status', receiverId);
   }
 
 }

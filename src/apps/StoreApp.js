@@ -28,7 +28,6 @@ import Transaction from '../pages/Transaction';
 import SavedCarts from '../pages/Store/SavedCarts';
 import SavedCart from '../pages/Store/SavedCart';
 import Reviews from '../pages/Store/Reviews';
-import Messages from '../pages/Store/Messages';
 import Discounts from '../pages/Store/Discounts';
 import Discount from '../pages/Store/Discount';
 import DiscountCreate from '../pages/Store/DiscountCreate';
@@ -44,6 +43,7 @@ import ProductVariantUpdate from '../pages/Store/ProductVariantUpdate';
 import Cart from '../pages/Store/Cart';
 import DiscountProductCreate from '../pages/Store/DiscountProductCreate';
 import Home from '../pages/Store/Home';
+import Chats from '../pages/Store/Chats';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -123,7 +123,7 @@ export default function StoreApp() {
           <Route path="/discount/create" render={()=> authMiddleware() || <DiscountCreate />} />
           <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount />} />
           <Route path="/discounts" render={()=> authMiddleware() || <Discounts />} />
-          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
           <Route path="/reviews" render={()=> authMiddleware() || <Reviews />} />
           <Route path="/saved-cart/:ID" render={()=> authMiddleware() || <SavedCart />} />
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />

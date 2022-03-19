@@ -15,6 +15,7 @@ export default function StoreProfile(
     store: { 
       id,
       user: {
+        id: uid,
         photo, 
         name,  
         phone_number, 
@@ -92,7 +93,7 @@ export default function StoreProfile(
 
   const links = [
     {
-      href: `/messages/${id}`,
+      href: `/messages/${uid}`,
       title: '_message.Message',
       icon: messageIcon
     }

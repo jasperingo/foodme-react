@@ -3,6 +3,7 @@ import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useMessageFetch } from "../message/messageFetchHook";
 import { useSaveDeliveryFirmToken } from "./saveDeliveryFirmTokenHook";
 
 export function useDeliveryFirmCreate() {
@@ -10,6 +11,8 @@ export function useDeliveryFirmCreate() {
   const { 
     deliveryFirm: { deliveryFirmDispatch } 
   } = useAppContext();
+
+  const newMessage = useMessageFetch();
 
   const saveToken = useSaveDeliveryFirmToken();
 
@@ -133,6 +136,8 @@ export function useDeliveryFirmCreate() {
             }
           });
 
+          newMessage(res.body.data.api_token.token, res.body.data.delivery_firm.user.id);
+
         } else if (res.status === 400) {
 
           setFetchStatus(FETCH_STATUSES.PENDING);
@@ -180,7 +185,7 @@ export function useDeliveryFirmCreate() {
       setDialog(false);
     }
 
-  }, [data, fetchStatus, dialog, deliveryFirmDispatch, saveToken]);
+  }, [data, fetchStatus, dialog, deliveryFirmDispatch, saveToken, newMessage]);
 
 
   return [onSubmit, dialog, formError, nameError, emailError, phoneError, adminEmailError, adminPasswordError];

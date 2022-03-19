@@ -58,7 +58,7 @@ export function useAuthCustomerFetch() {
 
             messageCount(customerToken);
 
-            newMessage(customerToken);
+            newMessage(customerToken, res.body.data.user.id);
 
           } else if (res.status === 401) {
             window.localStorage.removeItem(CUSTOMER_ID);
@@ -101,6 +101,8 @@ export function useCustomerLogin() {
   } = useAppContext();
 
   const messageCount = useMessageUnreceivedCountFetch();
+  
+  const newMessage = useMessageFetch();
 
   const storeToken = useStoreCustomerToken();
 
@@ -155,6 +157,8 @@ export function useCustomerLogin() {
 
             messageCount(res.body.data.api_token.token);
 
+            newMessage(res.body.data.api_token.token, res.body.data.customer.user.id);
+
           } else if (res.status === 401) {
             setFormError('_errors.Credentials_are_incorrect');
           } else {
@@ -174,7 +178,7 @@ export function useCustomerLogin() {
       }
 
     }, 
-    [data, fetchStatus, dialog, dispatch, storeToken, messageCount]
+    [data, fetchStatus, dialog, dispatch, storeToken, newMessage, messageCount]
   );
 
   return [onSubmit, dialog, formError];
@@ -186,6 +190,8 @@ export function useCustomerCreate() {
   const { 
     customer: { dispatch } 
   } = useAppContext();
+
+  const newMessage = useMessageFetch();
 
   const storeToken = useStoreCustomerToken();
 
@@ -304,6 +310,8 @@ export function useCustomerCreate() {
             }
           });
 
+          newMessage(res.body.data.api_token.token, res.body.data.customer.user.id);
+
         } else if (res.status === 400) {
 
           setFetchStatus(FETCH_STATUSES.PENDING);
@@ -353,7 +361,7 @@ export function useCustomerCreate() {
       setDialog(false);
     }
 
-  }, [data, fetchStatus, dialog, dispatch, storeToken]);
+  }, [data, fetchStatus, dialog, dispatch, storeToken, newMessage]);
 
 
   return [onSubmit, dialog, formError, firstNameError, lastNameError, emailError, phoneError, passwordError];

@@ -1,10 +1,23 @@
 
 import React from 'react';
+import MessagesList from '../../components/profile/MessagesList';
+import { useAppContext } from '../../hooks/contextHook';
 
 export default function Messages() {
+
+  const { 
+    admin: { 
+      admin: {
+        admin,
+        adminToken
+      }
+    } 
+  } = useAppContext();
+
   return (
-    <section>
-      Messages...
-    </section>
+    <MessagesList 
+      userId={admin.application.id}
+      userToken={adminToken}
+      />
   );
 }

@@ -3,6 +3,7 @@ import { STORE } from "../../context/actions/storeActions";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
+import { useMessageFetch } from "../message/messageFetchHook";
 import { useSaveStoreToken } from "./saveStoreTokenHook";
 
 export function useStoreCreate() {
@@ -10,6 +11,8 @@ export function useStoreCreate() {
   const { 
     store: { storeDispatch } 
   } = useAppContext();
+
+  const newMessage = useMessageFetch();
 
   const saveToken = useSaveStoreToken();
 
@@ -145,6 +148,8 @@ export function useStoreCreate() {
             }
           });
 
+          newMessage(res.body.data.api_token.token, res.body.data.store.user.id);
+
         } else if (res.status === 400) {
 
           setFetchStatus(FETCH_STATUSES.PENDING);
@@ -198,7 +203,7 @@ export function useStoreCreate() {
       setDialog(false);
     }
 
-  }, [data, fetchStatus, dialog, storeDispatch, saveToken]);
+  }, [data, fetchStatus, dialog, storeDispatch, saveToken, newMessage]);
 
 
   return [onSubmit, dialog, formError, nameError, categoryError, emailError, phoneError, adminEmailError, adminPasswordError];

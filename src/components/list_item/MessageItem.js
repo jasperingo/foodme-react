@@ -1,10 +1,39 @@
-import Icon from "@mdi/react";
-import { checkIcon, timeIcon } from "../../assets/icons";
-import { useDateFormatter } from "../../hooks/viewHook";
+import Icon from '@mdi/react';
+import { useEffect } from 'react';
+import { checkIcon, timeIcon } from '../../assets/icons';
+import { useMessageCreate } from '../../hooks/message/messageCreateHook';
+import { useDateFormatter } from '../../hooks/viewHook';
 
-export default function MessageItem({ userId, index, message: { id, content, created_at, user_id  } }) {
+export default function MessageItem({ userToken, userId, receiverId, onSend, message: { id, content, created_at, user_id, clientId  } }) {
 
   const dateFormat = useDateFormatter();
+
+  const [sender, onResponse, data, unsetData] = useMessageCreate(userToken, id > 0);
+  
+  useEffect(
+    function() {
+      if (id < 1) 
+        sender(receiverId, content);
+    },
+    [id, content, receiverId, sender]
+  );
+
+  useEffect(
+    function() {
+      if (data !== null) {
+        onSend(clientId, data);
+        unsetData();
+      }
+    },
+    [data, unsetData, clientId, onSend]
+  );
+  
+  useEffect(
+    function() {
+      return onResponse();
+    },
+    [onResponse]
+  );
 
   return (
     <li className={`px-2 py-4 flex ${userId === user_id && 'justify-end'}`}>

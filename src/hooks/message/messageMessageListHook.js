@@ -1,4 +1,5 @@
 import { useMemo, useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { MESSAGE } from '../../context/actions/messageActions';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import MessageRepository from '../../repositories/MessageRepository';
@@ -20,7 +21,7 @@ export function useMessageMessgeList(userToken) {
     }
   } = useAppContext();
 
-  const api = useMemo(function() { return new MessageRepository(userToken); }, [userToken]);
+  const api = useMemo(function() { return MessageRepository.getInstance(userToken); }, [userToken]);
 
   const retryFetch = useCallback(
     function() { 
@@ -86,12 +87,20 @@ export function useMessageMessgeList(userToken) {
           id: 0,
           content,
           user_id,
+          clientId: uuidv4(),
           created_at: (new Date()).toISOString()
         }
       });
     },
     [messageDispatch]
   );
+
+  function onMessageSent(clientId, chat) {
+    messageDispatch({
+      type: MESSAGE.DELIVERED,
+      payload: { clientId, chat }
+    });
+  }
 
   return [
     fetch, 
@@ -102,6 +111,7 @@ export function useMessageMessgeList(userToken) {
     messagesLoaded, 
     messagesEnded,
     retryFetch,
-    onSendMessage
+    onSendMessage,
+    onMessageSent
   ];
 }

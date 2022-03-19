@@ -20,8 +20,18 @@ export function useMessageChatList(userToken) {
     }
   } = useAppContext();
 
-  const api = useMemo(function() { return new MessageRepository(userToken); }, [userToken]);
+  const api = useMemo(function() { return MessageRepository.getInstance(userToken); }, [userToken]);
 
+  const onChatListOpened = useCallback(
+    function() { 
+      messageDispatch({ 
+        type: MESSAGE.UNRECEIVED_COUNT_FETCHED, 
+        payload: { count: 0 } 
+      }) ;
+    },
+    [messageDispatch]
+  );
+  
   const retryFetch = useCallback(
     function() { 
       messageDispatch({ 
@@ -86,6 +96,7 @@ export function useMessageChatList(userToken) {
     chatsError, 
     chatsLoaded, 
     chatsEnded,
-    retryFetch
+    retryFetch,
+    onChatListOpened
   ];
 }
