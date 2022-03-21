@@ -9,13 +9,16 @@ export function useMessageCreate(userToken, hasId) {
 
   const [data, setData] = useState(null);
 
-  const api = useMemo(function() { return new MessageRepository(userToken) }, [userToken]);
-
+  const api = useMemo(
+    function() { return done ? null : new MessageRepository(userToken); }, 
+    [done, userToken]
+  );
+  
   const unsetData = useCallback(function() { setData(null); }, []);
 
   const onResponse = useCallback(
     function() {
-      return api.onMessageCreated(function(response) {
+      return api?.onMessageCreated(function(response) {
         if (response.data) {
           setDone(true);
           setLoading(false);

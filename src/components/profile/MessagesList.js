@@ -169,8 +169,8 @@ export default function MessagesList({ userToken, userId }) {
     <section 
       className={`
         fixed top-0 left-0 w-full z-50 
-        flex-grow bg-color h-screen flex flex-col 
-        lg:static lg:w-auto lg:justify-evenly
+        flex-grow bg-color h-full flex flex-col 
+        lg:static lg:w-auto lg:justify-evenly lg:h-screen
       `}
       >
       
