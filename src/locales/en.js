@@ -533,6 +533,7 @@ export const TRANSLATIONS_EN = {
     No_delivery_weight: 'No delivery weight',
     No_delivery_duration: 'No delivery duration',
     No_message: 'No message',
+    No_favorite: 'No favorite',
     List_is_empty: 'List is empty',
     Your_cart_is_empty: 'Your cart is empty',
     No_delivery_suggestion_for_cart: 'No delivery firm is available to fulfill your order, please try pick up delivery',

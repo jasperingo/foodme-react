@@ -36,8 +36,9 @@ const customerState = {
 
   addresses: {
     addresses: [],
-    addressesLoading: true,
-    addressesFetchStatus: FETCH_STATUSES.LOADING
+    addressesError: null,
+    addressesLoaded: false,
+    addressesLoading: false,
   },
 
   transactions: {

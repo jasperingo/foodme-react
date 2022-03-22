@@ -52,7 +52,7 @@ export function useAddressList(user, userToken) {
               type: ADDRESS.LIST_FETCHED, 
               payload: {
                 list: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
+                fetchStatus: res.body.data.length < 1 ? FETCH_STATUSES.EMPTY : FETCH_STATUSES.DONE 
               }
             });
           } else {

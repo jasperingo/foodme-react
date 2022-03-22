@@ -92,7 +92,7 @@ export default function Promotions() {
               render() { 
                 return (
                   <li key="promotion-footer" className="list-2-x-col-span"> 
-                    <EmptyList text="_empty.No_product" icon={promotionIcon} /> 
+                    <EmptyList text="_empty.No_promotion" icon={promotionIcon} /> 
                   </li> 
                 );
               }

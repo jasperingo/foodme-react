@@ -1,8 +1,8 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import RefreshPull from './RefreshPull';
-import RefreshRelease from './RefreshRelease';
+import { refreshIcon } from '../../assets/icons';
 
 export default function ScrollList({ data, hasMore, nextPage, refreshPage, inverse, className, renderDataItem, header, footer }) {
 
@@ -23,12 +23,19 @@ export default function ScrollList({ data, hasMore, nextPage, refreshPage, inver
       next={nextPage}
       hasMore={hasMore}
       inverse={inverse}
-      pullDownToRefresh={refreshPage !== undefined}
-      pullDownToRefreshContent={<RefreshPull />}
-      releaseToRefreshContent={<RefreshRelease />}
-      pullDownToRefreshThreshold={50}
-      refreshFunction={refreshPage}
       >
+      {
+        refreshPage &&
+        <div className="text-right pt-2">
+          <button 
+            onClick={refreshPage}
+            className="btn-color-primary px-1 rounded inline-flex gap-1 items-center"
+            >
+            <Icon path={refreshIcon} className="w-4 h-4" />
+            <span>Refresh</span>
+          </button>
+        </div>
+      }
       <ul className={className}>
         { header }
         { makeList() }

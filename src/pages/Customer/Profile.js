@@ -1,38 +1,58 @@
 
-import React from 'react';
-import { useCustomerUpdate } from '../../hooks/customerHook';
+import React, { useEffect } from 'react';
 import { useHeader } from '../../hooks/headerHook';
 import ProfileUpdateForm from '../../components/form/ProfileUpdateForm';
+import { useCustomerUpdate } from '../../hooks/customer/customerUpdateHook';
+import { useCustomerPhotoUpdate } from '../../hooks/customer/customerPhotoUpdateHook';
 
 export default function Profile() {
   
   const [
     onSubmit,
-    onPhotoChoose,
-    photoUploaded,
     customer,
-    dialog, 
+    loading, 
+    success,
+    setSuccess,
     formError, 
-    formSuccess, 
+    formSuccess,
     firstNameError, 
     lastNameError, 
     emailError, 
     phoneError
   ] = useCustomerUpdate();
 
+  const [
+    photoSubmit,
+    photo,
+    setPhoto,
+    photoLoading,
+    photoUploaded,
+    photoFormError
+  ] = useCustomerPhotoUpdate();
+
   useHeader({ 
     title: `${customer.user.name} - Profile`,
     headerTitle: "_user.Profile"
   });
+
+  useEffect(
+    function() {
+      if (success && photo !== null && !photoUploaded && photoFormError === null)
+        photoSubmit();
+      else if (success) 
+        setSuccess(false);
+    }, 
+    [success, photo, photoUploaded, photoFormError, photoSubmit, setSuccess]
+  );
   
   return (
     <ProfileUpdateForm 
       onSubmit={onSubmit}
-      onPhotoChoose={onPhotoChoose}
+      onPhotoChoose={setPhoto}
       photoUploaded={photoUploaded}
       customer={customer}
-      dialog={dialog}
-      formError={formError}
+      dialog={loading || photoLoading}
+      formError={formError || photoFormError}
       formSuccess={formSuccess}
       firstNameError={firstNameError} 
       lastNameError={lastNameError}

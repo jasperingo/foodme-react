@@ -54,6 +54,8 @@ export function usePromotionCreate() {
       return;
     }
 
+    setFormError(null);
+
     const [
       error, 
       titleError, 

@@ -166,15 +166,29 @@ export default function CustomerReducer (state, action) {
           transactions: [...state.transactions.transactions, ...action.payload.list],
         }
       };
-      
 
-    case ADDRESS.LIST_FETCH_STATUS_CHANGED: 
+    case ADDRESS.LIST_UNFETCHED:
+      return {
+        ...state,
+        addresses: customerState.addresses
+      };
+    
+    case ADDRESS.LIST_ERROR_CHANGED:
       return {
         ...state,
         addresses: {
           ...state.addresses,
-          addressesLoading: action.payload.loading,
-          addressesFetchStatus: action.payload.fetchStatus
+          addressesLoading: false,
+          addressesError: action.payload.error
+        }
+      };
+    
+    case ADDRESS.LIST_FETCHING:
+      return {
+        ...state,
+        addresses: {
+          ...state.addresses,
+          addressesLoading: true
         }
       };
 
@@ -182,12 +196,13 @@ export default function CustomerReducer (state, action) {
       return {
         ...state,
         addresses: {
+          ...state.addresses,
+          addressesLoaded: true,
           addressesLoading: false, 
           addresses: action.payload.list, 
-          addressesFetchStatus: action.payload.fetchStatus,
         }
       };
-    
+
 
     default:
       return state;

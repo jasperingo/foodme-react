@@ -1,7 +1,8 @@
-import { useCallback, useEffect } from "react";
-import { ADDRESS, getAddressesListFetchStatusAction } from "../../context/actions/addressActions";
+import { useCallback, useMemo } from "react";
+import { ADDRESS } from "../../context/actions/addressActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
 
@@ -14,61 +15,82 @@ export function useCustomerAddressList(userId, userToken) {
         addresses: {
           addresses,
           addressesLoading,
-          addressesFetchStatus
+          addressesError,
+          addressesLoaded,
         }
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (addressesFetchStatus !== FETCH_STATUSES.LOADING) 
-        dispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [dispatch, addressesFetchStatus]
-  );
+  const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
   const refresh = useCallback(
-    ()=> {
+    function() {
       dispatch({ type: ADDRESS.LIST_UNFETCHED });
     },
     [dispatch]
   );
 
-  useEffect(
-    ()=> {
-      if (addressesLoading && addressesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-
-        dispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
-
-      } else if (addressesLoading && addressesFetchStatus === FETCH_STATUSES.LOADING) {
-
-        dispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-
-        const api = new CustomerRepository(userToken);
-        api.getAddressesList(userId)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            dispatch({
-              type: ADDRESS.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          dispatch(getAddressesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
-        });
-      }
+  const retryFetch = useCallback(
+    function() { 
+      dispatch({ 
+        type: ADDRESS.LIST_ERROR_CHANGED, 
+        payload: { error: null } 
+      });
     },
-    [userId, userToken, addressesLoading, addressesFetchStatus, dispatch]
+    [dispatch]
   );
 
-  return [addresses, addressesFetchStatus, refetch, refresh];
+  const fetch = useCallback(
+    async function() {
+      if (addressesLoading || addressesError !== null) return;
+
+      if (!window.navigator.onLine) {
+        dispatch({
+          type: ADDRESS.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
+
+      dispatch({ type: ADDRESS.LIST_FETCHING });
+
+      try {
+        
+        const res = await api.getAddressesList(userId);
+
+        if (res.status === 200) {
+          dispatch({
+            type: ADDRESS.LIST_FETCHED, 
+            payload: { list: res.body.data }
+          });
+        } else if (res.status === 401) {
+          throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+        
+      } catch(error) {
+        dispatch({
+          type: ADDRESS.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
+        });
+      }
+
+    },
+    [userId, api, addressesLoading, addressesError, dispatch]
+  );
+
+  return [
+    fetch, 
+    addresses, 
+    addressesLoading, 
+    addressesError, 
+    addressesLoaded, 
+    retryFetch,
+    refresh
+  ];
 }
 

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect, useLocation } from "react-router-dom";
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
@@ -39,8 +39,6 @@ import ProductReviews from '../pages/Customer/ProductReviews';
 import Discount from '../pages/Customer/Discount';
 
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
-import { useAuthCustomerFetch } from '../hooks/customerHook';
-import { FETCH_STATUSES } from '../repositories/Fetch';
 import { useAppContext } from '../hooks/contextHook';
 import { useCartCounter, useURLQuery } from '../hooks/viewHook';
 import CartDeliveryMethod from '../pages/Customer/CartDeliveryMethod';
@@ -51,6 +49,7 @@ import CartDeliveryAddress from '../pages/Customer/CartDeliveryAddress';
 import CartSummary from '../pages/Customer/CartSummary';
 import CartDone from '../pages/Customer/CartDone';
 import { useMessageUnreceivedCounter } from '../hooks/message/messageUnreceivedCounterHook';
+import { useAuthCustomerFetch } from '../hooks/customer/authCustomerFetchHook';
 
 
 const HEADER_NAV_LINKS = [
@@ -80,15 +79,20 @@ export default function CustomerApp() {
 
   const location = useLocation();
 
-  const redirectTo = useURLQuery().get('redirect_to');
+  const redirectTo = useURLQuery().get('redirect_to') ?? '/account';
 
-  const [authDone, retry] = useAuthCustomerFetch();
+  const [customerId, fetch, success, error] = useAuthCustomerFetch();
 
-  if (authDone !== FETCH_STATUSES.DONE) {
-    return <Splash 
-      onRetry={retry} 
-      error={authDone === FETCH_STATUSES.ERROR}
-      />;
+  useEffect(
+    function() {
+      if (customerId !== null && error === null && !success)
+        fetch();
+    },
+    [customerId, error, success, fetch]
+  );
+
+  if (customerId !== null && !success) {
+    return <Splash onRetry={fetch} error={error} />;
   }
 
   function authMiddleware() {
@@ -96,7 +100,7 @@ export default function CustomerApp() {
   }
 
   function guestMiddleware() {
-    return customer === null ? null : <Redirect to={redirectTo ?? '/account'} />
+    return customer === null ? null : <Redirect to={redirectTo} />
   }
   
   return (
@@ -135,8 +139,8 @@ export default function CustomerApp() {
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
-          <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
-          <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
+          <Route path="/register" render={()=> guestMiddleware() || <Register redirectTo={redirectTo} />} /> 
+          <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword customer={true} />} />
           <Route path="/cart" render={()=> <Cart />} />

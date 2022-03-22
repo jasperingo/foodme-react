@@ -1,5 +1,6 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
 import ForgotPasswordLink from '../../components/form/ForgotPasswordLink';
 import FormButton from '../../components/form/FormButton';
@@ -7,21 +8,30 @@ import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLink';
 import SocialLoginList from '../../components/SocialLoginList';
-import { useCustomerLogin } from '../../hooks/customerHook';
+import { useCustomerSignIn } from '../../hooks/customer/customerSignInHook';
 import { useHeader } from '../../hooks/headerHook';
 
-export default function LogIn({ guestMiddleware }) {
+export default function LogIn({ redirectTo }) {
 
   useHeader({ 
     title: 'Log In - DailyNeeds',
     headerTitle: '_user.Log_in'
   });
 
+  const history = useHistory();
+
   const emailInput = useRef(null);
 
   const passwordInput = useRef(null);
 
-  const [onSubmit, dialog, formError] = useCustomerLogin();
+  const [onSubmit, loading, success, formError] = useCustomerSignIn();
+
+  useEffect(
+    function() {
+      if (success && !loading) history.replace(redirectTo);
+    },
+    [success, loading, history, redirectTo]
+  );
   
   function onLoginSubmit(e) {
     e.preventDefault();
@@ -33,7 +43,7 @@ export default function LogIn({ guestMiddleware }) {
     );
   }
 
-  return guestMiddleware() || (
+  return (
     <section>
 
       <div className="container-x">
@@ -71,7 +81,7 @@ export default function LogIn({ guestMiddleware }) {
 
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
 
     </section>
   );

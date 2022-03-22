@@ -1,21 +1,24 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
 import FormButton from '../../components/form/FormButton';
 import FormMessage from '../../components/form/FormMessage';
 import FormField from '../../components/form/FormField';
 import SocialLoginList from '../../components/SocialLoginList';
-import { useCustomerCreate } from '../../hooks/customerHook';
 import { useHeader } from '../../hooks/headerHook';
 import RegistrationAgreementLink from '../../components/form/RegistrationAgreementLink';
 import LoginIfHasAccountLink from '../../components/form/LoginIfHasAccountLink';
+import { useCustomerCreate } from '../../hooks/customer/customerCreateHook';
+import { useHistory } from 'react-router-dom';
 
-export default function Register({ guestMiddleware }) {
+export default function Register({ redirectTo }) {
 
   useHeader({ 
     title: `Register - DailyNeeds`,
     headerTitle: '_user.Register'
   });
+
+  const history = useHistory();
 
   const firstNameInput = useRef(null);
 
@@ -29,7 +32,8 @@ export default function Register({ guestMiddleware }) {
 
   const [
     onSubmit, 
-    dialog, 
+    loading, 
+    success,
     formError, 
     firstNameError, 
     lastNameError, 
@@ -38,6 +42,13 @@ export default function Register({ guestMiddleware }) {
     passwordError
   ] = useCustomerCreate();
 
+  useEffect(
+    function() {
+      if (success && !loading) history.replace(redirectTo);
+    },
+    [success, loading, history, redirectTo]
+  );
+  
   function onRegisterSubmit(e) {
     e.preventDefault();
     onSubmit(
@@ -54,7 +65,7 @@ export default function Register({ guestMiddleware }) {
     );
   }
   
-  return guestMiddleware() || (
+  return (
     <section>
 
       <div className="container-x">
@@ -121,7 +132,7 @@ export default function Register({ guestMiddleware }) {
         
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
       
     </section>
   );

@@ -1,9 +1,18 @@
 
 import React from 'react';
-import { bankAccountIcon, cartIcon, favoritedIcon, locationIcon, orderIcon, passwordIcon, transactionIcon, userIcon } from '../../assets/icons';
+import { 
+  bankAccountIcon, 
+  cartIcon, 
+  favoritedIcon, 
+  locationIcon, 
+  orderIcon, 
+  passwordIcon, 
+  transactionIcon, 
+  userIcon 
+} from '../../assets/icons';
 import AccountMenuView from '../../components/AccountMenuView';
 import { useAppContext } from '../../hooks/contextHook';
-import { useCustomerLogOut } from '../../hooks/customerHook';
+import { useCustomerSignOut } from '../../hooks/customer/customerSignOutHook';
 import { useHeader } from '../../hooks/headerHook';
 
 const MENU_ITEMS = [
@@ -34,7 +43,7 @@ export default function AccountMenu() {
     topNavPaths: ['/cart', '/search']
   });
   
-  const onLogOut = useCustomerLogOut();
+  const onLogOut = useCustomerSignOut();
 
   return (
     <section>

@@ -32,7 +32,7 @@ export function usePromotionList() {
       promotionDispatch({ 
         type: PROMOTION.LIST_ERROR_CHANGED, 
         payload: { error: null } 
-      }) ;
+      });
     },
     [promotionDispatch]
   );

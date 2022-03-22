@@ -1,11 +1,11 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import CustomerProfile from '../../components/profile/CustomerProfile';
-import AddressList from '../../components/profile/section/AddressList';
+import AddressList from '../../components/list/AddressList';
 import OrderList from '../../components/profile/section/OrderList';
 import ProductList from '../../components/profile/section/ProductList';
 import TransactionList from '../../components/profile/section/TransactionList';
@@ -44,16 +44,30 @@ function CustomerAddressesList() {
   } = useAppContext();
   
   const [
-    addresses,
-    addressesFetchStatus,
-    refetch
+    fetch, 
+    addresses, 
+    addressesLoading, 
+    addressesError, 
+    addressesLoaded, 
+    retryFetch,
+    refresh
   ] = useCustomerAddressList(customer.id, adminToken);
+
+  useEffect(
+    function() {
+      if (!addressesLoaded) fetch();
+    }, 
+    [addressesLoaded, fetch]
+  );
 
   return (
     <AddressList 
       addresses={addresses}
-      addressesFetchStatus={addressesFetchStatus}
-      refetch={refetch}
+      addressesLoading={addressesLoading}
+      addressesError={addressesError}
+      addressesLoaded={addressesLoaded}
+      refetch={retryFetch}
+      refresh={refresh}
       canEdit={false}
       />
   );

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import PasswordUpdateForm from '../../components/form/PasswordUpdateForm';
-import { useCustomerPasswordUpdate } from '../../hooks/customerHook';
+import { useCustomerPasswordUpdate } from '../../hooks/customer/customerPasswordUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
 
 export default function PasswordUpdate() {
@@ -13,19 +13,18 @@ export default function PasswordUpdate() {
 
   const [
     onSubmit,
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     newPasswordError, 
     currentPasswordError
   ] = useCustomerPasswordUpdate();
 
-
   return (
     <section>
       <div className="container-x">
         <PasswordUpdateForm 
-          dialog={dialog}
+          dialog={loading}
           onSubmit={onSubmit}
           formError={formError} 
           formSuccess={formSuccess}

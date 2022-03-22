@@ -1,34 +1,12 @@
 
-import React from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect } from 'react';
 import { Redirect, useHistory } from 'react-router-dom';
-import { locationIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import SingleList from '../../components/list/SingleList';
-import Loading from '../../components/Loading';
-import Reload from '../../components/Reload';
+import AddButton from '../../components/AddButton';
+import AddressList from '../../components/list/AddressList';
 import { CART } from '../../context/actions/cartActions';
-import { useAddressList } from '../../hooks/address/addressListHook';
 import { useAppContext } from '../../hooks/contextHook';
+import { useCustomerAddressList } from '../../hooks/customer/customerAddressListHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderListFooter } from '../../hooks/viewHook';
-
-function AddressButton({ address: { id, title, street, city, state, type }, onClick }) {
-
-  const { t } = useTranslation();
-
-  return (
-    <li>
-      <button className="block w-full border rounded text-left mb-4" onClick={()=> onClick(id)}>
-        <div className="p-2 font-bold">{ title }</div>
-        <div className="px-2 pb-2">{ street }, { city }, { state }</div>
-        <div className={`${type === 'default' ? 'text-color-primary' : 'text-color-gray'} border-t p-2`}>
-            { type === 'default' ? t('_user.Default_address') : t('_extra.Not_default') }
-        </div>
-      </button>
-    </li>
-  );
-}
 
 export default function CartDeliveryAddress() {
 
@@ -56,19 +34,22 @@ export default function CartDeliveryAddress() {
   } = useAppContext();
 
   const [
-    addresses,
-    addressesFetchStatus,
-    refetch,
+    fetch, 
+    addresses, 
+    addressesLoading, 
+    addressesError, 
+    addressesLoaded, 
+    retryFetch,
     refresh
-  ] = useAddressList(customer, customerToken);
+  ] = useCustomerAddressList(customer.id, customerToken);
 
   const history = useHistory();
 
-  const footer = useRenderListFooter(
-    addressesFetchStatus,
-    ()=> <li key="addresses-footer" className="list-2-x-col-span"> <Loading /> </li>, 
-    ()=> <li key="addresses-footer" className="list-2-x-col-span"> <Reload action={refetch} /> </li>,
-    ()=> <li key="addresses-footer" className="list-2-x-col-span"> <EmptyList text="_empty.No_address" icon={locationIcon} /> </li>
+  useEffect(
+    function() {
+      if (!addressesLoaded && cartItems.length > 0) fetch();
+    }, 
+    [addressesLoaded, fetch, cartItems.length]
   );
 
   if (cartItems.length === 0) {
@@ -86,20 +67,21 @@ export default function CartDeliveryAddress() {
 
   return (
     <section>
-      
+
       <div className="container-x">
-
-        <SingleList
-          data={addresses}
-          className="list-2-x"
-          refreshPage={refresh}
-          renderDataItem={(item)=> (
-            <AddressButton key={`address-${item.id}`} address={item} onClick={onSelect} />
-          )}
-          footer={footer}
-          />
-
+        <AddButton text="_user.Add_address" href="/address/add" />
       </div>
+      
+      <AddressList 
+        addresses={addresses}
+        addressesLoading={addressesLoading}
+        addressesError={addressesError}
+        addressesLoaded={addressesLoaded}
+        refetch={retryFetch}
+        refresh={refresh}
+        renderButtons={true}
+        onButtonClicked={onSelect}
+        />
 
     </section>
   );
