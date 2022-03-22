@@ -51,11 +51,15 @@ import {
   mdiBullhorn,
   mdiHomeMapMarker,
   mdiMapMarkerRadius,
-  mdiLink
+  mdiLink,
+  mdiBell,
+  mdiHeadset
 
 } from '@mdi/js';
 
 export const homeIcon = mdiHome;
+export const notificationIcon = mdiBell;
+export const supportIcon = mdiHeadset;
 export const dashboardIcon = mdiViewDashboard;
 export const storeIcon = mdiStore;
 export const productIcon = mdiArchive;

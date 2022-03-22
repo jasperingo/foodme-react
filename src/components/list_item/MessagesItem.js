@@ -1,11 +1,16 @@
 
+import Icon from '@mdi/react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { notificationIcon } from '../../assets/icons';
 import { useMessageMemberGet } from '../../hooks/message/messageMemberGetHook';
 import { useDateFormatter } from '../../hooks/viewHook';
 import Message from '../../models/Message';
 
 export default function MessagesItem({ userId, chat }) {
+
+  const { t } = useTranslation();
 
   const dateFormatter = useDateFormatter();
 
@@ -34,7 +39,19 @@ export default function MessagesItem({ userId, chat }) {
             <span className="text-color-gray text-sm">{ dateFormatter(message.created_at, { date: true }) }</span>
           </div>
           <div className="flex gap-2 items-center">
-            <div className="flex-grow truncate text-color-gray w-10">{ message.content }</div>
+            {
+              message.content && 
+              <div className="flex-grow truncate text-color-gray w-10">{ message.content }</div>
+            }
+
+            {
+              message.notification &&
+              <div className="flex items-center gap-1 flex-grow truncate text-color-gray w-10">
+                <Icon path={notificationIcon} className="w-4 h-4" />
+                <div>{ t('_message.Notification') }</div>
+              </div>
+            }
+
             {
               member.id === message.user_id && message.delivery_status === Message.DELIVERY_STATUS_SENT &&
               <div className="px-2 py-2 text-sm text-white bg-color-primary rounded-full"></div>

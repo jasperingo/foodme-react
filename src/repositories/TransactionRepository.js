@@ -10,6 +10,14 @@ export default class TransactionRepository extends Fetch {
       JSON.stringify(formData)
     );
   }
+
+  createRefund(formData) {
+    return this.apiFetch(
+      'transaction/refund/create',
+      'POST',
+      JSON.stringify(formData)
+    );
+  }
  
   withdraw(formData) {
     return this.apiFetch(

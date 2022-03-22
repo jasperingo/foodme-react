@@ -11,11 +11,12 @@ import OrderItemItem from '../list_item/OrderItemItem';
 import Order from '../../models/Order';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
+import PayWithPaystack from '../PayWithPaystack';
 import { useOrderStatusUpdate } from '../../hooks/order/orderStatusUpdateHook';
 import { useStoreStatusUpdate } from '../../hooks/order/orderStoreStatusUpdateHook';
 import { useDeliveryFirmStatusUpdate } from '../../hooks/order/orderDeliveryFirmStatusUpdateHook';
 import { useOrderPaymentTransactionFetch } from '../../hooks/order/orderPaymentTransactionFetchHook';
-import PayWithPaystack from '../PayWithPaystack';
+import { useRefundTransactionCreate } from '../../hooks/transaction/refundTransactionCreateHook';
 
 export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm, userToken }) {
   
@@ -57,6 +58,13 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
     transactionSuccess,
     transactionError
   ] = useOrderPaymentTransactionFetch(userToken);
+
+  const [
+    refundSend,
+    refundLoading,
+    refundSuccess,
+    refundError
+  ] = useRefundTransactionCreate(userToken);
 
   useEffect(
     ()=> {
@@ -158,6 +166,33 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
     [transactionSuccess, transactionError]
   );
 
+  useEffect(
+    ()=> {
+      if (refundSuccess)
+        setDialog({
+          body: '_transaction._refund_request_sent',
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+
+      if (refundError) 
+        setDialog({
+          body: refundError,
+          negativeButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+            }
+          },
+        });
+    },
+    [refundSuccess, refundError]
+  );
+
   const usersLinks = [
     {
       href: !isCustomer ? `/customer/${order.customer.id}` : `/profile`,
@@ -198,6 +233,22 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
           transactionSend(order);
         else 
           setShowPay(true);
+      }
+    });
+  }
+
+  if (
+    isCustomer && 
+    order.status === Order.STATUS_CANCELLED &&
+    order.payment_status === Order.PAYMENT_STATUS_APPROVED && 
+    order.refund_status !== Order.REFUND_STATUS_APPROVED && 
+    order.refund_status !== Order.REFUND_STATUS_PENDING
+  ) {
+    buttons.push({
+      text: '_transaction.Request_refund',
+      color: 'btn-color-primary',
+      action() {
+        refundSend(order.id);
       }
     });
   }
@@ -413,7 +464,16 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
           />
       }
         
-      { (cancelisLoading || storeStatusIsLoading || deliveryFirmStatusIsLoading || transactionLoading) && <LoadingDialog /> }
+      { 
+        (
+          cancelisLoading || 
+          storeStatusIsLoading ||
+          deliveryFirmStatusIsLoading || 
+          transactionLoading || 
+          refundLoading
+        ) && 
+        <LoadingDialog /> 
+      }
     </>
   );
 }

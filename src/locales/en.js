@@ -170,6 +170,7 @@ export const TRANSLATIONS_EN = {
     Created_on: 'Created on',
     Expiring_on: 'Expiring on',
     Enable_notifications: 'Enable notifications',
+    Contact_support: 'Contact support',
 
     Approved: 'Approved',
     Process: 'Process',
@@ -401,7 +402,8 @@ export const TRANSLATIONS_EN = {
     Returned: 'Returned',
     Order: 'Order',
     Orders: 'Orders',
-    Order_note: 'Order note',
+    View_order: 'View order',
+    Order_not: 'Order note',
     Add_order: 'Add order',
     Ordered_by: 'Ordered by',
     Delivered_by: 'Delivered by',
@@ -437,6 +439,7 @@ export const TRANSLATIONS_EN = {
   _transaction: {
     Transaction: 'Transaction',
     Transactions: 'Transactions',
+    View_transaction: 'View transaction',
     Wallet: 'Wallet',
     Withdraw: 'Withdraw',
     Withdrawal: 'Withdrawal',
@@ -463,6 +466,7 @@ export const TRANSLATIONS_EN = {
     Change_withdrawal_account: 'Change withdrawal account',
     Your_withdrawal_is_being_processed: 'Your withdrawal is being processed',
 
+    Request_refund: 'Request refund',
     Transaction_cancelled: 'This transaction has been cancelled',
     Transaction_declined: 'This transaction has been declined',
 
@@ -475,6 +479,7 @@ export const TRANSLATIONS_EN = {
     Get_paid_securely_and_fast: 'Get paid securely and fast',
 
     _payment_being_confirmed: 'Your payment is being confirmed.',
+    _refund_request_sent: 'Your refund request has been sent.',
 
   },
 
@@ -495,6 +500,21 @@ export const TRANSLATIONS_EN = {
     Start_a_conversation: 'Start a conversation',
     Send_Us_A_Message: 'Send Us A Message',
     _contact_us_note: 'If you need a consulting regarding colaboration let us know, or maybe you have another question don\'t be shy, send us a message.',  
+ 
+    Notification: 'Notification',
+    _nt_order_created: 'New order',
+    _nt_order_accepted: 'Order accepted',
+    _nt_order_declined: 'Order declined',
+    _nt_order_cancelled: 'Order cancelled',
+    _nt_order_item_processing: 'Order item processing',
+    _nt_order_item_transporting: 'Order item transporting',
+    _nt_order_item_delivered: 'Order item delivered',
+    _nt_transaction_created: 'Transaction created',
+    _nt_transaction_cancelled: 'Transaction cancelled',
+    _nt_transaction_declined: 'Transaction declined',
+    _nt_transaction_processing: 'Transaction processing',
+    _nt_transaction_failed: 'Transaction failed',
+    _nt_transaction_approved: 'Transaction approved'
   },
   
   _empty: {

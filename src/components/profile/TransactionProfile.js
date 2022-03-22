@@ -17,7 +17,6 @@ export default function TransactionProfile(
     canProcessAndDecline, 
     transaction: { 
       id, 
-      application, 
       reference, 
       status, 
       type, 

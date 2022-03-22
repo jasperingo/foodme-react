@@ -7,7 +7,7 @@ import { Switch } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 import { useRouteMatch } from 'react-router-dom';
-import { backIcon, messageIcon } from '../../assets/icons';
+import { backIcon, messageIcon, notificationIcon, supportIcon } from '../../assets/icons';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useMessageChatList } from '../../hooks/message/messageChatListHook';
 import { useNotificationEnable } from '../../hooks/notification/notificationEnableHook';
@@ -20,7 +20,7 @@ import MessagesItem from '../list_item/MessagesItem';
 import Loading from '../Loading';
 import Reload from '../Reload';
 
-export default function ChatsList({ userId, userToken, renderMessages }) {
+export default function ChatsList({ isAdmin, userId, userToken, renderMessages }) {
 
   const { t } = useTranslation();
 
@@ -83,17 +83,32 @@ export default function ChatsList({ userId, userToken, renderMessages }) {
             </button>
           </div>
 
-          {
-            canAskForNotify &&
-            <div className="text-right">
-              <button 
-                  onClick={askForNotify}
-                  className="btn-color-primary my-2 rounded p-1"
+          <ul className="flex gap-2 flex-wrap justify-between">
+            {
+              !isAdmin && 
+              <li>
+                <button 
+                  onClick={()=> alert('Loading...')}
+                  className="flex items-center gap-1 btn-color-primary my-2 rounded p-1"
                   >
-                  { t('_extra.Enable_notifications') }
-              </button>
-            </div>
-          }
+                  <Icon path={supportIcon} className="w-4 h-4" />
+                  <div>{ t('_extra.Contact_support') }</div>
+                </button>
+              </li>
+            }
+            {
+              canAskForNotify &&
+              <li className="text-right">
+                <button 
+                  onClick={askForNotify}
+                  className="flex items-center gap-1 btn-color-primary my-2 rounded p-1"
+                  >
+                  <Icon path={notificationIcon} className="w-4 h-4" />
+                  <div>{ t('_extra.Enable_notifications') }</div>
+                </button>
+              </li>
+            }
+          </ul>
 
           <ScrollList
             data={chats}

@@ -1,8 +1,17 @@
 import { useState, useMemo } from 'react';
+import { ORDER } from '../../context/actions/orderActions';
+import Order from '../../models/Order';
 import OrderRepository from '../../repositories/OrderRepository';
 import TransactionRepository from '../../repositories/TransactionRepository';
+import { useAppContext } from '../contextHook';
 
 export function useOrderPaymentTransactionFetch(userToken) {
+
+  const {
+    order: { 
+      orderDispatch,
+    }
+  } = useAppContext();
 
   const [transaction, setTransaction] = useState(null);
 
@@ -29,7 +38,7 @@ export function useOrderPaymentTransactionFetch(userToken) {
 
     try {
 
-      const res = order.payment_status === null ? 
+      const res = order.payment_status === null || order.payment_status === Order.PAYMENT_STATUS_FAILED ? 
           await transactionApi.createPayment({ order_id: order.id}) : 
             await orderApi.getPaymentTransaction(order.id);
 
@@ -37,6 +46,12 @@ export function useOrderPaymentTransactionFetch(userToken) {
   
         setTransaction(res.body.data);
         setSuccess(true);
+
+        if (res.status === 201)
+          orderDispatch({
+            type: ORDER.UPDATED,
+            payload: { order: res.body.data.order }
+          });
         
       } else if (res.status === 400) {
 
@@ -59,5 +74,5 @@ export function useOrderPaymentTransactionFetch(userToken) {
     loading,
     success,
     error
-  ]
+  ];
 }
