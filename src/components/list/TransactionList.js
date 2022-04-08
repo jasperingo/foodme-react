@@ -20,8 +20,7 @@ export default function TransactionList(
     transactionsError, 
     transactionsPage, 
     transactionsNumberOfPages,
-    getNextPage, 
-    retryFetch, 
+    fetchTransactions,
     refreshList
   }
 ) {
@@ -36,7 +35,7 @@ export default function TransactionList(
         
         <ScrollList
           data={transactions}
-          nextPage={getNextPage}
+          nextPage={fetchTransactions}
           refreshPage={refreshList}
           hasMore={loadOnScroll(transactionsPage, transactionsNumberOfPages, transactionsError)}
           className="list-2-x"
@@ -53,7 +52,7 @@ export default function TransactionList(
             { 
               canRender: transactionsError === NetworkErrorCodes.UNKNOWN_ERROR, 
               render() { 
-                return <li key="transactions-footer" className="list-2-x-col-span"> <Reload action={retryFetch} /> </li>;
+                return <li key="transactions-footer" className="list-2-x-col-span"> <Reload action={fetchTransactions} /> </li>;
               }
             },
             { 
@@ -65,7 +64,7 @@ export default function TransactionList(
             { 
               canRender: transactionsPage <= transactionsNumberOfPages, 
               render() { 
-                return <li key="transactions-footer" className="list-2-x-col-span"> <FetchMoreButton action={getNextPage} /> </li>;
+                return <li key="transactions-footer" className="list-2-x-col-span"> <FetchMoreButton action={fetchTransactions} /> </li>;
               }
             },
             { 

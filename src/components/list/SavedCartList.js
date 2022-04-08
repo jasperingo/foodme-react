@@ -20,8 +20,7 @@ export default function SavedCartList(
     savedCartsError, 
     savedCartsPage, 
     savedCartsNumberOfPages, 
-    getNextPage, 
-    retryFetch, 
+    fetchSavedCarts,
     refreshList 
   }
 ) {
@@ -35,7 +34,7 @@ export default function SavedCartList(
 
       <ScrollList
         data={savedCarts}
-        nextPage={getNextPage}
+        nextPage={fetchSavedCarts}
         refreshPage={refreshList}
         hasMore={loadOnScroll(savedCartsPage, savedCartsNumberOfPages, savedCartsError)}
         className="list-2-x"
@@ -52,7 +51,7 @@ export default function SavedCartList(
           { 
             canRender: savedCartsError === NetworkErrorCodes.UNKNOWN_ERROR, 
             render() { 
-              return <li key="saved-cart-footer" className="list-2-x-col-span"> <Reload action={retryFetch} /> </li>; 
+              return <li key="saved-cart-footer" className="list-2-x-col-span"> <Reload action={fetchSavedCarts} /> </li>; 
             }
           },
           { 
@@ -64,7 +63,7 @@ export default function SavedCartList(
           { 
             canRender: savedCartsPage <= savedCartsNumberOfPages, 
             render() { 
-              return <li key="saved-cart-footer" className="list-2-x-col-span"> <FetchMoreButton action={getNextPage} /> </li>; 
+              return <li key="saved-cart-footer" className="list-2-x-col-span"> <FetchMoreButton action={fetchSavedCarts} /> </li>; 
             }
           },
           { 

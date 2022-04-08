@@ -26,19 +26,20 @@ export function useCustomerFavoriteList(userId, userToken) {
 
   const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
-  function setCustomerProductsError(error) {
-    dispatch({ 
-      type: PRODUCT.LIST_ERROR_CHANGED, 
-      payload: { error } 
-    });
-  }
-
   function refreshCustomerProducts() {
     dispatch({ type: PRODUCT.LIST_UNFETCHED });
   }
 
   const fetchCustomerProducts = useCallback(
     async function() {
+
+      if (!window.navigator.onLine) {
+        dispatch({
+          type: PRODUCT.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
       dispatch({ type: PRODUCT.LIST_FETCHING });
 
@@ -80,7 +81,6 @@ export function useCustomerFavoriteList(userId, userToken) {
     productsError,
     productsPage, 
     productsNumberOfPages, 
-    setCustomerProductsError, 
     refreshCustomerProducts
   ];
 }

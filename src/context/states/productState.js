@@ -10,8 +10,8 @@ const productState = {
 
   product: null,
   productID: null,
-  productLoading: true,
-  productFetchStatus: FETCH_STATUSES.LOADING,
+  productError: null,
+  productLoading: false,
 
   productVariant: null,
   productVariantID: null,

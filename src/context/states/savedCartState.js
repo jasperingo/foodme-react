@@ -1,4 +1,3 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const savedCartState = {
   
@@ -6,14 +5,12 @@ const savedCartState = {
   savedCartsPage: 1,
   savedCartsLoading: true,
   savedCartsNumberOfPages: 0,
-  savedCartsFetchStatus: FETCH_STATUSES.LOADING,
   
   savedCart: null,
   savedCartID: null,
-  savedCartLoading: true,
-  savedCartFetchStatus: FETCH_STATUSES.LOADING,
+  savedCartError: null,
+  savedCartLoading: false
 
 };
 
 export default savedCartState;
-

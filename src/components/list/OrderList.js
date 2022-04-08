@@ -13,7 +13,7 @@ import Forbidden from '../Forbidden';
 import Reload from '../Reload';
 
 export default function OrderList(
-  { orders, ordersLoading, ordersLoaded, ordersError, ordersPage, ordersNumberOfPages, getNextPage, retryFetch, refreshList }
+  { orders, ordersLoading, ordersLoaded, ordersError, ordersPage, ordersNumberOfPages, fetchOrders, refreshList }
 ) {
 
   const listFooter = useListFooter();
@@ -25,7 +25,7 @@ export default function OrderList(
 
       <ScrollList
         data={orders}
-        nextPage={getNextPage}
+        nextPage={fetchOrders}
         refreshPage={refreshList}
         hasMore={loadOnScroll(ordersPage, ordersNumberOfPages, ordersError)}
         className="list-2-x"
@@ -44,7 +44,7 @@ export default function OrderList(
           { 
             canRender: ordersError === NetworkErrorCodes.UNKNOWN_ERROR,
             render() { 
-              return <li key="orders-footer" className="list-2-x-col-span"> <Reload action={retryFetch} /> </li>;
+              return <li key="orders-footer" className="list-2-x-col-span"> <Reload action={fetchOrders} /> </li>;
             }
           },
 
@@ -58,7 +58,7 @@ export default function OrderList(
           { 
             canRender: ordersPage <= ordersNumberOfPages,
             render() { 
-              return <li key="orders-footer" className="list-2-x-col-span"> <FetchMoreButton action={getNextPage} /> </li>; 
+              return <li key="orders-footer" className="list-2-x-col-span"> <FetchMoreButton action={fetchOrders} /> </li>; 
             }
           },
 

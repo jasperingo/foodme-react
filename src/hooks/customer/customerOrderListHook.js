@@ -25,19 +25,20 @@ export function useCustomerOrderList(userId, userToken) {
 
   const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
-  function setCustomerOrdersError(error) {
-    dispatch({ 
-      type: ORDER.LIST_ERROR_CHANGED, 
-      payload: { error } 
-    });
-  }
-
   function refreshCustomerOrders() {
     dispatch({ type: ORDER.LIST_UNFETCHED });
   }
 
   const fetchCustomerOrders = useCallback(
     async function() {
+
+      if (!window.navigator.onLine) {
+        dispatch({
+          type: ORDER.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
       dispatch({ type: ORDER.LIST_FETCHING });
 
@@ -78,8 +79,7 @@ export function useCustomerOrderList(userId, userToken) {
     ordersLoaded, 
     ordersError,
     ordersPage, 
-    ordersNumberOfPages, 
-    setCustomerOrdersError, 
+    ordersNumberOfPages,  
     refreshCustomerOrders
   ];
 }

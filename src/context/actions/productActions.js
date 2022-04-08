@@ -2,7 +2,8 @@
 export const PRODUCT = {
   FETCHED: 'PRODUCT_FETCHED',
   UNFETCHED: 'PRODUCT_UNFETCHED',
-  FETCH_STATUS_CHANGED: 'PRODUCT_FETCH_STATUS_CHANGED',
+  FETCHING: 'PRODUCT_FETCHING',
+  ERROR_CHANGED: 'PRODUCT_ERROR_CHANGED',
   
   LIST_FETCHED: 'PRODUCTS_FETCHED',
   LIST_UNFETCHED: 'PRODUCTS_UNFETCHED',
@@ -25,13 +26,6 @@ export const PRODUCT = {
   VARIANT_UNFETCHED: 'PRODUCT_VARIANT_UNFETCHED',
   VARIANT_FETCH_STATUS_CHANGED: 'PRODUCT_VARIANT_FETCH_STATUS_CHANGED',
 };
-
-export const getProductFetchStatusAction = (fetchStatus, id, loading) => ({
-  type: PRODUCT.FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, id, loading
-  }
-});
 
 export const getProductVariantFetchStatusAction = (fetchStatus, id, loading) => ({
   type: PRODUCT.VARIANT_FETCH_STATUS_CHANGED,

@@ -110,6 +110,7 @@ export default function CustomerReducer (state, action) {
         ...state,
         orders: {
           ...state.orders,
+          ordersError: null,
           ordersLoading: true
         }
       };
@@ -139,6 +140,7 @@ export default function CustomerReducer (state, action) {
         ...state,
         products: {
           ...state.products,
+          productsError: null,
           productsLoading: true
         }
       };
@@ -178,6 +180,7 @@ export default function CustomerReducer (state, action) {
         ...state,
         savedCarts: {
           ...state.savedCarts,
+          savedCartsError: null,
           savedCartsLoading: true
         }
       };
@@ -217,6 +220,7 @@ export default function CustomerReducer (state, action) {
         ...state,
         transactions: {
           ...state.transactions,
+          transactionsError: null,
           transactionsLoading: true
         }
       };
@@ -266,7 +270,8 @@ export default function CustomerReducer (state, action) {
         ...state,
         addresses: {
           ...state.addresses,
-          addressesLoading: true
+          addressesError: null,
+          addressesLoading: true,
         }
       };
 

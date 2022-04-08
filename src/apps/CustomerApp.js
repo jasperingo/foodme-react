@@ -33,7 +33,7 @@ import Transactions from '../pages/Customer/Transactions';
 import Transaction from '../pages/Transaction';
 import PasswordUpdate from '../pages/Customer/PasswordUpdate';
 import WithdrawalAccountUpdate from '../pages/Customer/WithdrawalAccountUpdate';
-import SavedCart from '../pages/Customer/SavedCart';
+import SavedCart from '../pages/SavedCart';
 import DeliveryFirm from '../pages/Customer/DeliveryFirm';
 import ProductReviews from '../pages/Customer/ProductReviews';
 import Discount from '../pages/Customer/Discount';
@@ -128,7 +128,7 @@ export default function CustomerApp() {
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order userToken={customerToken} isCustomer={true} />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
-          <Route path="/saved-cart/:ID" render={()=> authMiddleware() || <SavedCart />} />
+          <Route path="/saved-cart/:ID" render={()=> authMiddleware() || <SavedCart userToken={customerToken} />} />
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
           <Route path="/favorites" render={()=> authMiddleware() || <Favorites />} />
           <Route path="/address/add" render={()=> authMiddleware() || <AddressAdd />} />

@@ -4,7 +4,6 @@ import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import SavedCartList from '../../components/list/SavedCartList';
 import { useCustomerSavedCartList } from '../../hooks/customer/customerSavedCartListHook';
-import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 export default function SavedCarts() {
   
@@ -31,24 +30,21 @@ export default function SavedCarts() {
     savedCartsLoaded, 
     savedCartsError,
     savedCartsPage, 
-    savedCartsNumberOfPages, 
-    setCustomerSavedCartsError, 
+    savedCartsNumberOfPages,  
     refreshCustomerSavedCarts
   ] = useCustomerSavedCartList(customer.id, customerToken);
 
-  const fetch = useCallback(
+  const savedCartsFetch = useCallback(
     function() {
-      if (!window.navigator.onLine && savedCartsError === null)
-        setCustomerSavedCartsError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
-      else if (window.navigator.onLine && !savedCartsLoading) 
+      if (!savedCartsLoading) 
         fetchCustomerSavedCarts();
     },
-    [savedCartsError, savedCartsLoading, fetchCustomerSavedCarts, setCustomerSavedCartsError]
+    [savedCartsLoading, fetchCustomerSavedCarts]
   );
 
   useEffect(
-    function() { if (!savedCartsLoaded) fetch(); },
-    [savedCartsLoaded, fetch]
+    function() { if (!savedCartsLoaded) savedCartsFetch(); },
+    [savedCartsLoaded, savedCartsFetch]
   );
 
   return (
@@ -62,8 +58,7 @@ export default function SavedCarts() {
           savedCartsLoaded={savedCartsLoaded}
           savedCartsLoading={savedCartsLoading}
           savedCartsNumberOfPages={savedCartsNumberOfPages}
-          getNextPage={fetch}
-          retryFetch={()=> setCustomerSavedCartsError(null)}
+          fetchSavedCarts={savedCartsFetch}
           refreshList={refreshCustomerSavedCarts}
           />
 
@@ -71,4 +66,3 @@ export default function SavedCarts() {
     </section>
   );
 }
-

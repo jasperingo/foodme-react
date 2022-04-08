@@ -4,7 +4,6 @@ import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useCustomerOrderList } from '../../hooks/customer/customerOrderListHook';
 import OrderList from '../../components/list/OrderList';
-import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 export default function Orders() {
 
@@ -32,23 +31,20 @@ export default function Orders() {
     ordersError,
     ordersPage, 
     ordersNumberOfPages, 
-    setCustomerOrdersError, 
     refreshCustomerOrders
   ] = useCustomerOrderList(customer.id, customerToken);
 
-  const fetch = useCallback(
+  const ordersFetch = useCallback(
     function() {
-      if (!window.navigator.onLine && ordersError === null)
-        setCustomerOrdersError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
-      else if (window.navigator.onLine && !ordersLoading) 
+      if (!ordersLoading) 
         fetchCustomerOrders();
     },
-    [ordersError, ordersLoading, fetchCustomerOrders, setCustomerOrdersError]
+    [ordersLoading, fetchCustomerOrders]
   );
 
   useEffect(
-    function() { if (!ordersLoaded) fetch(); },
-    [ordersLoaded, fetch]
+    function() { if (!ordersLoaded) ordersFetch(); },
+    [ordersLoaded, ordersFetch]
   );
   
   return (
@@ -62,8 +58,7 @@ export default function Orders() {
           ordersLoaded={ordersLoaded}
           ordersLoading={ordersLoading}
           ordersNumberOfPages={ordersNumberOfPages}
-          getNextPage={fetch}
-          retryFetch={()=> setCustomerOrdersError(null)}
+          fetchOrders={ordersFetch}
           refreshList={refreshCustomerOrders}
           />
 

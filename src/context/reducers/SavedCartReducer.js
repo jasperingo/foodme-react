@@ -1,7 +1,6 @@
 import { SAVED_CART } from "../actions/savedCartActions";
 import savedCartState from "../states/savedCartState";
 
-
 export default function SavedCartReducer (state, action) {
   
   switch (action.type) {
@@ -37,50 +36,36 @@ export default function SavedCartReducer (state, action) {
     case SAVED_CART.UNFETCHED:
       return {
         ...state,
-        savedCartLoading: true,
         savedCart: savedCartState.savedCart,
         savedCartID: savedCartState.savedCartID,
-        savedCartFetchStatus: savedCartState.savedCartFetchStatus
+        savedCartError: savedCartState.savedCartError,
+        savedCartLoading: savedCartState.savedCartLoading
       };
 
-    case SAVED_CART.FETCH_STATUS_CHANGED:
+    case SAVED_CART.FETCHING:
       return {
         ...state,
+        savedCartError: null,
+        savedCartLoading: true
+      };
+
+    case SAVED_CART.ERROR_CHANGED:
+      return {
+        ...state,
+        savedCartLoading: false,
         savedCartID: action.payload.id,
-        savedCartLoading: action.payload.loading,
-        savedCartFetchStatus: action.payload.fetchStatus
+        savedCartError: action.payload.error
       };
     
     case SAVED_CART.FETCHED:
       return {
         ...state,
         savedCartLoading: false,
-        savedCart: action.payload.savedCart, 
-        savedCartID: action.payload.savedCart.id, 
-        savedCartFetchStatus: action.payload.fetchStatus,
+        savedCartID: action.payload.id,
+        savedCart: action.payload.savedCart
       };
-
-
-    case SAVED_CART.CREATED:
-      console.log('Saved cart created');
-      return state;
-      
-    
-    // case SAVED_CART.DELETED:
-     
-    //   const carts1 = state.savedCarts.savedCarts.filter(i=>  i !== null && i.code !== action.payload);
-
-    //   return {
-    //     ...state,
-    //     savedCarts: {
-    //       ...state.savedCarts,
-    //       savedCarts: [...carts1, null],
-    //       savedCartsFetchStatus: carts1.length === 0 ? FETCH_STATUSES.LOADING : state.savedCarts.savedCartsFetchStatus
-    //     }
-    //   };
     
     default:
       return state;
   }
 }
-

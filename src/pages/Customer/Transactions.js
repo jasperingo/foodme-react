@@ -4,8 +4,6 @@ import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useCustomerTransactionList } from '../../hooks/customer/customerTransactionListHook';
 import TransactionList from '../../components/list/TransactionList';
-import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
-
 
 export default function Transactions() {
 
@@ -33,23 +31,20 @@ export default function Transactions() {
     transactionsError,
     transactionsPage, 
     transactionsNumberOfPages, 
-    setCustomerTransactionsError, 
     refreshCustomerTransactions
   ] = useCustomerTransactionList(customer.id, customerToken);
 
-  const fetch = useCallback(
+  const transactionsFetch = useCallback(
     function() {
-      if (!window.navigator.onLine && transactionsError === null)
-        setCustomerTransactionsError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
-      else if (window.navigator.onLine && !transactionsLoading) 
+      if (!transactionsLoading) 
         fetchCustomerTransactions();
     },
-    [transactionsError, transactionsLoading, fetchCustomerTransactions, setCustomerTransactionsError]
+    [transactionsLoading, fetchCustomerTransactions]
   );
 
   useEffect(
-    function() { if (!transactionsLoaded) fetch(); },
-    [transactionsLoaded, fetch]
+    function() { if (!transactionsLoaded) transactionsFetch(); },
+    [transactionsLoaded, transactionsFetch]
   );
 
   return (
@@ -63,8 +58,7 @@ export default function Transactions() {
           transactionsLoading={transactionsLoading}
           transactionsLoaded={transactionsLoaded}
           transactionsNumberOfPages={transactionsNumberOfPages}
-          getNextPage={fetch}
-          retryFetch={()=> setCustomerTransactionsError(null)}
+          fetchTransactions={transactionsFetch}
           refreshList={refreshCustomerTransactions}
           />
 

@@ -13,7 +13,7 @@ import { useListFooter, useLoadOnListScroll } from '../../hooks/viewHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 export default function ProductList(
-  { products, productsLoading, productsLoaded, productsError, productsPage, productsNumberOfPages, getNextPage, retryFetch, refreshList }
+  { products, productsLoading, productsLoaded, productsError, productsPage, productsNumberOfPages, fetchProducts, refreshList }
 ) {
   
   const listFooter = useListFooter();
@@ -25,7 +25,7 @@ export default function ProductList(
 
       <ScrollList
         data={products}
-        nextPage={getNextPage}
+        nextPage={fetchProducts}
         refreshPage={refreshList}
         hasMore={loadOnScroll(productsPage, productsNumberOfPages, productsError)}
         className="list-x"
@@ -44,7 +44,7 @@ export default function ProductList(
           { 
             canRender: productsError === NetworkErrorCodes.UNKNOWN_ERROR, 
             render() { 
-              return <li key="product-footer" className="list-x-col-span"> <Reload action={retryFetch} /> </li>;
+              return <li key="product-footer" className="list-x-col-span"> <Reload action={fetchProducts} /> </li>;
             }
           },
 
@@ -58,7 +58,7 @@ export default function ProductList(
           { 
             canRender: productsPage <= productsNumberOfPages, 
             render() { 
-              return <li key="product-footer" className="list-x-col-span"> <FetchMoreButton action={getNextPage} /> </li>;
+              return <li key="product-footer" className="list-x-col-span"> <FetchMoreButton action={fetchProducts} /> </li>;
             }
           },
 

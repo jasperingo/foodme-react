@@ -8,30 +8,36 @@ export default function ProductReducer (state, action) {
 
     case PRODUCT.UNFETCHED:
       return {
-        ...productState,
-        products: state.products,
-        productsPage: state.productsPage,
-        productsLoading: state.productsLoading,
-        productsNumberOfPages: state.productsNumberOfPages,
-        productsFetchStatus: state.productsFetchStatus
+        ...state,
+        product: productState.product,
+        productID: productState.productID,
+        productError: productState.productError,
+        productLoading: productState.productLoading,
       };
     
-    case PRODUCT.FETCH_STATUS_CHANGED:
+    case PRODUCT.FETCHING:
       return {
         ...state,
+        productError: null,
+        productLoading: true
+      };
+
+    case PRODUCT.ERROR_CHANGED:
+      return {
+        ...state,
+        productLoading: false,
         productID: action.payload.id,
-        productLoading: action.payload.loading,
-        productFetchStatus: action.payload.fetchStatus
+        productError: action.payload.error
       };
     
     case PRODUCT.FETCHED:
       return {
         ...state,
         productLoading: false,
-        product: action.payload.product,
-        productID: action.payload.product.id,
-        productFetchStatus: action.payload.fetchStatus
+        productID: action.payload.id,
+        product: action.payload.product
       };
+
 
     case PRODUCT.VARIANT_UNFETCHED:
       return {
@@ -58,6 +64,7 @@ export default function ProductReducer (state, action) {
         productVariantID: action.payload.productVariant.id,
         productVariantFetchStatus: action.payload.fetchStatus
       };
+
 
     case REVIEW.LIST_FETCH_STATUS_CHANGED:
       return {

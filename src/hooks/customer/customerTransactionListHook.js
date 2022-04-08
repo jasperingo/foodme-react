@@ -25,19 +25,20 @@ export function useCustomerTransactionList(userId, userToken) {
 
   const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
-  function setCustomerTransactionsError(error) {
-    dispatch({ 
-      type: TRANSACTION.LIST_ERROR_CHANGED, 
-      payload: { error } 
-    });
-  }
-
   function refreshCustomerTransactions() {
     dispatch({ type: TRANSACTION.LIST_UNFETCHED });
   }
 
   const fetchCustomerTransactions = useCallback(
     async function() {
+
+      if (!window.navigator.onLine) {
+        dispatch({
+          type: TRANSACTION.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
       dispatch({ type: TRANSACTION.LIST_FETCHING });
 
@@ -79,7 +80,6 @@ export function useCustomerTransactionList(userId, userToken) {
     transactionsError,
     transactionsPage, 
     transactionsNumberOfPages, 
-    setCustomerTransactionsError, 
     refreshCustomerTransactions
   ];
 }

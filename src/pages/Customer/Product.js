@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
@@ -7,7 +7,7 @@ import ProductProfile from '../../components/profile/ProductProfile';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
 import { useProductFetch } from '../../hooks/product/productFetchHook';
-import { useHasMoreToFetchViaScroll, useRenderListFooter, useRenderOnDataFetched } from '../../hooks/viewHook';
+import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 import H4Heading from '../../components/H4Heading';
 import SingleList from '../../components/list/SingleList';
 import EmptyList from '../../components/EmptyList';
@@ -26,6 +26,8 @@ import { useFavoriteDelete } from '../../hooks/favorite/favoriteDeleteHook';
 import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
 import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
 import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
+import { useParams } from 'react-router-dom';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 
 function RelatedList() {
@@ -147,6 +149,8 @@ function ReviewList() {
 
 export default function Product() {
 
+  const { ID } = useParams();
+
   const {
     customer: {
       customer: {
@@ -163,9 +167,12 @@ export default function Product() {
   } = useAppContext();
 
   const [
-    product, 
-    productFetchStatus, 
-    refetch
+    fetchProduct,
+    product,
+    productLoading,
+    productError,
+    productID,
+    unfetchProduct
   ] = useProductFetch(customerToken);
 
   const onFavoriteCreateSubmit = useFavoriteCreate();
@@ -178,34 +185,57 @@ export default function Product() {
     topNavPaths: ['/cart', '/search']
   });
 
+  const productFetch = useCallback(
+    function(ID) {
+      if (!productLoading) fetchProduct(ID);
+    },
+    [productLoading, fetchProduct]
+  );
+
+  useEffect(
+    function() {
+      if ((product !== null || productError !== null) && productID !== ID) 
+        unfetchProduct();
+      else if (product === null && productError === null)
+        productFetch(ID);
+    },
+    [ID, product, productError, productID, productFetch, unfetchProduct]
+  );
+
   return (
     <section>
+
       {
-        useRenderOnDataFetched(
-          productFetchStatus,
-          ()=> (
-            <ProductProfile 
-              product={product} 
-              isCustomer={true} 
-              customerToken={customerToken} 
-              onFavoriteSubmit={onFavoriteCreateSubmit} 
-              onUnfavoriteSubmit={onFavoriteDeleteSubmit} 
-              />
-          ),
-          ()=> <div className="container-x"> <Loading /> </div>,
-          ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
-          ()=> <div className="container-x"> <NotFound /> </div>,
-          ()=> <div className="container-x"> <Forbidden /> </div>,
+        product !== null &&
+        (
+          <ProductProfile 
+            product={product} 
+            isCustomer={true} 
+            customerToken={customerToken} 
+            onFavoriteSubmit={onFavoriteCreateSubmit} 
+            onUnfavoriteSubmit={onFavoriteDeleteSubmit} 
+            />
         )
       }
 
+      {
+        product === null &&
+        <div>
+          { productLoading && <Loading /> }
+          { productError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+          { productError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+          { productError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={productFetch} /> }
+          { productError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={productFetch} /> }
+        </div>
+      }
+
       { 
-        product && 
+        product !== null && 
         <ReviewList />
       }
 
       { 
-        product && 
+        product !== null && 
         (
           reviewsFetchStatus === FETCH_STATUSES.DONE || 
           reviewsFetchStatus === FETCH_STATUSES.MORE || 

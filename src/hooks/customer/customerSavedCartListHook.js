@@ -26,19 +26,20 @@ export function useCustomerSavedCartList(userId, userToken) {
 
   const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
-  function setCustomerSavedCartsError(error) {
-    dispatch({ 
-      type: SAVED_CART.LIST_ERROR_CHANGED, 
-      payload: { error } 
-    });
-  }
-
   function refreshCustomerSavedCarts() {
     dispatch({ type: SAVED_CART.LIST_UNFETCHED });
   }
 
   const fetchCustomerSavedCarts = useCallback(
     async function() {
+
+      if (!window.navigator.onLine) {
+        dispatch({
+          type: SAVED_CART.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
       dispatch({ type: SAVED_CART.LIST_FETCHING });
 
@@ -80,7 +81,6 @@ export function useCustomerSavedCartList(userId, userToken) {
     savedCartsError,
     savedCartsPage, 
     savedCartsNumberOfPages, 
-    setCustomerSavedCartsError, 
     refreshCustomerSavedCarts
   ];
 }
