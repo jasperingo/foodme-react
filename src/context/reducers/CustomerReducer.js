@@ -3,6 +3,7 @@ import { ADDRESS } from "../actions/addressActions";
 import { CUSTOMER } from "../actions/customerActions";
 import { ORDER } from "../actions/orderActions";
 import { PRODUCT } from "../actions/productActions";
+import { SAVED_CART } from "../actions/savedCartActions";
 import { TRANSACTION } from "../actions/transactionActions";
 import customerState from "../states/customerState";
 
@@ -94,13 +95,22 @@ export default function CustomerReducer (state, action) {
         orders: customerState.orders
       };
       
-    case ORDER.LIST_FETCH_STATUS_CHANGED:
+    case ORDER.LIST_ERROR_CHANGED:
       return {
         ...state,
         orders: {
           ...state.orders,
-          ordersLoading: action.payload.loading,
-          ordersFetchStatus: action.payload.fetchStatus,
+          ordersLoading: false,
+          ordersError: action.payload.error
+        }
+      };
+    
+    case ORDER.LIST_FETCHING:
+      return {
+        ...state,
+        orders: {
+          ...state.orders,
+          ordersLoading: true
         }
       };
       
@@ -108,22 +118,38 @@ export default function CustomerReducer (state, action) {
       return {
         ...state,
         orders: {
+          ...state.orders,
+          ordersLoaded: true,
           ordersLoading: false,
-          ordersPage: state.orders.ordersPage+1,
-          ordersFetchStatus: action.payload.fetchStatus,
+          ordersPage: state.orders.ordersPage + 1,
           ordersNumberOfPages: action.payload.numberOfPages,
           orders: [...state.orders.orders, ...action.payload.list],
         }
       };
     
   
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
+    case PRODUCT.LIST_UNFETCHED:
+      return {
+        ...state,
+        products: customerState.products
+      };
+
+    case PRODUCT.LIST_FETCHING:
       return {
         ...state,
         products: {
           ...state.products,
-          productsLoading: action.payload.loading,
-          productsFetchStatus: action.payload.fetchStatus
+          productsLoading: true
+        }
+      };
+
+    case PRODUCT.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        products: {
+          ...state.products,
+          productsLoading: false,
+          productsError: action.payload.error
         }
       };
     
@@ -131,13 +157,54 @@ export default function CustomerReducer (state, action) {
       return {
         ...state,
         products: {
+          ...state.products,
+          productsLoaded: true,
           productsLoading: false,
-          productsPage: state.products.productsPage+1,
-          productsFetchStatus: action.payload.fetchStatus,
+          productsPage: state.products.productsPage + 1,
           productsNumberOfPages: action.payload.numberOfPages,
           products: [...state.products.products, ...action.payload.list],
         }
       };
+
+    
+    case SAVED_CART.LIST_UNFETCHED:
+      return {
+        ...state,
+        savedCarts: customerState.savedCarts
+      };
+    
+    case SAVED_CART.LIST_FETCHING:
+      return {
+        ...state,
+        savedCarts: {
+          ...state.savedCarts,
+          savedCartsLoading: true
+        }
+      };
+
+    case SAVED_CART.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        savedCarts: {
+          ...state.savedCarts,
+          savedCartsLoading: false,
+          savedCartsError: action.payload.error
+        }
+      };
+    
+    case SAVED_CART.LIST_FETCHED:
+      return {
+        ...state,
+        savedCarts: {
+          ...state.savedCarts,
+          savedCartsLoaded: true,
+          savedCartsLoading: false,
+          savedCartsPage: state.savedCarts.savedCartsPage + 1,
+          savedCartsNumberOfPages: action.payload.numberOfPages,
+          savedCarts: [...state.savedCarts.savedCarts, ...action.payload.list],
+        }
+      };
+
 
     case TRANSACTION.LIST_UNFETCHED:
       return {
@@ -145,13 +212,22 @@ export default function CustomerReducer (state, action) {
         transactions: customerState.transactions
       };
 
-    case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
+    case TRANSACTION.LIST_FETCHING:
       return {
         ...state,
         transactions: {
           ...state.transactions,
-          transactionsLoading: action.payload.loading,
-          transactionsFetchStatus: action.payload.fetchStatus
+          transactionsLoading: true
+        }
+      };
+
+    case TRANSACTION.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        transactions: {
+          ...state.transactions,
+          transactionsLoading: false,
+          transactionsFetchStatus: action.payload.error
         }
       };
     
@@ -159,13 +235,15 @@ export default function CustomerReducer (state, action) {
       return {
         ...state,
         transactions: {
+          ...state.transactions,
+          transactionsLoaded: true,
           transactionsLoading: false,
-          transactionsPage: state.transactions.transactionsPage+1,
-          transactionsFetchStatus: action.payload.fetchStatus,
+          transactionsPage: state.transactions.transactionsPage + 1,
           transactionsNumberOfPages: action.payload.numberOfPages,
           transactions: [...state.transactions.transactions, ...action.payload.list],
         }
       };
+
 
     case ADDRESS.LIST_UNFETCHED:
       return {

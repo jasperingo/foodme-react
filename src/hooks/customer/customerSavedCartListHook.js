@@ -1,25 +1,24 @@
 
 import { useCallback, useMemo } from "react";
-import { PRODUCT } from "../../context/actions/productActions";
+import { SAVED_CART } from "../../context/actions/savedCartActions";
 import NetworkError from "../../errors/NetworkError";
 import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
 import { useAppContext } from "../contextHook";
 
-
-export function useCustomerFavoriteList(userId, userToken) {
+export function useCustomerSavedCartList(userId, userToken) {
 
   const { 
     customer: {
       dispatch,
       customer: {
-        products: {
-          products,
-          productsPage,
-          productsError,
-          productsLoaded,
-          productsLoading,
-          productsNumberOfPages
+        savedCarts: {
+          savedCarts,
+          savedCartsPage,
+          savedCartsError,
+          savedCartsLoaded,
+          savedCartsLoading,
+          savedCartsNumberOfPages
         } 
       } 
     }
@@ -27,29 +26,29 @@ export function useCustomerFavoriteList(userId, userToken) {
 
   const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
-  function setCustomerProductsError(error) {
+  function setCustomerSavedCartsError(error) {
     dispatch({ 
-      type: PRODUCT.LIST_ERROR_CHANGED, 
+      type: SAVED_CART.LIST_ERROR_CHANGED, 
       payload: { error } 
     });
   }
 
-  function refreshCustomerProducts() {
-    dispatch({ type: PRODUCT.LIST_UNFETCHED });
+  function refreshCustomerSavedCarts() {
+    dispatch({ type: SAVED_CART.LIST_UNFETCHED });
   }
 
-  const fetchCustomerProducts = useCallback(
+  const fetchCustomerSavedCarts = useCallback(
     async function() {
 
-      dispatch({ type: PRODUCT.LIST_FETCHING });
+      dispatch({ type: SAVED_CART.LIST_FETCHING });
 
       try {
         
-        const res = await api.getFavoritesList(userId, productsPage);
+        const res = await api.getSavedCartsList(userId, savedCartsPage);
 
         if (res.status === 200) {
           dispatch({
-            type: PRODUCT.LIST_FETCHED, 
+            type: SAVED_CART.LIST_FETCHED, 
             payload: {
               list: res.body.data, 
               numberOfPages: res.body.pagination.number_of_pages
@@ -65,24 +64,23 @@ export function useCustomerFavoriteList(userId, userToken) {
         
       } catch(error) {
         dispatch({
-          type: PRODUCT.LIST_ERROR_CHANGED,
+          type: SAVED_CART.LIST_ERROR_CHANGED,
           payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [userId, productsPage, api, dispatch]
+    [userId, savedCartsPage, api, dispatch]
   );
-  
+
   return [
-    fetchCustomerProducts, 
-    products, 
-    productsLoading, 
-    productsLoaded, 
-    productsError,
-    productsPage, 
-    productsNumberOfPages, 
-    setCustomerProductsError, 
-    refreshCustomerProducts
+    fetchCustomerSavedCarts, 
+    savedCarts, 
+    savedCartsLoading, 
+    savedCartsLoaded, 
+    savedCartsError,
+    savedCartsPage, 
+    savedCartsNumberOfPages, 
+    setCustomerSavedCartsError, 
+    refreshCustomerSavedCarts
   ];
 }
-

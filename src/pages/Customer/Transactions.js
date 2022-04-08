@@ -1,16 +1,10 @@
 
-import React from 'react';
-import { transactionIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import ScrollList from '../../components/list/ScrollList';
-import Loading from '../../components/Loading';
-import Reload from '../../components/Reload';
-import TransactionItem from '../../components/list_item/TransactionItem';
-import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
+import React, { useCallback, useEffect } from 'react';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useCustomerTransactionList } from '../../hooks/customer/customerTransactionListHook';
+import TransactionList from '../../components/list/TransactionList';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 
 export default function Transactions() {
@@ -32,34 +26,46 @@ export default function Transactions() {
   });
   
   const [
+    fetchCustomerTransactions, 
     transactions, 
-    transactionsFetchStatus, 
+    transactionsLoading, 
+    transactionsLoaded, 
+    transactionsError,
     transactionsPage, 
     transactionsNumberOfPages, 
-    refetch,
-    refresh
+    setCustomerTransactionsError, 
+    refreshCustomerTransactions
   ] = useCustomerTransactionList(customer.id, customerToken);
+
+  const fetch = useCallback(
+    function() {
+      if (!window.navigator.onLine && transactionsError === null)
+        setCustomerTransactionsError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+      else if (window.navigator.onLine && !transactionsLoading) 
+        fetchCustomerTransactions();
+    },
+    [transactionsError, transactionsLoading, fetchCustomerTransactions, setCustomerTransactionsError]
+  );
+
+  useEffect(
+    function() { if (!transactionsLoaded) fetch(); },
+    [transactionsLoaded, fetch]
+  );
 
   return (
     <section>
       <div className="container-x">
         
-        <ScrollList
-          data={transactions}
-          nextPage={refetch}
-          refreshPage={refresh}
-          hasMore={useHasMoreToFetchViaScroll(transactionsPage, transactionsNumberOfPages, transactionsFetchStatus)}
-          className="list-2-x"
-          renderDataItem={(item)=> (
-            <TransactionItem key={`transaction-${item.id}`} transaction={item} />
-          )}
-          footer={useRenderListFooter(
-            transactionsFetchStatus,
-            ()=> <li key="transactionfooter"> <Loading /> </li>, 
-            ()=> <li key="transaction-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="transaction-footer" className="col-span-2"> <EmptyList text="_empty.No_transaction" icon={transactionIcon} /> </li>,
-            ()=> <li key="transaction-footer"> <FetchMoreButton action={refetch} /> </li>
-          )}
+        <TransactionList
+          transactions={transactions}
+          transactionsPage={transactionsPage}
+          transactionsError={transactionsError}
+          transactionsLoading={transactionsLoading}
+          transactionsLoaded={transactionsLoaded}
+          transactionsNumberOfPages={transactionsNumberOfPages}
+          getNextPage={fetch}
+          retryFetch={()=> setCustomerTransactionsError(null)}
+          refreshList={refreshCustomerTransactions}
           />
 
       </div>

@@ -1,16 +1,10 @@
 
-import React from 'react';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import Loading from '../../components/Loading';
-import OrderItem from '../../components/list_item/OrderItem';
-import Reload from '../../components/Reload';
-import { orderIcon } from '../../assets/icons';
-import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
-import ScrollList from '../../components/list/ScrollList';
+import React, { useEffect, useCallback } from 'react';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useCustomerOrderList } from '../../hooks/customer/customerOrderListHook';
+import OrderList from '../../components/list/OrderList';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 export default function Orders() {
 
@@ -31,34 +25,46 @@ export default function Orders() {
   });
 
   const [
+    fetchCustomerOrders, 
     orders, 
-    ordersFetchStatus, 
+    ordersLoading, 
+    ordersLoaded, 
+    ordersError,
     ordersPage, 
     ordersNumberOfPages, 
-    refetch,
-    refresh
+    setCustomerOrdersError, 
+    refreshCustomerOrders
   ] = useCustomerOrderList(customer.id, customerToken);
+
+  const fetch = useCallback(
+    function() {
+      if (!window.navigator.onLine && ordersError === null)
+        setCustomerOrdersError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+      else if (window.navigator.onLine && !ordersLoading) 
+        fetchCustomerOrders();
+    },
+    [ordersError, ordersLoading, fetchCustomerOrders, setCustomerOrdersError]
+  );
+
+  useEffect(
+    function() { if (!ordersLoaded) fetch(); },
+    [ordersLoaded, fetch]
+  );
   
   return (
     <section>
       <div className="container-x">
 
-        <ScrollList
-          data={orders}
-          nextPage={refetch}
-          refreshPage={refresh}
-          hasMore={useHasMoreToFetchViaScroll(ordersPage, ordersNumberOfPages, ordersFetchStatus)}
-          className="list-2-x"
-          renderDataItem={(item)=> (
-            <OrderItem key={`order-${item.id}`} order={item} />
-          )}
-          footer={useRenderListFooter(
-            ordersFetchStatus,
-            ()=> <li key="orders-footer" className="list-2-x-col-span"> <Loading /> </li>, 
-            ()=> <li key="orders-footer" className="list-2-x-col-span"> <Reload action={refetch} /> </li>,
-            ()=> <li key="orders-footer" className="list-2-x-col-span"> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>,
-            ()=> <li key="orders-footer" className="list-2-x-col-span"> <FetchMoreButton action={refetch} /> </li>
-          )}
+        <OrderList 
+          orders={orders}
+          ordersPage={ordersPage}
+          ordersError={ordersError}
+          ordersLoaded={ordersLoaded}
+          ordersLoading={ordersLoading}
+          ordersNumberOfPages={ordersNumberOfPages}
+          getNextPage={fetch}
+          retryFetch={()=> setCustomerOrdersError(null)}
+          refreshList={refreshCustomerOrders}
           />
 
       </div>

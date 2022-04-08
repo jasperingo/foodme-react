@@ -1,16 +1,10 @@
 
-import React from 'react';
-import { cartIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import Loading from '../../components/Loading';
-import Reload from '../../components/Reload';
-import SavedCartItem from '../../components/list_item/SavedCartItem';
-import { useSavedCartList } from '../../hooks/saved_cart/savedCartListHook';
+import React, { useCallback, useEffect } from 'react';
 import { useAppContext } from '../../hooks/contextHook';
-import ScrollList from '../../components/list/ScrollList';
-import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 import { useHeader } from '../../hooks/headerHook';
+import SavedCartList from '../../components/list/SavedCartList';
+import { useCustomerSavedCartList } from '../../hooks/customer/customerSavedCartListHook';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 export default function SavedCarts() {
   
@@ -31,34 +25,46 @@ export default function SavedCarts() {
   });
 
   const [
+    fetchCustomerSavedCarts, 
     savedCarts, 
-    savedCartsFetchStatus, 
+    savedCartsLoading, 
+    savedCartsLoaded, 
+    savedCartsError,
     savedCartsPage, 
     savedCartsNumberOfPages, 
-    refetch, 
-    refresh
-  ] = useSavedCartList(customer.id, customerToken);
+    setCustomerSavedCartsError, 
+    refreshCustomerSavedCarts
+  ] = useCustomerSavedCartList(customer.id, customerToken);
+
+  const fetch = useCallback(
+    function() {
+      if (!window.navigator.onLine && savedCartsError === null)
+        setCustomerSavedCartsError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+      else if (window.navigator.onLine && !savedCartsLoading) 
+        fetchCustomerSavedCarts();
+    },
+    [savedCartsError, savedCartsLoading, fetchCustomerSavedCarts, setCustomerSavedCartsError]
+  );
+
+  useEffect(
+    function() { if (!savedCartsLoaded) fetch(); },
+    [savedCartsLoaded, fetch]
+  );
 
   return (
     <section>
       <div className="container-x">
         
-        <ScrollList
-          data={savedCarts}
-          nextPage={refetch}
-          refreshPage={refresh}
-          hasMore={useHasMoreToFetchViaScroll(savedCartsPage, savedCartsNumberOfPages, savedCartsFetchStatus)}
-          className="list-2-x"
-          renderDataItem={(item)=> (
-            <SavedCartItem key={`saved-cart-${item.id}`} cart={item} />
-          )}
-          footer={useRenderListFooter(
-            savedCartsFetchStatus,
-            ()=> <li key="saved-cart-footer"> <Loading /> </li>, 
-            ()=> <li key="saved-cart-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="saved-cart-footer" className="col-span-2"> <EmptyList text="_empty.No_saved_cart" icon={cartIcon} /> </li>,
-            ()=> <li key="saved-cart-footer"> <FetchMoreButton action={refetch} /> </li>
-          )}
+        <SavedCartList 
+          savedCarts={savedCarts}
+          savedCartsError={savedCartsError}
+          savedCartsPage={savedCartsPage}
+          savedCartsLoaded={savedCartsLoaded}
+          savedCartsLoading={savedCartsLoading}
+          savedCartsNumberOfPages={savedCartsNumberOfPages}
+          getNextPage={fetch}
+          retryFetch={()=> setCustomerSavedCartsError(null)}
+          refreshList={refreshCustomerSavedCarts}
           />
 
       </div>

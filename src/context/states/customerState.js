@@ -21,17 +21,28 @@ const customerState = {
   orders: {
     orders: [],
     ordersPage: 1,
-    ordersLoading: true,
-    ordersNumberOfPages: 0,
-    ordersFetchStatus: FETCH_STATUSES.LOADING,
+    ordersError: null,
+    ordersLoaded: false,
+    ordersLoading: false,
+    ordersNumberOfPages: 0
   },
 
   products: {
     products: [],
     productsPage: 1,
-    productsLoading: true,
-    productsNumberOfPages: 0,
-    productsFetchStatus: FETCH_STATUSES.LOADING
+    productsError: null,
+    productsLoaded: false,
+    productsLoading: false,
+    productsNumberOfPages: 0
+  },
+
+  savedCarts: {
+    savedCarts: [],
+    savedCartsPage: 1,
+    savedCartsError: null,
+    savedCartsLoaded: false,
+    savedCartsLoading: false,
+    savedCartsNumberOfPages: 0
   },
 
   addresses: {
@@ -44,9 +55,10 @@ const customerState = {
   transactions: {
     transactions: [],
     transactionsPage: 1,
-    transactionsLoading: true,
-    transactionsNumberOfPages: 0,
-    transactionsFetchStatus: FETCH_STATUSES.LOADING
+    transactionsError: null,
+    transactionsLoaded: false,
+    transactionsLoading: false,
+    transactionsNumberOfPages: 0
   },
 };
 

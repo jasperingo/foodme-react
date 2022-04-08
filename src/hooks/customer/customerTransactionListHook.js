@@ -1,10 +1,9 @@
-import { useCallback, useEffect } from "react";
-import { getTransactionsListFetchStatusAction, TRANSACTION } from "../../context/actions/transactionActions";
+import { useCallback, useMemo } from "react";
+import { TRANSACTION } from "../../context/actions/transactionActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useCustomerTransactionList(userId, userToken) {
 
@@ -15,81 +14,72 @@ export function useCustomerTransactionList(userId, userToken) {
         transactions: {
           transactions,
           transactionsPage,
+          transactionsError,
+          transactionsLoaded,
           transactionsLoading,
-          transactionsNumberOfPages,
-          transactionsFetchStatus
+          transactionsNumberOfPages
         } 
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
+  function setCustomerTransactionsError(error) {
+    dispatch({ 
+      type: TRANSACTION.LIST_ERROR_CHANGED, 
+      payload: { error } 
+    });
+  }
 
-  const refetch = useCallback(
-    ()=> {
-      if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
-        dispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [dispatch, transactionsFetchStatus]
-  );
+  function refreshCustomerTransactions() {
+    dispatch({ type: TRANSACTION.LIST_UNFETCHED });
+  }
 
-  const refresh = useCallback(
-    ()=> {
-      dispatch({ type: TRANSACTION.LIST_UNFETCHED });
-    },
-    [dispatch]
-  );
+  const fetchCustomerTransactions = useCallback(
+    async function() {
 
-  useEffect(
-    ()=> {
-      if (transactionsLoading && transactionsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      dispatch({ type: TRANSACTION.LIST_FETCHING });
 
-        dispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
-
-      } else if (transactionsLoading && transactionsFetchStatus === FETCH_STATUSES.LOADING) {
-
-        dispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      try {
         
-        const api = new CustomerRepository(userToken);
-        api.getTransactionsList(userId, transactionsPage)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            dispatch({
-              type: TRANSACTION.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  transactionsPage, 
-                  res.body.pagination.number_of_pages, 
-                  transactions.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          dispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        const res = await api.getTransactionsList(userId, transactionsPage);
+
+        if (res.status === 200) {
+          dispatch({
+            type: TRANSACTION.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
+        } else if (res.status === 401) {
+          throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+        
+      } catch(error) {
+        dispatch({
+          type: TRANSACTION.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [
-      userId, 
-      userToken, 
-      transactions.length, 
-      transactionsPage, 
-      transactionsLoading, 
-      transactionsFetchStatus, 
-      dispatch, 
-      listStatusUpdater
-    ]
+    [userId, transactionsPage, api, dispatch]
   );
 
-
-  return [transactions, transactionsFetchStatus, transactionsPage, transactionsNumberOfPages, refetch, refresh];
+  return [
+    fetchCustomerTransactions, 
+    transactions, 
+    transactionsLoading, 
+    transactionsLoaded, 
+    transactionsError,
+    transactionsPage, 
+    transactionsNumberOfPages, 
+    setCustomerTransactionsError, 
+    refreshCustomerTransactions
+  ];
 }

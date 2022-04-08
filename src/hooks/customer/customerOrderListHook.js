@@ -1,10 +1,9 @@
-import { useCallback, useEffect } from "react";
-import { getOrdersListFetchStatusAction, ORDER } from "../../context/actions/orderActions";
+import { useCallback, useMemo } from "react";
+import { ORDER } from "../../context/actions/orderActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useCustomerOrderList(userId, userToken) {
 
@@ -15,71 +14,72 @@ export function useCustomerOrderList(userId, userToken) {
         orders: {
           orders,
           ordersPage,
+          ordersError,
+          ordersLoaded,
           ordersLoading,
-          ordersNumberOfPages,
-          ordersFetchStatus
+          ordersNumberOfPages
         } 
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-        dispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [dispatch, ordersFetchStatus]
-  );
+  function setCustomerOrdersError(error) {
+    dispatch({ 
+      type: ORDER.LIST_ERROR_CHANGED, 
+      payload: { error } 
+    });
+  }
 
-  const refresh = useCallback(
-    ()=> {
-      dispatch({ type: ORDER.LIST_UNFETCHED });
-    },
-    [dispatch]
-  );
+  function refreshCustomerOrders() {
+    dispatch({ type: ORDER.LIST_UNFETCHED });
+  }
 
-  useEffect(
-    ()=> {
-      if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchCustomerOrders = useCallback(
+    async function() {
 
-        dispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      dispatch({ type: ORDER.LIST_FETCHING });
 
-      } else if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING) {
+      try {
         
-        dispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+        const res = await api.getOrdersList(userId, ordersPage);
 
-        const api = new CustomerRepository(userToken);
-        api.getOrdersList(userId, ordersPage)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            dispatch({
-              type: ORDER.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  ordersPage, 
-                  res.body.pagination.number_of_pages, 
-                  orders.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          dispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        if (res.status === 200) {
+          dispatch({
+            type: ORDER.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
+        } else if (res.status === 401) {
+          throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+        
+      } catch(error) {
+        dispatch({
+          type: ORDER.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [userId, userToken, orders.length, ordersPage, ordersLoading, ordersFetchStatus, dispatch, listStatusUpdater]
+    [userId, ordersPage, api, dispatch]
   );
 
-
-  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch, refresh];
+  return [
+    fetchCustomerOrders, 
+    orders, 
+    ordersLoading, 
+    ordersLoaded, 
+    ordersError,
+    ordersPage, 
+    ordersNumberOfPages, 
+    setCustomerOrdersError, 
+    refreshCustomerOrders
+  ];
 }

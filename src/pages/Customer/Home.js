@@ -83,44 +83,44 @@ function Stores() {
     <div className="container-x py-2">
       <h3 className="font-bold my-2">{ t('_store.Recommended_stores') }</h3>
       <SingleList
-          data={stores}
-          className="list-x"
-          renderDataItem={(item)=> (
-            <li key={`store-${item.id}`}> <StoreItem store={item} /> </li>
-          )}
-          footer={listFooter([
-            {
-              canRender: storesLoading,
-              render() { 
-                return ( 
-                  <li key="stores-footer" className="list-x-col-span"> 
-                    <Loading /> 
-                  </li> 
-                ); 
-              },
-            }, 
-            {
-              canRender: storesError !== null,
-              render() { 
-                return (
-                  <li key="stores-footer" className="list-x-col-span"> 
-                    <Reload action={retryFetch} /> 
-                  </li> 
-                );
-              },
+        data={stores}
+        className="list-x"
+        renderDataItem={(item)=> (
+          <li key={`store-${item.id}`}> <StoreItem store={item} /> </li>
+        )}
+        footer={listFooter([
+          {
+            canRender: storesLoading,
+            render() { 
+              return ( 
+                <li key="stores-footer" className="list-x-col-span"> 
+                  <Loading /> 
+                </li> 
+              ); 
             },
-            {
-              canRender: storesLoaded && stores.length === 0,
-              render() { 
-                return (
-                  <li key="stores-footer" className="list-x-col-span"> 
-                    <EmptyList text="_empty.No_store" icon={storeIcon} /> 
-                  </li> 
-                );
-              }
+          }, 
+          {
+            canRender: storesError !== null,
+            render() { 
+              return (
+                <li key="stores-footer" className="list-x-col-span"> 
+                  <Reload action={retryFetch} /> 
+                </li> 
+              );
+            },
+          },
+          {
+            canRender: storesLoaded && stores.length === 0,
+            render() { 
+              return (
+                <li key="stores-footer" className="list-x-col-span"> 
+                  <EmptyList text="_empty.No_store" icon={storeIcon} /> 
+                </li> 
+              );
             }
-          ])}
-          />
+          }
+        ])}
+        />
     </div>
   );
 }

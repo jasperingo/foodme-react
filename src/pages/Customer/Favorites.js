@@ -1,18 +1,10 @@
 
-import React from 'react';
-import { favoritedIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import Forbidden from '../../components/Forbidden';
-import ScrollList from '../../components/list/ScrollList';
-import ProductItem from '../../components/list_item/ProductItem';
-import Loading from '../../components/Loading';
-import NotFound from '../../components/NotFound';
-import Reload from '../../components/Reload';
+import React, { useEffect, useCallback } from 'react';
+import ProductList from '../../components/list/ProductList';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useAppContext } from '../../hooks/contextHook';
-import { useFavoriteList } from '../../hooks/favorite/favoriteListHook';
+import { useCustomerFavoriteList } from '../../hooks/customer/customerFavoriteListHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 
 
 export default function Favorites() {
@@ -34,36 +26,46 @@ export default function Favorites() {
   });
 
   const [
+    fetchCustomerProducts, 
     products, 
-    productsFetchStatus, 
+    productsLoading, 
+    productsLoaded, 
+    productsError,
     productsPage, 
     productsNumberOfPages, 
-    refetch,
-    refresh
-  ] = useFavoriteList(customer.id, customerToken);
+    setCustomerProductsError, 
+    refreshCustomerProducts
+  ] = useCustomerFavoriteList(customer.id, customerToken);
+
+  const fetch = useCallback(
+    function() {
+      if (!window.navigator.onLine && productsError === null)
+        setCustomerProductsError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+      else if (window.navigator.onLine && !productsLoading) 
+        fetchCustomerProducts();
+    },
+    [productsError, productsLoading, fetchCustomerProducts, setCustomerProductsError]
+  );
+
+  useEffect(
+    function() { if (!productsLoaded) fetch(); },
+    [productsLoaded, fetch]
+  );
 
   return (
     <section>
       <div className="container-x">
         
-        <ScrollList
-          data={products}
-          nextPage={refetch}
-          refreshPage={refresh}
-          hasMore={useHasMoreToFetchViaScroll(productsPage, productsNumberOfPages, productsFetchStatus)}
-          className="list-x"
-          renderDataItem={(item)=> (
-            <li key={`favorite-${item.id}`}> <ProductItem product={item.product} /> </li>
-          )}
-          footer={useRenderListFooter(
-            productsFetchStatus,
-            ()=> <li key="favorite-footer"> <Loading /> </li>, 
-            ()=> <li key="favorite-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="favorite-footer"> <EmptyList text="_empty.No_favorite" icon={favoritedIcon} /> </li>,
-            ()=> <li key="favorite-footer"> <FetchMoreButton action={refetch} /> </li>,
-            ()=> <li key="favorite-footer"> <NotFound /> </li>,
-            ()=> <li key="favorite-footer"> <Forbidden /> </li>,
-          )}
+        <ProductList
+          products={products.map(i=> i.product)}
+          productsPage={productsPage}
+          productsError={productsError}
+          productsLoaded={productsLoaded}
+          productsLoading={productsLoading}
+          productsNumberOfPages={productsNumberOfPages}
+          getNextPage={fetch}
+          retryFetch={()=> setCustomerProductsError(null)}
+          refreshList={refreshCustomerProducts}
           />
 
       </div>
