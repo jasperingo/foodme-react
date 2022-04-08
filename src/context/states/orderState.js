@@ -1,4 +1,3 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const orderState = {
   
@@ -6,13 +5,13 @@ const orderState = {
   ordersPage: 1,
   ordersStatus: null,
   ordersLoading: true,
+  ordersError: null,
   ordersNumberOfPages: 0,
-  ordersFetchStatus: FETCH_STATUSES.LOADING,
   
   order: null,
   orderID: null,
-  orderLoading: true,
-  orderFetchStatus: FETCH_STATUSES.LOADING,
+  orderError: null,
+  orderLoading: false
   
 };
 

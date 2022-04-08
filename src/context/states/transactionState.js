@@ -8,15 +8,15 @@ const transactionState = {
 
   transaction: null,
   transactionID: null,
-  transactionLoading: true,
-  transactionFetchStatus: FETCH_STATUSES.LOADING,
+  transactionError: null,
+  transactionLoading: false,
 
   transactions: [],
   transactionsPage: 1,
   transactionsType: null,
+  transactionsError: null,
   transactionsLoading: true,
-  transactionsNumberOfPages: 0,
-  transactionsFetchStatus: FETCH_STATUSES.LOADING,
+  transactionsNumberOfPages: 0
 
 };
 

@@ -5,7 +5,6 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
 import { useAppContext } from "../contextHook";
 
-
 export function useCustomerAddressList(userId, userToken) {
 
   const { 
@@ -24,26 +23,12 @@ export function useCustomerAddressList(userId, userToken) {
 
   const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
-  const refresh = useCallback(
-    function() {
-      dispatch({ type: ADDRESS.LIST_UNFETCHED });
-    },
-    [dispatch]
-  );
+  function refreshCustomerAddresses() {
+    dispatch({ type: ADDRESS.LIST_UNFETCHED });
+  }
 
-  const retryFetch = useCallback(
-    function() { 
-      dispatch({ 
-        type: ADDRESS.LIST_ERROR_CHANGED, 
-        payload: { error: null } 
-      });
-    },
-    [dispatch]
-  );
-
-  const fetch = useCallback(
+  const fetchCustomerAddresses = useCallback(
     async function() {
-      if (addressesLoading || addressesError !== null) return;
 
       if (!window.navigator.onLine) {
         dispatch({
@@ -80,17 +65,16 @@ export function useCustomerAddressList(userId, userToken) {
       }
 
     },
-    [userId, api, addressesLoading, addressesError, dispatch]
+    [userId, api, dispatch]
   );
 
   return [
-    fetch, 
+    fetchCustomerAddresses, 
     addresses, 
     addressesLoading, 
     addressesError, 
     addressesLoaded, 
-    retryFetch,
-    refresh
+    refreshCustomerAddresses
   ];
 }
 

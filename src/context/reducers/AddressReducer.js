@@ -5,70 +5,62 @@ export default function AddressReducer (state, action) {
   
   switch (action.type) { 
 
-    case ADDRESS.LOCATIONS_LIST_FETCH_STATUS_CHANGED: 
+    case ADDRESS.LOCATIONS_LIST_FETCHING: 
       return {
         ...state,
-        locationsFetchStatus: action.payload
+        locationsError: null,
+        locationsLoading: true
+      };
+
+    case ADDRESS.LOCATIONS_LIST_ERROR_CHANGED: 
+      return {
+        ...state,
+        locationsLoading: false,
+        locationsError: action.payload.error,
       };
 
     case ADDRESS.LOCATIONS_LIST_FETCHED:
       return {
         ...state,
-        locations: action.payload.list, 
-        locationsFetchStatus: action.payload.fetchStatus,
+        locationsLoaded: true,
+        locationsLoading: false,
+        locations: action.payload.list
       };
 
-    case ADDRESS.LIST_UNFETCHED:
-      return {
-        ...state,
-        addresses: addressState.addresses,
-        addressesLoading: addressState.addressesLoading,
-        addressesFetchStatus: addressState.addressesFetchStatus,
-      };
-    
-    case ADDRESS.LIST_FETCH_STATUS_CHANGED: 
-      return {
-        ...state,
-        addressesLoading: action.payload.loading,
-        addressesFetchStatus: action.payload.fetchStatus
-      };
-
-    case ADDRESS.LIST_FETCHED:
-      return {
-        ...state,
-        addressesLoading: false, 
-        addresses: action.payload.list, 
-        addressesFetchStatus: action.payload.fetchStatus,
-      };
 
     case ADDRESS.UNFETCHED:
       return {
         ...state,
-        addressLoading: true,
         address: addressState.address,
         addressID: addressState.addressID,
-        addressFetchStatus: addressState.addressFetchStatus,
+        addressError: addressState.addressError,
+        addressLoading: addressState.addressLoading
       };
 
-    case ADDRESS.FETCH_STATUS_CHANGED: 
+    case ADDRESS.FETCHING: 
       return {
         ...state,
+        addressError: null,
+        addressLoading: true
+      };
+
+    case ADDRESS.ERROR_CHANGED: 
+      return {
+        ...state,
+        addressLoading: false,
         addressID: action.payload.id,
-        addressLoading: action.payload.loading,
-        addressFetchStatus: action.payload.fetchStatus
+        addressError: action.payload.error,
       };
 
     case ADDRESS.FETCHED:
       return {
         ...state,
         addressLoading: false,
-        address: action.payload.address, 
-        addressID: action.payload.address.id, 
-        addressFetchStatus: action.payload.fetchStatus
+        addressID: action.payload.id,
+        address: action.payload.address
       };
     
     default:
       return state;
   }
 }
-

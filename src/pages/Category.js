@@ -1,6 +1,7 @@
 
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { categoryIcon, editIcon } from '../assets/icons';
 import AddButton from '../components/AddButton';
 import CategoryItem from '../components/list_item/CategoryItem';
@@ -9,10 +10,9 @@ import NotFound from '../components/NotFound';
 import ProfileDetails from '../components/profile/ProfileDetails';
 import ProfileHeader from '../components/profile/ProfileHeader';
 import Reload from '../components/Reload';
+import NetworkErrorCodes from '../errors/NetworkErrorCodes';
 import { useCategoryFetch } from '../hooks/category/categoryFetchHook';
 import { useHeader } from '../hooks/headerHook';
-import { useRenderOnDataFetched } from '../hooks/viewHook';
-
 
 function Profile({ category, isAdmin }) {
 
@@ -72,13 +72,17 @@ function Profile({ category, isAdmin }) {
   );
 }
 
-
 export default function Category({ isAdmin }) {
 
+  const { ID } = useParams();
+
   const [
-    category, 
-    categoryFetchStatus, 
-    refetch
+    fetchCategory,
+    category,
+    categoryLoading,
+    categoryError,
+    categoryID,
+    unfetchCategory
   ] = useCategoryFetch();
 
   useHeader({ 
@@ -86,19 +90,36 @@ export default function Category({ isAdmin }) {
     headerTitle: '_category.Category'
   });
 
+  const fetch = useCallback(
+    function(ID) {
+      if (!categoryLoading) fetchCategory(ID);
+    },
+    [categoryLoading, fetchCategory]
+  );
+
+  useEffect(
+    function() {
+      if ((category !== null || categoryError !== null) && categoryID !== ID) 
+        unfetchCategory();
+      else if (category === null && categoryError === null)
+        fetch(ID);
+    },
+    [ID, category, categoryError, categoryID, fetch, unfetchCategory]
+  );
+
   return (
     <section>
       <div className="container-x">
 
-        {
-          useRenderOnDataFetched(
-            categoryFetchStatus,
-            ()=> <Profile category={category} isAdmin={isAdmin} />,
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-            ()=> <NotFound />
-          )
-        }
+        { category !== null && <Profile category={category} isAdmin={isAdmin} /> }
+
+        { categoryLoading && <Loading /> }
+
+        { categoryError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+        
+        { categoryError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetch(ID)} /> }
+
+        { categoryError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetch(ID)} /> }
 
       </div>
     </section>

@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from "react";
-import { ADDRESS, getLocationsListFetchStatusAction } from "../../context/actions/addressActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { ADDRESS } from "../../context/actions/addressActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import LocationRepository from "../../repositories/LocationRepository";
 import { useAppContext } from "../contextHook";
 
@@ -11,48 +11,55 @@ export function useLocationList() {
       addressDispatch,
       address: {
         locations,
-        locationsFetchStatus
+        locationsLoading,
+        locationsLoaded,
+        locationsError,
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (locationsFetchStatus !== FETCH_STATUSES.LOADING && locationsFetchStatus !== FETCH_STATUSES.DONE)
-        addressDispatch(getLocationsListFetchStatusAction(FETCH_STATUSES.LOADING));
-    },
-    [locationsFetchStatus, addressDispatch]
-  );
+  const api = useMemo(function() { return new LocationRepository(); }, []);
 
-  useEffect(
-    ()=> {
-      if (locationsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-        addressDispatch(getLocationsListFetchStatusAction(FETCH_STATUSES.ERROR));
-      } else if (locationsFetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new LocationRepository();
-        api.getList()
-        .then(res=> {
+  const fetchLocations = useCallback(
+    async function() {
+
+      if (!window.navigator.onLine) {
+        addressDispatch({
+          type: ADDRESS.LOCATIONS_LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
+
+      addressDispatch({ type: ADDRESS.LOCATIONS_LIST_FETCHING });
+
+      try {
+
+        const res = await api.getList();
           
-          if (res.status === 200) {
-            addressDispatch({
-              type: ADDRESS.LOCATIONS_LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          addressDispatch(getLocationsListFetchStatusAction(FETCH_STATUSES.ERROR));
+        if (res.status === 200) {
+          addressDispatch({
+            type: ADDRESS.LOCATIONS_LIST_FETCHED, 
+            payload: { list: res.body.data }
+          });
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        addressDispatch({
+          type: ADDRESS.LOCATIONS_LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [locationsFetchStatus, addressDispatch]
-  )
+    [api, addressDispatch]
+  );
 
-  return [locations, locationsFetchStatus, refetch];
+  return [
+    fetchLocations,
+    locations,
+    locationsLoading,
+    locationsError,
+    locationsLoaded
+  ];
 }
-

@@ -6,7 +6,6 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
 import { useAppContext } from "../contextHook";
 
-
 export function useCustomerFavoriteList(userId, userToken) {
 
   const { 

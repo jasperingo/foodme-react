@@ -155,7 +155,7 @@ export function useUpdateListFetchStatus() {
 
 export function useLoadOnListScroll() {
   return function(page, numberOfPages, error, scrollCount=5) {
-    return page % scrollCount !== 0 && page <= numberOfPages && error !== null;
+    return page % scrollCount !== 0 && page <= numberOfPages && error === null;
   }
 }
 

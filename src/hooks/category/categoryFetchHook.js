@@ -1,14 +1,11 @@
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { CATEGORY, getCategoryFetchStatusAction } from "../../context/actions/categoryActions";
+import { useCallback, useMemo } from "react";
+import { CATEGORY } from "../../context/actions/categoryActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CategoryRepository from "../../repositories/CategoryRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
-
 export function useCategoryFetch() {
-
-  const { ID } = useParams();
 
   const { 
     category: { 
@@ -18,72 +15,88 @@ export function useCategoryFetch() {
         products,
         category,
         categoryID,
-        categoryFetchStatus,
+        categoryLoading,
+        categoryError,
       } 
     },
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (categoryFetchStatus !== FETCH_STATUSES.LOADING && categoryFetchStatus !== FETCH_STATUSES.DONE)
-        categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
-    },
-    [ID, categoryFetchStatus, categoryDispatch]
+  const api = useMemo(function() { return new CategoryRepository(); }, []);
+
+  const unfetchCategory = useCallback(
+    function() { categoryDispatch({ type: CATEGORY.UNFETCHED }); },
+    [categoryDispatch]
   );
   
-  useEffect(
-    ()=> {
+  const fetchCategory = useCallback(
+    async function(ID) {
 
-      if (categoryID !== null && categoryID !== Number(ID)) {
+      const theCategory = products.concat(stores).find(c=> c.id === Number(ID));
 
-        categoryDispatch({ type: CATEGORY.UNFETCHED });
+      if (theCategory !== undefined) {
 
-      } else if (categoryFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+        categoryDispatch({
+          type: CATEGORY.FETCHED, 
+          payload: {
+            category: theCategory, 
+            id: String(theCategory.id)
+          }
+        });
+        
+        return;
+      }
 
-        categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
+      if (!window.navigator.onLine) {
+        categoryDispatch({
+          type: CATEGORY.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: NetworkErrorCodes.NO_NETWORK_CONNECTION
+          }
+        });
+        return;
+      }
 
-      } else if (categoryFetchStatus === FETCH_STATUSES.LOADING) {
+      categoryDispatch({ type: CATEGORY.FETCHING });
 
-        const theCategory = products.concat(stores).find(c=> c.id === Number(ID));
-
-        if (theCategory !== undefined) {
-
+      try {
+        const res = await api.get(ID);
+            
+        if (res.status === 200) {
           categoryDispatch({
             type: CATEGORY.FETCHED, 
             payload: {
-              category: theCategory, 
-              fetchStatus: FETCH_STATUSES.DONE 
+              category: res.body.data, 
+              id: String(res.body.data.id)
             }
           });
-
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
         } else {
-
-          const api = new CategoryRepository();
-          api.get(ID)
-          .then(res=> {
-            
-            if (res.status === 200) {
-              categoryDispatch({
-                type: CATEGORY.FETCHED, 
-                payload: {
-                  category: res.body.data, 
-                  fetchStatus: FETCH_STATUSES.DONE 
-                }
-              });
-            } else if (res.status === 404) {
-              categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
-            } else {
-              throw new Error();
-            }
-          })
-          .catch(()=> {
-            categoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
-          });
+          throw new Error();
         }
+
+      } catch(error) {
+
+        categoryDispatch({
+          type: CATEGORY.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
+          }
+        });
       }
-    }
+    },
+    [api, products, stores, categoryDispatch]
   );
 
-  return [category, categoryFetchStatus, refetch];
+  return [
+    fetchCategory,
+    category,
+    categoryLoading,
+    categoryError,
+    categoryID,
+    unfetchCategory
+  ];
 }
 

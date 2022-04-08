@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import AddButton from '../../components/AddButton';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
@@ -25,20 +25,27 @@ export default function Addresses() {
   });
 
   const [
-    fetch, 
+    fetchCustomerAddresses, 
     addresses, 
     addressesLoading, 
     addressesError, 
     addressesLoaded, 
-    retryFetch,
-    refresh
+    refreshCustomerAddresses
   ] = useCustomerAddressList(customer.id, customerToken);
+
+  const addressesFetch = useCallback(
+    function() {
+      if (!addressesLoading) 
+        fetchCustomerAddresses();
+    },
+    [addressesLoading, fetchCustomerAddresses]
+  );
 
   useEffect(
     function() {
-      if (!addressesLoaded) fetch();
+      if (!addressesLoaded) addressesFetch();
     }, 
-    [addressesLoaded, fetch]
+    [addressesLoaded, addressesFetch]
   );
 
   return (
@@ -53,8 +60,8 @@ export default function Addresses() {
         addressesLoading={addressesLoading}
         addressesError={addressesError}
         addressesLoaded={addressesLoaded}
-        refetch={retryFetch}
-        refresh={refresh}
+        fetchAddresses={addressesFetch}
+        refreshList={refreshCustomerAddresses}
         canEdit={true}
         />
 

@@ -10,7 +10,7 @@ import Reload from '../Reload';
 import AddressButtonItem from '../list_item/AddressButtonItem';
 
 export default function AddressList(
-  { addresses, addressesLoading, addressesError, addressesLoaded, retryFetch, refresh, canEdit, renderButtons, onButtonClicked }
+  { addresses, addressesLoading, addressesError, addressesLoaded, fetchAddresses, refreshList, canEdit, renderButtons, onButtonClicked }
 ) {
 
   const listFooter = useListFooter();
@@ -21,7 +21,7 @@ export default function AddressList(
       <SingleList
         data={addresses}
         className="list-2-x"
-        refreshPage={refresh}
+        refreshPage={refreshList}
         renderDataItem={(item)=> (
           renderButtons ? 
           <AddressButtonItem key={`addresses-${item.id}`} address={item} onClick={onButtonClicked} />
@@ -44,7 +44,7 @@ export default function AddressList(
             render() { 
               return (
                 <li key="address-footer" className="list-2-x-col-span"> 
-                  <Reload action={retryFetch} /> 
+                  <Reload action={fetchAddresses} /> 
                 </li> 
               );
             },

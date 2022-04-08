@@ -1,61 +1,67 @@
 
-import { useCallback, useEffect } from "react";
-import { CATEGORY, getProductCategoriesListFetchStatusAction } from "../../context/actions/categoryActions";
+import { useCallback, useMemo } from "react";
+import { CATEGORY } from "../../context/actions/categoryActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CategoryRepository from "../../repositories/CategoryRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
-
-export function useProductCategoryList(start) {
+export function useProductCategoryList() {
 
   const { 
     category: { 
       categoryDispatch,
       category: {
         products,
-        productsFetchStatus
+        productsError,
+        productsLoaded,
+        productsLoading
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-        categoryDispatch(getProductCategoriesListFetchStatusAction(FETCH_STATUSES.LOADING));
-    },
-    [categoryDispatch, productsFetchStatus]
-  );
+  const api = useMemo(function() { return new CategoryRepository(); }, []);
 
-  useEffect(
-    ()=> {
-      if (start === true && productsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-        categoryDispatch(getProductCategoriesListFetchStatusAction(FETCH_STATUSES.ERROR));
-      } else if (start === true && productsFetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new CategoryRepository();
-        api.getListByProduct()
-        .then(res=> {
-          
-          if (res.status === 200) {
-            categoryDispatch({
-              type: CATEGORY.PRODUCTS_LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          categoryDispatch(getProductCategoriesListFetchStatusAction(FETCH_STATUSES.ERROR));
+  function setProductCategoriesError(error) {
+    categoryDispatch({ 
+      type: CATEGORY.PRODUCTS_LIST_ERROR_CHANGED, 
+      payload: { error } 
+    });
+  }
+
+  const fetchProductCategories = useCallback(
+    async function() {
+
+      categoryDispatch({ type: CATEGORY.PRODUCTS_LIST_FETCHING });
+
+      try {
+        
+        const res = await api.getListByProduct();
+
+        if (res.status === 200) {
+          categoryDispatch({
+            type: CATEGORY.PRODUCTS_LIST_FETCHED, 
+            payload: { list: res.body.data }
+          });
+        } else {
+          throw new Error();
+        }
+        
+      } catch(error) {
+        categoryDispatch({
+          type: CATEGORY.PRODUCTS_LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [start, productsFetchStatus, categoryDispatch]
+    [api, categoryDispatch]
   );
-
-  return [products, productsFetchStatus, refetch];
+  
+  return [
+    fetchProductCategories, 
+    products,
+    productsLoading,
+    productsLoaded,
+    productsError,
+    setProductCategoriesError
+  ];
 }
-
-

@@ -1,14 +1,11 @@
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getTransactionFetchStatusAction, TRANSACTION } from "../../context/actions/transactionActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { TRANSACTION } from "../../context/actions/transactionActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import TransactionRepository from "../../repositories/TransactionRepository";
 import { useAppContext } from "../contextHook";
 
-
 export function useTransactionFetch(userToken) {
-
-  const { ID } = useParams();
 
   const { 
     transaction: { 
@@ -16,62 +13,73 @@ export function useTransactionFetch(userToken) {
       transaction: {
         transaction,
         transactionID,
-        transactionLoading,
-        transactionFetchStatus
+        transactionError,
+        transactionLoading
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (transactionFetchStatus !== FETCH_STATUSES.LOADING && transactionFetchStatus !== FETCH_STATUSES.DONE)
-        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
-    },
-    [ID, transactionFetchStatus, transactionDispatch]
+  const api = useMemo(function() { return new TransactionRepository(userToken); }, [userToken]);
+
+  const unfetchTransaction = useCallback(
+    function() { transactionDispatch({ type: TRANSACTION.UNFETCHED }); },
+    [transactionDispatch]
   );
   
-  useEffect(
-    ()=> {
+  const fetchTransaction = useCallback(
+    async function(ID) {
 
-      if (transactionID !== null && transactionID !== Number(ID)) {
-        
-        transactionDispatch({ type: TRANSACTION.UNFETCHED });
-
-      } else if (transactionLoading && transactionFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-
-        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
-
-      } else if (transactionLoading && transactionFetchStatus === FETCH_STATUSES.LOADING) {
-
-        transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
-
-        const api = new TransactionRepository(userToken);
-        api.get(ID)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            transactionDispatch({
-              type: TRANSACTION.FETCHED, 
-              payload: {
-                transaction: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else if (res.status === 404) {
-            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
-          } else if (res.status === 403) {
-            transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
-          } else {
-            throw new Error();
+      if (!window.navigator.onLine) {
+        transactionDispatch({
+          type: TRANSACTION.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: NetworkErrorCodes.NO_NETWORK_CONNECTION
           }
-        })
-        .catch(()=> {
-          transactionDispatch(getTransactionFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
+        });
+        return;
+      } 
+      
+      transactionDispatch({ type: TRANSACTION.FETCHING });
+
+      try { 
+        const res = await api.get(ID);
+          
+        if (res.status === 200) {
+          transactionDispatch({
+            type: TRANSACTION.FETCHED, 
+            payload: {
+              transaction: res.body.data, 
+              id: String(res.body.data.id)
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+
+      } catch(error) {
+        transactionDispatch({
+          type: TRANSACTION.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
+          }
         });
       }
-    }
+    },
+    [api, transactionDispatch]
   );
 
-  return [transaction, transactionFetchStatus, refetch];
+  return [
+    fetchTransaction,
+    transaction,
+    transactionLoading,
+    transactionError,
+    transactionID,
+    unfetchTransaction
+  ];
 }
-

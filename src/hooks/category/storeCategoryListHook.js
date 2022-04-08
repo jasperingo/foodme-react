@@ -1,10 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { CATEGORY, getStoreCategoriesListFetchStatusAction } from "../../context/actions/categoryActions";
+import { useCallback, useMemo } from "react";
+import { CATEGORY } from "../../context/actions/categoryActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CategoryRepository from "../../repositories/CategoryRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-
 
 export function useStoreCategoryList() {
 
@@ -13,49 +13,58 @@ export function useStoreCategoryList() {
       categoryDispatch,
       category: {
         stores,
-        storesFetchStatus
+        storesError,
+        storesLoaded,
+        storesLoading
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
-        categoryDispatch(getStoreCategoriesListFetchStatusAction(FETCH_STATUSES.LOADING));
-    },
-    [categoryDispatch, storesFetchStatus]
-  );
+  const api = useMemo(function() { return new CategoryRepository(); }, []);
 
-  useEffect(
-    ()=> {
-      if (storesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-        categoryDispatch(getStoreCategoriesListFetchStatusAction(FETCH_STATUSES.ERROR));
-      } else if (storesFetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new CategoryRepository();
-        api.getListByStore()
-        .then(res=> {
-          
-          if (res.status === 200) {
-            categoryDispatch({
-              type: CATEGORY.STORES_LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          categoryDispatch(getStoreCategoriesListFetchStatusAction(FETCH_STATUSES.ERROR));
+  function setStoreCategoriesError(error) {
+    categoryDispatch({ 
+      type: CATEGORY.STORES_LIST_ERROR_CHANGED, 
+      payload: { error } 
+    });
+  }
+
+  const fetchStoreCategories = useCallback(
+    async function() {
+
+      categoryDispatch({ type: CATEGORY.STORES_LIST_FETCHING });
+
+      try {
+        
+        const res = await api.getListByStore();
+
+        if (res.status === 200) {
+          categoryDispatch({
+            type: CATEGORY.STORES_LIST_FETCHED, 
+            payload: { list: res.body.data }
+          });
+        } else {
+          throw new Error();
+        }
+        
+      } catch(error) {
+        categoryDispatch({
+          type: CATEGORY.STORES_LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [storesFetchStatus, categoryDispatch]
+    [api, categoryDispatch]
   );
-
-  return [stores, storesFetchStatus, refetch];
+  
+  return [
+    fetchStoreCategories, 
+    stores,
+    storesLoading,
+    storesLoaded,
+    storesError,
+    setStoreCategoriesError
+  ];
 }
 
 

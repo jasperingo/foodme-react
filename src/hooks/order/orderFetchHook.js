@@ -1,14 +1,11 @@
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getOrderFetchStatusAction, ORDER } from "../../context/actions/orderActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { ORDER } from "../../context/actions/orderActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import OrderRepository from "../../repositories/OrderRepository";
 import { useAppContext } from "../contextHook";
 
-
 export function useOrderFetch(userToken) {
-
-  const { ID } = useParams();
 
   const { 
     order: { 
@@ -17,61 +14,73 @@ export function useOrderFetch(userToken) {
         order,
         orderID,
         orderLoading,
-        orderFetchStatus
+        orderError
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (orderFetchStatus !== FETCH_STATUSES.LOADING && orderFetchStatus !== FETCH_STATUSES.DONE)
-        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
-    },
-    [ID, orderFetchStatus, orderDispatch]
+  const api = useMemo(function() { return new OrderRepository(userToken); }, [userToken]);
+
+  const unfetchOrder = useCallback(
+    function() { orderDispatch({ type: ORDER.UNFETCHED }); },
+    [orderDispatch]
   );
   
-  useEffect(
-    ()=> {
+  const fetchOrder = useCallback(
+    async function(ID) {
 
-      if (orderID !== null && orderID !== Number(ID)) {
-
-        orderDispatch({ type: ORDER.UNFETCHED });
-
-      } else if (orderLoading && orderFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-
-        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
-
-      } else if (orderLoading && orderFetchStatus === FETCH_STATUSES.LOADING) {
-
-        orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
-
-        const api = new OrderRepository(userToken);
-        api.get(ID)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            orderDispatch({
-              type: ORDER.FETCHED, 
-              payload: {
-                order: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else if (res.status === 404) {
-            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
-          } else if (res.status === 403) {
-            orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
-          } else {
-            throw new Error();
+      if (!window.navigator.onLine) {
+        orderDispatch({
+          type: ORDER.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: NetworkErrorCodes.NO_NETWORK_CONNECTION
           }
-        })
-        .catch(()=> {
-          orderDispatch(getOrderFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
+        });
+        return;
+      }
+
+      orderDispatch({ type: ORDER.FETCHING });
+
+      try {
+        const res = await api.get(ID);
+       
+        if (res.status === 200) {
+          orderDispatch({
+            type: ORDER.FETCHED, 
+            payload: {
+              order: res.body.data, 
+              id: String(res.body.data.id)
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+
+      } catch(error) {
+        orderDispatch({
+          type: ORDER.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
+          }
         });
       }
-    }
+    },
+    [api, orderDispatch]
   );
   
-  return [order, orderFetchStatus, refetch];
+  return [
+    fetchOrder,
+    order,
+    orderLoading,
+    orderError,
+    orderID,
+    unfetchOrder
+  ];
 }
 

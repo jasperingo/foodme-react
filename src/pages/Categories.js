@@ -1,49 +1,11 @@
 
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import { categoryIcon } from '../assets/icons';
+import React, { useCallback, useEffect } from 'react';
 import AddButton from '../components/AddButton';
-import EmptyList from '../components/EmptyList';
-import SingleList from '../components/list/SingleList';
-import CategoryItem from '../components/list_item/CategoryItem';
-import Loading from '../components/Loading';
-import Reload from '../components/Reload';
+import CategoryList from '../components/list/CategoryList';
+import NetworkErrorCodes from '../errors/NetworkErrorCodes';
 import { useProductCategoryList } from '../hooks/category/productCategoryListHook';
 import { useStoreCategoryList } from '../hooks/category/storeCategoryListHook';
 import { useHeader } from '../hooks/headerHook';
-import { useRenderListFooter } from '../hooks/viewHook';
-import { FETCH_STATUSES } from '../repositories/Fetch';
-
-
-function List({ headerText, categories, categoriesFetchStatus, refetch }) {
-
-  const { t } = useTranslation();
-
-  return (
-    <div className="py-2">
-      <h3 className="font-bold my-2">{ t(headerText) }</h3>
-      <SingleList
-        data={categories}
-        className="category-list"
-        renderDataItem={(item, i)=> (
-          <CategoryItem 
-            key={`category-${item.id}`} 
-            index={i}
-            category={item} 
-            grid={false}
-            />
-        )}
-        footer={useRenderListFooter(
-          categoriesFetchStatus,
-          ()=> <li key="category-footer" className="col-span-3"> <Loading /> </li>, 
-          ()=> <li key="category-footer" className="col-span-3"> <Reload action={refetch} /> </li>,
-          ()=> <li key="category-footer" className="col-span-3"> <EmptyList text="_empty.No_category" icon={categoryIcon} /> </li>
-        )}
-        />
-    </div>
-  );
-}
-
 
 export default function Categories({ isAdmin }) {
 
@@ -54,16 +16,50 @@ export default function Categories({ isAdmin }) {
   });
 
   const [
-    stores, 
-    storesFetchStatus, 
-    refetchStores
+    fetchStoreCategories, 
+    stores,
+    storesLoading,
+    storesLoaded,
+    storesError,
+    setStoreCategoriesError
   ] = useStoreCategoryList();
 
   const [
-    products, 
-    productsFetchStatus, 
-    refetchProducts
-  ] = useProductCategoryList(storesFetchStatus === FETCH_STATUSES.DONE);
+    fetchProductCategories, 
+    products,
+    productsLoading,
+    productsLoaded,
+    productsError,
+    setProductCategoriesError
+  ] = useProductCategoryList();
+
+  const fetchStores = useCallback(
+    function() {
+      if (!window.navigator.onLine && storesError === null)
+        setStoreCategoriesError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+      else if (window.navigator.onLine && !storesLoading) 
+        fetchStoreCategories();
+    },
+    [storesError, storesLoading, fetchStoreCategories, setStoreCategoriesError]
+  );
+
+  const fetchProducts = useCallback(
+    function() {
+      if (!window.navigator.onLine && productsError === null)
+        setProductCategoriesError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+      else if (window.navigator.onLine && !productsLoading) 
+        fetchProductCategories();
+    },
+    [productsError, productsLoading, fetchProductCategories, setProductCategoriesError]
+  );
+
+  useEffect(
+    function() { 
+      if (!storesLoaded) fetchStores(); 
+      if (!productsLoaded) fetchProducts();
+    },
+    [storesLoaded, productsLoaded, fetchStores, fetchProducts]
+  );
 
   return (
     <section>
@@ -72,20 +68,24 @@ export default function Categories({ isAdmin }) {
 
         { isAdmin && <AddButton text="_category.Add_category" href="/category/add" />}
         
-        <List 
-          headerText="_store.Store_categories"
-          categories={stores}
-          categoriesFetchStatus={storesFetchStatus}
-          refetch={refetchStores}
+        <CategoryList 
+          headerText="_store.Store_categories" 
+          categories={stores} 
+          categoriesLoading={storesLoading} 
+          categoriesLoaded={storesLoaded} 
+          categoriesError={storesError} 
+          retryFetch={()=> setStoreCategoriesError(null)}
           />
 
         {
-          storesFetchStatus === FETCH_STATUSES.DONE && 
-          <List 
-            headerText="_product.Product_categories"
-            categories={products}
-            categoriesFetchStatus={productsFetchStatus}
-            refetch={refetchProducts}
+          storesLoaded &&
+          <CategoryList 
+            headerText="_product.Product_categories" 
+            categories={products} 
+            categoriesLoading={productsLoading} 
+            categoriesLoaded={productsLoaded} 
+            categoriesError={productsError} 
+            retryFetch={()=> setProductCategoriesError(null)}
             />
         }
 

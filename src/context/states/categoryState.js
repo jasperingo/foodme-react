@@ -1,19 +1,21 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
-export const categoryState = {
+const categoryState = {
   
   category: null,
   categoryID: null,
-  categoryFetchStatus: FETCH_STATUSES.LOADING,
+  categoryError: null,
+  categoryLoading: false,
 
   stores: [],
-  storesFetchStatus: FETCH_STATUSES.LOADING,
+  storesError: null,
+  storesLoaded: false,
+  storesLoading: false,
   
   products: [],
-  productsFetchStatus: FETCH_STATUSES.LOADING
+  productsError: null,
+  productsLoaded: false,
+  productsLoading: false
   
 };
 
-
 export default categoryState;
-

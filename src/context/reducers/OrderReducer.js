@@ -43,30 +43,37 @@ export default function OrderReducer (state, action) {
         orders: [...state.orders, ...action.payload.list],
       };
 
+
     case ORDER.UNFETCHED:
       return {
         ...state,
-        orderLoading: true,
         order: orderState.order,
         orderID: orderState.orderID,
-        orderFetchStatus: orderState.orderFetchStatus
+        orderError: orderState.orderError,
+        orderLoading: orderState.orderLoading
       };
 
-    case ORDER.FETCH_STATUS_CHANGED:
+    case ORDER.FETCHING:
       return {
         ...state,
-        orderID: action.payload.id,
-        orderLoading: action.payload.loading,
-        orderFetchStatus: action.payload.fetchStatus
+        orderError: null,
+        orderLoading: true
       };
     
+    case ORDER.ERROR_CHANGED:
+      return {
+        ...state,
+        orderLoading: false,
+        orderID: action.payload.id, 
+        orderError: action.payload.error
+      };
+
     case ORDER.FETCHED:
       return {
         ...state,
         orderLoading: false,
-        order: action.payload.order, 
-        orderID: action.payload.order.id, 
-        orderFetchStatus: action.payload.fetchStatus,
+        orderID: action.payload.id,
+        order: action.payload.order 
       };
     
     case ORDER.UPDATED:

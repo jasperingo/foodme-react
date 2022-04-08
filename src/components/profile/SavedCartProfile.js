@@ -186,7 +186,7 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
         </div>
       </div>
 
-      <div className="py-2 border-b">
+      <div className="py-2">
         <div className="container-x">
           <H4Heading color="text-color-gray" text="_cart.Saved_items" />
           <ul className="list-3-x">

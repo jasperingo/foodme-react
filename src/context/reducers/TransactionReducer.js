@@ -43,30 +43,37 @@ export default function TransactionReducer (state, action) {
         transactions: [...state.transactions, ...action.payload.list],
       };
 
+
     case TRANSACTION.UNFETCHED:
       return {
         ...state,
-        transactionLoading: true,
         transaction: transactionState.transaction,
         transactionID: transactionState.transactionID,
-        transactionFetchStatus: transactionState.transactionFetchStatus
+        transactionError: transactionState.transactionError,
+        transactionLoading: transactionState.transactionLoading
       };
     
-    case TRANSACTION.FETCH_STATUS_CHANGED:
+    case TRANSACTION.FETCHING:
       return {
         ...state,
+        transactionError: null,
+        transactionLoading: true
+      };
+
+    case TRANSACTION.ERROR_CHANGED:
+      return {
+        ...state,
+        transactionLoading: false,
         transactionID: action.payload.id,
-        transactionLoading: action.payload.loading,
-        transactionFetchStatus: action.payload.fetchStatus
+        transactionError: action.payload.error
       };
     
     case TRANSACTION.FETCHED:
       return {
         ...state,
         transactionLoading: false,
-        transaction: action.payload.transaction, 
-        transactionID: action.payload.transaction.id, 
-        transactionFetchStatus: action.payload.fetchStatus,
+        transactionID: action.payload.id, 
+        transaction: action.payload.transaction
       };
     
     default:

@@ -27,7 +27,7 @@ import AddressAdd from '../pages/Customer/AddressAdd';
 import AddressUpdate from '../pages/Customer/AddressUpdate';
 import Favorites from '../pages/Customer/Favorites';
 import SavedCarts from '../pages/Customer/SavedCarts';
-import Order from '../pages/Customer/Order';
+import Order from '../pages/Order';
 import Orders from '../pages/Customer/Orders';
 import Transactions from '../pages/Customer/Transactions';
 import Transaction from '../pages/Transaction';
@@ -126,7 +126,7 @@ export default function CustomerApp() {
           
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={customerToken} canCancel={true} />} />
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
-          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order userToken={customerToken} isCustomer={true} />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/saved-cart/:ID" render={()=> authMiddleware() || <SavedCart />} />
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />

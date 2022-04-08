@@ -1,85 +1,85 @@
 import { CATEGORY } from "../actions/categoryActions";
 import categoryState from "../states/categoryState";
 
-
 export default function CategoryReducer (state, action) {
   
   switch (action.type) {  
     
-    case CATEGORY.STORES_LIST_FETCH_STATUS_CHANGED:
+    case CATEGORY.STORES_LIST_FETCHING:
       return {
         ...state,
-        storesFetchStatus: action.payload
+        storesLoading: true
+      };
+
+    case CATEGORY.STORES_LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        storesLoading: false,
+        storesError: action.payload.error
       };
     
     case CATEGORY.STORES_LIST_FETCHED:
       return {
         ...state,
-        stores: action.payload.list, 
-        storesFetchStatus: action.payload.fetchStatus
+        storesLoaded: true,
+        storesLoading: false,
+        stores: action.payload.list
       };
 
-    case CATEGORY.PRODUCTS_LIST_FETCH_STATUS_CHANGED:
+
+    case CATEGORY.PRODUCTS_LIST_FETCHING:
       return {
         ...state,
-        productsFetchStatus: action.payload
+        productsLoading: true
       };
     
+    case CATEGORY.PRODUCTS_LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        productsLoading: false,
+        productsError: action.payload.error
+      };
+      
     case CATEGORY.PRODUCTS_LIST_FETCHED:
       return {
         ...state,
-        products: action.payload.list, 
-        productsFetchStatus: action.payload.fetchStatus
+        productsLoaded: true,
+        productsLoading: false,
+        products: action.payload.list
       };
       
+
     case CATEGORY.UNFETCHED:
       return {
         ...state,
         category: categoryState.category,
         categoryID: categoryState.categoryID,
-        categoryFetchStatus: categoryState.categoryFetchStatus
+        categoryError: categoryState.categoryError,
+        categoryLoading: categoryState.categoryLoading
       };
       
-    case CATEGORY.FETCH_STATUS_CHANGED:
+    case CATEGORY.FETCHING:
       return {
         ...state,
-        categoryID: action.payload.id,
-        categoryFetchStatus: action.payload.fetchStatus
+        categoryError: null,
+        categoryLoading: true
+      };
+
+    case CATEGORY.ERROR_CHANGED:
+      return {
+        ...state,
+        categoryLoading: false,
+        categoryID: action.payload.id, 
+        categoryError: action.payload.error
       };
     
     case CATEGORY.FETCHED:
       return {
         ...state,
-        category: action.payload.category, 
-        categoryID: action.payload.category.id, 
-        categoryFetchStatus: action.payload.fetchStatus
+        categoryLoading: false,
+        categoryID: action.payload.id,
+        category: action.payload.category
       };
-
-    // case CATEGORIES.SUB_UNFETCH:
-    //   return {
-    //     ...state,
-    //     category: {
-    //       ...initialCategoriesState.category
-    //     }
-    //   };
-      
-    // case CATEGORIES.SUB_FETCH_STATUS_CHANGED:
-    //   return {
-    //     ...state,
-    //     subCategory: {
-    //       ...state.subCategory,
-    //       subCategoryFetchStatus: action.payload
-    //     }
-    //   };
-    
-    // case CATEGORIES.SUB_FETCHED:
-    //   return {
-    //     ...state,
-    //     subCategory: {
-    //       subCategory: action.payload, 
-    //       subCategoryFetchStatus: FETCH_STATUSES.DONE,
-    //     }
-    //   };
 
     default:
       return state;
