@@ -1,11 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { DISCOUNT, getDiscountsListFetchStatusAction } from "../../context/actions/discountActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { DISCOUNT } from "../../context/actions/discountActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useStoreDiscountList(userToken) {
 
@@ -13,70 +12,75 @@ export function useStoreDiscountList(userToken) {
     store: { 
       storeDispatch,
       store: {
-        store,
         discounts,
         discountsPage,
+        discountsLoaded,
         discountsLoading,
         discountsNumberOfPages,
-        discountsFetchStatus
+        discountsError
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
-
-  const refetch = useCallback(
-    ()=> {
-      if (discountsFetchStatus !== FETCH_STATUSES.LOADING) 
-        storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [storeDispatch, discountsFetchStatus]
-  );
+  const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
   
-  useEffect(
-    ()=> {
-      if (discountsLoading && discountsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  function refreshStoreDiscounts() {
+    storeDispatch({ type: DISCOUNT.LIST_UNFETCHED }); 
+  }
+  
+  const fetchStoreDiscounts = useCallback(
+    async function(ID) {
 
-        storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (discountsLoading) return;
 
-      } else if (discountsLoading && discountsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (!window.navigator.onLine) {
+        storeDispatch({
+          type: DISCOUNT.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
+
+      storeDispatch({ type: DISCOUNT.LIST_FETCHING });
+
+      try {
+
+        const res = await api.getDiscountsList(ID, discountsPage);
         
-        storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+        if (res.status === 200) {
+          storeDispatch({
+            type: DISCOUNT.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages,
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
 
-        const api = new StoreRepository(userToken);
-        api.getDiscountsList(store.id, discountsPage)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            storeDispatch({
-              type: DISCOUNT.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  discountsPage, 
-                  res.body.pagination.number_of_pages, 
-                  discounts.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else if (res.status === 404) {
-            storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-          } else if (res.status === 403) {
-            storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          storeDispatch(getDiscountsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      } catch(error) {
+        storeDispatch({
+          type: DISCOUNT.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [store.id, discounts, discountsPage, discountsLoading, discountsFetchStatus, userToken, storeDispatch, listStatusUpdater]
+    [api, discountsPage, discountsLoading, storeDispatch]
   );
 
-  return [discounts, discountsFetchStatus, discountsPage, discountsNumberOfPages, refetch];
+  return [
+    fetchStoreDiscounts,
+    discounts, 
+    discountsLoading,
+    discountsLoaded,
+    discountsError,
+    discountsPage, 
+    discountsNumberOfPages,
+    refreshStoreDiscounts
+  ];
 }
-

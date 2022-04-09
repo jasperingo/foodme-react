@@ -40,7 +40,7 @@ import Discount from '../pages/Customer/Discount';
 
 import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
 import { useAppContext } from '../hooks/contextHook';
-import { useCartCounter, useURLQuery } from '../hooks/viewHook';
+import { useCartCounter } from '../hooks/viewHook';
 import CartDeliveryMethod from '../pages/Customer/CartDeliveryMethod';
 import DeliveryRoute from '../pages/Customer/DeliveryRoute';
 import CartDeliveryRoutes from '../pages/Customer/CartDeliveryRoutes';
@@ -79,7 +79,7 @@ export default function CustomerApp() {
 
   const location = useLocation();
 
-  const redirectTo = useURLQuery().get('redirect_to') ?? '/account';
+  const redirectTo = new URLSearchParams().get('redirect_to') ?? '/account';
 
   const [customerId, fetch, success, error] = useAuthCustomerFetch();
 

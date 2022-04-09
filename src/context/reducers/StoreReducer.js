@@ -7,7 +7,6 @@ import { STORE } from "../actions/storeActions";
 import { TRANSACTION } from "../actions/transactionActions";
 import storeState from "../states/storeState";
 
-
 export default function StoreReducer (state, action) {
   
   switch (action.type) {  
@@ -26,30 +25,62 @@ export default function StoreReducer (state, action) {
 
     case STORE.UNFETCHED: 
       return {
-        ...storeState,
-        stores: state.stores,
-        storesPage: state.storesPage,
-        storesLoading: state.storesLoading,
-        storesNumberOfPages: state.storesNumberOfPages,
-        storesFetchStatus: state.storesFetchStatus
+        ...state,
+        store: storeState.store,
+        storeID: storeState.storeID,
+        storeError: storeState.storeError,
+        storeLoading: storeState.storeLoading,
+
+        productCategories: storeState.productCategories,
+        productCategoriesError: storeState.productCategoriesError,
+        productCategoriesLoaded: storeState.productCategoriesLoaded,
+        productCategoriesLoading: storeState.productCategoriesLoading,
+
+        products: storeState.products,
+        productsPage: storeState.productsPage,
+        productsError: storeState.productsError,
+        productsLoaded: storeState.productsLoaded,
+        productsLoading: storeState.productsLoading,
+        productsNumberOfPages: storeState.productsNumberOfPages,
+
+        reviews: storeState.reviews,
+        reviewsPage: storeState.reviewsPage,
+        reviewsError: storeState.reviewsError,
+        reviewsLoaded: storeState.reviewsLoaded,
+        reviewsLoading: storeState.reviewsLoading,
+        reviewsNumberOfPages: storeState.reviewsNumberOfPages,
+
+        discounts: storeState.discounts,
+        discountsPage: storeState.discountsPage,
+        discountsError: storeState.discountsError,
+        discountsLoaded: storeState.discountsLoaded,
+        discountsLoading: storeState.discountsLoading,
+        discountsNumberOfPages: storeState.discountsNumberOfPages
       };
     
-    case STORE.FETCH_STATUS_CHANGED:
+    case STORE.ERROR_CHANGED:
       return {
         ...state,
+        storeLoading: false,
         storeID: action.payload.id,
-        storeLoading: action.payload.loading,
-        storeFetchStatus: action.payload.fetchStatus
+        storeError: action.payload.error
+      };
+
+    case STORE.FETCHING:
+      return {
+        ...state,
+        storeError: null,
+        storeLoading: true
       };
     
     case STORE.FETCHED:
       return {
         ...state,
         storeLoading: false, 
-        store: action.payload.store, 
-        storeID: action.payload.store.id,
-        storeFetchStatus: action.payload.fetchStatus
+        storeID: action.payload.id,
+        store: action.payload.store
       };
+
 
     case STORE.LIST_FETCH_STATUS_CHANGED:
       return {
@@ -68,6 +99,7 @@ export default function StoreReducer (state, action) {
         stores: [...state.stores, ...action.payload.list],
       };
 
+
     case CATEGORY.PRODUCTS_LIST_ERROR_CHANGED:
       return {
         ...state,
@@ -78,6 +110,7 @@ export default function StoreReducer (state, action) {
     case CATEGORY.PRODUCTS_LIST_FETCHING:
       return {
         ...state,
+        productCategoriesError: null,
         productCategoriesLoading: true
       };
     
@@ -89,69 +122,112 @@ export default function StoreReducer (state, action) {
         productCategories: action.payload.list
       };
 
-    case PRODUCT.LIST_SUB_CATEGORY_FILTER_CHANGED:
+    
+    case PRODUCT.LIST_UNFETCHED:
       return {
         ...state,
-        productsPage: 1,
-        productsLoading: true,
-        productsNumberOfPages: 0,
         products: storeState.products,
-        productsFetchStatus: storeState.productsFetchStatus,
-        productsSubCategory: action.payload.status
+        productsPage: storeState.productsPage,
+        productsError: storeState.productsError,
+        productsLoaded: storeState.productsLoaded,
+        productsLoading: storeState.productsLoading,
+        productsNumberOfPages: storeState.productsNumberOfPages
       };
 
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
+    case PRODUCT.LIST_ERROR_CHANGED:
       return {
         ...state,
-        productsLoading: action.payload.loading,
-        productsFetchStatus: action.payload.fetchStatus
+        productsLoading: false,
+        productsError: action.payload.error
+      };
+
+    case PRODUCT.LIST_FETCHING:
+      return {
+        ...state,
+        productsError: null,
+        productsLoading: true
       };
     
     case PRODUCT.LIST_FETCHED:
       return {
         ...state,
+        productsLoaded: true,
         productsLoading: false,
-        productsPage: state.productsPage+1,
-        productsFetchStatus: action.payload.fetchStatus,
+        productsPage: state.productsPage + 1,
         productsNumberOfPages: action.payload.numberOfPages,
         products: [...state.products, ...action.payload.list],
       };
     
 
-    case REVIEW.LIST_FETCH_STATUS_CHANGED :
+    case REVIEW.LIST_UNFETCHED:
+      return {
+        reviews: storeState.reviews,
+        reviewsPage: storeState.reviewsPage,
+        reviewsError: storeState.reviewsError,
+        reviewsLoaded: storeState.reviewsLoaded,
+        reviewsLoading: storeState.reviewsLoading,
+        reviewsNumberOfPages: storeState.reviewsNumberOfPages
+      };
+
+    case REVIEW.LIST_FETCHING:
       return {
         ...state,
-        reviewsLoading: action.payload.loading,
-        reviewsFetchStatus: action.payload.fetchStatus
+        reviewsError: null,
+        reviewsLoading: true
+      };
+
+    case REVIEW.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        reviewsLoading: false,
+        reviewsError: action.payload.error
       };
 
     case REVIEW.LIST_FETCHED:
       return {
         ...state,
+        reviewsLoaded: true,
         reviewsLoading: false,
-        reviewsPage: state.reviewsPage+1,
-        reviewsFetchStatus: action.payload.fetchStatus,
+        reviewsPage: state.reviewsPage + 1,
         reviewsNumberOfPages: action.payload.numberOfPages,
         reviews: [...state.reviews, ...action.payload.list],
       };
       
 
-    case DISCOUNT.LIST_FETCH_STATUS_CHANGED :
+    case DISCOUNT.LIST_UNFETCHED:
+      return {
+        discounts: storeState.discounts,
+        discountsPage: storeState.discountsPage,
+        discountsError: storeState.discountsError,
+        discountsLoaded: storeState.discountsLoaded,
+        discountsLoading: storeState.discountsLoading,
+        discountsNumberOfPages: storeState.discountsNumberOfPages
+      };
+
+    case DISCOUNT.LIST_FETCHING:
       return {
         ...state,
-        discountsLoading: action.payload.loading,
-        discountsFetchStatus: action.payload.fetchStatus
+        discountsError: null,
+        discountsLoading: true
+      };
+
+    case DISCOUNT.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        discountsLoading: false,
+        discountsError: action.payload.error
       };
 
     case DISCOUNT.LIST_FETCHED:
       return {
         ...state,
+        discountsLoaded: true,
         discountsLoading: false,
-        discountsPage: state.discountsPage+1,
-        discountsFetchStatus: action.payload.fetchStatus,
+        discountsPage: state.discountsPage + 1,
         discountsNumberOfPages: action.payload.numberOfPages,
         discounts: [...state.discounts, ...action.payload.list],
       };
+
 
     case ORDER.LIST_UNFETCHED:
     case ORDER.LIST_STATUS_FILTER_CHANGED:

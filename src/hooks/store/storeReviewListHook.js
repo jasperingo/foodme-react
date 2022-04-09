@@ -1,11 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { getReviewsListFetchStatusAction, REVIEW } from "../../context/actions/reviewActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { REVIEW } from "../../context/actions/reviewActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useStoreReviewList(userToken) {
 
@@ -13,74 +12,75 @@ export function useStoreReviewList(userToken) {
     store: { 
       storeDispatch,
       store: {
-        store,
         reviews,
         reviewsPage,
+        reviewsLoaded,
         reviewsLoading,
         reviewsNumberOfPages,
-        reviewsFetchStatus
+        reviewsError
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
-
-  const refetch = useCallback(
-    ()=> {
-      if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
-        storeDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [storeDispatch, reviewsFetchStatus]
-  );
+  const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
   
-  useEffect(
-    ()=> {
-      if (reviewsLoading && reviewsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  function refreshStoreReviews() {
+    storeDispatch({ type: REVIEW.LIST_UNFETCHED }); 
+  }
 
-        storeDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+  const fetchStoreReviews = useCallback(
+    async function(ID) {
 
-      } else if (reviewsLoading && reviewsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (reviewsLoading) return;
 
-        storeDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      if (!window.navigator.onLine) {
+        storeDispatch({
+          type: REVIEW.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
+
+      storeDispatch({ type: REVIEW.LIST_FETCHING });
+      
+      try {
+
+        const res = await api.getReviewsList(ID, reviewsPage)
         
-        const api = new StoreRepository(userToken);
-        api.getReviewsList(store.id, reviewsPage)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            storeDispatch({
-              type: REVIEW.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  reviewsPage, 
-                  res.body.pagination.number_of_pages, 
-                  reviews.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else if (res.status === 404) {
-
-            storeDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            storeDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-            
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          storeDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        if (res.status === 200) {
+          storeDispatch({
+            type: REVIEW.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages,
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+        
+      } catch(error) {
+        storeDispatch({
+          type: REVIEW.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [store.id, reviews, reviewsPage, reviewsLoading, reviewsFetchStatus, userToken, storeDispatch, listStatusUpdater]
+    [api, reviewsPage, reviewsLoading, storeDispatch]
   );
 
-  return [reviews, reviewsFetchStatus, reviewsPage, reviewsNumberOfPages, refetch];
+  return [
+    fetchStoreReviews,
+    reviews, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
+    reviewsPage, 
+    reviewsNumberOfPages,
+    refreshStoreReviews
+  ];
 }
-

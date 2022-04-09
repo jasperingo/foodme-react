@@ -1,10 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { getProductsListFetchStatusAction, PRODUCT } from "../../context/actions/productActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { PRODUCT } from "../../context/actions/productActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
 
 export function useStoreProductList(userToken) {
 
@@ -12,96 +12,79 @@ export function useStoreProductList(userToken) {
     store: { 
       storeDispatch,
       store: {
-        store,
         products,
-        productsFetchStatus,
+        productsError,
         productsPage,
+        productsLoaded,
         productsLoading,
         productsNumberOfPages,
-        productsSubCategory
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
 
-  const onStatusChange = useCallback(
-    function(subCategory) {
-      storeDispatch({ 
-        type: PRODUCT.LIST_SUB_CATEGORY_FILTER_CHANGED, 
-        payload: { status: subCategory } 
-      });
-    },
-    [storeDispatch]
-  );
-  
-  const refetch = useCallback(
-    ()=> {
-      if (productsFetchStatus !== FETCH_STATUSES.LOADING) 
-        storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [storeDispatch, productsFetchStatus]
-  );
-  
-  useEffect(
-    ()=> {
-      if (productsLoading && productsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  function refreshStoreProducts() {
+    storeDispatch({ type: PRODUCT.LIST_UNFETCHED }); 
+  }
 
-        storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+  const fetchStoreProducts = useCallback(
+    async function(ID, subCategory) {
 
-      } else if (productsLoading && productsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (productsLoading) return;
 
-        storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-        
-        const api = new StoreRepository(userToken);
-        api.getProductsList(store.id, productsPage, productsSubCategory)
-        .then(res=> {
-          
-          if (res.status === 200) {
+      if (!window.navigator.onLine) {
+        storeDispatch({
+          type: PRODUCT.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      } 
+      
+      storeDispatch({ type: PRODUCT.LIST_FETCHING });
+      
+      try {
 
-            storeDispatch({
-              type: PRODUCT.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  productsPage, 
-                  res.body.pagination.number_of_pages, 
-                  products.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-
-          } else if (res.status === 404) {
-
-            storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          storeDispatch(getProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        const res = await api.getProductsList(ID, productsPage, subCategory)
+       
+        if (res.status === 200) {
+          storeDispatch({
+            type: PRODUCT.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages,
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        storeDispatch({
+          type: PRODUCT.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      store.id, 
-      products, 
+      api,
       productsPage, 
       productsLoading, 
-      productsFetchStatus, 
-      productsSubCategory,
-      userToken,
       storeDispatch, 
-      listStatusUpdater
     ]
   );
 
-  return [products, productsFetchStatus, productsPage, productsNumberOfPages, refetch, onStatusChange];
+  return [
+    fetchStoreProducts,
+    products, 
+    productsLoading,
+    productsError,
+    productsLoaded,
+    productsPage, 
+    productsNumberOfPages,
+    refreshStoreProducts
+  ];
 }

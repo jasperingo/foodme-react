@@ -2,6 +2,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next';
 import { categoryIcon } from '../../assets/icons';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useListFooter } from '../../hooks/viewHook';
 import EmptyList from '../EmptyList';
 import CategoryItem from '../list_item/CategoryItem';
@@ -39,9 +40,15 @@ export default function CategoryList(
             }
           }, 
           { 
-            canRender: categoriesError !== null, 
+            canRender: categoriesError === NetworkErrorCodes.UNKNOWN_ERROR, 
             render() { 
               return <li key="category-footer" className="col-span-3"> <Reload action={retryFetch} /> </li>;
+            }
+          },
+          { 
+            canRender: categoriesError === NetworkErrorCodes.NO_NETWORK_CONNECTION, 
+            render() { 
+              return <li key="category-footer" className="col-span-3"> <Reload message="_errors.No_netowrk_connection" action={retryFetch} /> </li>;
             }
           },
           { 

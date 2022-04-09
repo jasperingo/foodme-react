@@ -8,6 +8,9 @@ import AddressItem from '../list_item/AddressItem';
 import Loading from '../Loading';
 import Reload from '../Reload';
 import AddressButtonItem from '../list_item/AddressButtonItem';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import NotFound from '../NotFound';
+import Forbidden from '../Forbidden';
 
 export default function AddressList(
   { addresses, addressesLoading, addressesError, addressesLoaded, fetchAddresses, refreshList, canEdit, renderButtons, onButtonClicked }
@@ -40,7 +43,37 @@ export default function AddressList(
             },
           },
           {
-            canRender: addressesError !== null,
+            canRender: addressesError === NetworkErrorCodes.FORBIDDEN,
+            render() {
+              return (
+                <li key="address-footer" className="list-2-x-col-span">
+                  <Forbidden />
+                </li>
+              );
+            }
+          },
+          {
+            canRender: addressesError === NetworkErrorCodes.NOT_FOUND,
+            render() {
+              return (
+                <li key="address-footer" className="list-2-x-col-span">
+                  <NotFound />
+                </li>
+              );
+            }
+          },
+          {
+            canRender: addressesError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+            render() {
+              return (
+                <li key="address-footer" className="list-2-x-col-span">
+                  <Reload message="_errors.No_netowrk_connection" action={fetchAddresses} />
+                </li>
+              );
+            }
+          },
+          {
+            canRender: addressesError === NetworkErrorCodes.UNKNOWN_ERROR,
             render() { 
               return (
                 <li key="address-footer" className="list-2-x-col-span"> 

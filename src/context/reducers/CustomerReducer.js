@@ -12,10 +12,7 @@ export default function CustomerReducer (state, action) {
   switch (action.type) {
 
     case CUSTOMER.UNAUTHED:
-      return {
-        ...state,
-        customer: customerState.customer
-      };
+      return { ...customerState };
 
     case CUSTOMER.AUTHED:
       return {

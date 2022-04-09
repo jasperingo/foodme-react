@@ -74,7 +74,18 @@ export default function OrderList(
             render() { 
               return <li key="orders-footer" className="list-2-x-col-span"> <Forbidden /> </li>; 
             }
-          }
+          },
+
+          {
+            canRender: ordersError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+            render() {
+              return (
+                <li key="orders-footer" className="list-2-x-col-span">
+                  <Reload message="_errors.No_netowrk_connection" action={fetchOrders} />
+                </li>
+              );
+            }
+          },
 
         ])}
         />

@@ -13,6 +13,18 @@ export default function ProductReducer (state, action) {
         productID: productState.productID,
         productError: productState.productError,
         productLoading: productState.productLoading,
+        reviews: productState.reviews,
+        reviewsPage: productState.reviewsPage,
+        reviewsError: productState.reviewsError,
+        reviewsLoaded: productState.reviewsLoaded,
+        reviewsLoading: productState.reviewsLoading,
+        reviewsNumberOfPages: productState.reviewsNumberOfPages,
+        related: productState.related,
+        relatedPage: productState.relatedPage,
+        relatedError: productState.relatedError,
+        relatedLoaded: productState.relatedLoaded,
+        relatedLoading: productState.relatedLoading,
+        relatedNumberOfPages: productState.relatedNumberOfPages
       };
     
     case PRODUCT.FETCHING:
@@ -66,22 +78,41 @@ export default function ProductReducer (state, action) {
       };
 
 
-    case REVIEW.LIST_FETCH_STATUS_CHANGED:
+    case REVIEW.LIST_UNFETCHED:
       return {
         ...state,
-        reviewsLoading: action.payload.loading,
-        reviewsFetchStatus: action.payload.fetchStatus
+        reviews: productState.reviews,
+        reviewsPage: productState.reviewsPage,
+        reviewsError: productState.reviewsError,
+        reviewsLoaded: productState.reviewsLoaded,
+        reviewsLoading: productState.reviewsLoading,
+        reviewsNumberOfPages: productState.reviewsNumberOfPages,
+      };
+
+    case REVIEW.LIST_FETCHING:
+      return {
+        ...state,
+        reviewsError: null,
+        reviewsLoading: true
+      };
+
+    case REVIEW.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        reviewsLoading: false,
+        reviewsError: action.payload.error
       };
 
     case REVIEW.LIST_FETCHED:
       return {
         ...state,
+        reviewsLoaded: true,
         reviewsLoading: false,
-        reviewsPage: state.reviewsPage+1,
-        reviewsFetchStatus: action.payload.fetchStatus,
+        reviewsPage: state.reviewsPage + 1,
         reviewsNumberOfPages: action.payload.numberOfPages,
         reviews: [...state.reviews, ...action.payload.list],
       };
+
 
     case PRODUCT.LIST_UNFETCHED:
       return {
@@ -110,22 +141,31 @@ export default function ProductReducer (state, action) {
         products: [...state.products, ...action.payload.list],
       };
       
-    case PRODUCT.RELATED_LIST_FETCH_STATUS_CHANGED:
+
+    case PRODUCT.RELATED_LIST_ERROR_CHANGED:
       return {
         ...state,
-        relatedLoading: action.payload.loading,
-        relatedFetchStatus: action.payload.fetchStatus
+        relatedLoading: false,
+        relatedError: action.payload.error
+      };
+
+    case PRODUCT.RELATED_LIST_FETCHING:
+      return {
+        ...state,
+        relatedError: null,
+        relatedLoading: true
       };
     
     case PRODUCT.RELATED_LIST_FETCHED:
       return {
         ...state,
+        relatedLoaded: true,
         relatedLoading: false,
-        relatedPage: state.relatedPage+1,
-        relatedFetchStatus: action.payload.fetchStatus,
+        relatedPage: state.relatedPage + 1,
         relatedNumberOfPages: action.payload.numberOfPages,
         related: [...state.related, ...action.payload.list],
       };
+
 
     case PRODUCT.VARIANT_CREATED: 
     if (!state.product) {

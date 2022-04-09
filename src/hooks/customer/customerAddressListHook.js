@@ -51,6 +51,8 @@ export function useCustomerAddressList(userId, userToken) {
           });
         } else if (res.status === 401) {
           throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
         } else if (res.status === 403) {
           throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
         } else {

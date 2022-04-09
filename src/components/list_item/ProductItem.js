@@ -16,7 +16,6 @@ export default function ProductItem(
       product_variants: [ variant ]
     }, 
     href = `/product/${id}`, 
-    layout = ProductItem.LAYOUT_LIST_GRID 
   }
 ) {
 
@@ -24,38 +23,19 @@ export default function ProductItem(
 
   const priceView = useMoneyFormat(variant?.price || 0);
 
-  let layoutStyle, layoutImgStyle, layoutBodyStyle;
-
-  switch(layout) {
-    case ProductItem.LAYOUT_LIST:
-      layoutStyle = 'flex gap-2 md:p-2 md:shadow';
-      layoutImgStyle = 'w-24 h-24';
-      layoutBodyStyle = 'pb-2';
-      break;
-    case ProductItem.LAYOUT_GRID:
-      layoutStyle = 'block shadow';
-      layoutImgStyle = 'w-full h-52';
-      layoutBodyStyle = 'p-2';
-      break;
-    default:
-      layoutStyle = 'flex gap-2 md:block md:shadow';
-      layoutImgStyle = 'w-24 h-24 md:w-full md:h-52';
-      layoutBodyStyle = 'pb-2 md:p-2';
-  }
-
   return (
     <Link 
       to={href} 
-      className={`${layoutStyle} mb-5 hover:bg-color-gray-h`}
+      className="flex gap-2 md:block md:shadow mb-5 hover:bg-color-gray-h"
       >
       <img 
         width="200"
         height="200"
         alt={title} 
         src={photo.href} 
-        className={`${layoutImgStyle} border rounded block`}
+        className="w-24 h-24 border rounded block md:w-full md:h-52"
         />
-      <div className={`flex-grow ${layoutBodyStyle}`}>
+      <div className="flex-grow pb-2 md:p-2">
         <div className="mb-1">{ title }</div>
         {
           variant?.price ?
@@ -70,10 +50,3 @@ export default function ProductItem(
     </Link>
   );
 }
-
-ProductItem.LAYOUT_LIST = 0;
-
-ProductItem.LAYOUT_GRID = 1;
-
-ProductItem.LAYOUT_LIST_GRID = 2;
-

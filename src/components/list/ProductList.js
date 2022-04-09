@@ -74,7 +74,18 @@ export default function ProductList(
             render() { 
               return <li key="product-footer" className="list-x-col-span"> <Forbidden /> </li>;
             }
-          }
+          },
+
+          {
+            canRender: productsError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+            render() {
+              return (
+                <li key="product-footer" className="list-x-col-span">
+                  <Reload message="_errors.No_netowrk_connection" action={fetchProducts} />
+                </li>
+              );
+            }
+          },
 
         ])}
         />
@@ -82,4 +93,3 @@ export default function ProductList(
     </div>
   );
 }
-

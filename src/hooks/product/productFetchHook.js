@@ -19,7 +19,7 @@ export function useProductFetch(userToken) {
       } 
     }
   } = useAppContext();
-
+  
   const api = useMemo(function() { return new ProductRepository(userToken); }, [userToken]);
 
   const unfetchProduct = useCallback(
@@ -55,6 +55,8 @@ export function useProductFetch(userToken) {
               product: res.body.data
             }
           });
+        } else if (res.status === 401) {
+          throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
         } else if (res.status === 404) {
           throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
         } else if (res.status === 403) {

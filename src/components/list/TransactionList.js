@@ -79,6 +79,16 @@ export default function TransactionList(
                 return <li key="transactions-footer" className="list-2-x-col-span"> <Forbidden /> </li>;
               }
             },
+            {
+              canRender: transactionsError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+              render() {
+                return (
+                  <li key="transactions-footer" className="list-2-x-col-span">
+                    <Reload message="_errors.No_netowrk_connection" action={fetchTransactions} />
+                  </li>
+                );
+              }
+            }
           ])}
           />
 

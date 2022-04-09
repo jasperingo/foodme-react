@@ -1,5 +1,4 @@
 import moment from 'moment';
-import { useLocation } from 'react-router-dom';
 import User from '../models/User';
 import WorkingHour from '../models/WorkingHour';
 import { FETCH_STATUSES } from "../repositories/Fetch";
@@ -48,8 +47,9 @@ export function useWorkingHoursDay() {
   }
 }
 
-export function useURLQuery() {
-  return new URLSearchParams(useLocation().search);
+export function useURLQuery(params) {
+  const search = new URLSearchParams(window.location.search);
+  return params.map(i=> search.get(i));
 }
 
 export function useMoneyFormatter() {

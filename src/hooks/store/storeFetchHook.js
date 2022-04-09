@@ -1,14 +1,12 @@
 
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getStoreFetchStatusAction, STORE } from "../../context/actions/storeActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo} from "react";
+import { STORE } from "../../context/actions/storeActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 
 export function useStoreFetch(userToken) {
-
-  const { ID } = useParams();
 
   const { 
     store: { 
@@ -17,65 +15,75 @@ export function useStoreFetch(userToken) {
         store,
         storeID,
         storeLoading,
-        storeFetchStatus
+        storeError
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (storeFetchStatus !== FETCH_STATUSES.LOADING && storeFetchStatus !== FETCH_STATUSES.DONE)
-        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
-    },
-    [ID, storeFetchStatus, storeDispatch]
+  const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
+
+  const unfetchStore = useCallback(
+    function() { storeDispatch({ type: STORE.UNFETCHED }); },
+    [storeDispatch]
   );
   
-  useEffect(
-    ()=> {
+  const fetchStore = useCallback(
+    async function(ID) {
 
-      if (storeID !== null && storeID !== Number(ID)) {
+      if (storeLoading) return;
         
-        storeDispatch({ type: STORE.UNFETCHED });
-
-      } else if (storeLoading && storeFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-
-        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
-
-      } else if (storeLoading && storeFetchStatus === FETCH_STATUSES.LOADING) {
-
-        storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
-
-        const api = new StoreRepository(userToken);
-        api.get(ID)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            storeDispatch({
-              type: STORE.FETCHED, 
-              payload: {
-                store: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else if (res.status === 404) {
-
-            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
-
-          } else if (res.status === 403) {
-
-            storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
-
-          } else {
-            throw new Error();
+      if (!window.navigator.onLine) {
+        storeDispatch({
+          type: STORE.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: NetworkErrorCodes.NO_NETWORK_CONNECTION
           }
-        })
-        .catch(()=> {
-          storeDispatch(getStoreFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
+        });
+        return;
+      }
+
+      storeDispatch({ type: STORE.FETCHING });
+
+      try {
+        const res = await api.get(ID);
+          
+        if (res.status === 200) {
+          storeDispatch({
+            type: STORE.FETCHED, 
+            payload: {
+              id: ID,
+              store: res.body.data,
+            }
+          });
+        } else if (res.status === 401) {
+          throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        storeDispatch({
+          type: STORE.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
+          }
         });
       }
-    }
+    },
+    [api, storeLoading, storeDispatch]
   );
 
-  return [store, storeFetchStatus, refetch];
+  return [
+    fetchStore,
+    store,
+    storeLoading,
+    storeError,
+    storeID,
+    unfetchStore
+  ];
 }
-

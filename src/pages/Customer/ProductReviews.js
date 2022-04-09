@@ -1,7 +1,6 @@
 
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useAppContext } from '../../hooks/contextHook';
-import { useHasMoreToFetchViaScroll, useRenderListFooter, useRenderOnDataFetched } from '../../hooks/viewHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useProductFetch } from '../../hooks/product/productFetchHook';
 import Forbidden from '../../components/Forbidden';
@@ -11,13 +10,14 @@ import Reload from '../../components/Reload';
 import { useProductReviewList } from '../../hooks/product/productReviewListHook';
 import ProfileHeader from '../../components/profile/ProfileHeader';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
-import ScrollList from '../../components/list/ScrollList';
-import ReviewItem from '../../components/list_item/ReviewItem';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import { reviewIcon } from '../../assets/icons';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import { useParams } from 'react-router-dom';
+import ReviewList from '../../components/list/ReviewList';
+import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
+import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
+import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
 
-function Profile() {
+function ProductReviewList() {
   
   const {
     customer: {
@@ -35,53 +35,66 @@ function Profile() {
   } = useAppContext();
 
   const [
+    fetchProductReviews,
     reviews, 
-    reviewsFetchStatus, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
     reviewsPage, 
     reviewsNumberOfPages,
-    refetch
-  ] = useProductReviewList(customerToken);
+    refreshProductReviews
+  ] = useProductReviewList(product.id, customerToken);
 
+  const onReviewUpdate = useReviewUpdate();
+
+  const onReviewDelete = useReviewDelete({ product: true });
+  
+  const onReviewCreate = useReviewCreate({ product: product.id });
+
+  const reviewsFetch = useCallback(
+    function() {
+      if (!reviewsLoading && reviewsError === null) 
+        fetchProductReviews();
+    },
+    [reviewsLoading, reviewsError, fetchProductReviews]
+  );
+
+  useEffect(
+    function() { if (!reviewsLoaded) reviewsFetch(); },
+    [reviewsLoaded, reviewsFetch]
+  );
+  
   return (
     <div className="container-x">
 
-      <ProfileHeader 
-        photo={product.photo.href}
-        name={product.title} 
-        />
-
       <ReviewRaterAndSummary 
+        onReviewCreate={onReviewCreate}
+        onReviewUpdate={onReviewUpdate}
+        onReviewDelete={onReviewDelete}
         summary={product.review_summary}
-        onReviewSubmit={(rating, review)=> console.log(rating, review)}
         title="_review.Rate_this_product"
-        review={customerToken === null || product.reviews?.length === 0 ? null : product.reviews[0]}
+        review={customerToken === null || !product?.reviews?.length ? null : product.reviews[0]}
         />
 
-      <ScrollList
-        data={reviews}
-        nextPage={refetch}
-        hasMore={useHasMoreToFetchViaScroll(reviewsPage, reviewsNumberOfPages, reviewsFetchStatus)}
-        className="list-x"
-        renderDataItem={(item)=> (
-          <li key={`review-${item.id}`}> <ReviewItem review={item} /> </li>
-        )}
-        footer={useRenderListFooter(
-          reviewsFetchStatus,
-          ()=> <li key="review-footer"> <Loading /> </li>, 
-          ()=> <li key="review-footer"> <Reload action={refetch} /> </li>,
-          ()=> <li key="review-footer"> <EmptyList text="_empty.No_review" icon={reviewIcon} /> </li>,
-          ()=> <li key="review-footer"> <FetchMoreButton action={refetch} /> </li>,
-          ()=> <li key="review-footer"> <NotFound /> </li>,
-          ()=> <li key="review-footer"> <Forbidden /> </li>,
-        )}
+      <ReviewList
+        single={false}
+        reviews={reviews} 
+        reviewsLoading={reviewsLoading}
+        reviewsLoaded={reviewsLoaded}
+        reviewsError={reviewsError}
+        reviewsPage={reviewsPage}
+        reviewsNumberOfPages={reviewsNumberOfPages}
+        fetchReviews={reviewsFetch}
+        refreshList={refreshProductReviews}
         />
-
     </div>
   );
 }
 
 
 export default function ProductReviews() {
+
+  const { ID } = useParams();
 
   const {
     customer: {
@@ -94,30 +107,63 @@ export default function ProductReviews() {
   } = useAppContext();
 
   const [
-    product, 
-    productFetchStatus, 
-    refetch
+    fetchProduct,
+    product,
+    productLoading,
+    productError,
+    productID,
+    unfetchProduct
   ] = useProductFetch(customerToken);
 
-  
   useHeader({ 
-    title: `${product?.name ?? 'Loading...'} - Product reviews`,
-    headerTitle: '_product.Product_reviews',
+    title: `${product?.title ?? 'Loading...'} - Product`,
+    headerTitle: '_product.Product',
     topNavPaths: ['/cart', '/search']
   });
 
+  const productFetch = useCallback(
+    function(ID) {
+      if (!productLoading) fetchProduct(ID);
+    },
+    [productLoading, fetchProduct]
+  );
+
+  useEffect(
+    function() {
+      if ((product !== null || productError !== null) && productID !== ID) 
+        unfetchProduct();
+      else if (product === null && productError === null)
+        productFetch(ID);
+    },
+    [ID, product, productError, productID, productFetch, unfetchProduct]
+  );
+  
   return (
     <section>
-      {
-        useRenderOnDataFetched(
-          productFetchStatus,
-          ()=> <Profile />,
-          ()=> <div className="container-x"> <Loading /> </div>,
-          ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
-          ()=> <div className="container-x"> <NotFound /> </div>,
-          ()=> <div className="container-x"> <Forbidden /> </div>,
-        )
+
+      { 
+        product !== null && 
+        <div className="container-x">
+          <ProfileHeader 
+            photo={product.photo.href}
+            name={product.title} 
+            />
+        </div>
       }
+
+      {
+        product === null &&
+        <div>
+          { productLoading && <Loading /> }
+          { productError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+          { productError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+          { productError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> productFetch(ID)} /> }
+          { productError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> productFetch(ID)} /> }
+        </div>
+      }
+
+      { product !== null && <ProductReviewList /> }
+
     </section>
   );
 }

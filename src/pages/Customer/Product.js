@@ -7,19 +7,10 @@ import ProductProfile from '../../components/profile/ProductProfile';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
 import { useProductFetch } from '../../hooks/product/productFetchHook';
-import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 import H4Heading from '../../components/H4Heading';
-import SingleList from '../../components/list/SingleList';
-import EmptyList from '../../components/EmptyList';
-import ReviewItem from '../../components/list_item/ReviewItem';
-import { reviewIcon } from '../../assets/icons';
 import { useProductReviewList } from '../../hooks/product/productReviewListHook';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
 import { useProductRelatedList } from '../../hooks/product/productRelatedHook';
-import ScrollList from '../../components/list/ScrollList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import ProductItem from '../../components/list_item/ProductItem';
 import { useHeader } from '../../hooks/headerHook';
 import { useFavoriteCreate } from '../../hooks/favorite/favoriteCreateHook';
 import { useFavoriteDelete } from '../../hooks/favorite/favoriteDeleteHook';
@@ -28,61 +19,10 @@ import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
 import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
 import { useParams } from 'react-router-dom';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import ReviewList from '../../components/list/ReviewList';
+import ProductList from '../../components/list/ProductList';
 
-
-function RelatedList() {
-
-  const {
-    customer: {
-      customer: {
-        customer: {
-          customerToken
-        }
-      } 
-    }
-  } = useAppContext();
-
-  const [
-    related, 
-    relatedFetchStatus, 
-    relatedPage, 
-    relatedNumberOfPages, 
-    refetch
-  ] = useProductRelatedList(customerToken);
-
-  return (
-    <div className="container-x py-4">
-
-      {
-        relatedFetchStatus !== FETCH_STATUSES.EMPTY && 
-        <H4Heading text="_product.Related_products" />
-      }
-
-      <ScrollList
-        data={related}
-        nextPage={refetch}
-        hasMore={useHasMoreToFetchViaScroll(relatedPage, relatedNumberOfPages, relatedFetchStatus)}
-        className="py-2 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5"
-        renderDataItem={(item)=> (
-          <li key={`product-${item.id}`}> <ProductItem product={item} layout={ProductItem.LAYOUT_GRID} /> </li>
-        )}
-        footer={useRenderListFooter(
-          relatedFetchStatus,
-          ()=> <li key="product-footer"> <Loading /> </li>, 
-          ()=> <li key="product-footer"> <Reload action={refetch} /> </li>,
-          ()=> null,
-          ()=> <li key="product-footer"> <FetchMoreButton action={refetch} /> </li>,
-          ()=> <li key="product-footer"> <NotFound /> </li>,
-          ()=> <li key="product-footer"> <Forbidden /> </li>,
-        )}
-        />
-
-    </div>
-  );
-}
-
-
-function ReviewList() {
+function ProductRelatedList() {
 
   const {
     customer: {
@@ -100,18 +40,91 @@ function ReviewList() {
   } = useAppContext();
 
   const [
+    fetchRelatedProducts,
+    related, 
+    relatedLoading,
+    relatedLoaded,
+    relatedError,
+    relatedPage,
+    relatedNumberOfPages
+  ] = useProductRelatedList(product.id, customerToken);
+
+  const relatedFetch = useCallback(
+    function() { if (!relatedLoading && relatedError === null) fetchRelatedProducts(); },
+    [relatedLoading, relatedError, fetchRelatedProducts]
+  );
+
+  useEffect(
+    function() { if (!relatedLoaded) relatedFetch(); },
+    [relatedLoaded, relatedFetch]
+  );
+
+  return (
+    <div className="container-x py-4">
+
+      {
+        relatedLoaded && related.length > 0 && 
+        <H4Heading text="_product.Related_products" />
+      }
+
+      <ProductList
+        products={related}
+        productsPage={relatedPage}
+        productsError={relatedError}
+        productsLoaded={relatedLoaded}
+        productsLoading={relatedLoading}
+        productsNumberOfPages={relatedNumberOfPages}
+        fetchProducts={relatedFetch}
+        />
+
+    </div>
+  );
+}
+
+
+function ProductReviewList() {
+
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    },
+    product: {
+      product: {
+        product
+      } 
+    }
+  } = useAppContext();
+
+  const [
+    fetchProductReviews,
     reviews, 
-    reviewsFetchStatus, 
-    , 
-    , 
-    refetch
-  ] = useProductReviewList(customerToken);
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
+  ] = useProductReviewList(product.id, customerToken);
 
   const onReviewUpdate = useReviewUpdate();
 
   const onReviewDelete = useReviewDelete({ product: true });
   
   const onReviewCreate = useReviewCreate({ product: product.id });
+
+  const reviewsFetch = useCallback(
+    function() {
+      if (!reviewsLoading) 
+        fetchProductReviews();
+    },
+    [reviewsLoading, fetchProductReviews]
+  );
+
+  useEffect(
+    function() { if (!reviewsLoaded && reviewsError === null) reviewsFetch(); },
+    [reviewsLoaded, reviewsError, reviewsFetch]
+  );
   
   return (
     <div className="my-2 container-x">
@@ -126,21 +139,13 @@ function ReviewList() {
         review={customerToken === null || !product?.reviews?.length ? null : product.reviews[0]}
         />
 
-      <SingleList
-        data={reviews}
-        className="list-2-x"
-        renderDataItem={(item)=> (
-          <li key={`review-${item.id}`}> <ReviewItem review={item} /> </li>
-        )}
-        footer={useRenderListFooter(
-          reviewsFetchStatus,
-          ()=> <li key="review-footer"> <Loading /> </li>, 
-          ()=> <li key="review-footer"> <Reload action={refetch} /> </li>,
-          ()=> <li key="review-footer" className="col-span-2"> <EmptyList text="_empty.No_review" icon={reviewIcon} /> </li>,
-          ()=> null,
-          ()=> <li key="review-footer"> <NotFound /> </li>,
-          ()=> <li key="review-footer"> <Forbidden /> </li>,
-        )}
+      <ReviewList 
+        single={true}
+        reviews={reviews} 
+        reviewsLoading={reviewsLoading}
+        reviewsLoaded={reviewsLoaded}
+        reviewsError={reviewsError}
+        fetchReviews={reviewsFetch}
         />
     </div>
   );
@@ -161,7 +166,7 @@ export default function Product() {
     },
     product: {
       product: {
-        reviewsFetchStatus
+        reviewsLoaded
       } 
     }
   } = useAppContext();
@@ -201,7 +206,7 @@ export default function Product() {
     },
     [ID, product, productError, productID, productFetch, unfetchProduct]
   );
-
+  
   return (
     <section>
 
@@ -224,26 +229,15 @@ export default function Product() {
           { productLoading && <Loading /> }
           { productError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
           { productError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
-          { productError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={productFetch} /> }
-          { productError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={productFetch} /> }
+          { productError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> productFetch(ID)} /> }
+          { productError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> productFetch(ID)} /> }
         </div>
       }
 
-      { 
-        product !== null && 
-        <ReviewList />
-      }
+      { product !== null && <ProductReviewList /> }
 
-      { 
-        product !== null && 
-        (
-          reviewsFetchStatus === FETCH_STATUSES.DONE || 
-          reviewsFetchStatus === FETCH_STATUSES.MORE || 
-          reviewsFetchStatus === FETCH_STATUSES.EMPTY
-        ) &&
-        <RelatedList /> 
-      }
+      { reviewsLoaded && <ProductRelatedList /> }
+
     </section>
   );
 }
-

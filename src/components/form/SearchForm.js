@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
-import { useURLQuery } from '../../hooks/viewHook';
 
 export default function SearchForm({ onSearchPage }) {
 
@@ -15,7 +14,7 @@ export default function SearchForm({ onSearchPage }) {
 
   const [q, setQ] = useState('');
 
-  const param = useURLQuery();
+  const param = new URLSearchParams();
   
   const queryParam = param.get('q');
 

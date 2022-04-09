@@ -20,15 +20,17 @@ const productState = {
 
   reviews: [],
   reviewsPage: 1,
-  reviewsLoading: true,
+  reviewsError: null,
+  reviewsLoaded: false,
+  reviewsLoading: false,
   reviewsNumberOfPages: 0,
-  reviewsFetchStatus: FETCH_STATUSES.LOADING,
 
   related: [],
   relatedPage: 1,
-  relatedLoading: true,
-  relatedNumberOfPages: 0,
-  relatedFetchStatus: FETCH_STATUSES.LOADING
+  relatedError: null,
+  relatedLoaded: false,
+  relatedLoading: false,
+  relatedNumberOfPages: 0
 };
 
 export default productState;

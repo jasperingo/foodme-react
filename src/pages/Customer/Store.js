@@ -9,15 +9,12 @@ import { categoryIcon } from '../../assets/icons';
 import { useStoreFetch } from '../../hooks/store/storeFetchHook';
 import NotFound from '../../components/NotFound';
 import Forbidden from '../../components/Forbidden';
-import { useListFooter, useRenderOnDataFetched, useURLQuery } from '../../hooks/viewHook';
-import ProductList from '../../components/profile/section/ProductList';
+import { useListFooter, useURLQuery } from '../../hooks/viewHook';
 import { useStoreProductList } from '../../hooks/store/storeProductListHook';
 import { useAppContext } from '../../hooks/contextHook';
 import StoreProfile from '../../components/profile/StoreProfile';
 import { useStoreReviewList } from '../../hooks/store/storeReviewListHook';
-import ReviewList from '../../components/profile/section/ReviewList';
 import { useStoreDiscountList } from '../../hooks/store/storeDiscountListHook';
-import DiscountList from '../../components/profile/section/DiscountList';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
 import { useHeader } from '../../hooks/headerHook';
 import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
@@ -26,6 +23,10 @@ import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
 import SelectFilter from '../../components/filter/SelectFilter';
 import { useStoreProductCategoryList } from '../../hooks/store/storeProductCategoryListHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import { useParams } from 'react-router-dom';
+import ProductList from '../../components/list/ProductList';
+import ReviewList from '../../components/list/ReviewList';
+import DiscountList from '../../components/list/DiscountList';
 
 const NAV_LINKS = [
   { title : '_extra.Menu', href: '' },
@@ -43,24 +44,41 @@ function StoreDiscountsList() {
           customerToken
         }
       } 
-    } 
+    },
+    store: { 
+      store: {
+        store
+      } 
+    }
   } = useAppContext();
 
   const [
+    fetchStoreDiscounts,
     discounts, 
-    discountsFetchStatus, 
+    discountsLoading,
+    discountsLoaded,
+    discountsError,
     discountsPage, 
-    discountsNumberOfPages, 
-    refetch
+    discountsNumberOfPages,
   ] = useStoreDiscountList(customerToken);
   
+  useEffect(
+    function() {
+      if (!discountsLoaded && discountsError === null) 
+        fetchStoreDiscounts(store.id); 
+    },
+    [store.id, discountsError, discountsLoaded, fetchStoreDiscounts]
+  );
+
   return (
     <DiscountList
       discounts={discounts}
-      discountsFetchStatus={discountsFetchStatus}
       discountsPage={discountsPage}
+      discountsError={discountsError}
+      discountsLoaded={discountsLoaded}
+      discountsLoading={discountsLoading}
       discountsNumberOfPages={discountsNumberOfPages}
-      refetch={refetch}
+      fetchDiscounts={()=> fetchStoreDiscounts(store.id)}
       />
   );
 }
@@ -83,11 +101,13 @@ function StoreReviewsList() {
   } = useAppContext();
   
   const [
+    fetchStoreReviews,
     reviews, 
-    reviewsFetchStatus, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
     reviewsPage, 
-    reviewsNumberOfPages, 
-    refetch
+    reviewsNumberOfPages
   ] = useStoreReviewList(customerToken);
 
   const onReviewUpdate = useReviewUpdate();
@@ -95,6 +115,14 @@ function StoreReviewsList() {
   const onReviewDelete = useReviewDelete({ store: true });
 
   const onReviewCreate = useReviewCreate({ store: store.id });
+
+  useEffect(
+    function() {
+      if (!reviewsLoaded && reviewsError === null) 
+        fetchStoreReviews(store.id); 
+    },
+    [store.id, reviewsError, reviewsLoaded, fetchStoreReviews]
+  );
 
   return (
     <>
@@ -112,17 +140,20 @@ function StoreReviewsList() {
       </div>
 
       <ReviewList 
-        reviews={reviews}
-        reviewsFetchStatus={reviewsFetchStatus}
+        single={true}
+        reviews={reviews} 
+        reviewsLoading={reviewsLoading}
+        reviewsLoaded={reviewsLoaded}
+        reviewsError={reviewsError}
         reviewsPage={reviewsPage}
         reviewsNumberOfPages={reviewsNumberOfPages}
-        refetch={refetch}
+        fetchReviews={()=> fetchStoreReviews(store.id)}
         />
     </>
   );
 }
 
-function StoreProductsListList() {
+function StoreProductsList() {
 
   const {
     customer: {
@@ -134,59 +165,53 @@ function StoreProductsListList() {
     },
     store: {
       store: {
-        productsSubCategory
+        store
       } 
     }
   } = useAppContext();
 
-  const [
-    products, 
-    productsFetchStatus, 
-    productsPage, 
-    productsNumberOfPages, 
-    refetch,
-    onStatusChange
-  ] = useStoreProductList(customerToken);
-
-  const param = useURLQuery();
-
-  useEffect(
-    function() {
-      if (param.get('sub_category') !== productsSubCategory)
-        onStatusChange(param.get('sub_category'));
-    },
-    [param, productsSubCategory, onStatusChange]
-  );
-  
-  return (
-    <ProductList 
-      products={products}
-      productsFetchStatus={productsFetchStatus}
-      productsPage={productsPage}
-      productsNumberOfPages={productsNumberOfPages}
-      refetch={refetch}
-      />
-  );
-}
-
-function StoreProductsList() {
-
-  const [
-    fetch, 
-    categories, 
-    categoriesLoading, 
-    categoriesError, 
-    , 
-    retryFetchCategories
-  ] = useStoreProductCategoryList();
-
-  const param = useURLQuery();
+  const param = new URLSearchParams();
 
   const history = useHistory();
 
   const match = useRouteMatch();
 
-  useEffect(fetch, [fetch]);
+  const [subCategory] = useURLQuery(['sub_category']);
+
+  const [
+    fetchProductCategories, 
+    productCategories, 
+    productCategoriesLoading, 
+    productCategoriesError, 
+    productCategoriesLoaded,
+  ] = useStoreProductCategoryList(customerToken);
+
+  const [
+    fetchStoreProducts,
+    products, 
+    productsLoading,
+    productsError,
+    productsLoaded,
+    productsPage, 
+    productsNumberOfPages,
+    refreshStoreProducts
+  ] = useStoreProductList(customerToken);
+
+  useEffect(
+    function() {
+      if (!productCategoriesLoaded && productCategoriesError === null) 
+        fetchProductCategories(store.id);
+    },
+    [store.id, productCategoriesLoaded, productCategoriesError, fetchProductCategories]
+  );
+
+  useEffect(
+    function() {
+      if (productCategoriesLoaded && !productsLoaded && productsError === null) 
+        fetchStoreProducts(store.id, subCategory); 
+    },
+    [store.id, productCategoriesLoaded, productsError, productsLoaded, subCategory, fetchStoreProducts]
+  );
   
   function onFilterChange(value) {
     if (value)
@@ -195,60 +220,91 @@ function StoreProductsList() {
       param.delete('sub_category');
     
     history.replace(`${match.url}?${param.toString()}`);
-  }
-  
-  if (categoriesLoading) {
-    return <Loading />;
-  }
 
-  if (categoriesError === NetworkErrorCodes.UNKNOWN_ERROR) {
-    return <Reload action={retryFetchCategories} />;
-  }
-
-  if (categoriesError === NetworkErrorCodes.NOT_FOUND) {
-    return <NotFound />;
-  }
-
-  if (categoriesError === NetworkErrorCodes.FORBIDDEN) {
-    return <Forbidden />;
+    refreshStoreProducts();
   }
 
   return (
     <>
       <div className="container-x">
-        <SelectFilter 
-          onFilterChange={onFilterChange} 
-          value={param.get('sub_category')} 
-          options={categories.flatMap(i=> i.sub_categories).map(i=> ({ text: i.name, value: i.id }))} 
-          /> 
+
+        { productCategoriesLoading && <Loading /> }
+
+        { productCategoriesError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+
+        { productCategoriesError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+
+        { productCategoriesError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchProductCategories(store.id)} /> }
+
+        { productCategoriesError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchProductCategories(store.id)} /> }
+
+        {
+          productCategoriesLoaded && 
+          <SelectFilter 
+            onFilterChange={onFilterChange} 
+            value={subCategory} 
+            options={productCategories.flatMap(i=> i.sub_categories).map(i=> ({ text: i.name, value: i.id }))} 
+            /> 
+        }
       </div>
-      <StoreProductsListList />
+      
+      <ProductList 
+        products={products}
+        productsPage={productsPage}
+        productsError={productsError}
+        productsLoaded={productsLoaded}
+        productsLoading={productsLoading}
+        productsNumberOfPages={productsNumberOfPages}
+        fetchProducts={()=> fetchStoreProducts(store.id, subCategory)}
+        />
     </>
   );
 }
 
-function StoreProductCategoriesList({ url }) {
+function StoreProductCategoriesList() {
+
+  const {
+    customer: {
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    },
+    store: {
+      store: {
+        store
+      } 
+    }
+  } = useAppContext();
+
+  const match = useRouteMatch();
+
+  const history = useHistory();
+  
+  const param = new URLSearchParams();
 
   const listFooter = useListFooter();
 
-  const history = useHistory();
-
-  const param = useURLQuery();
-
   const [
-    fetch, 
+    fetchProductCategories, 
     productCategories, 
     productCategoriesLoading, 
     productCategoriesError, 
-    productCategoriesLoaded, 
-    retryFetch
-  ] = useStoreProductCategoryList();
+    productCategoriesLoaded,
+  ] = useStoreProductCategoryList(customerToken);
 
-  useEffect(fetch, [fetch]);
+  useEffect(
+    function() {
+      if (!productCategoriesLoaded && productCategoriesError === null) 
+        fetchProductCategories(store.id);
+    },
+    [store.id, productCategoriesLoaded, productCategoriesError, fetchProductCategories]
+  );
 
   function onFilterChange(value) {
     param.set('sub_category', value);
-    history.push(`${url}/products?${param.toString()}`);
+    history.push(`${match.url}/products?${param.toString()}`);
   }
 
   return (
@@ -285,7 +341,17 @@ function StoreProductCategoriesList({ url }) {
               render() { 
                 return (
                   <li key="category-footer" className="col-span-3">
-                    <Reload action={retryFetch} /> 
+                    <Reload action={()=> fetchProductCategories(store.id)} /> 
+                  </li> 
+                );
+              },
+            },
+            {
+              canRender: productCategoriesError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+              render() { 
+                return (
+                  <li key="category-footer" className="col-span-3">
+                    <Reload message="_errors.No_netowrk_connection" action={()=> fetchProductCategories(store.id)} /> 
                   </li> 
                 );
               },
@@ -329,6 +395,8 @@ function StoreProductCategoriesList({ url }) {
 
 export default function Store() {
 
+  const { ID } = useParams();
+
   const match = useRouteMatch();
 
   const {
@@ -342,41 +410,51 @@ export default function Store() {
   } = useAppContext();
 
   const [
-    store, 
-    storeFetchStatus, 
-    refetch
+    fetchStore,
+    store,
+    storeLoading,
+    storeError,
+    storeID,
+    unfetchStore
   ] = useStoreFetch(customerToken);
-
 
   useHeader({ 
     title: `${store?.user.name ?? 'Loading...'} - Store`,
     headerTitle: '_store.Store',
     topNavPaths: ['/cart', '/search']
   });
+  
+  useEffect(
+    function() {
+      if ((store !== null || storeError !== null) && storeID !== ID) 
+        unfetchStore();
+      else if (store === null && storeError === null)
+        fetchStore(ID);
+    },
+    [ID, store, storeError, storeID, fetchStore, unfetchStore]
+  );
 
   return (
     <section>
 
       <div className="container-x">
-        {
-          useRenderOnDataFetched(
-            storeFetchStatus,
-            ()=> <StoreProfile store={store} navLinks={NAV_LINKS} />,
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
-          )
-        }
+        
+          { store !== null && <StoreProfile store={store} navLinks={NAV_LINKS} /> }
+          { storeLoading && <Loading /> }
+          { storeError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+          { storeError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+          { storeError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchStore(ID)} /> }
+          { storeError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchStore(ID)} /> }
+        
       </div>
 
       {
-        store && 
+        store !== null && 
         <Switch>
           <Route path={`${match.url}/discounts`} render={()=> <StoreDiscountsList />} />
           <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList ratings={store.rating} />} />
           <Route path={`${match.url}/products`} render={()=> <StoreProductsList />} />
-          <Route path={match.url} render={()=> <StoreProductCategoriesList url={match.url} />} />
+          <Route path={match.url} render={()=> <StoreProductCategoriesList />} />
         </Switch>
       }
 

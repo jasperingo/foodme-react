@@ -69,14 +69,25 @@ export default function SavedCartList(
           { 
             canRender: savedCartsError === NetworkErrorCodes.NOT_FOUND,
             return() { 
-              return <li key="orders-footer" className="list-2-x-col-span"> <NotFound /> </li>;
+              return <li key="saved-cart-footer" className="list-2-x-col-span"> <NotFound /> </li>;
             }
           },
 
           { 
             canRender: savedCartsError === NetworkErrorCodes.FORBIDDEN,
             render() { 
-              return <li key="orders-footer" className="list-2-x-col-span"> <Forbidden /> </li>; 
+              return <li key="saved-cart-footer" className="list-2-x-col-span"> <Forbidden /> </li>; 
+            }
+          },
+
+          {
+            canRender: savedCartsError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+            render() {
+              return (
+                <li key="saved-cart-footer" className="list-2-x-col-span">
+                  <Reload message="_errors.No_netowrk_connection" action={fetchSavedCarts} />
+                </li>
+              );
             }
           }
         ])}
