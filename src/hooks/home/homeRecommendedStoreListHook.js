@@ -18,22 +18,12 @@ export function useHomeRecommendedStoreList() {
     }
   } = useAppContext();
 
-  const api = useMemo(function(){ return new StoreRepository(); }, []);
-
-  const retryFetch = useCallback(
-    function() { 
-      homeDispatch({ 
-        type: STORE.LIST_ERROR_CHANGED, 
-        payload: { error: null } 
-      }) ;
-    },
-    [homeDispatch]
-  );
+  const api = useMemo(function() { return new StoreRepository(); }, []);
   
-  const fetch = useCallback(
+  const fetchRecommendedStores = useCallback(
     async function() {
       
-      if (storesLoaded || storesLoading || storesError !== null) return;
+      if (storesLoading) return;
 
       if (!window.navigator.onLine) {
         homeDispatch({
@@ -69,8 +59,8 @@ export function useHomeRecommendedStoreList() {
         });
       }
     },
-    [api, storesLoaded, storesLoading, storesError, homeDispatch]
+    [api, storesLoading, homeDispatch]
   );
 
-  return [fetch, stores, storesLoading, storesError, storesLoaded, retryFetch];
+  return [fetchRecommendedStores, stores, storesLoading, storesError, storesLoaded];
 }

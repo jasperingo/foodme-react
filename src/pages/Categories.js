@@ -1,8 +1,7 @@
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import AddButton from '../components/AddButton';
 import CategoryList from '../components/list/CategoryList';
-import NetworkErrorCodes from '../errors/NetworkErrorCodes';
 import { useProductCategoryList } from '../hooks/category/productCategoryListHook';
 import { useStoreCategoryList } from '../hooks/category/storeCategoryListHook';
 import { useHeader } from '../hooks/headerHook';
@@ -20,8 +19,7 @@ export default function Categories({ isAdmin }) {
     stores,
     storesLoading,
     storesLoaded,
-    storesError,
-    setStoreCategoriesError
+    storesError
   ] = useStoreCategoryList();
 
   const [
@@ -29,36 +27,15 @@ export default function Categories({ isAdmin }) {
     products,
     productsLoading,
     productsLoaded,
-    productsError,
-    setProductCategoriesError
+    productsError
   ] = useProductCategoryList();
-
-  const fetchStores = useCallback(
-    function() {
-      if (!window.navigator.onLine && storesError === null)
-        setStoreCategoriesError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
-      else if (window.navigator.onLine && !storesLoading) 
-        fetchStoreCategories();
-    },
-    [storesError, storesLoading, fetchStoreCategories, setStoreCategoriesError]
-  );
-
-  const fetchProducts = useCallback(
-    function() {
-      if (!window.navigator.onLine && productsError === null)
-        setProductCategoriesError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
-      else if (window.navigator.onLine && !productsLoading) 
-        fetchProductCategories();
-    },
-    [productsError, productsLoading, fetchProductCategories, setProductCategoriesError]
-  );
 
   useEffect(
     function() { 
-      if (!storesLoaded) fetchStores(); 
-      if (!productsLoaded) fetchProducts();
+      if (!storesLoaded && storesError === null) fetchStoreCategories(); 
+      if (!productsLoaded && productsError === null) fetchProductCategories();
     },
-    [storesLoaded, productsLoaded, fetchStores, fetchProducts]
+    [storesLoaded, storesError, productsLoaded, productsError, fetchStoreCategories, fetchProductCategories]
   );
 
   return (
@@ -74,7 +51,7 @@ export default function Categories({ isAdmin }) {
           categoriesLoading={storesLoading} 
           categoriesLoaded={storesLoaded} 
           categoriesError={storesError} 
-          retryFetch={()=> setStoreCategoriesError(null)}
+          retryFetch={fetchStoreCategories}
           />
 
         {
@@ -85,7 +62,7 @@ export default function Categories({ isAdmin }) {
             categoriesLoading={productsLoading} 
             categoriesLoaded={productsLoaded} 
             categoriesError={productsError} 
-            retryFetch={()=> setProductCategoriesError(null)}
+            retryFetch={fetchProductCategories}
             />
         }
 

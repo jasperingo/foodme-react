@@ -22,13 +22,6 @@ export function useStoreCategoryList() {
 
   const api = useMemo(function() { return new CategoryRepository(); }, []);
 
-  function setStoreCategoriesError(error) {
-    categoryDispatch({ 
-      type: CATEGORY.STORES_LIST_ERROR_CHANGED, 
-      payload: { error } 
-    });
-  }
-
   const fetchStoreCategories = useCallback(
     async function() {
 
@@ -73,6 +66,5 @@ export function useStoreCategoryList() {
     storesLoading,
     storesLoaded,
     storesError,
-    setStoreCategoriesError
   ];
 }

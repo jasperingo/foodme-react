@@ -19,21 +19,11 @@ export function useHomePromotionList() {
   } = useAppContext();
 
   const api = useMemo(function() { return new PromotionRepository(); }, []);
-
-  const retryFetch = useCallback(
-    function() { 
-      homeDispatch({ 
-        type: PROMOTION.LIST_ERROR_CHANGED, 
-        payload: { error: null } 
-      }) ;
-    },
-    [homeDispatch]
-  );
   
-  const fetch = useCallback(
+  const fetchPromotions = useCallback(
     async function() {
       
-      if (promotionsLoaded || promotionsLoading || promotionsError !== null) return;
+      if (promotionsLoading) return;
 
       if (!window.navigator.onLine) {
         homeDispatch({
@@ -69,8 +59,8 @@ export function useHomePromotionList() {
         });
       }
     },
-    [api, promotionsLoaded, promotionsLoading, promotionsError, homeDispatch]
+    [api, promotionsLoading, homeDispatch]
   );
 
-  return [fetch, promotions, promotionsLoading, promotionsError, promotionsLoaded, retryFetch];
+  return [fetchPromotions, promotions, promotionsLoading, promotionsError, promotionsLoaded];
 }

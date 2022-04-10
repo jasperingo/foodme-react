@@ -13,7 +13,7 @@ import Reload from '../Reload';
 import ScrollList from './ScrollList';
 
 export default function StoreList(
-  { stores, storesLoading, storesLoaded, storesError, storesPage, storesNumberOfPages, fetchStores, refreshList }
+  { single, stores, storesLoading, storesLoaded, storesError, storesPage, storesNumberOfPages, fetchStores, refreshList }
 ) {
   
   const listFooter = useListFooter();
@@ -27,7 +27,7 @@ export default function StoreList(
         data={stores}
         nextPage={fetchStores}
         refreshPage={refreshList}
-        hasMore={loadOnScroll(storesPage, storesNumberOfPages, storesError)}
+        hasMore={!single && loadOnScroll(storesPage, storesNumberOfPages, storesError)}
         className="list-x"
         renderDataItem={(item)=> (
           <li key={`store-${item.id}`}> <StoreItem store={item} /> </li>
@@ -56,7 +56,7 @@ export default function StoreList(
           },
 
           { 
-            canRender: storesPage <= storesNumberOfPages, 
+            canRender: !single && storesPage <= storesNumberOfPages, 
             render() { 
               return <li key="store-footer" className="list-x-col-span"> <FetchMoreButton action={fetchStores} /> </li>;
             }

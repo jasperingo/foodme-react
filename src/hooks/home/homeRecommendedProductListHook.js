@@ -19,21 +19,11 @@ export function useHomeRecommendedProductList() {
   } = useAppContext();
 
   const api = useMemo(function() { return new ProductRepository(); }, []);
-
-  const retryFetch = useCallback(
-    function() { 
-      homeDispatch({ 
-        type: PRODUCT.LIST_ERROR_CHANGED, 
-        payload: { error: null } 
-      });
-    },
-    [homeDispatch]
-  );
   
-  const fetch = useCallback(
+  const fetchRecommendedProducts = useCallback(
     async function() {
       
-      if (productsLoaded || productsLoading || productsError !== null) return;
+      if (productsLoading) return;
 
       if (!window.navigator.onLine) {
         homeDispatch({
@@ -69,8 +59,8 @@ export function useHomeRecommendedProductList() {
         });
       }
     },
-    [api, productsLoaded, productsLoading, productsError, homeDispatch]
+    [api, productsLoading, homeDispatch]
   );
 
-  return [fetch, products, productsLoading, productsError, productsLoaded, retryFetch];
+  return [fetchRecommendedProducts, products, productsLoading, productsError, productsLoaded];
 }

@@ -13,7 +13,7 @@ import { useListFooter, useLoadOnListScroll } from '../../hooks/viewHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 export default function ProductList(
-  { products, productsLoading, productsLoaded, productsError, productsPage, productsNumberOfPages, fetchProducts, refreshList }
+  { single, products, productsLoading, productsLoaded, productsError, productsPage, productsNumberOfPages, fetchProducts, refreshList }
 ) {
   
   const listFooter = useListFooter();
@@ -27,7 +27,7 @@ export default function ProductList(
         data={products}
         nextPage={fetchProducts}
         refreshPage={refreshList}
-        hasMore={loadOnScroll(productsPage, productsNumberOfPages, productsError)}
+        hasMore={!single && loadOnScroll(productsPage, productsNumberOfPages, productsError)}
         className="list-x"
         renderDataItem={(item)=> (
           <li key={`product-${item.id}`}> <ProductItem product={item} /> </li>
@@ -49,7 +49,7 @@ export default function ProductList(
           },
 
           { 
-            canRender: productsLoaded && products.length === 0, 
+            canRender: !single && productsLoaded && products.length === 0, 
             render() { 
               return <li key="product-footer" className="list-x-col-span"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>;
             }

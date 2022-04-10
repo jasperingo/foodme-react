@@ -11,7 +11,7 @@ import Reload from '../Reload';
 import SingleList from './SingleList';
 
 export default function CategoryList(
-  { headerText, categories, categoriesLoading, categoriesLoaded, categoriesError, retryFetch }
+  { headerText, grid, categories, categoriesLoading, categoriesLoaded, categoriesError, fetchCategories }
 ) {
 
   const { t } = useTranslation();
@@ -23,13 +23,13 @@ export default function CategoryList(
       <h3 className="font-bold my-2">{ t(headerText) }</h3>
       <SingleList
         data={categories}
-        className="category-list"
+        className={ grid ? 'grid gap-4 grid-cols-3 md:grid-cols-4' : 'category-list'}
         renderDataItem={(item, i)=> (
           <CategoryItem 
             key={`category-${item.id}`} 
             index={i}
             category={item} 
-            grid={false}
+            grid={grid}
             />
         )}
         footer={listFooter([
@@ -42,13 +42,13 @@ export default function CategoryList(
           { 
             canRender: categoriesError === NetworkErrorCodes.UNKNOWN_ERROR, 
             render() { 
-              return <li key="category-footer" className="col-span-3"> <Reload action={retryFetch} /> </li>;
+              return <li key="category-footer" className="col-span-3"> <Reload action={fetchCategories} /> </li>;
             }
           },
           { 
             canRender: categoriesError === NetworkErrorCodes.NO_NETWORK_CONNECTION, 
             render() { 
-              return <li key="category-footer" className="col-span-3"> <Reload message="_errors.No_netowrk_connection" action={retryFetch} /> </li>;
+              return <li key="category-footer" className="col-span-3"> <Reload message="_errors.No_netowrk_connection" action={fetchCategories} /> </li>;
             }
           },
           { 
