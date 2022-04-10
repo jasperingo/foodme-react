@@ -32,6 +32,16 @@ export function useStoreCategoryList() {
   const fetchStoreCategories = useCallback(
     async function() {
 
+      if (storesLoading) return;
+
+      if (!window.navigator.onLine) {
+        categoryDispatch({
+          type: CATEGORY.STORES_LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
+
       categoryDispatch({ type: CATEGORY.STORES_LIST_FETCHING });
 
       try {
@@ -54,7 +64,7 @@ export function useStoreCategoryList() {
         });
       }
     },
-    [api, categoryDispatch]
+    [api, storesLoading, categoryDispatch]
   );
   
   return [
@@ -66,5 +76,3 @@ export function useStoreCategoryList() {
     setStoreCategoriesError
   ];
 }
-
-

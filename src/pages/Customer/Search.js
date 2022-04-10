@@ -1,26 +1,22 @@
 
 import React, { useEffect } from 'react';
+import Icon from '@mdi/react';
 import { Route, Switch, useRouteMatch, useHistory } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import EmptyList from '../../components/EmptyList';
 import Tab from '../../components/Tab';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import { filterIcon, productIcon, searchIcon, storeIcon } from '../../assets/icons';
-import { useHasMoreToFetchViaScroll, useRenderListFooter, useRenderOnDataFetched, useURLQuery } from '../../hooks/viewHook';
-import { useAppContext } from '../../hooks/contextHook';
-import { SEARCH } from '../../context/actions/searchActions';
+import { filterIcon, searchIcon } from '../../assets/icons';
+import { useURLQuery } from '../../hooks/viewHook';
 import { useSearchStoreList } from '../../hooks/search/searchStoreListHook';
-import ScrollList from '../../components/list/ScrollList';
-import StoreItem from '../../components/list_item/StoreItem';
-import ProductItem from '../../components/list_item/ProductItem';
 import { useSearchProductList } from '../../hooks/search/searchProductListHook';
-import Icon from '@mdi/react';
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useTranslation } from 'react-i18next';
-
+import StoreList from '../../components/list/StoreList';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import ProductList from '../../components/list/ProductList';
 
 const TAB_LINKS = [
   { title : '_store.Stores', href: '/stores' },
@@ -66,177 +62,166 @@ function SubCategoryFilter({ categories, subCategory, onFilterChange }) {
   );
 }
 
-function ProductList() {
-
-  const [
-    products, 
-    productsFetchStatus, 
-    productsPage, 
-    productsNumberOfPages, 
-    refetch
-  ] = useSearchProductList();
-  
-  return (
-    <ScrollList
-      data={products}
-      nextPage={refetch}
-      hasMore={useHasMoreToFetchViaScroll(productsPage, productsNumberOfPages, productsFetchStatus)}
-      className="list-x"
-      renderDataItem={(item)=> (
-        <li key={`product-${item.id}`}> <ProductItem product={item} /> </li>
-      )}
-      footer={useRenderListFooter(
-        productsFetchStatus,
-        ()=> <li key="product-footer"> <Loading /> </li>, 
-        ()=> <li key="product-footer"> <Reload action={refetch} /> </li>,
-        ()=> <li key="product-footer"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>,
-        ()=> <li key="product-footer"> <FetchMoreButton action={refetch} /> </li>,
-      )}
-      />
-  );
-}
-
 function Products() {
 
-  const {
-    search: {
-      searchDispatch, 
-      search: {
-        productsSubCategory
-      } 
-    }
-  } = useAppContext();
-
-  const [
-    products, 
-    productsFetchStatus, 
-    refetchProducts
-  ] = useProductCategoryList(true);
-
   const history = useHistory()
 
-  const param = useURLQuery();
+  const param = new URLSearchParams(window.location.search);
 
-  const subCategoryParam = param.get('products_sub_category');
-
-  function filterChanged(value) {
-    param.set('products_sub_category', value);
-    searchDispatch({
-      type: SEARCH.PRODUCTS_FILTER_CHANGED,
-      payload: value
-    });
-    history.replace(`/search/products?${param.toString()}`);
-  }
-
-  useEffect(
-    ()=> {
-      if (subCategoryParam !== null && subCategoryParam !== productsSubCategory) {
-        searchDispatch({
-          type: SEARCH.PRODUCTS_FILTER_CHANGED,
-          payload: subCategoryParam
-        });
-      }
-    }, 
-    [subCategoryParam, productsSubCategory, searchDispatch]
-  );
-
-  return useRenderOnDataFetched(
-    productsFetchStatus,
-    ()=> (
-      <div>
-        <SubCategoryFilter categories={products} subCategory={subCategoryParam} onFilterChange={filterChanged} />
-        <ProductList />
-      </div>
-    ),
-    ()=> <Loading />,
-    ()=> <Reload action={refetchProducts} />,
-  );
-}
-
-function StoreList() {
+  const [q, subCategory] = useURLQuery(['q', 'products_sub_category']);
 
   const [
-    stores, 
-    storesFetchStatus, 
-    storesPage, 
-    storesNumberOfPages, 
-    refetch
-  ] = useSearchStoreList();
+    fetchProductCategories, 
+    productsCategories,
+    productsCategoriesLoading,
+    productsCategoriesLoaded,
+    productsCategoriesError,
+  ] = useProductCategoryList();
 
+  const [
+    fetchProducts,
+    products, 
+    productsLoading,
+    productsLoaded,
+    productsError,
+    productsPage, 
+    productsNumberOfPages,
+    refreshProducts
+  ] = useSearchProductList();
+
+  useEffect(
+    function() {
+      if (!productsCategoriesLoaded && productsCategoriesError === null) 
+        fetchProductCategories();
+    },
+    [productsCategoriesLoaded, productsCategoriesError, fetchProductCategories]
+  );
+
+  useEffect(
+    function() {
+      if (productsCategoriesLoaded && !productsLoaded && productsError === null) 
+        fetchProducts(q, subCategory); 
+    },
+    [q, productsCategoriesLoaded, productsError, productsLoaded, subCategory, fetchProducts]
+  );
+
+  function filterChanged(value) {
+    if (value)
+      param.set('products_sub_category', value);
+    else 
+      param.delete('products_sub_category');
+   
+    history.replace(`/search/products?${param.toString()}`);
+
+    refreshProducts();
+  }
+
+  if (productsCategoriesLoading) return <Loading />;
+  
+  if (productsCategoriesError === NetworkErrorCodes.UNKNOWN_ERROR) return <Reload action={fetchProductCategories} />;
+
+  if (productsCategoriesError === NetworkErrorCodes.NO_NETWORK_CONNECTION) return <Reload message="_errors.No_netowrk_connection" action={fetchProductCategories} />;
+  
   return (
-    <ScrollList
-      data={stores}
-      nextPage={refetch}
-      hasMore={useHasMoreToFetchViaScroll(storesPage, storesNumberOfPages, storesFetchStatus)}
-      className="list-x"
-      renderDataItem={(item)=> (
-        <li key={`store-${item.id}`}> <StoreItem store={item} /> </li>
-      )}
-      footer={useRenderListFooter(
-        storesFetchStatus,
-        ()=> <li key="store-footer"> <Loading /> </li>, 
-        ()=> <li key="store-footer"> <Reload action={refetch} /> </li>,
-        ()=> <li key="store-footer"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>,
-        ()=> <li key="store-footer"> <FetchMoreButton action={refetch} /> </li>
-      )}
-      />
-  )
+    <>
+      <SubCategoryFilter 
+        subCategory={subCategory} 
+        categories={productsCategories} 
+        onFilterChange={filterChanged} 
+        />
+      
+      <ProductList 
+        products={products}
+        productsPage={productsPage}
+        productsError={productsError}
+        productsLoaded={productsLoaded}
+        productsLoading={productsLoading}
+        productsNumberOfPages={productsNumberOfPages}
+        fetchProducts={()=> fetchProducts(q, subCategory)}
+        />
+    </>
+  );
 }
+
 
 function Stores() {
-
-  const {
-    search: {
-      searchDispatch, 
-      search: {
-        storesSubCategory
-      } 
-    }
-  } = useAppContext();
-
-  const [
-    stores, 
-    storesFetchStatus, 
-    refetchStores
-  ] = useStoreCategoryList();
-
+  
   const history = useHistory()
 
-  const param = useURLQuery();
+  const param = new URLSearchParams(window.location.search);
 
-  const subCategoryParam = param.get('stores_sub_category');
+  const [q, subCategory] = useURLQuery(['q', 'stores_sub_category']);
 
-  function filterChanged(value) {
-    param.set('stores_sub_category', value);
-    searchDispatch({
-      type: SEARCH.STORES_FILTER_CHANGED,
-      payload: value
-    });
-    history.replace(`/search/stores?${param.toString()}`);
-  }
+  const [
+    fetchStoreCategories, 
+    storesCategories,
+    storesCategoriesLoading,
+    storesCategoriesLoaded,
+    storesCategoriesError
+  ] = useStoreCategoryList();
+
+  const [
+    fetchStores,
+    stores, 
+    storesLoading,
+    storesLoaded,
+    storesError,
+    storesPage, 
+    storesNumberOfPages,
+    refreshStore
+  ] = useSearchStoreList();
 
   useEffect(
-    ()=> {
-      if (subCategoryParam !== null && subCategoryParam !== storesSubCategory) {
-        searchDispatch({
-          type: SEARCH.STORES_FILTER_CHANGED,
-          payload: subCategoryParam
-        });
-      }
-    }, 
-    [subCategoryParam, storesSubCategory, searchDispatch]
+    function() {
+      if (!storesCategoriesLoaded && storesCategoriesError === null) 
+        fetchStoreCategories();
+    },
+    [storesCategoriesLoaded, storesCategoriesError, fetchStoreCategories]
   );
 
-  return useRenderOnDataFetched(
-    storesFetchStatus,
-    ()=> (
-      <div>
-        <SubCategoryFilter categories={stores} subCategory={subCategoryParam} onFilterChange={filterChanged} />
-        <StoreList />
-      </div>
-    ),
-    ()=> <Loading />,
-    ()=> <Reload action={refetchStores} />,
+  useEffect(
+    function() {
+      if (storesCategoriesLoaded && !storesLoaded && storesError === null) 
+        fetchStores(q, subCategory); 
+    },
+    [q, storesCategoriesLoaded, storesError, storesLoaded, subCategory, fetchStores]
+  );
+
+  function filterChanged(value) {
+    if (value)
+      param.set('stores_sub_category', value);
+    else 
+      param.delete('stores_sub_category');
+
+    history.replace(`/search/stores?${param.toString()}`);
+
+    refreshStore();
+  }
+
+  if (storesCategoriesLoading) return <Loading />;
+
+  if (storesCategoriesError === NetworkErrorCodes.UNKNOWN_ERROR) return <Reload action={fetchStoreCategories} />;
+
+  if (storesCategoriesError === NetworkErrorCodes.NO_NETWORK_CONNECTION) return <Reload message="_errors.No_netowrk_connection" action={fetchStoreCategories} />;
+  
+  return (
+    <>
+      <SubCategoryFilter 
+        subCategory={subCategory}
+        categories={storesCategories} 
+        onFilterChange={filterChanged} 
+        />
+
+      <StoreList 
+        stores={stores}
+        storesError={storesError}
+        storesPage={storesPage}
+        storesLoaded={storesLoaded}
+        storesLoading={storesLoading}
+        storesNumberOfPages={storesNumberOfPages}
+        fetchStores={()=> fetchStores(q, subCategory)}
+        />
+    </>
   );
 }
 
@@ -244,46 +229,15 @@ export default function Search() {
 
   const match = useRouteMatch();
   
-  const queryParam = useURLQuery().get('q');
-
-  const storesSubCategoryParam = useURLQuery().get('stores_sub_category');
-
-  const productsSubCategoryParam = useURLQuery().get('products_sub_category');
-
-  const {
-    search: {
-      searchDispatch,
-      search: {
-        query
-      } 
-    }
-  } = useAppContext();
+  const [q, storeSubCategory, productSubCategory] = useURLQuery(['q', 'stores_sub_category', 'products_sub_category']);
 
   useHeader({ 
     searchPage: true,
-    title: `${queryParam ?? 'No search parameter'} - Search`,
+    title: `${q ?? 'No search parameter'} - Search`,
     headerTitle: '_search.Search',
   });
-
-  useEffect(
-    ()=> {
-      if (queryParam !== null && queryParam !== query) {
-        searchDispatch({
-          type: SEARCH.QUERY_CHANGED,
-          payload: queryParam
-        });
-      }
-    }, 
-    [queryParam, query, searchDispatch]
-  );
   
-  if (
-    !queryParam && 
-    storesSubCategoryParam === null && 
-    productsSubCategoryParam === null
-  ) {
-    return <SearchEmpty />
-  }
+  if (!q && !storeSubCategory && !productSubCategory) return <SearchEmpty />;
   
   return (
     <section>
@@ -291,7 +245,7 @@ export default function Search() {
       <div className="container-x">
         <Tab 
           keyPrefix="search-tab" 
-          items={ TAB_LINKS.map(i=> ({ ...i, href: `${i.href}${queryParam ? `?q=${queryParam}`: ''}` })) } 
+          items={ TAB_LINKS.map(i=> ({ ...i, href: `${i.href}${q ? `?q=${q}`: ''}` })) } 
           />
       </div>
 

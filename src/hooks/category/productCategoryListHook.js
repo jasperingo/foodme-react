@@ -31,6 +31,16 @@ export function useProductCategoryList() {
   const fetchProductCategories = useCallback(
     async function() {
 
+      if (productsLoading) return;
+
+      if (!window.navigator.onLine) {
+        categoryDispatch({
+          type: CATEGORY.PRODUCTS_LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
+
       categoryDispatch({ type: CATEGORY.PRODUCTS_LIST_FETCHING });
 
       try {
@@ -53,7 +63,7 @@ export function useProductCategoryList() {
         });
       }
     },
-    [api, categoryDispatch]
+    [api, productsLoading, categoryDispatch]
   );
   
   return [

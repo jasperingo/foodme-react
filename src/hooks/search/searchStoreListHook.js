@@ -1,24 +1,19 @@
 
-import { useCallback, useEffect } from "react";
-import { getStoresListFetchStatusAction, STORE } from "../../context/actions/storeActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { STORE } from "../../context/actions/storeActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus, useURLQuery } from "../viewHook";
-
 
 export function useSearchStoreList() {
-
-  const queryParam = useURLQuery().get('q');
-
-  const subCategoryParam = useURLQuery().get('stores_sub_category');
 
   const { 
     search: {
       searchDispatch,
       search: {
         stores,
-        storesFetchStatus,
+        storesError,
+        storesLoaded,
         storesLoading,
         storesPage,
         storesNumberOfPages
@@ -26,67 +21,65 @@ export function useSearchStoreList() {
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new StoreRepository(); }, []);
 
+  function refreshStores() {
+    searchDispatch({ type: STORE.LIST_UNFETCHED }); 
+  }
 
-  const refetch = useCallback(
-    ()=> {
-      if (storesFetchStatus !== FETCH_STATUSES.LOADING) 
-        searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [searchDispatch, storesFetchStatus]
-  );
+  const fetchStores = useCallback(
+    async function(q, subCategory) {
+      
+      if (storesLoading) return;
+      
+      if (!window.navigator.onLine) {
+        searchDispatch({
+          type: STORE.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
-  useEffect(
-    ()=> {
-      if (storesLoading && storesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      searchDispatch({ type: STORE.LIST_FETCHING });
 
-        searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      try {
+        const res = await api.getSearchList(q, subCategory, storesPage)
+        
+        if (res.status === 200) {
+          searchDispatch({
+            type: STORE.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages,
+            }
+          });
+        } else {
+          throw new Error();
+        }
 
-      } else if (storesLoading && storesFetchStatus === FETCH_STATUSES.LOADING) {
-
-        searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-
-        const api = new StoreRepository();
-        api.getSearchList(queryParam, subCategoryParam, storesPage)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            searchDispatch({
-              type: STORE.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  storesPage, 
-                  res.body.pagination.number_of_pages, 
-                  stores.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          searchDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      } catch(error) {
+        searchDispatch({
+          type: STORE.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      queryParam, 
-      subCategoryParam, 
-      stores, 
-      storesLoading, 
-      storesFetchStatus, 
+      api,
       storesPage, 
-      storesNumberOfPages, 
+      storesLoading, 
       searchDispatch, 
-      listStatusUpdater
     ]
   );
 
-  return [stores, storesFetchStatus, storesPage, storesNumberOfPages, refetch];
+  return [
+    fetchStores,
+    stores, 
+    storesLoading,
+    storesLoaded,
+    storesError,
+    storesPage, 
+    storesNumberOfPages,
+    refreshStores
+  ];
 }
-
