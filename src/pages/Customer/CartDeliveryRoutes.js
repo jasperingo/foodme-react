@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
 import { Redirect, useHistory } from 'react-router-dom';
 import EmptyList from '../../components/EmptyList';
@@ -87,8 +87,16 @@ export default function CartDeliveryRoutes() {
 
   const history = useHistory();
 
-  const [data, isLoading, error, load] = useOrderRouteSuggest();
+  const [fetchRouteSuggestions, data, isLoading, error, isLoaded] = useOrderRouteSuggest();
   
+  useEffect(
+    function() {
+      if (!isLoaded && error === null && cartItems.length > 0) 
+        fetchRouteSuggestions();
+    }, 
+    [isLoaded, error, fetchRouteSuggestions, cartItems.length]
+  );
+
   if (cartItems.length === 0) {
     return <Redirect to="/" />
   }
@@ -115,11 +123,8 @@ export default function CartDeliveryRoutes() {
           )}
           footer={
             (isLoading && <li key="route-footer" className="list-2-x-col-span"> <Loading /> </li>) ||
-            (error && <li key="route-footer" className="list-2-x-col-span"> <Reload message={error} action={load} /> </li>) || 
-            (
-              (!isLoading && !error && data.length === 0) && 
-              <li key="route-footer" className="list-2-x-col-span"> <EmptyList text='_empty.No_delivery_suggestion_for_cart' /> </li>
-            )
+            (error && <li key="route-footer" className="list-2-x-col-span"> <Reload message={error} action={fetchRouteSuggestions} /> </li>) || 
+            (isLoaded && data.length === 0 && <li key="route-footer" className="list-2-x-col-span"> <EmptyList text='_empty.No_delivery_suggestion_for_cart' /> </li>)
           }
           />
 

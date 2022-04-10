@@ -32,24 +32,24 @@ export default function CartDeliveryAddress() {
       } 
     } 
   } = useAppContext();
+  
+  const history = useHistory();
 
   const [
-    fetch, 
+    fetchCustomerAddresses, 
     addresses, 
     addressesLoading, 
     addressesError, 
     addressesLoaded, 
-    retryFetch,
-    refresh
-  ] = useCustomerAddressList(customer.id, customerToken);
-
-  const history = useHistory();
+    refreshCustomerAddresses
+  ] = useCustomerAddressList(customerToken);
 
   useEffect(
     function() {
-      if (!addressesLoaded && cartItems.length > 0) fetch();
+      if (!addressesLoaded && addressesError === null && cartItems.length > 0) 
+        fetchCustomerAddresses(customer.id);
     }, 
-    [addressesLoaded, fetch, cartItems.length]
+    [customer.id, addressesLoaded, addressesError, fetchCustomerAddresses, cartItems.length]
   );
 
   if (cartItems.length === 0) {
@@ -73,14 +73,14 @@ export default function CartDeliveryAddress() {
       </div>
       
       <AddressList 
+        renderButtons={true}
+        onButtonClicked={onSelect}
         addresses={addresses}
         addressesLoading={addressesLoading}
         addressesError={addressesError}
         addressesLoaded={addressesLoaded}
-        refetch={retryFetch}
-        refresh={refresh}
-        renderButtons={true}
-        onButtonClicked={onSelect}
+        refreshList={refreshCustomerAddresses}
+        fetchAddresses={()=> fetchCustomerAddresses(customer.id)}
         />
 
     </section>

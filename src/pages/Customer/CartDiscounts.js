@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
@@ -137,9 +137,17 @@ export default function CartDiscounts() {
 
   const { t } = useTranslation();
 
-  const [data, isLoading, error, load] = useOrderDiscountSuggest();
+  const [fetchDiscountSugggestions, data, isLoading, error, isLoaded] = useOrderDiscountSuggest();
   
   const [discounts, setDiscounts] = useState([]);
+
+  useEffect(
+    function() {
+      if (!isLoaded && error === null && cartItems.length > 0) 
+        fetchDiscountSugggestions();
+    }, 
+    [isLoaded, error, fetchDiscountSugggestions, cartItems.length]
+  );
 
   function onDiscountSelected(productId, discountProductId, discountAmount) {
     const value = { product_id: productId, discount_product_id: discountProductId, discount_amount: discountAmount };
@@ -187,9 +195,9 @@ export default function CartDiscounts() {
           )}
           footer={
             (isLoading && <li key="discounts-footer" className="list-2-x-col-span"> <Loading /> </li>) ||
-            (error && <li key="discounts-footer" className="list-2-x-col-span"> <Reload message={error} action={load} /> </li>) || 
+            (error && <li key="discounts-footer" className="list-2-x-col-span"> <Reload message={error} action={fetchDiscountSugggestions} /> </li>) || 
             (
-              (!isLoading && !error) && 
+              isLoaded && 
               <li 
                 key="discounts-footer"
                 onClick={onContinueClicked}
