@@ -1,11 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { DELIVERY_ROUTE, getDeliveryRoutesListFetchStatusAction } from "../../context/actions/deliveryRouteActions";
+import { useCallback, useMemo } from "react";
+import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useDeliveryFirmRouteList(userToken) {
 
@@ -13,74 +12,74 @@ export function useDeliveryFirmRouteList(userToken) {
     deliveryFirm: {
       deliveryFirmDispatch,
       deliveryFirm: {
-        deliveryFirm,
         routes,
         routesPage,
+        routesError,
+        routesLoaded,
         routesLoading,
-        routesNumberOfPages,
-        routesFetchStatus
+        routesNumberOfPages
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new DeliveryFirmRepository(userToken); }, [userToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (routesFetchStatus !== FETCH_STATUSES.LOADING) 
-        deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [deliveryFirmDispatch, routesFetchStatus]
-  );
+  function refreshDeliveryFirmRoutes() {
+    deliveryFirmDispatch({ type: DELIVERY_ROUTE.LIST_UNFETCHED }); 
+  }
   
-  useEffect(
-    ()=> {
-      if (routesLoading && routesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchDeliveryFirmRoutes = useCallback(
+    async function(ID) {
 
-        deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (routesLoading) return;
+      
+      if (!window.navigator.onLine) {
+        deliveryFirmDispatch({
+          type: DELIVERY_ROUTE.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
-      } else if (routesLoading && routesFetchStatus === FETCH_STATUSES.LOADING) {
-
-        deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      deliveryFirmDispatch({ type: DELIVERY_ROUTE.LIST_FETCHING });
         
-        const api = new DeliveryFirmRepository(userToken);
-        api.getRoutesList(deliveryFirm.id, routesPage)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            deliveryFirmDispatch({
-              type: DELIVERY_ROUTE.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  routesPage, 
-                  res.body.pagination.number_of_pages, 
-                  routes.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else if (res.status === 404) {
-
-            deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          deliveryFirmDispatch(getDeliveryRoutesListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      try {
+        const res = await api.getRoutesList(ID, routesPage);
+        
+        if (res.status === 200) {
+          deliveryFirmDispatch({
+            type: DELIVERY_ROUTE.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+        
+      } catch(error) {
+        deliveryFirmDispatch({
+          type: DELIVERY_ROUTE.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [deliveryFirm.id, routes, routesPage, routesLoading, routesFetchStatus, userToken, deliveryFirmDispatch, listStatusUpdater]
+    [api, routesPage, routesLoading, deliveryFirmDispatch]
   );
 
-  return [routes, routesFetchStatus, routesPage, routesNumberOfPages, refetch];
+  return [
+    fetchDeliveryFirmRoutes,
+    routes, 
+    routesLoading,
+    routesError,
+    routesLoaded,
+    routesPage, 
+    routesNumberOfPages,
+    refreshDeliveryFirmRoutes
+  ];
 }
-

@@ -1,11 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { getReviewsListFetchStatusAction, REVIEW } from "../../context/actions/reviewActions";
+import { useCallback, useMemo } from "react";
+import { REVIEW } from "../../context/actions/reviewActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useDeliveryFirmReviewList(userToken) {
 
@@ -13,74 +12,74 @@ export function useDeliveryFirmReviewList(userToken) {
     deliveryFirm: {
       deliveryFirmDispatch,
       deliveryFirm: {
-        deliveryFirm,
         reviews,
         reviewsPage,
+        reviewsLoaded,
         reviewsLoading,
         reviewsNumberOfPages,
-        reviewsFetchStatus
+        reviewsError
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
-
-  const refetch = useCallback(
-    ()=> {
-      if (reviewsFetchStatus !== FETCH_STATUSES.LOADING) 
-        deliveryFirmDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [deliveryFirmDispatch, reviewsFetchStatus]
-  );
+  const api = useMemo(function() { return new DeliveryFirmRepository(userToken); }, [userToken]);
   
-  useEffect(
-    ()=> {
-      if (reviewsLoading && reviewsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  function refreshDeliveryFirmReviews() {
+    deliveryFirmDispatch({ type: REVIEW.LIST_UNFETCHED }); 
+  }
 
-        deliveryFirmDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+  const fetchDeliveryFirmReviews = useCallback(
+    async function(ID) {
 
-      } else if (reviewsLoading && reviewsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (reviewsLoading) return;
+      
+      if (!window.navigator.onLine) {
+        deliveryFirmDispatch({
+          type: REVIEW.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
-        deliveryFirmDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      deliveryFirmDispatch({ type: REVIEW.LIST_FETCHING });
         
-        const api = new DeliveryFirmRepository(userToken);
-        api.getReviewsList(deliveryFirm.id, reviewsPage)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            deliveryFirmDispatch({
-              type: REVIEW.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  reviewsPage, 
-                  res.body.pagination.number_of_pages, 
-                  reviews.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else if (res.status === 404) {
+      try {
+        const res = await api.getReviewsList(ID, reviewsPage);
+       
+        if (res.status === 200) {
+          deliveryFirmDispatch({
+            type: REVIEW.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
 
-            deliveryFirmDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            deliveryFirmDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-            
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          deliveryFirmDispatch(getReviewsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      } catch(error) {
+        deliveryFirmDispatch({
+          type: REVIEW.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [deliveryFirm.id, reviews, reviewsPage, reviewsLoading, reviewsFetchStatus, userToken, deliveryFirmDispatch, listStatusUpdater]
+    [api, reviewsPage, reviewsLoading, deliveryFirmDispatch]
   );
 
-  return [reviews, reviewsFetchStatus, reviewsPage, reviewsNumberOfPages, refetch];
+  return [
+    fetchDeliveryFirmReviews,
+    reviews, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
+    reviewsPage, 
+    reviewsNumberOfPages,
+    refreshDeliveryFirmReviews
+  ];
 }
-

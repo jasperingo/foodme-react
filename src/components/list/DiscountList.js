@@ -21,70 +21,68 @@ export default function DiscountList(
   const loadOnScroll = useLoadOnListScroll();
 
   return (
-    <div>
-      <div className="container-x">
+    <div className="container-x">
 
-        <ScrollList
-          data={discounts}
-          nextPage={fetchDiscounts}
-          refreshPage={refreshList}
-          hasMore={loadOnScroll(discountsPage, discountsNumberOfPages, discountsError)}
-          className="list-3-x"
-          renderDataItem={(item)=> (
-            <DiscountItem key={`discount-${item.id}`} discount={item} />
-          )}
-          footer={listFooter([
-            
-            { 
-              canRender: discountsLoading, 
-              render() { 
-                return <li key="discount-footer" className="list-3-x-col-span"> <Loading /> </li>;
-              }
-            }, 
-            { 
-              canRender: discountsError === NetworkErrorCodes.UNKNOWN_ERROR, 
-              render() { 
-                return <li key="discount-footer" className="list-3-x-col-span"> <Reload action={fetchDiscounts} /> </li>;
-              }
-            },
-            { 
-              canRender: discountsLoaded && discounts.length === 0, 
-              render() { 
-                return <li key="discount-footer" className="list-3-x-col-span"> <EmptyList text="_empty.No_discount" icon={discountIcon} /> </li>;
-              }
-            },
-            { 
-              canRender: discountsPage <= discountsNumberOfPages, 
-              render() { 
-                return <li key="discount-footer" className="list-3-x-col-span"> <FetchMoreButton action={fetchDiscounts} /> </li>;
-              }
-            },
-            { 
-              canRender: discountsError === NetworkErrorCodes.NOT_FOUND, 
-              render() { 
-                return <li key="discount-footer" className="list-3-x-col-span"> <NotFound /> </li>;
-              }
-            },
-            { 
-              canRender: discountsError === NetworkErrorCodes.FORBIDDEN, 
-              render() { 
-                return <li key="discount-footer" className="list-3-x-col-span"> <Forbidden /> </li>;
-              }
-            },
-            {
-              canRender: discountsError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
-              render() {
-                return (
-                  <li key="discount-footer" className="list-3-x-col-span">
-                    <Reload message="_errors.No_netowrk_connection" action={fetchDiscounts} />
-                  </li>
-                );
-              }
-            },
-          ])}
-          />
+      <ScrollList
+        data={discounts}
+        nextPage={fetchDiscounts}
+        refreshPage={refreshList}
+        hasMore={loadOnScroll(discountsPage, discountsNumberOfPages, discountsError)}
+        className="list-3-x"
+        renderDataItem={(item)=> (
+          <DiscountItem key={`discount-${item.id}`} discount={item} />
+        )}
+        footer={listFooter([
+          
+          { 
+            canRender: discountsLoading, 
+            render() { 
+              return <li key="discount-footer" className="list-3-x-col-span"> <Loading /> </li>;
+            }
+          }, 
+          { 
+            canRender: discountsError === NetworkErrorCodes.UNKNOWN_ERROR, 
+            render() { 
+              return <li key="discount-footer" className="list-3-x-col-span"> <Reload action={fetchDiscounts} /> </li>;
+            }
+          },
+          { 
+            canRender: discountsLoaded && discounts.length === 0, 
+            render() { 
+              return <li key="discount-footer" className="list-3-x-col-span"> <EmptyList text="_empty.No_discount" icon={discountIcon} /> </li>;
+            }
+          },
+          { 
+            canRender: discountsPage <= discountsNumberOfPages, 
+            render() { 
+              return <li key="discount-footer" className="list-3-x-col-span"> <FetchMoreButton action={fetchDiscounts} /> </li>;
+            }
+          },
+          { 
+            canRender: discountsError === NetworkErrorCodes.NOT_FOUND, 
+            render() { 
+              return <li key="discount-footer" className="list-3-x-col-span"> <NotFound /> </li>;
+            }
+          },
+          { 
+            canRender: discountsError === NetworkErrorCodes.FORBIDDEN, 
+            render() { 
+              return <li key="discount-footer" className="list-3-x-col-span"> <Forbidden /> </li>;
+            }
+          },
+          {
+            canRender: discountsError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+            render() {
+              return (
+                <li key="discount-footer" className="list-3-x-col-span">
+                  <Reload message="_errors.No_netowrk_connection" action={fetchDiscounts} />
+                </li>
+              );
+            }
+          },
+        ])}
+        />
 
-      </div>
     </div>
   );
 }

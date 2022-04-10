@@ -6,9 +6,9 @@ const deliveryFirmState = {
   deliveryFirmID: null,
   deliveryFirmToken: null,
   deliveryFirmAdminID: null,
-  deliveryFirmLoading: true,
-  deliveryFirmFetchStatus: FETCH_STATUSES.LOADING,
-    
+  deliveryFirmError: null,
+  deliveryFirmLoading: false,
+  
   deliveryFirms: [],
   deliveryFirmsPage: 1,
   deliveryFirmsLoading: true,
@@ -17,9 +17,10 @@ const deliveryFirmState = {
 
   routes: [],
   routesPage: 1,
-  routesLoading: true,
+  routesError: null,
+  routesLoaded: false,
+  routesLoading: false,
   routesNumberOfPages: 0,
-  routesFetchStatus: FETCH_STATUSES.LOADING,
   
   deliveryBaseRoutes: [],
   deliveryBaseRoutesPage: 1,
@@ -29,9 +30,10 @@ const deliveryFirmState = {
 
   reviews: [],
   reviewsPage: 1,
-  reviewsLoading: true,
+  reviewsError: null,
+  reviewsLoaded: false,
+  reviewsLoading: false,
   reviewsNumberOfPages: 0,
-  reviewsFetchStatus: FETCH_STATUSES.LOADING,
 
   orders: [],
   ordersPage: 1,

@@ -140,7 +140,7 @@ function StoreReviewsList() {
       </div>
 
       <ReviewList 
-        single={true}
+        single={false}
         reviews={reviews} 
         reviewsLoading={reviewsLoading}
         reviewsLoaded={reviewsLoaded}

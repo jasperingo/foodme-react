@@ -1,12 +1,10 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import DeliveryFirmProfile from '../../components/profile/DeliveryFirmProfile';
-import ReviewList from '../../components/profile/section/ReviewList';
-import RouteList from '../../components/profile/section/RouteList';
 import Reload from '../../components/Reload';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
 import { useAppContext } from '../../hooks/contextHook';
@@ -17,7 +15,10 @@ import { useHeader } from '../../hooks/headerHook';
 import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
 import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
 import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import { useParams } from 'react-router-dom';
+import RouteList from '../../components/list/RouteList';
+import ReviewList from '../../components/list/ReviewList';
 
 const NAV_LINKS = [
   { title : '_delivery.Routes', href: '' },
@@ -42,11 +43,13 @@ function DeliveryFirmReviewsList() {
   } = useAppContext();
   
   const [
+    fetchDeliveryFirmReviews,
     reviews, 
-    reviewsFetchStatus, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
     reviewsPage, 
-    reviewsNumberOfPages, 
-    refetch
+    reviewsNumberOfPages
   ] = useDeliveryFirmReviewList(customerToken);
 
   const onReviewUpdate = useReviewUpdate();
@@ -54,6 +57,14 @@ function DeliveryFirmReviewsList() {
   const onReviewDelete = useReviewDelete({ deliveryFirm: true });
 
   const onReviewCreate = useReviewCreate({ deliveryFirm: deliveryFirm.id });
+
+  useEffect(
+    function() {
+      if (!reviewsLoaded && reviewsError === null) 
+        fetchDeliveryFirmReviews(deliveryFirm.id); 
+    },
+    [deliveryFirm.id, reviewsError, reviewsLoaded, fetchDeliveryFirmReviews]
+  );
 
   return (
     <>
@@ -71,11 +82,14 @@ function DeliveryFirmReviewsList() {
       </div>
 
       <ReviewList 
-        reviews={reviews}
-        reviewsFetchStatus={reviewsFetchStatus}
+        single={false}
+        reviews={reviews} 
+        reviewsLoading={reviewsLoading}
+        reviewsLoaded={reviewsLoaded}
+        reviewsError={reviewsError}
         reviewsPage={reviewsPage}
         reviewsNumberOfPages={reviewsNumberOfPages}
-        refetch={refetch}
+        fetchReviews={()=> fetchDeliveryFirmReviews(deliveryFirm.id)}
         />
     </>
   );
@@ -90,29 +104,48 @@ function DeliveryFirmRoutesList() {
           customerToken
         }
       } 
+    },
+    deliveryFirm: {
+      deliveryFirm: {
+        deliveryFirm
+      }
     } 
   } = useAppContext();
 
   const [
+    fetchDeliveryFirmRoutes,
     routes, 
-    routesFetchStatus, 
+    routesLoading,
+    routesError,
+    routesLoaded,
     routesPage, 
-    routesNumberOfPages, 
-    refetch
+    routesNumberOfPages,
   ] = useDeliveryFirmRouteList(customerToken);
   
+  useEffect(
+    function() {
+      if (!routesLoaded && routesError === null) 
+        fetchDeliveryFirmRoutes(deliveryFirm.id); 
+    },
+    [deliveryFirm.id, routesError, routesLoaded, fetchDeliveryFirmRoutes]
+  );
+
   return (
     <RouteList 
       routes={routes}
-      routesFetchStatus={routesFetchStatus}
       routesPage={routesPage}
+      routesError={routesError}
+      routesLoaded={routesLoaded}
+      routesLoading={routesLoading}
       routesNumberOfPages={routesNumberOfPages}
-      refetch={refetch}
+      fetchRoutes={()=> fetchDeliveryFirmRoutes(deliveryFirm.id)}
       />
   );
 }
 
 export default function DeliveryFirm() {
+
+  const { ID } = useParams();
 
   const match = useRouteMatch();
 
@@ -127,9 +160,12 @@ export default function DeliveryFirm() {
   } = useAppContext();
 
   const [
-    deliveryFirm, 
-    deliveryFirmFetchStatus,
-    refetch
+    fetchDeliveryFirm,
+    deliveryFirm,
+    deliveryFirmLoading,
+    deliveryFirmError,
+    deliveryFirmID,
+    unfetchDeliveryFirm
   ] = useDeliveryFirmFetch(customerToken);
 
   useHeader({ 
@@ -138,24 +174,32 @@ export default function DeliveryFirm() {
     topNavPaths: ['/cart', '/search']
   });
 
+  useEffect(
+    function() {
+      if ((deliveryFirm !== null || deliveryFirmError !== null) && deliveryFirmID !== ID) 
+        unfetchDeliveryFirm();
+      else if (deliveryFirm === null && deliveryFirmError === null)
+        fetchDeliveryFirm(ID);
+    },
+    [ID, deliveryFirm, deliveryFirmError, deliveryFirmID, fetchDeliveryFirm, unfetchDeliveryFirm]
+  );
+
   return (
     <section>
 
       <div className="container-x">
-        {
-          useRenderOnDataFetched(
-            deliveryFirmFetchStatus,
-            ()=> <DeliveryFirmProfile deliveryFirm={deliveryFirm} navLinks={NAV_LINKS} />,
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
-          )
-        }
+        
+        { deliveryFirm !== null && <DeliveryFirmProfile deliveryFirm={deliveryFirm} navLinks={NAV_LINKS} /> }
+        { deliveryFirmLoading && <Loading /> }
+        { deliveryFirmError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+        { deliveryFirmError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+        { deliveryFirmError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchDeliveryFirm(ID)} /> }
+        { deliveryFirmError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload message="_errors.No_netowrk_connection" action={()=> fetchDeliveryFirm(ID)} /> }
+        
       </div>
 
       {
-        deliveryFirm && 
+        deliveryFirm !== null && 
         <Switch>
           <Route path={`${match.url}/reviews`} render={()=> <DeliveryFirmReviewsList />} />
           <Route path={match.url} render={()=> <DeliveryFirmRoutesList />} />

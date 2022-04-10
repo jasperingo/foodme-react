@@ -5,7 +5,6 @@ import { REVIEW } from "../actions/reviewActions";
 import { TRANSACTION } from "../actions/transactionActions";
 import deliveryFirmState from "../states/deliveryFirmState";
 
-
 export default function DeliveryFirmReducer(state, { type, payload }) {
   
   switch (type) {  
@@ -39,50 +38,85 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
           deliveryFirms: [...state.deliveryFirms, ...payload.list],
       };
 
+
     case DELIVERY_FIRM.UNFETCHED:
       return {
-        ...deliveryFirmState,
-        deliveryFirms: state.deliveryFirms,
-        deliveryFirmsPage: state.deliveryFirmsPage,
-        deliveryFirmsLoading: state.deliveryFirmsLoading,
-        deliveryFirmsNumberOfPages: state.deliveryFirmsNumberOfPages,
-        deliveryFirmsFetchStatus: state.deliveryFirmsFetchStatus
+        ...state,
+        deliveryFirm: deliveryFirmState.deliveryFirm,
+        deliveryFirmID: deliveryFirmState.deliveryFirmID,
+        deliveryFirmToken: deliveryFirmState.deliveryFirmToken,
+        deliveryFirmAdminID: deliveryFirmState.deliveryFirmAdminID,
+        deliveryFirmError: deliveryFirmState.deliveryFirmError,
+        deliveryFirmLoading: deliveryFirmState.deliveryFirmLoading,
+
+        routes: deliveryFirmState.routes,
+        routesPage: deliveryFirmState.routesPage,
+        routesError: deliveryFirmState.routesError,
+        routesLoaded: deliveryFirmState.routesLoaded,
+        routesLoading: deliveryFirmState.routesLoading,
+        routesNumberOfPages: deliveryFirmState.routesNumberOfPages
       }
       
-    case DELIVERY_FIRM.FETCH_STATUS_CHANGED:
+    case DELIVERY_FIRM.FETCHING:
       return {
         ...state,
-        deliveryFirmID: payload.id,
-        deliveryFirmLoading: payload.loading,
-        deliveryFirmFetchStatus: payload.fetchStatus
+        deliveryFirmError: null,
+        deliveryFirmLoading: true
       };
+
+    case DELIVERY_FIRM.ERROR_CHANGED:
+      return {
+        ...state,
+        deliveryFirmLoading: false,
+        deliveryFirmID: payload.id,
+        deliveryFirmError: payload.error
+      };
+    
     
     case DELIVERY_FIRM.FETCHED:
       return {
         ...state,
         deliveryFirmLoading: false, 
-        deliveryFirm: payload.deliveryFirm, 
-        deliveryFirmID: payload.deliveryFirm.id,
-        deliveryFirmFetchStatus: payload.fetchStatus
+        deliveryFirmID: payload.id,
+        deliveryFirm: payload.deliveryFirm
       };
 
     
-    case DELIVERY_ROUTE.LIST_FETCH_STATUS_CHANGED:
+    case DELIVERY_ROUTE.LIST_UNFETCHED:
       return {
         ...state,
-        routesLoading: payload.loading,
-        routesFetchStatus: payload.fetchStatus
+        routes: deliveryFirmState.routes,
+        routesPage: deliveryFirmState.routesPage,
+        routesError: deliveryFirmState.routesError,
+        routesLoaded: deliveryFirmState.routesLoaded,
+        routesLoading: deliveryFirmState.routesLoading,
+        routesNumberOfPages: deliveryFirmState.routesNumberOfPages
+      };
+
+    case DELIVERY_ROUTE.LIST_FETCHING:
+      return {
+        ...state,
+        routesError: null,
+        routesLoading: true
+      };
+    
+    case DELIVERY_ROUTE.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        routesLoading: false,
+        routesError: payload.error
       };
     
     case DELIVERY_ROUTE.LIST_FETCHED:
       return {
         ...state,
+        routesLoaded: true,
         routesLoading: false,
-        routesPage: state.routesPage+1,
-        routesFetchStatus: payload.fetchStatus,
+        routesPage: state.routesPage + 1,
         routesNumberOfPages: payload.numberOfPages,
         routes: [...state.routes, ...payload.list],
       };
+
 
     case DELIVERY_ROUTE.BASE_LIST_FETCH_STATUS_CHANGED:
       return {
@@ -102,22 +136,41 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
       };
 
 
-    case REVIEW.LIST_FETCH_STATUS_CHANGED:
-      return {
-        ...state,
-        reviewsLoading: payload.loading,
-        reviewsFetchStatus: payload.fetchStatus
-      };
-
-    case REVIEW.LIST_FETCHED:
-      return {
-        ...state,
-        reviewsLoading: false,
-        reviewsPage: state.reviewsPage+1,
-        reviewsFetchStatus: payload.fetchStatus,
-        reviewsNumberOfPages: payload.numberOfPages,
-        reviews: [...state.reviews, ...payload.list],
-      };
+      case REVIEW.LIST_UNFETCHED:
+        return {
+          ...state,
+          reviews: deliveryFirmState.reviews,
+          reviewsPage: deliveryFirmState.reviewsPage,
+          reviewsError: deliveryFirmState.reviewsError,
+          reviewsLoaded: deliveryFirmState.reviewsLoaded,
+          reviewsLoading: deliveryFirmState.reviewsLoading,
+          reviewsNumberOfPages: deliveryFirmState.reviewsNumberOfPages
+        };
+  
+      case REVIEW.LIST_FETCHING:
+        return {
+          ...state,
+          reviewsError: null,
+          reviewsLoading: true
+        };
+  
+      case REVIEW.LIST_ERROR_CHANGED:
+        return {
+          ...state,
+          reviewsLoading: false,
+          reviewsError: payload.error
+        };
+  
+      case REVIEW.LIST_FETCHED:
+        return {
+          ...state,
+          reviewsLoaded: true,
+          reviewsLoading: false,
+          reviewsPage: state.reviewsPage + 1,
+          reviewsNumberOfPages: payload.numberOfPages,
+          reviews: [...state.reviews, ...payload.list],
+        };
+        
 
     case ORDER.LIST_UNFETCHED:
     case ORDER.LIST_STATUS_FILTER_CHANGED:

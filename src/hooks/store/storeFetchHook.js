@@ -56,8 +56,6 @@ export function useStoreFetch(userToken) {
               store: res.body.data,
             }
           });
-        } else if (res.status === 401) {
-          throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
         } else if (res.status === 404) {
           throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
         } else if (res.status === 403) {
@@ -65,6 +63,7 @@ export function useStoreFetch(userToken) {
         } else {
           throw new Error();
         }
+        
       } catch(error) {
         storeDispatch({
           type: STORE.ERROR_CHANGED,

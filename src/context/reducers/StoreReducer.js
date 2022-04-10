@@ -161,6 +161,7 @@ export default function StoreReducer (state, action) {
 
     case REVIEW.LIST_UNFETCHED:
       return {
+        ...state,
         reviews: storeState.reviews,
         reviewsPage: storeState.reviewsPage,
         reviewsError: storeState.reviewsError,
@@ -196,6 +197,7 @@ export default function StoreReducer (state, action) {
 
     case DISCOUNT.LIST_UNFETCHED:
       return {
+        ...state,
         discounts: storeState.discounts,
         discountsPage: storeState.discountsPage,
         discountsError: storeState.discountsError,
