@@ -3,6 +3,7 @@ import { DISCOUNT } from "../actions/discountActions";
 import { ORDER } from "../actions/orderActions";
 import { PRODUCT } from "../actions/productActions";
 import { REVIEW } from "../actions/reviewActions";
+import { SAVED_CART } from "../actions/savedCartActions";
 import { STORE } from "../actions/storeActions";
 import { TRANSACTION } from "../actions/transactionActions";
 import storeState from "../states/storeState";
@@ -55,7 +56,21 @@ export default function StoreReducer (state, action) {
         discountsError: storeState.discountsError,
         discountsLoaded: storeState.discountsLoaded,
         discountsLoading: storeState.discountsLoading,
-        discountsNumberOfPages: storeState.discountsNumberOfPages
+        discountsNumberOfPages: storeState.discountsNumberOfPages,
+
+        orders: storeState.orders,
+        ordersPage: storeState.ordersPage,
+        ordersError: storeState.ordersError,
+        ordersLoaded: storeState.ordersLoaded,
+        ordersLoading: storeState.ordersLoading,
+        ordersNumberOfPages: storeState.ordersNumberOfPages,
+
+        savedCarts: storeState.savedCarts,
+        savedCartsPage: storeState.savedCartsPage,
+        savedCartsError: storeState.savedCartsError,
+        savedCartsLoaded: storeState.savedCartsLoaded,
+        savedCartsLoading: storeState.savedCartsLoading,
+        savedCartsNumberOfPages: storeState.savedCartsNumberOfPages,
       };
     
     case STORE.ERROR_CHANGED:
@@ -232,71 +247,140 @@ export default function StoreReducer (state, action) {
 
 
     case ORDER.LIST_UNFETCHED:
-    case ORDER.LIST_STATUS_FILTER_CHANGED:
       return {
         ...state,
-        ordersPage: 1,
-        ordersLoading: true,
-        ordersNumberOfPages: 0,
         orders: storeState.orders,
-        ordersFetchStatus: storeState.ordersFetchStatus,
+        ordersPage: storeState.ordersPage,
+        ordersError: storeState.ordersError,
+        ordersLoaded: storeState.ordersLoaded,
+        ordersLoading: storeState.ordersLoading,
+        ordersNumberOfPages: storeState.ordersNumberOfPages
       };
     
-    case ORDER.LIST_FETCH_STATUS_CHANGED:
+    case ORDER.LIST_ERROR_CHANGED:
       return {
         ...state,
-        ordersLoading: action.payload.loading,
-        ordersFetchStatus: action.payload.fetchStatus,
+        ordersLoading: false,
+        ordersError: action.payload.error
+      };
+    
+    case ORDER.LIST_FETCHING:
+      return {
+        ...state,
+        ordersError: null,
+        ordersLoading: true
       };
       
     case ORDER.LIST_FETCHED:
       return {
         ...state,
+        ordersLoaded: true,
         ordersLoading: false,
-        ordersPage: state.ordersPage+1,
-        ordersFetchStatus: action.payload.fetchStatus,
+        ordersPage: state.ordersPage + 1,
         ordersNumberOfPages: action.payload.numberOfPages,
         orders: [...state.orders, ...action.payload.list],
       };
 
-    case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
+
+    case SAVED_CART.LIST_UNFETCHED:
       return {
         ...state,
-        transactionsLoading: action.payload.loading,
-        transactionsFetchStatus: action.payload.fetchStatus
+        savedCarts: storeState.savedCarts,
+        savedCartsPage: storeState.savedCartsPage,
+        savedCartsError: storeState.savedCartsError,
+        savedCartsLoaded: storeState.savedCartsLoaded,
+        savedCartsLoading: storeState.savedCartsLoading,
+        savedCartsNumberOfPages: storeState.savedCartsNumberOfPages,
+      };
+    
+    case SAVED_CART.LIST_FETCHING:
+      return {
+        ...state,
+        savedCartsError: null,
+        savedCartsLoading: true
+      };
+
+    case SAVED_CART.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        savedCartsLoading: false,
+        savedCartsError: action.payload.error
+      };
+    
+    case SAVED_CART.LIST_FETCHED:
+      return {
+        ...state,
+        savedCartsLoaded: true,
+        savedCartsLoading: false,
+        savedCartsPage: state.savedCartsPage + 1,
+        savedCartsNumberOfPages: action.payload.numberOfPages,
+        savedCarts: [...state.savedCarts, ...action.payload.list]
+      };
+
+
+    case TRANSACTION.LIST_UNFETCHED:
+      return {
+        ...state,
+        transactions: storeState.transactions,
+        transactionsPage: storeState.transactionsPage,
+        transactionsError: storeState.transactionsError,
+        transactionsLoaded: storeState.transactionsLoaded,
+        transactionsLoading: storeState.transactionsLoading,
+        transactionsNumberOfPages: storeState.transactionsNumberOfPages
+      };
+
+    case TRANSACTION.LIST_FETCHING:
+      return {
+        ...state,
+        transactionsError: null,
+        transactionsLoading: true
+      };
+
+    case TRANSACTION.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        transactionsLoading: false,
+        transactionsFetchStatus: action.payload.error
       };
     
     case TRANSACTION.LIST_FETCHED:
       return {
         ...state,
+        transactionsLoaded: true,
         transactionsLoading: false,
-        transactionsPage: state.transactionsPage+1,
-        transactionsFetchStatus: action.payload.fetchStatus,
+        transactionsPage: state.transactionsPage + 1,
         transactionsNumberOfPages: action.payload.numberOfPages,
         transactions: [...state.transactions, ...action.payload.list],
       };
 
+
     case TRANSACTION.BALANCE_UNFETCHED:
       return {
         ...state,
-        transactionBalanceLoading: true,
         transactionBalance: storeState.transactionBalance,
-        transactionBalanceFetchStatus: storeState.transactionBalanceFetchStatus
+        transactionBalanceError: storeState.transactionBalanceError,
+        transactionBalanceLoading: storeState.transactionBalanceLoading,
       };
 
-    case TRANSACTION.BALANCE_FETCH_STATUS_CHANGED:
+    case TRANSACTION.BALANCE_FETCHING:
       return {
         ...state,
-        transactionBalanceLoading: action.payload.loading,
-        transactionBalanceFetchStatus: action.payload.fetchStatus
+        transactionBalanceError: null,
+        transactionBalanceLoading: true
       };
+
+      case TRANSACTION.BALANCE_ERROR_CHANGED:
+        return {
+          ...state,
+          transactionBalanceLoading: false,
+          transactionBalanceError: action.payload.error
+        };
     
     case TRANSACTION.BALANCE_FETCHED:
       return {
         ...state,
         transactionBalanceLoading: false,
-        transactionBalance: action.payload.balance,
-        transactionBalanceFetchStatus: action.payload.fetchStatus
+        transactionBalance: action.payload.balance
       };
 
     case TRANSACTION.BALANCE_WITHDRAWN:

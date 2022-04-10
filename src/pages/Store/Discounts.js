@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import AddButton from '../../components/AddButton';
-import DiscountList from '../../components/profile/section/DiscountList';
+import DiscountList from '../../components/list/DiscountList';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreDiscountList } from '../../hooks/store/storeDiscountListHook';
@@ -23,12 +23,22 @@ export default function Discounts() {
   });
 
   const [
+    fetchStoreDiscounts,
     discounts, 
-    discountsFetchStatus, 
+    discountsLoading,
+    discountsLoaded,
+    discountsError,
     discountsPage, 
-    discountsNumberOfPages, 
-    refetch
+    discountsNumberOfPages,
   ] = useStoreDiscountList(storeToken);
+  
+  useEffect(
+    function() {
+      if (!discountsLoaded && discountsError === null) 
+        fetchStoreDiscounts(store.id); 
+    },
+    [store.id, discountsError, discountsLoaded, fetchStoreDiscounts]
+  );
   
   return (
     <section>
@@ -41,12 +51,14 @@ export default function Discounts() {
       
       <DiscountList
         discounts={discounts}
-        discountsFetchStatus={discountsFetchStatus}
         discountsPage={discountsPage}
+        discountsError={discountsError}
+        discountsLoaded={discountsLoaded}
+        discountsLoading={discountsLoading}
         discountsNumberOfPages={discountsNumberOfPages}
-        refetch={refetch}
+        fetchDiscounts={()=> fetchStoreDiscounts(store.id)}
         />
-      
+        
     </section>
   );
 }

@@ -1,6 +1,6 @@
 
-import React from 'react';
-import ReviewList from '../../components/profile/section/ReviewList';
+import React, { useEffect } from 'react';
+import ReviewList from '../../components/list/ReviewList';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
@@ -23,12 +23,23 @@ export default function Reviews() {
   });
   
   const [
+    fetchStoreReviews,
     reviews, 
-    reviewsFetchStatus, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
     reviewsPage, 
-    reviewsNumberOfPages, 
-    refetch
+    reviewsNumberOfPages,
+    refreshStoreReviews
   ] = useStoreReviewList(storeToken);
+
+  useEffect(
+    function() {
+      if (!reviewsLoaded && reviewsError === null) 
+        fetchStoreReviews(store.id); 
+    },
+    [store.id, reviewsError, reviewsLoaded, fetchStoreReviews]
+  );
   
   return (
     <section>
@@ -41,14 +52,17 @@ export default function Reviews() {
       }
 
       <ReviewList 
-        reviews={reviews}
-        reviewsFetchStatus={reviewsFetchStatus}
+        single={false}
+        reviews={reviews} 
+        reviewsLoading={reviewsLoading}
+        reviewsLoaded={reviewsLoaded}
+        reviewsError={reviewsError}
         reviewsPage={reviewsPage}
         reviewsNumberOfPages={reviewsNumberOfPages}
-        refetch={refetch}
+        refreshList={refreshStoreReviews}
+        fetchReviews={()=> fetchStoreReviews(store.id)}
         />
+
     </section>
   );
 }
-
-

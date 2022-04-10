@@ -57,8 +57,6 @@ export function useCustomerSavedCartList(userToken) {
               numberOfPages: res.body.pagination.number_of_pages
             }
           });
-        } else if (res.status === 401) {
-          throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
         } else if (res.status === 404) {
           throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
         } else if (res.status === 403) {

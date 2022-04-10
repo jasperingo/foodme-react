@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import TransactionList from '../../components/list/TransactionList';
 import Loading from '../../components/Loading';
-import TransactionList from '../../components/profile/section/TransactionList';
 import Reload from '../../components/Reload';
 import WalletAmount from '../../components/WalletAmount';
 import { useAppContext } from '../../hooks/contextHook';
@@ -16,26 +16,41 @@ function StoreTransactionsList() {
   const { 
     store: { 
       store: {
+        store,
         storeToken
       }
     } 
   } = useAppContext();
   
   const [
+    fetchStoreTransactions, 
     transactions, 
-    transactionsFetchStatus, 
+    transactionsLoading, 
+    transactionsLoaded, 
+    transactionsError,
     transactionsPage, 
     transactionsNumberOfPages, 
-    refetch
+    refreshStoreTransactions
   ] = useStoreTransactionList(storeToken);
+
+  useEffect(
+    function() { 
+      if (!transactionsLoaded && transactionsError === null) 
+        fetchStoreTransactions(store.id); 
+    },
+    [store.id, transactionsLoaded, transactionsError, fetchStoreTransactions]
+  );
 
   return (
     <TransactionList
       transactions={transactions}
-      transactionsFetchStatus={transactionsFetchStatus}
       transactionsPage={transactionsPage}
+      transactionsError={transactionsError}
+      transactionsLoading={transactionsLoading}
+      transactionsLoaded={transactionsLoaded}
       transactionsNumberOfPages={transactionsNumberOfPages}
-      refetch={refetch}
+      fetchTransactions={()=> fetchStoreTransactions(store.id)}
+      refreshList={refreshStoreTransactions}
       />
   );
 }

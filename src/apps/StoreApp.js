@@ -1,13 +1,12 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, Redirect, useLocation } from "react-router-dom";
 import { cartIcon, discountIcon, messageIcon, orderIcon, productIcon, storeIcon } from '../assets/icons';
 import Footer from '../components/Footer';
 import Header from '../components/header/Header';
 import { useAppContext } from '../hooks/contextHook';
 import { useStoreAuthFetch } from '../hooks/store/storeAuthFetchHook';
-import { useCartCounter, useURLQuery } from '../hooks/viewHook';
-import { FETCH_STATUSES } from '../repositories/Fetch';
+import { useCartCounter } from '../hooks/viewHook';
 import Splash from '../pages/Splash';
 import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
@@ -71,17 +70,20 @@ export default function StoreApp() {
 
   const location = useLocation();
 
-  const redirectTo = useURLQuery().get('redirect_to');
+  const redirectTo = new URLSearchParams().get('redirect_to')  ?? '/products';
 
-  const [authDone, retry] = useStoreAuthFetch();
+  const [storeId, fetchStore, success, error] = useStoreAuthFetch();
 
-  if (authDone !== FETCH_STATUSES.DONE) {
-    return (
-      <Splash 
-        onRetry={retry} 
-        error={authDone === FETCH_STATUSES.ERROR}
-        />
-    );
+  useEffect(
+    function() {
+      if (storeId !== null && error === null && !success)
+        fetchStore();
+    },
+    [storeId, error, success, fetchStore]
+  );
+
+  if (storeId !== null && !success) {
+    return <Splash onRetry={fetchStore} error={error} />;
   }
 
   function authMiddleware() {
@@ -89,7 +91,7 @@ export default function StoreApp() {
   }
 
   function guestMiddleware() {
-    return store === null ? null : <Redirect to={redirectTo ?? '/products'} />
+    return store === null ? null : <Redirect to={redirectTo} />
   }
 
   return (

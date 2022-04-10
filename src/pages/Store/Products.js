@@ -1,11 +1,10 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import AddButton from '../../components/AddButton';
-import ProductList from '../../components/profile/section/ProductList';
+import ProductList from '../../components/list/ProductList';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreProductList } from '../../hooks/store/storeProductListHook';
-
 
 export default function Products() {
 
@@ -24,12 +23,23 @@ export default function Products() {
   });
 
   const [
+    fetchStoreProducts,
     products, 
-    productsFetchStatus, 
+    productsLoading,
+    productsError,
+    productsLoaded,
     productsPage, 
-    productsNumberOfPages, 
-    refetch
+    productsNumberOfPages,
+    refreshStoreProducts
   ] = useStoreProductList(storeToken);
+
+  useEffect(
+    function() {
+      if (!productsLoaded && productsError === null) 
+        fetchStoreProducts(store.id); 
+    },
+    [store.id, productsError, productsLoaded, fetchStoreProducts]
+  );
 
   return (
     <section>
@@ -42,10 +52,13 @@ export default function Products() {
 
       <ProductList 
         products={products}
-        productsFetchStatus={productsFetchStatus}
         productsPage={productsPage}
+        productsError={productsError}
+        productsLoaded={productsLoaded}
+        productsLoading={productsLoading}
         productsNumberOfPages={productsNumberOfPages}
-        refetch={refetch}
+        refreshList={refreshStoreProducts}
+        fetchProducts={()=> fetchStoreProducts(store.id)}
         />
       
     </section>

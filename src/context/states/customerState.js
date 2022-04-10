@@ -6,8 +6,8 @@ const customerState = {
     customer: null,
     customerToken: null,
     customerID: null,
-    customerLoading: true,
-    customerFetchStatus: FETCH_STATUSES.LOADING
+    customerLoading: false,
+    customerError: null
   },
 
   customers: {

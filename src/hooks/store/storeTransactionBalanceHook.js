@@ -1,10 +1,11 @@
 
-import { useCallback, useEffect } from "react";
-import { getTransactionBalanceFetchStatusAction, TRANSACTION } from "../../context/actions/transactionActions";
+import { useCallback, useMemo } from "react";
+import { TRANSACTION } from "../../context/actions/transactionActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-
 
 export function useStoreTransactionBalance(userToken) {
 
@@ -12,35 +13,36 @@ export function useStoreTransactionBalance(userToken) {
     store: { 
       storeDispatch,
       store: {
-        store,
         transactionBalance,
         transactionBalanceLoading,
-        transactionBalanceFetchStatus
+        transactionBalanceError
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (transactionBalanceFetchStatus !== FETCH_STATUSES.LOADING) 
-        storeDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [storeDispatch, transactionBalanceFetchStatus]
-  );
+  const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
+
+  function refreshStoreTransactions() {
+    storeDispatch({ type: TRANSACTION.BALANCE_UNFETCHED });
+  }
   
-  useEffect(
-    ()=> {
-      if (transactionBalanceLoading && transactionBalanceFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchStoreTransactionBalance = useCallback(
+    async function(ID) {
 
-        storeDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (transactionBalanceLoading) return;
+      
+      if (!window.navigator.onLine) {
+        storeDispatch({
 
-      } else if (transactionBalanceLoading && transactionBalanceFetchStatus === FETCH_STATUSES.LOADING) {
-        
-        storeDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.LOADING, false));
+        });
+        return;
+      }
 
-        const api = new StoreRepository(userToken);
-        api.getTransactionBalance(store.id)
-        .then(res=> {
+      storeDispatch({ type: TRANSACTION.BALANCE_FETCHING });
+      
+      try {
+
+        const res = await api.getTransactionBalance(ID);
           
           if (res.status === 200) {
             
@@ -53,32 +55,32 @@ export function useStoreTransactionBalance(userToken) {
             });
 
           } else if (res.status === 404) {
-
-            storeDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
+            throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
           } else if (res.status === 403) {
-
-            storeDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-
+            throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
           } else {
             throw new Error();
           }
-        })
-        .catch(()=> {
-          storeDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.ERROR, false));
-        });
+
+        } catch(error) {
+          storeDispatch({
+            type: TRANSACTION.BALANCE_ERROR_CHANGED,
+            payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
+          });
       }
     },
     [
-      store.id,
-      transactionBalanceLoading, 
-      transactionBalanceFetchStatus, 
-      userToken, 
+      api,
+      transactionBalanceLoading,
       storeDispatch
     ]
   );
 
-  return [transactionBalance, transactionBalanceFetchStatus, refetch];
+  return [
+    fetchStoreTransactionBalance,
+    transactionBalance, 
+    transactionBalanceLoading,
+    transactionBalanceError,
+    refreshStoreTransactions
+  ];
 }
-
-

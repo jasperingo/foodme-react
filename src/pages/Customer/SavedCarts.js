@@ -44,20 +44,18 @@ export default function SavedCarts() {
 
   return (
     <section>
-      <div className="container-x">
         
-        <SavedCartList 
-          savedCarts={savedCarts}
-          savedCartsError={savedCartsError}
-          savedCartsPage={savedCartsPage}
-          savedCartsLoaded={savedCartsLoaded}
-          savedCartsLoading={savedCartsLoading}
-          savedCartsNumberOfPages={savedCartsNumberOfPages}
-          fetchSavedCarts={()=> fetchCustomerSavedCarts(customer.id)}
-          refreshList={refreshCustomerSavedCarts}
-          />
+      <SavedCartList 
+        savedCarts={savedCarts}
+        savedCartsError={savedCartsError}
+        savedCartsPage={savedCartsPage}
+        savedCartsLoaded={savedCartsLoaded}
+        savedCartsLoading={savedCartsLoading}
+        savedCartsNumberOfPages={savedCartsNumberOfPages}
+        fetchSavedCarts={()=> fetchCustomerSavedCarts(customer.id)}
+        refreshList={refreshCustomerSavedCarts}
+        />
 
-      </div>
     </section>
   );
 }

@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { STORE } from "../../context/actions/storeActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 import { useMessageFetch } from "../message/messageFetchHook";
 import { useMessageUnreceivedCountFetch } from "../message/messageUnreceivedCountFetchHook";
-import { STORE_ADMIN_ID, STORE_ID, STORE_TOKEN } from "./storeConstants";
-
+import { useStoreAuthGet, useStoreAuthUnset } from "./storeAuthStorageHook";
 
 export function useStoreAuthFetch() {
 
@@ -18,64 +17,65 @@ export function useStoreAuthFetch() {
 
   const messageCount = useMessageUnreceivedCountFetch();
 
-  const [done, setDone] = useState(FETCH_STATUSES.LOADING);
+  const [storeId, storeToken, storeAdminID] = useStoreAuthGet();
 
-  const retry = useCallback(() => setDone(FETCH_STATUSES.LOADING), []);
+  const unsetAuth = useStoreAuthUnset();
+
+  const [error, setError] = useState(null);
+
+  const [success, setSuccess] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const api = useMemo(function() { return new StoreRepository(storeToken); }, [storeToken]);
   
-  useEffect(
-    ()=> {
-      const storeId = window.localStorage.getItem(STORE_ID);
-      const storeToken = window.localStorage.getItem(STORE_TOKEN);
-      const storeAdminID = window.localStorage.getItem(STORE_ADMIN_ID);
+  const fetchStore = useCallback(
+    async function() {
 
-      if (done === FETCH_STATUSES.LOADING && storeId !== null && storeToken !== null && !window.navigator.onLine) {
+      if (loading) return;
+      
+      if (!window.navigator.onLine) {
+        setError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+        return;
+      }
 
-        setDone(FETCH_STATUSES.ERROR);
+      setLoading(true);
 
-      } else if (done === FETCH_STATUSES.LOADING && storeId !== null && storeToken !== null) {
-        
-        const api = new StoreRepository(storeToken);
+      try {
 
-        api.get(storeId)
-        .then(res=> {
+        const res = await api.get(storeId);
+
+        if (res.status === 200) {
           
-          if (res.status === 200) {
-            
-            storeDispatch({
-              type: STORE.AUTHED, 
-              payload: { 
-                token: storeToken, 
-                adminID: storeAdminID,
-                store: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
+          setSuccess(true);
 
-            setDone(FETCH_STATUSES.DONE);
+          storeDispatch({
+            type: STORE.AUTHED, 
+            payload: { 
+              token: storeToken, 
+              adminID: storeAdminID,
+              store: res.body.data
+            }
+          });
 
-            messageCount(storeToken);
+          messageCount(storeToken);
 
-            newMessage(storeToken, res.body.data.user.id);
+          newMessage(storeToken, res.body.data.user.id);
 
-          } else if (res.status === 401) {
-            window.localStorage.removeItem(STORE_ID);
-            window.localStorage.removeItem(STORE_TOKEN);
-            window.localStorage.removeItem(STORE_ADMIN_ID);
-            setDone(FETCH_STATUSES.DONE);
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          setDone(FETCH_STATUSES.ERROR);
-        });
+        } else if (res.status === 401) {
+          unsetAuth();
+        } else {
+          throw new Error();
+        }
 
-      } else if (done === FETCH_STATUSES.LOADING && (storeId === null || storeToken === null)) {
-        setDone(FETCH_STATUSES.DONE);
+      } catch(error) {
+        setError(NetworkErrorCodes.UNKNOWN_ERROR);
+      } finally {
+        setLoading(false);
       }
     },
-    [done, storeDispatch, messageCount, newMessage]
+    [api, loading, storeAdminID, storeId, storeToken, storeDispatch, unsetAuth, messageCount, newMessage]
   )
   
-  return [done, retry];
+  return [storeId, fetchStore, success, error];
 }

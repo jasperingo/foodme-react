@@ -1,16 +1,9 @@
 
-import React from 'react';
-import { cartIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
-import ScrollList from '../../components/list/ScrollList';
-import SavedCartItem from '../../components/list_item/SavedCartItem';
-import Loading from '../../components/Loading';
-import Reload from '../../components/Reload';
+import React, { useEffect } from 'react';
+import SavedCartList from '../../components/list/SavedCartList';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreSavedCartList } from '../../hooks/store/storeSavedCartListHook';
-import { useHasMoreToFetchViaScroll, useRenderListFooter } from '../../hooks/viewHook';
 
 export default function SavedCarts() {
 
@@ -29,37 +22,38 @@ export default function SavedCarts() {
   });
 
   const [
+    fetchStoreSavedCarts, 
     savedCarts, 
-    savedCartsFetchStatus, 
+    savedCartsLoading, 
+    savedCartsLoaded, 
+    savedCartsError,
     savedCartsPage, 
-    savedCartsNumberOfPages, 
-    refetch, 
-    refresh
-  ] = useStoreSavedCartList(store.id, storeToken);
+    savedCartsNumberOfPages,  
+    refreshCustomerSavedCarts
+  ] = useStoreSavedCartList(storeToken);
+
+  useEffect(
+    function() { 
+      if (!savedCartsLoaded && savedCartsError === null) 
+        fetchStoreSavedCarts(store.id); 
+    },
+    [store.id, savedCartsError, savedCartsLoaded, fetchStoreSavedCarts]
+  );
 
   return (
     <section>
-      <div className="container-x">
-        
-        <ScrollList
-          data={savedCarts}
-          nextPage={refetch}
-          refreshPage={refresh}
-          hasMore={useHasMoreToFetchViaScroll(savedCartsPage, savedCartsNumberOfPages, savedCartsFetchStatus)}
-          className="list-2-x"
-          renderDataItem={(item)=> (
-            <SavedCartItem key={`saved-cart-${item.id}`} cart={item} />
-          )}
-          footer={useRenderListFooter(
-            savedCartsFetchStatus,
-            ()=> <li key="saved-cart-footer"> <Loading /> </li>, 
-            ()=> <li key="saved-cart-footer"> <Reload action={refetch} /> </li>,
-            ()=> <li key="saved-cart-footer" className="col-span-2"> <EmptyList text="_empty.No_saved_cart" icon={cartIcon} /> </li>,
-            ()=> <li key="saved-cart-footer"> <FetchMoreButton action={refetch} /> </li>
-          )}
-          />
+      
+      <SavedCartList 
+        savedCarts={savedCarts}
+        savedCartsError={savedCartsError}
+        savedCartsPage={savedCartsPage}
+        savedCartsLoaded={savedCartsLoaded}
+        savedCartsLoading={savedCartsLoading}
+        savedCartsNumberOfPages={savedCartsNumberOfPages}
+        fetchSavedCarts={()=> fetchStoreSavedCarts(store.id)}
+        refreshList={refreshCustomerSavedCarts}
+        />
 
-      </div>
     </section>
   );
 }

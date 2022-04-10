@@ -1,93 +1,90 @@
-import { useCallback, useEffect } from "react";
-import { getSavedCartsListFetchStatusAction, SAVED_CART } from "../../context/actions/savedCartActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { SAVED_CART } from "../../context/actions/savedCartActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
 
-
-export function useStoreSavedCartList(userId, userToken) {
+export function useStoreSavedCartList(userToken) {
 
   const { 
-    savedCart: { 
-      savedCartDispatch,
-      savedCart: {
+    store: { 
+      storeDispatch,
+      store: {
         savedCarts,
         savedCartsPage,
+        savedCartsLoaded,
         savedCartsLoading,
         savedCartsNumberOfPages,
-        savedCartsFetchStatus
+        savedCartsError
       } 
     }, 
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
 
+  function refreshStoreSavedCarts() {
+    storeDispatch({ type: SAVED_CART.LIST_UNFETCHED });
+  }
 
-  const refetch = useCallback(
-    ()=> {
-      if (savedCartsFetchStatus !== FETCH_STATUSES.LOADING) 
-        savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [savedCartDispatch, savedCartsFetchStatus]
-  );
+  const fetchStoreSavedCarts = useCallback(
+    async function(ID) {
 
-  const refresh = useCallback(
-    ()=> {
-      savedCartDispatch({ type: SAVED_CART.LIST_UNFETCHED });
-    },
-    [savedCartDispatch]
-  );
+      if (savedCartsLoading) return;
 
-  useEffect(
-    ()=> {
-      if (savedCartsLoading && savedCartsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (!window.navigator.onLine) {
+        storeDispatch({
+          type: SAVED_CART.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
-        savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      storeDispatch({ type: SAVED_CART.LIST_FETCHING });
 
-      } else if (savedCartsLoading && savedCartsFetchStatus === FETCH_STATUSES.LOADING) {
+      try {
         
-        savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-
-        const api = new StoreRepository(userToken);
-        api.getSavedCartsList(userId, savedCartsPage)
-        .then(res=> {
+        const res = await api.getSavedCartsList(ID, savedCartsPage);
           
-          if (res.status === 200) {
-            savedCartDispatch({
-              type: SAVED_CART.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  savedCartsPage, 
-                  res.body.pagination.number_of_pages, 
-                  savedCarts.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          savedCartDispatch(getSavedCartsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        if (res.status === 200) {
+          storeDispatch({
+            type: SAVED_CART.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+
+      } catch(error) {
+        storeDispatch({
+          type: SAVED_CART.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      userId, 
-      userToken, 
-      savedCarts.length, 
+      api,
       savedCartsPage, 
-      savedCartsLoading, 
-      savedCartsFetchStatus, 
-      savedCartDispatch, 
-      listStatusUpdater
+      savedCartsLoading,
+      storeDispatch
     ]
   );
 
-
-  return [savedCarts, savedCartsFetchStatus, savedCartsPage, savedCartsNumberOfPages, refetch, refresh];
+  return [
+    fetchStoreSavedCarts,
+    savedCarts, 
+    savedCartsLoading,
+    savedCartsLoaded,
+    savedCartsError,
+    savedCartsPage, 
+    savedCartsNumberOfPages,
+    refreshStoreSavedCarts
+  ];
 }

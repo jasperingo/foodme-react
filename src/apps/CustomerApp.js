@@ -81,18 +81,18 @@ export default function CustomerApp() {
 
   const redirectTo = new URLSearchParams().get('redirect_to') ?? '/account';
 
-  const [customerId, fetch, success, error] = useAuthCustomerFetch();
+  const [customerId, fetchCustomer, success, error] = useAuthCustomerFetch();
 
   useEffect(
     function() {
       if (customerId !== null && error === null && !success)
-        fetch();
+        fetchCustomer();
     },
-    [customerId, error, success, fetch]
+    [customerId, error, success, fetchCustomer]
   );
 
   if (customerId !== null && !success) {
-    return <Splash onRetry={fetch} error={error} />;
+    return <Splash onRetry={fetchCustomer} error={error} />;
   }
 
   function authMiddleware() {

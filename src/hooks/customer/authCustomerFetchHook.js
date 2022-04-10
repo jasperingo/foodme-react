@@ -2,7 +2,6 @@ import { useState, useCallback, useMemo } from 'react';
 import { CUSTOMER } from '../../context/actions/customerActions';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import CustomerRepository from '../../repositories/CustomerRepository';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
 import { useAppContext } from '../contextHook';
 import { useMessageFetch } from '../message/messageFetchHook';
 import { useMessageUnreceivedCountFetch } from '../message/messageUnreceivedCountFetchHook';
@@ -30,7 +29,7 @@ export function useAuthCustomerFetch() {
 
   const api = useMemo(function() { return new CustomerRepository(customerToken); }, [customerToken]);
   
-  const fetch = useCallback(
+  const fetchCustomer = useCallback(
     async function() {
 
       if (loading) return;
@@ -54,8 +53,7 @@ export function useAuthCustomerFetch() {
             type: CUSTOMER.AUTHED, 
             payload: { 
               token: customerToken, 
-              customer: res.body.data, 
-              fetchStatus: FETCH_STATUSES.DONE 
+              customer: res.body.data
             }
           });
 
@@ -64,9 +62,7 @@ export function useAuthCustomerFetch() {
           newMessage(customerToken, res.body.data.user.id);
 
         } else if (res.status === 401) {
-
           unsetAuth();
-
         } else {
           throw new Error();
         }
@@ -80,5 +76,5 @@ export function useAuthCustomerFetch() {
     [api, loading, customerId, customerToken, dispatch, unsetAuth, messageCount, newMessage]
   );
   
-  return [customerId, fetch, success, error];
+  return [customerId, fetchCustomer, success, error];
 }

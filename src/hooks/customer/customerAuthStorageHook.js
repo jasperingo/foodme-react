@@ -1,12 +1,13 @@
+import { useCallback } from 'react';
 
 const CUSTOMER_ID = 'customer_id';
 const CUSTOMER_TOKEN = 'customer_token';
 
 export function useCustomerAuthSet() {
-  return function(id, api_token) {
+  return useCallback(function(id, api_token) {
     window.localStorage.setItem(CUSTOMER_ID, id);
     window.localStorage.setItem(CUSTOMER_TOKEN, api_token);
-  }
+  }, []);
 }
 
 export function useCustomerAuthGet() {

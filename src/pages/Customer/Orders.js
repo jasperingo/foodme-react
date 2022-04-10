@@ -44,20 +44,18 @@ export default function Orders() {
   
   return (
     <section>
-      <div className="container-x">
 
-        <OrderList 
-          orders={orders}
-          ordersPage={ordersPage}
-          ordersError={ordersError}
-          ordersLoaded={ordersLoaded}
-          ordersLoading={ordersLoading}
-          ordersNumberOfPages={ordersNumberOfPages}
-          fetchOrders={()=> fetchCustomerOrders(customer.id)}
-          refreshList={refreshCustomerOrders}
-          />
+      <OrderList 
+        orders={orders}
+        ordersPage={ordersPage}
+        ordersError={ordersError}
+        ordersLoaded={ordersLoaded}
+        ordersLoading={ordersLoading}
+        ordersNumberOfPages={ordersNumberOfPages}
+        fetchOrders={()=> fetchCustomerOrders(customer.id)}
+        refreshList={refreshCustomerOrders}
+        />
 
-      </div>
     </section>
   );
 }

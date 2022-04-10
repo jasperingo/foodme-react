@@ -43,21 +43,28 @@ export const storeState = {
 
   orders: [],
   ordersPage: 1,
-  ordersLoading: true,
+  ordersError: null,
+  ordersLoaded: false,
+  ordersLoading: false,
   ordersNumberOfPages: 0,
-  ordersFetchStatus: FETCH_STATUSES.LOADING,
 
+  savedCarts: [],
+  savedCartsPage: 1,
+  savedCartsError: null,
+  savedCartsLoaded: false,
+  savedCartsLoading: false,
+  savedCartsNumberOfPages: 0,
 
   transactions: [],
   transactionsPage: 1,
-  transactionsLoading: true,
+  transactionsError: null,
+  transactionsLoaded: false,
+  transactionsLoading: false,
   transactionsNumberOfPages: 0,
-  transactionsFetchStatus: FETCH_STATUSES.LOADING,
 
-  
   transactionBalance: null,
   transactionBalanceLoading: true,
-  transactionBalanceFetchStatus: FETCH_STATUSES.LOADING,
+  transactionBalanceError: null,
 
 };
 

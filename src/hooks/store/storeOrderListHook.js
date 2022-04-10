@@ -1,104 +1,88 @@
 
-import { useCallback, useEffect } from "react";
-import { getOrdersListFetchStatusAction, ORDER } from "../../context/actions/orderActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { ORDER } from "../../context/actions/orderActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus, useURLQuery } from "../viewHook";
-
 
 export function useStoreOrderList(userToken) {
-
-  const statusParam = useURLQuery().get('status');
 
   const { 
     store: { 
       storeDispatch,
       store: {
-        store,
         orders,
         ordersPage,
+        ordersLoaded,
         ordersLoading,
         ordersNumberOfPages,
-        ordersFetchStatus
+        ordersError
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
 
-  const onStatusChange = useCallback(
-    ()=> {
-      storeDispatch({ type: ORDER.LIST_STATUS_FILTER_CHANGED, payload: { status: statusParam } });
-    },
-    [statusParam, storeDispatch]
-  );
+  function refreshStoreOrders() {
+    storeDispatch({ type: ORDER.LIST_UNFETCHED });
+  }
 
-  const refetch = useCallback(
-    ()=> {
-      if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-        storeDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [storeDispatch, ordersFetchStatus]
-  );
+  const fetchStoreOrders = useCallback(
+    async function(ID, status) {
 
-  const refresh = useCallback(
-    ()=> {
-      storeDispatch({ type: ORDER.LIST_UNFETCHED });
-    },
-    [storeDispatch]
-  );
-  
-  useEffect(
-    ()=> {
-      if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (ordersLoading) return;
 
-        storeDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (!window.navigator.onLine) {
+        storeDispatch({
+          type: ORDER.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
-      } else if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING) {
-        
-        storeDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      storeDispatch({ type: ORDER.LIST_FETCHING });
 
-        const api = new StoreRepository(userToken);
-        api.getOrdersList(store.id, ordersPage, statusParam)
-        .then(res=> {
+      try {
+
+        const res = await api.getOrdersList(ID, ordersPage, status);
           
-          if (res.status === 200) {
-            
-            storeDispatch({
-              type: ORDER.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  ordersPage, 
-                  res.body.pagination.number_of_pages, 
-                  orders.length, 
-                  res.body.data.length
-                ),
-              }
-            });
+        if (res.status === 200) {
+          
+          storeDispatch({
+            type: ORDER.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
 
-          } else if (res.status === 404) {
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
 
-            storeDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            storeDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          storeDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      } catch(error) {
+        storeDispatch({
+          type: ORDER.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [store.id, statusParam, orders, ordersPage, ordersLoading, ordersFetchStatus, userToken, storeDispatch, listStatusUpdater]
+    [api, ordersPage, ordersLoading, storeDispatch]
   );
 
-  return [orders, ordersFetchStatus, ordersPage, ordersNumberOfPages, refetch, refresh, onStatusChange];
+  return [
+    fetchStoreOrders,
+    orders, 
+    ordersLoaded,
+    ordersLoading,
+    ordersError,
+    ordersPage, 
+    ordersNumberOfPages,
+    refreshStoreOrders
+  ];
 }
-

@@ -44,21 +44,18 @@ export default function Transactions() {
 
   return (
     <section>
-      <div className="container-x">
         
-        <TransactionList
-          transactions={transactions}
-          transactionsPage={transactionsPage}
-          transactionsError={transactionsError}
-          transactionsLoading={transactionsLoading}
-          transactionsLoaded={transactionsLoaded}
-          transactionsNumberOfPages={transactionsNumberOfPages}
-          fetchTransactions={()=> fetchCustomerTransactions(customer.id)}
-          refreshList={refreshCustomerTransactions}
-          />
+      <TransactionList
+        transactions={transactions}
+        transactionsPage={transactionsPage}
+        transactionsError={transactionsError}
+        transactionsLoading={transactionsLoading}
+        transactionsLoaded={transactionsLoaded}
+        transactionsNumberOfPages={transactionsNumberOfPages}
+        fetchTransactions={()=> fetchCustomerTransactions(customer.id)}
+        refreshList={refreshCustomerTransactions}
+        />
 
-      </div>
     </section>
   );
 }
-
