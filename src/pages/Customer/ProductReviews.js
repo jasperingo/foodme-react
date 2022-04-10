@@ -43,7 +43,7 @@ function ProductReviewList() {
     reviewsPage, 
     reviewsNumberOfPages,
     refreshProductReviews
-  ] = useProductReviewList(product.id, customerToken);
+  ] = useProductReviewList(customerToken);
 
   const onReviewUpdate = useReviewUpdate();
 
@@ -51,17 +51,12 @@ function ProductReviewList() {
   
   const onReviewCreate = useReviewCreate({ product: product.id });
 
-  const reviewsFetch = useCallback(
-    function() {
-      if (!reviewsLoading && reviewsError === null) 
-        fetchProductReviews();
-    },
-    [reviewsLoading, reviewsError, fetchProductReviews]
-  );
-
   useEffect(
-    function() { if (!reviewsLoaded) reviewsFetch(); },
-    [reviewsLoaded, reviewsFetch]
+    function() { 
+      if (!reviewsLoaded && reviewsError === null) 
+        fetchProductReviews(product.id); 
+    },
+    [product.id, reviewsLoaded, reviewsError, fetchProductReviews]
   );
   
   return (
@@ -84,7 +79,7 @@ function ProductReviewList() {
         reviewsError={reviewsError}
         reviewsPage={reviewsPage}
         reviewsNumberOfPages={reviewsNumberOfPages}
-        fetchReviews={reviewsFetch}
+        fetchReviews={()=> fetchProductReviews(product.id)}
         refreshList={refreshProductReviews}
         />
     </div>

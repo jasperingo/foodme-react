@@ -49,14 +49,12 @@ function ProductRelatedList() {
     relatedNumberOfPages
   ] = useProductRelatedList(product.id, customerToken);
 
-  const relatedFetch = useCallback(
-    function() { if (!relatedLoading && relatedError === null) fetchRelatedProducts(); },
-    [relatedLoading, relatedError, fetchRelatedProducts]
-  );
-
   useEffect(
-    function() { if (!relatedLoaded) relatedFetch(); },
-    [relatedLoaded, relatedFetch]
+    function() { 
+      if (!relatedLoaded && relatedError === null) 
+        fetchRelatedProducts(product.id); 
+    },
+    [product.id, relatedLoaded, relatedError, fetchRelatedProducts]
   );
 
   return (
@@ -74,7 +72,7 @@ function ProductRelatedList() {
         productsLoaded={relatedLoaded}
         productsLoading={relatedLoading}
         productsNumberOfPages={relatedNumberOfPages}
-        fetchProducts={relatedFetch}
+        fetchProducts={()=> fetchRelatedProducts(product.id)}
         />
 
     </div>
@@ -105,7 +103,7 @@ function ProductReviewList() {
     reviewsLoading,
     reviewsLoaded,
     reviewsError,
-  ] = useProductReviewList(product.id, customerToken);
+  ] = useProductReviewList(customerToken);
 
   const onReviewUpdate = useReviewUpdate();
 
@@ -113,17 +111,12 @@ function ProductReviewList() {
   
   const onReviewCreate = useReviewCreate({ product: product.id });
 
-  const reviewsFetch = useCallback(
-    function() {
-      if (!reviewsLoading) 
-        fetchProductReviews();
-    },
-    [reviewsLoading, fetchProductReviews]
-  );
-
   useEffect(
-    function() { if (!reviewsLoaded && reviewsError === null) reviewsFetch(); },
-    [reviewsLoaded, reviewsError, reviewsFetch]
+    function() { 
+      if (!reviewsLoaded && reviewsError === null) 
+        fetchProductReviews(product.id); 
+      },
+    [product.id, reviewsLoaded, reviewsError, fetchProductReviews]
   );
   
   return (
@@ -145,7 +138,7 @@ function ProductReviewList() {
         reviewsLoading={reviewsLoading}
         reviewsLoaded={reviewsLoaded}
         reviewsError={reviewsError}
-        fetchReviews={reviewsFetch}
+        fetchReviews={()=> fetchProductReviews(product.id)}
         />
     </div>
   );

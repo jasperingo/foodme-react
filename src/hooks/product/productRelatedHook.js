@@ -5,7 +5,7 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import ProductRepository from "../../repositories/ProductRepository";
 import { useAppContext } from "../contextHook";
 
-export function useProductRelatedList(productId, userToken) {
+export function useProductRelatedList(userToken) {
 
   const { 
     product: {
@@ -24,7 +24,9 @@ export function useProductRelatedList(productId, userToken) {
   const api = useMemo(function() { return new ProductRepository(userToken); }, [userToken]);
   
   const fetchRelatedProducts = useCallback(
-    async function() {
+    async function(ID) {
+
+      if (relatedLoading) return;
       
       if (!window.navigator.onLine) {
         productDispatch({
@@ -37,7 +39,7 @@ export function useProductRelatedList(productId, userToken) {
       productDispatch({ type: PRODUCT.RELATED_LIST_FETCHING });
         
       try {
-        const res = await api.getRelatedList(productId, relatedPage)
+        const res = await api.getRelatedList(ID, relatedPage)
         
         if (res.status === 200) {
           productDispatch({
@@ -63,7 +65,7 @@ export function useProductRelatedList(productId, userToken) {
         });
       }
     },
-    [productId, api, relatedPage, productDispatch]
+    [api, relatedLoading, relatedPage, productDispatch]
   );
 
   return [

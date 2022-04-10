@@ -6,7 +6,7 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import ProductRepository from "../../repositories/ProductRepository";
 import { useAppContext } from "../contextHook";
 
-export function useProductReviewList(productId, userToken) {
+export function useProductReviewList(userToken) {
 
   const { 
     product: {
@@ -29,7 +29,9 @@ export function useProductReviewList(productId, userToken) {
   }
   
   const fetchProductReviews = useCallback(
-    async function() {
+    async function(ID) {
+
+      if (reviewsLoading) return;
 
       if (!window.navigator.onLine) {
         productDispatch({
@@ -43,7 +45,7 @@ export function useProductReviewList(productId, userToken) {
         
       try {
 
-        const res = await api.getReviewsList(productId, reviewsPage);
+        const res = await api.getReviewsList(ID, reviewsPage);
         
         if (res.status === 200) {
           productDispatch({
@@ -71,8 +73,8 @@ export function useProductReviewList(productId, userToken) {
     },
     [
       api,
-      productId,
       reviewsPage, 
+      reviewsLoading,
       productDispatch,
     ]
   );
