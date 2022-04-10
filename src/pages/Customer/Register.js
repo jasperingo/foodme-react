@@ -4,7 +4,7 @@ import LoadingDialog from '../../components/dialog/LoadingDialog';
 import FormButton from '../../components/form/FormButton';
 import FormMessage from '../../components/form/FormMessage';
 import FormField from '../../components/form/FormField';
-import SocialLoginList from '../../components/SocialLoginList';
+// import SocialLoginList from '../../components/SocialLoginList';
 import { useHeader } from '../../hooks/headerHook';
 import RegistrationAgreementLink from '../../components/form/RegistrationAgreementLink';
 import LoginIfHasAccountLink from '../../components/form/LoginIfHasAccountLink';
@@ -126,7 +126,7 @@ export default function Register({ redirectTo }) {
 
           <LoginIfHasAccountLink />
 
-          <SocialLoginList href="/login" />
+          {/* <SocialLoginList href="/login" /> */}
 
         </form>
         

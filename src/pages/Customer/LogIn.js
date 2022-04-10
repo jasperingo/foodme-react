@@ -7,7 +7,7 @@ import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLink';
-import SocialLoginList from '../../components/SocialLoginList';
+// import SocialLoginList from '../../components/SocialLoginList';
 import { useCustomerSignIn } from '../../hooks/customer/customerSignInHook';
 import { useHeader } from '../../hooks/headerHook';
 
@@ -75,7 +75,7 @@ export default function LogIn({ redirectTo }) {
 
           <RegisterIfNoAccountLink />
 
-          <SocialLoginList href="/login" />
+          {/* <SocialLoginList href="/login" /> */}
 
         </form>
 
