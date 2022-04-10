@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useCustomerOrderList } from '../../hooks/customer/customerOrderListHook';
@@ -32,19 +32,14 @@ export default function Orders() {
     ordersPage, 
     ordersNumberOfPages, 
     refreshCustomerOrders
-  ] = useCustomerOrderList(customer.id, customerToken);
-
-  const ordersFetch = useCallback(
-    function() {
-      if (!ordersLoading) 
-        fetchCustomerOrders();
-    },
-    [ordersLoading, fetchCustomerOrders]
-  );
+  ] = useCustomerOrderList(customerToken);
 
   useEffect(
-    function() { if (!ordersLoaded) ordersFetch(); },
-    [ordersLoaded, ordersFetch]
+    function() { 
+      if (!ordersLoaded && ordersError === null) 
+        fetchCustomerOrders(customer.id); 
+    },
+    [customer.id, ordersLoaded, ordersError, fetchCustomerOrders]
   );
   
   return (
@@ -58,7 +53,7 @@ export default function Orders() {
           ordersLoaded={ordersLoaded}
           ordersLoading={ordersLoading}
           ordersNumberOfPages={ordersNumberOfPages}
-          fetchOrders={ordersFetch}
+          fetchOrders={()=> fetchCustomerOrders(customer.id)}
           refreshList={refreshCustomerOrders}
           />
 

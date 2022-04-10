@@ -5,7 +5,7 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
 import { useAppContext } from "../contextHook";
 
-export function useCustomerTransactionList(userId, userToken) {
+export function useCustomerTransactionList(userToken) {
 
   const { 
     customer: {
@@ -30,7 +30,9 @@ export function useCustomerTransactionList(userId, userToken) {
   }
 
   const fetchCustomerTransactions = useCallback(
-    async function() {
+    async function(ID) {
+
+      if (transactionsLoading) return;
 
       if (!window.navigator.onLine) {
         dispatch({
@@ -44,7 +46,7 @@ export function useCustomerTransactionList(userId, userToken) {
 
       try {
         
-        const res = await api.getTransactionsList(userId, transactionsPage);
+        const res = await api.getTransactionsList(ID, transactionsPage);
 
         if (res.status === 200) {
           dispatch({
@@ -71,7 +73,7 @@ export function useCustomerTransactionList(userId, userToken) {
         });
       }
     },
-    [userId, transactionsPage, api, dispatch]
+    [transactionsPage, transactionsLoading, api, dispatch]
   );
 
   return [

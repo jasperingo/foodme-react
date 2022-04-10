@@ -6,7 +6,7 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
 import { useAppContext } from "../contextHook";
 
-export function useCustomerSavedCartList(userId, userToken) {
+export function useCustomerSavedCartList(userToken) {
 
   const { 
     customer: {
@@ -31,7 +31,9 @@ export function useCustomerSavedCartList(userId, userToken) {
   }
 
   const fetchCustomerSavedCarts = useCallback(
-    async function() {
+    async function(ID) {
+
+      if (savedCartsLoading) return;
 
       if (!window.navigator.onLine) {
         dispatch({
@@ -45,7 +47,7 @@ export function useCustomerSavedCartList(userId, userToken) {
 
       try {
         
-        const res = await api.getSavedCartsList(userId, savedCartsPage);
+        const res = await api.getSavedCartsList(ID, savedCartsPage);
 
         if (res.status === 200) {
           dispatch({
@@ -72,7 +74,7 @@ export function useCustomerSavedCartList(userId, userToken) {
         });
       }
     },
-    [userId, savedCartsPage, api, dispatch]
+    [savedCartsPage, savedCartsLoading, api, dispatch]
   );
 
   return [

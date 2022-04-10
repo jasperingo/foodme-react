@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useCustomerTransactionList } from '../../hooks/customer/customerTransactionListHook';
@@ -32,19 +32,14 @@ export default function Transactions() {
     transactionsPage, 
     transactionsNumberOfPages, 
     refreshCustomerTransactions
-  ] = useCustomerTransactionList(customer.id, customerToken);
-
-  const transactionsFetch = useCallback(
-    function() {
-      if (!transactionsLoading) 
-        fetchCustomerTransactions();
-    },
-    [transactionsLoading, fetchCustomerTransactions]
-  );
+  ] = useCustomerTransactionList(customerToken);
 
   useEffect(
-    function() { if (!transactionsLoaded) transactionsFetch(); },
-    [transactionsLoaded, transactionsFetch]
+    function() { 
+      if (!transactionsLoaded && transactionsError === null) 
+        fetchCustomerTransactions(customer.id); 
+    },
+    [customer.id, transactionsLoaded, transactionsError, fetchCustomerTransactions]
   );
 
   return (
@@ -58,7 +53,7 @@ export default function Transactions() {
           transactionsLoading={transactionsLoading}
           transactionsLoaded={transactionsLoaded}
           transactionsNumberOfPages={transactionsNumberOfPages}
-          fetchTransactions={transactionsFetch}
+          fetchTransactions={()=> fetchCustomerTransactions(customer.id)}
           refreshList={refreshCustomerTransactions}
           />
 

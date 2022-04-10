@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import ProductList from '../../components/list/ProductList';
 import { useAppContext } from '../../hooks/contextHook';
 import { useCustomerFavoriteList } from '../../hooks/customer/customerFavoriteListHook';
@@ -32,19 +32,14 @@ export default function Favorites() {
     productsPage, 
     productsNumberOfPages, 
     refreshCustomerProducts
-  ] = useCustomerFavoriteList(customer.id, customerToken);
-
-  const favoritesFetch = useCallback(
-    function() {
-      if (!productsLoading) 
-        fetchCustomerProducts();
-    },
-    [productsLoading, fetchCustomerProducts]
-  );
+  ] = useCustomerFavoriteList(customerToken);
 
   useEffect(
-    function() { if (!productsLoaded) favoritesFetch(); },
-    [productsLoaded, favoritesFetch]
+    function() { 
+      if (!productsLoaded && productsError === null) 
+        fetchCustomerProducts(customer.id); 
+    },
+    [customer.id, productsLoaded, productsError, fetchCustomerProducts]
   );
 
   return (
@@ -58,7 +53,7 @@ export default function Favorites() {
           productsLoaded={productsLoaded}
           productsLoading={productsLoading}
           productsNumberOfPages={productsNumberOfPages}
-          fetchProducts={favoritesFetch}
+          fetchProducts={()=> fetchCustomerProducts(customer.id)}
           refreshList={refreshCustomerProducts}
           />
 

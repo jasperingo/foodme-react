@@ -6,7 +6,7 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
 import { useAppContext } from "../contextHook";
 
-export function useCustomerFavoriteList(userId, userToken) {
+export function useCustomerFavoriteList(userToken) {
 
   const { 
     customer: {
@@ -31,7 +31,9 @@ export function useCustomerFavoriteList(userId, userToken) {
   }
 
   const fetchCustomerProducts = useCallback(
-    async function() {
+    async function(ID) {
+
+      if (productsLoading) return;
 
       if (!window.navigator.onLine) {
         dispatch({
@@ -45,7 +47,7 @@ export function useCustomerFavoriteList(userId, userToken) {
 
       try {
         
-        const res = await api.getFavoritesList(userId, productsPage);
+        const res = await api.getFavoritesList(ID, productsPage);
 
         if (res.status === 200) {
           dispatch({
@@ -72,7 +74,7 @@ export function useCustomerFavoriteList(userId, userToken) {
         });
       }
     },
-    [userId, productsPage, api, dispatch]
+    [productsPage, productsLoading, api, dispatch]
   );
   
   return [

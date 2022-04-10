@@ -5,7 +5,7 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
 import { useAppContext } from "../contextHook";
 
-export function useCustomerAddressList(userId, userToken) {
+export function useCustomerAddressList(userToken) {
 
   const { 
     customer: {
@@ -28,7 +28,9 @@ export function useCustomerAddressList(userId, userToken) {
   }
 
   const fetchCustomerAddresses = useCallback(
-    async function() {
+    async function(ID) {
+
+      if (addressesLoading) return;
 
       if (!window.navigator.onLine) {
         dispatch({
@@ -42,7 +44,7 @@ export function useCustomerAddressList(userId, userToken) {
 
       try {
         
-        const res = await api.getAddressesList(userId);
+        const res = await api.getAddressesList(ID);
 
         if (res.status === 200) {
           dispatch({
@@ -67,7 +69,7 @@ export function useCustomerAddressList(userId, userToken) {
       }
 
     },
-    [userId, api, dispatch]
+    [api, addressesLoading, dispatch]
   );
 
   return [

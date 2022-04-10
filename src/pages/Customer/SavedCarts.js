@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import SavedCartList from '../../components/list/SavedCartList';
@@ -32,19 +32,14 @@ export default function SavedCarts() {
     savedCartsPage, 
     savedCartsNumberOfPages,  
     refreshCustomerSavedCarts
-  ] = useCustomerSavedCartList(customer.id, customerToken);
-
-  const savedCartsFetch = useCallback(
-    function() {
-      if (!savedCartsLoading) 
-        fetchCustomerSavedCarts();
-    },
-    [savedCartsLoading, fetchCustomerSavedCarts]
-  );
+  ] = useCustomerSavedCartList(customerToken);
 
   useEffect(
-    function() { if (!savedCartsLoaded) savedCartsFetch(); },
-    [savedCartsLoaded, savedCartsFetch]
+    function() { 
+      if (!savedCartsLoaded && savedCartsError === null) 
+        fetchCustomerSavedCarts(customer.id); 
+    },
+    [customer.id, savedCartsError, savedCartsLoaded, fetchCustomerSavedCarts]
   );
 
   return (
@@ -58,7 +53,7 @@ export default function SavedCarts() {
           savedCartsLoaded={savedCartsLoaded}
           savedCartsLoading={savedCartsLoading}
           savedCartsNumberOfPages={savedCartsNumberOfPages}
-          fetchSavedCarts={savedCartsFetch}
+          fetchSavedCarts={()=> fetchCustomerSavedCarts(customer.id)}
           refreshList={refreshCustomerSavedCarts}
           />
 
