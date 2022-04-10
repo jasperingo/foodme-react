@@ -1,17 +1,35 @@
 
 import React from 'react'
 import { Link } from 'react-router-dom';
+import { PRODUCT } from '../../context/actions/productActions';
+import { STORE } from '../../context/actions/storeActions';
+import { useAppContext } from '../../hooks/contextHook';
 import { useCategoryColor } from '../../hooks/viewHook';
 
 export default function CategoryItem({ canEdit, category, index, sub, path, grid }) {
+
+  const { 
+    search: {
+      searchDispatch 
+    }
+  } = useAppContext();
 
   const iconColor = useCategoryColor(index);
 
   const fullPath = sub ? `/search/${path}?${path}_sub_category=${category.id}` : `/category/${category.id}`;
 
+
+  function onItemClick() {
+    if (sub) {
+      searchDispatch({ type: STORE.LIST_UNFETCHED });
+      searchDispatch({ type: PRODUCT.LIST_UNFETCHED });
+    }
+  }
+
   return (
     <li className="mb-2">
       <Link 
+        onClick={onItemClick}
         to={canEdit ? `/sub-category/${category.id}/update` : fullPath} 
         className={`${grid ? 'block text-center shadow' : 'flex'} flex-grow items-center gap-2 bg-color p-2 rounded md:py-3 md:shadow md:block md:text-center hover:bg-color-gray-h`}
         >
