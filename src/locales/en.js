@@ -277,6 +277,7 @@ export const TRANSLATIONS_EN = {
     Products: 'Products',
     Add_product: 'Add product',
     Edit_product: 'Edit product',
+    Edit_products: 'Edit products',
     Related_products: 'Related products',
     Add_your_products: 'Add your products',
     Products_on_Dailyneeds: 'Products on Dailyneeds',

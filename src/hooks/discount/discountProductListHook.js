@@ -1,11 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { DISCOUNT, getDiscountProductsListFetchStatusAction } from "../../context/actions/discountActions";
+import { useCallback, useMemo } from "react";
+import { DISCOUNT } from "../../context/actions/discountActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DiscountRepository from "../../repositories/DiscountRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useDiscountProductList(userToken) {
 
@@ -13,97 +12,79 @@ export function useDiscountProductList(userToken) {
     discount: {
       discountDispatch,
       discount: {
-        discount,
         discountProducts,
         discountProductsPage,
+        discountProductsError,
+        discountProductsLoaded,
         discountProductsLoading,
-        discountProductsNumberOfPages,
-        discountProductsFetchStatus
+        discountProductsNumberOfPages
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new DiscountRepository(userToken); }, [userToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (discountProductsFetchStatus !== FETCH_STATUSES.LOADING) 
-        discountDispatch(getDiscountProductsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [discountDispatch, discountProductsFetchStatus]
-  );
-
-  const refresh = useCallback(
-    ()=> {
-      discountDispatch({ type: DISCOUNT.PRODUCT_LIST_UNFETCHED });
-    },
-    [discountDispatch]
-  );
+  function refreshDiscountProducts() {
+    discountDispatch({ type: DISCOUNT.PRODUCT_LIST_UNFETCHED }); 
+  }
   
-  useEffect(
-    ()=> {
-      if (discountProductsLoading && discountProductsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchDiscountProducts = useCallback(
+    async function(ID) {
 
-        discountDispatch(getDiscountProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (discountProductsLoading) return;
 
-      } else if (discountProductsLoading && discountProductsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (!window.navigator.onLine) {
+        discountDispatch({
+          type: DISCOUNT.PRODUCT_LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      } 
+      
+      discountDispatch({ type: DISCOUNT.PRODUCT_LIST_FETCHING });
+      
+      try {
 
-        discountDispatch(getDiscountProductsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-        
-        const api = new DiscountRepository(userToken);
-        api.getProductsList(discount.id, discountProductsPage)
-        .then(res=> {
+        const res = await api.getProductsList(ID, discountProductsPage);
           
-          if (res.status === 200) {
-            discountDispatch({
-              type:   DISCOUNT.PRODUCT_LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  discountProductsPage, 
-                  res.body.pagination.number_of_pages, 
-                  discountProducts.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-          } else if (res.status === 404) {
-
-            discountDispatch(getDiscountProductsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            discountDispatch(getDiscountProductsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-            
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          discountDispatch(getDiscountProductsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        if (res.status === 200) {
+          discountDispatch({
+            type:   DISCOUNT.PRODUCT_LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        discountDispatch({
+          type: DISCOUNT.PRODUCT_LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      discount.id, 
-      discountProducts, 
+      api,
       discountProductsPage, 
       discountProductsLoading,
-      discountProductsFetchStatus, 
-      userToken, 
       discountDispatch, 
-      listStatusUpdater
     ]
   );
   
   return [
+    fetchDiscountProducts,
     discountProducts, 
-    discountProductsFetchStatus, 
+    discountProductsLoading,
+    discountProductsLoaded,
+    discountProductsError,
     discountProductsPage, 
-    discountProductsNumberOfPages, 
-    refetch,
-    refresh
+    discountProductsNumberOfPages,
+    refreshDiscountProducts
   ];
 }
-

@@ -1,19 +1,24 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import DiscountDeleteForm from '../../components/form/DiscountDeleteForm';
 import DiscountForm from '../../components/form/DiscountForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useAppContext } from '../../hooks/contextHook';
 import { useDiscountDelete } from '../../hooks/discount/discountDeleteHook';
 import { useDiscountFetch } from '../../hooks/discount/discountFetchHook';
 import { useDiscountUpdate } from '../../hooks/discount/discountUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function DiscountUpdate() {
+
+  const { ID } = useParams();
+
+  const history = useHistory();
 
   const {
     store: { 
@@ -24,9 +29,12 @@ export default function DiscountUpdate() {
   } = useAppContext();
 
   const [
-    discount, 
-    discountFetchStatus, 
-    refetch
+    fetchDiscount,
+    discount,
+    discountLoading,
+    discountError,
+    discountID,
+    unfetchDiscount
   ] = useDiscountFetch(storeToken);
 
   useHeader({ 
@@ -36,7 +44,7 @@ export default function DiscountUpdate() {
   
   const [
     onSubmit, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     titleError, 
@@ -50,48 +58,64 @@ export default function DiscountUpdate() {
 
   const [
     onDeleteSubmit, 
-    deleteDialog, 
+    deleteLoading, 
     deleteFormSuccess, 
     deleteFormError
   ] = useDiscountDelete();
 
+  useEffect(
+    function() {
+      if ((discount !== null || discountError !== null) && discountID !== ID) 
+        unfetchDiscount();
+      else if (discount === null && discountError === null)
+        fetchDiscount(ID);
+    },
+    [ID, discount, discountError, discountID, fetchDiscount, unfetchDiscount]
+  );
+
+  useEffect(
+    function() {
+      if (deleteFormSuccess !== null) history.push('/discounts');
+    }, 
+    [deleteFormSuccess, history]
+  );
+  
   return (
     <section>
-     <div className="container-x">
+      <div className="container-x">
         {
-          useRenderOnDataFetched(
-            discountFetchStatus,
-            ()=> (
-              <>
-                <DiscountForm
-                  discount={discount} 
-                  onSubmit={onSubmit}
-                  dialog={dialog}
-                  formError={formError}
-                  formSuccess={formSuccess}
-                  titleError={titleError}
-                  typeError={typeError}
-                  valueError={valueError}
-                  minQtyError={minQtyError}
-                  minAmountError={minAmountError}
-                  startDateError={startDateError}
-                  endDateError={endDateError}
-                  />
-                
-                <DiscountDeleteForm 
-                  onSubmit={onDeleteSubmit}
-                  dialog={deleteDialog}
-                  formError={deleteFormError}
-                  formSuccess={deleteFormSuccess}
-                  />
-              </>
-            ),
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
-          )
+          discount !== null && 
+          <>
+            <DiscountForm
+              discount={discount} 
+              onSubmit={onSubmit}
+              dialog={loading}
+              formError={formError}
+              formSuccess={formSuccess}
+              titleError={titleError}
+              typeError={typeError}
+              valueError={valueError}
+              minQtyError={minQtyError}
+              minAmountError={minAmountError}
+              startDateError={startDateError}
+              endDateError={endDateError}
+              />
+            
+            <DiscountDeleteForm 
+              onSubmit={onDeleteSubmit}
+              dialog={deleteLoading}
+              formError={deleteFormError}
+              formSuccess={deleteFormSuccess}
+              />
+          </>
         }
+
+        { discountLoading && <Loading /> }
+        { discountError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+        { discountError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+        { discountError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchDiscount(ID)} /> }
+        { discountError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchDiscount(ID)} /> }
+      
       </div>
     </section>
   );

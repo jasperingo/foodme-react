@@ -2,62 +2,68 @@ import { DISCOUNT } from "../actions/discountActions";
 import { PRODUCT } from "../actions/productActions";
 import discountState from "../states/discountState";
 
-
 export default function DiscountReducer (state, { type, payload }) {
   
   switch (type) {  
 
     case DISCOUNT.UNFETCHED:
-      return {
-        ...discountState,
-        discounts: state.discounts,
-        discountsPage: state.discountsPage,
-        discountsLoading: state.discountsLoading,
-        discountsNumberOfPages: state.discountsNumberOfPages,
-        discountsFetchStatus: state.discountsFetchStatus
-      };
+      return { ...discountState };
     
-    case DISCOUNT.FETCH_STATUS_CHANGED :
+    case DISCOUNT.FETCHING:
       return {
         ...state,
-        discountID: payload.id,
-        discountLoading: payload.loading,
-        discountFetchStatus: payload.fetchStatus
+        discountError: null,
+        discountLoading: true,
       };
     
-    case DISCOUNT.FETCHED :
+    case DISCOUNT.ERROR_CHANGED:
       return {
         ...state,
         discountLoading: false,
-        discount: payload.discount, 
-        discountID: payload.discount.id,
-        discountFetchStatus: payload.fetchStatus,
+        discountID: payload.id,
+        discountFetchStatus: payload.error
+      };
+
+    case DISCOUNT.FETCHED:
+      return {
+        ...state,
+        discountLoading: false,
+        discountID: payload.id,
+        discount: payload.discount
       };
 
 
     case DISCOUNT.PRODUCT_LIST_UNFETCHED:
       return {
         ...state,
-        discountProductsPage: 1,
-        discountProductsLoading: true,
-        discountProductsNumberOfPages: 0,
         discountProducts: discountState.discountProducts,
-        discountProductsFetchStatus: discountState.discountProductsFetchStatus
+        discountProductsPage: discountState.discountProductsPage,
+        discountProductsError: discountState.discountProductsError,
+        discountProductsLoaded: discountState.discountProductsLoaded,
+        discountProductsLoading: discountState.discountProductsLoading,
+        discountProductsNumberOfPages: discountState.discountProductsNumberOfPages
       };
   
-    case DISCOUNT.PRODUCT_LIST_FETCH_STATUS_CHANGED:
+    case DISCOUNT.PRODUCT_LIST_FETCHING:
       return {
         ...state,
-        discountProductsLoading: payload.loading,
-        discountProductsFetchStatus: payload.fetchStatus
+        discountProductsError: null,
+        discountProductsLoading: true
+      };
+
+    case DISCOUNT.PRODUCT_LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        discountProductsLoading: false,
+        discountProductsError: payload.error
       };
       
     case DISCOUNT.PRODUCT_LIST_FETCHED:
       return {
         ...state,
+        discountProductsLoaded: true,
         discountProductsLoading: false,
-        discountProductsPage: state.discountProductsPage+1,
-        discountProductsFetchStatus: payload.fetchStatus,
+        discountProductsPage: state.discountProductsPage + 1,
         discountProductsNumberOfPages: payload.numberOfPages,
         discountProducts: [...state.discountProducts, ...payload.list],
       };

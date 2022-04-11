@@ -1,29 +1,24 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const discountState = {
   
-  discounts: [],
-  discountsPage: 1,
-  discountsLoading: true,
-  discountsNumberOfPages: 0,
-  discountsFetchStatus: FETCH_STATUSES.LOADING,
+  discount: null,
+  discountID: null,
+  discountError: null,
+  discountLoading: false,
 
   products: [],
   productsPage: 1,
-  productsLoading: true,
+  productsError: null,
+  productsLoaded: false,
+  productsLoading: false,
   productsNumberOfPages: 0,
-  productsFetchStatus: FETCH_STATUSES.LOADING,
 
   discountProducts: [],
   discountProductsPage: 1,
-  discountProductsLoading: true,
-  discountProductsNumberOfPages: 0,
-  discountProductsFetchStatus: FETCH_STATUSES.LOADING,
-
-  discount: null,
-  discountID: null,
-  discountLoading: true,
-  discountFetchStatus: FETCH_STATUSES.LOADING,
+  discountProductsError: null,
+  discountProductsLoaded: false,
+  discountProductsLoading: false,
+  discountProductsNumberOfPages: 0
   
 };
 

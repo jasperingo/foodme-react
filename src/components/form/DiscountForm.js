@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useISODateString } from '../../hooks/viewHook';
 import Discount from '../../models/Discount';
 import LoadingDialog from '../dialog/LoadingDialog';
@@ -41,10 +41,6 @@ export default function DiscountForm(
 
   const [type, setType] = useState(discount.type);
 
-  const [valueMinimium, setValueMinimium] = useState();
-
-  const [valueMaximium, setValueMaximium] = useState();
-
   const isoDate = useISODateString();
 
   function onFormSubmit(e) {
@@ -58,30 +54,17 @@ export default function DiscountForm(
       startDateInput.current.value,
       endDateInput.current.value,
 
-      titleInput.current.validity,
-      typeInput.current.validity,
-      valueInput.current.validity,
-      minAmountInput.current.validity,
-      minQtyInput.current.validity,
-      startDateInput.current.validity,
-      endDateInput.current.validity
+      {
+        titleValidity: titleInput.current.validity,
+        typeValidity: typeInput.current.validity,
+        valueValidity: valueInput.current.validity,
+        minAmountValidity: minAmountInput.current.validity,
+        minQtyValidity: minQtyInput.current.validity,
+        startDateValidity: startDateInput.current.validity,
+        endDateValidity: endDateInput.current.validity,
+      }
     );
   }
-
-  const setValueConstraints = useCallback(
-    ()=> {
-      if (type === Discount.TYPE_PERCENTAGE) {
-        setValueMinimium(0);
-        setValueMaximium(100);
-      } else if (type === Discount.TYPE_AMOUNT) {
-        setValueMinimium(0);
-        setValueMaximium(undefined);
-      }
-    },
-    [type]
-  );
-
-  useEffect(()=> { setValueConstraints(); });
 
   return (
     <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x" noValidate>
@@ -108,10 +91,7 @@ export default function DiscountForm(
         required={true}
         value={discount.type}
         options={Discount.getTypes().map(i=> ({ key: i, value: i }))}
-        onChange={(e)=>{
-          setType(e.target.value);
-          setValueConstraints();
-        }}
+        onChange={(e)=> setType(e.target.value)}
         />
 
       <FormField 
@@ -122,8 +102,8 @@ export default function DiscountForm(
         required={true}
         value={discount.value}
         type="number"
-        min={valueMinimium}
-        max={valueMaximium}
+        min={0}
+        max={type === Discount.TYPE_PERCENTAGE ? 100 : ''}
         step={type === Discount.TYPE_AMOUNT ? '0.01' : ''}
         />
 

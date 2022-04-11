@@ -15,7 +15,7 @@ export default function DiscountCreate() {
   const [
     onSubmit, 
     id, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     titleError, 
@@ -30,21 +30,19 @@ export default function DiscountCreate() {
   const history = useHistory();
   
   useEffect(
-    ()=> {
-      if (id) {
-        history.push(`/discount/${id}`);
-      }
+    function() {
+      if (id > 0) history.push(`/discount/${id}`);
     }, 
     [id, history]
   );
-
+  
   return (
     <section>
       <div className="container-x">
         <DiscountForm 
           discount={{}}
           onSubmit={onSubmit}
-          dialog={dialog}
+          dialog={loading}
           formError={formError}
           formSuccess={formSuccess}
           titleError={titleError}

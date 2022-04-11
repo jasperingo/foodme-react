@@ -1,8 +1,8 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import DiscountRepository from "../../repositories/DiscountRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useDiscountValidation } from "./discountValidationHook";
 
 export function useDiscountCreate() {
 
@@ -16,9 +16,7 @@ export function useDiscountCreate() {
 
   const [id, setId] = useState(0);
 
-  const [data, setData] = useState(null);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
@@ -38,9 +36,11 @@ export function useDiscountCreate() {
 
   const [endDateError, setEndDateError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const validator = useDiscountValidation();
 
-  function onSubmit(
+  const api = useMemo(function() { return new DiscountRepository(storeToken); }, [storeToken]);
+
+  async function onSubmit(
     title,
     type,
     value,
@@ -48,165 +48,116 @@ export function useDiscountCreate() {
     minimium_required_quantity,
     start_date,
     end_date,
-    titleValidity,
-    typeValidity,
-    valueValidity,
-    minAmountValidity,
-    minQtyValidity,
-    startDateValidity,
-    endDateValidity,
+    validity
   ) {
     
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+
     setFormError(null);
     setFormSuccess(null);
     
-    let error = false;
+    const [
+      error, 
+      titleError,
+      typeError,
+      valueError, 
+      minAmountError, 
+      minQtyError, 
+      startDateError, 
+      endDateError
+    ] = validator(validity)
     
-    if (!titleValidity.valid) {
-      error = true;
-      setTitleError('_errors.This_field_is_required');
-    } else {
-      setTitleError('');
-    }
+    setTitleError(titleError);
+    setTypeError(typeError);
+    setValueError(valueError);
+    setMinQtyError(minAmountError);
+    setMinAmountError(minQtyError);
+    setStartDateError(startDateError);
+    setEndDateError(endDateError);
 
-    if (!typeValidity.valid) {
-      error = true;
-      setTypeError('_errors.This_field_is_required');
-    } else {
-      setTypeError('');
-    }
+    if (error) return;
+
+    setLoading(true);
+
+    const form = { 
+      title, 
+      type,
+      value,
+      start_date,
+      end_date
+    };
+
+    if (minimium_required_amount) form.minimium_required_amount = minimium_required_amount;
+    if (minimium_required_quantity) form.minimium_required_quantity = minimium_required_quantity;
     
-    if (!valueValidity.valid) {
-      error = true;
-      setValueError('_errors.This_field_is_required');
-    } else {
-      setValueError('');
-    }
+    try {
 
-    if (!minQtyValidity.valid) {
-      error = true;
-      setMinQtyError('_errors.This_field_is_required');
-    } else {
-      setMinQtyError('');
-    }
+      const res = await api.create(form);
 
-    if (!minAmountValidity.valid) {
-      error = true;
-      setMinAmountError('_errors.This_field_is_required');
-    } else {
-      setMinAmountError('');
-    }
+      if (res.status === 201) {
+        
+        setFormSuccess(res.body.message);
+        
+        setId(res.body.data.id);
+        
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
 
-    if (!startDateValidity.valid) {
-      error = true;
-      setStartDateError('_errors.This_field_is_required');
-    } else {
-      setStartDateError('');
-    }
+          switch(error.name) {
 
-    if (!endDateValidity.valid) {
-      error = true;
-      setEndDateError('_errors.This_field_is_required');
-    } else {
-      setEndDateError('');
-    }
+            case 'title':
+              setTitleError(error.message);
+              break;
 
-    if (!window.navigator.onLine) {
-      setFormError('_errors.No_netowrk_connection');
-    } else if (!error) {
-      setDialog(true);
-      setData({ 
-        title, 
-        type,
-        value,
-        start_date,
-        end_date,
-        minimium_required_amount: minimium_required_amount === '' ? undefined : minimium_required_amount,
-        minimium_required_quantity: minimium_required_quantity === '' ? undefined : minimium_required_quantity
-      });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+            case 'type':
+              setTypeError(error.message);
+              break;
+
+            case 'value':
+              setValueError(error.message);
+              break;
+
+            case 'start_date':
+              setStartDateError(error.message);
+              break;
+
+            case 'end_date':
+              setEndDateError(error.message);
+              break;
+
+            case 'minimium_required_amount':
+              setMinAmountError(error.message);
+              break;
+            
+            case 'minimium_required_quantity':
+              setMinQtyError(error.message);
+              break;
+
+            default:
+          }
+        }
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
   
-  useEffect(
-    ()=> {
-     
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new DiscountRepository(storeToken);
-
-        api.create(data)
-        .then(res=> {
-
-          if (res.status === 201) {
-            
-            setFormSuccess(res.body.message);
-            
-            setId(res.body.data.id);
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-            
-          } else if (res.status === 400) {
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-            
-            for (let error of res.body.data) {
-
-              switch(error.name) {
-
-                case 'title':
-                  setTitleError(error.message);
-                  break;
-
-                case 'type':
-                  setTypeError(error.message);
-                  break;
-
-                case 'value':
-                  setValueError(error.message);
-                  break;
-
-                case 'start_date':
-                  setStartDateError(error.message);
-                  break;
-
-                case 'end_date':
-                  setEndDateError(error.message);
-                  break;
-
-                case 'minimium_required_amount':
-                  setMinAmountError(error.message);
-                  break;
-                
-                case 'minimium_required_quantity':
-                  setMinQtyError(error.message);
-                  break;
-
-                default:
-              }
-            }
-
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          setFormError('_errors.Something_went_wrong');
-        });
-
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    }, 
-    [fetchStatus, dialog, storeToken, data]
-  );
-
   return [
     onSubmit, 
     id, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     titleError, 

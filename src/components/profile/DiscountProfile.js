@@ -1,23 +1,15 @@
 
-import React from 'react';
-import { editIcon, productIcon } from '../../assets/icons';
+import React, { useEffect } from 'react';
+import { editIcon } from '../../assets/icons';
 import { useDiscountProductList } from '../../hooks/discount/discountProductListHook';
-import { useDateFormat, useHasMoreToFetchViaScroll, useMoneyFormat, useRenderListFooter } from '../../hooks/viewHook';
+import { useDateFormatter, useMoneyFormatter } from '../../hooks/viewHook';
 import Discount from '../../models/Discount';
 import AddButton from '../AddButton';
-import EmptyList from '../EmptyList';
-import FetchMoreButton from '../FetchMoreButton';
-import Forbidden from '../Forbidden';
 import H4Heading from '../H4Heading';
-import ScrollList from '../list/ScrollList';
-import ProductItem from '../list_item/ProductItem';
-import Loading from '../Loading';
-import NotFound from '../NotFound';
-import Reload from '../Reload';
+import ProductList from '../list/ProductList';
 import UserDescList from '../UserDescList';
 import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeaderText from './ProfileHeaderText';
-
 
 export default function DiscountProfile(
   { 
@@ -38,37 +30,47 @@ export default function DiscountProfile(
 ) {
 
   const [
-    products, 
-    productsFetchStatus, 
-    productsPage, 
-    productsNumberOfPages, 
-    refetch, 
-    refresh
+    fetchDiscountProducts,
+    discountProducts, 
+    discountProductsLoading,
+    discountProductsLoaded,
+    discountProductsError,
+    discountProductsPage, 
+    discountProductsNumberOfPages,
+    refreshDiscountProducts
   ] = useDiscountProductList(userToken);
   
-  const amount = useMoneyFormat(value);
+  useEffect(
+    function() { 
+      if (!discountProductsLoaded && discountProductsError === null) 
+        fetchDiscountProducts(id); 
+    },
+    [id, discountProductsLoaded, discountProductsError, fetchDiscountProducts]
+  );
+
+  const dateFormat = useDateFormatter();
+  
+  const amountFormat = useMoneyFormatter();
 
   const data = [
     {
       title: '_discount.Discount_value',
-      body: type === Discount.TYPE_AMOUNT ? amount : `${value}%`
+      body: type === Discount.TYPE_AMOUNT ? amountFormat(value) : `${value}%`
     },
     {
       title: '_discount.Start_date',
-      body: useDateFormat(start_date)
+      body: dateFormat(start_date)
     },
     {
       title: '_discount.End_date',
-      body: useDateFormat(end_date)
+      body: dateFormat(end_date)
     }
   ];
-
-  const miniAmount = useMoneyFormat(minimium_required_amount ?? 0);
 
   if (minimium_required_amount) {
     data.push({
       title: '_discount.Minimium_required_amount',
-      body: miniAmount
+      body: amountFormat(minimium_required_amount ?? 0)
     });
   }
 
@@ -99,50 +101,44 @@ export default function DiscountProfile(
 
           <ProfileDetailsText details={data} />
 
-          <UserDescList 
-            users={[
-              {
-                href: isStore ? '/profile' : `/store/${store.id}`,
-                photo: store.user.photo.href,
-                name: store.user.name,
-                title: '_store.Store'
-              }
-            ]} 
-            />
+          {
+            !isStore && 
+            <UserDescList 
+              users={[
+                {
+                  href: isStore ? '/profile' : `/store/${store.id}`,
+                  photo: store.user.photo.href,
+                  name: store.user.name,
+                  title: '_store.Store'
+                }
+              ]} 
+              />
+          }
 
         </div>
       </div>
       
-      <div className="py-2 border-b">
+      <div className="py-2">
       
         <div className="container-x">
 
           <H4Heading color="text-color-gray" text="_product.Products" />
 
-          <AddButton text="_product.Edit_product" href={`/discount/${id}/discount-product/create`} />
+          <AddButton text="_product.Edit_products" href={`/discount/${id}/discount-product/create`} />
           
-          <ScrollList
-            data={products}
-            nextPage={refetch}
-            refreshPage={refresh}
-            hasMore={useHasMoreToFetchViaScroll(productsPage, productsNumberOfPages, productsFetchStatus)}
-            className="list-x"
-            renderDataItem={(item)=> (
-              <li key={`discount-product-${item.id}`}> <ProductItem product={item.product} /> </li>
-            )}
-            footer={useRenderListFooter(
-              productsFetchStatus,
-              ()=> <li key="discount-product-footer" className="list-x-col-span"> <Loading /> </li>, 
-              ()=> <li key="discount-product-footer" className="list-x-col-span"> <Reload action={refetch} /> </li>,
-              ()=> <li key="discount-product-footer" className="list-x-col-span"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>,
-              ()=> <li key="discount-product-footer" className="list-x-col-span"> <FetchMoreButton action={refetch} /> </li>,
-              ()=> <li key="discount-product-footer" className="list-x-col-span"> <NotFound /> </li>,
-              ()=> <li key="discount-product-footer" className="list-x-col-span"> <Forbidden /> </li>,
-            )}
-            />
-
         </div>
 
+        <ProductList
+          single={false}  
+          products={discountProducts.map(i=> i.product)} 
+          productsLoading={discountProductsLoading} 
+          productsLoaded={discountProductsLoaded} 
+          productsError={discountProductsError} 
+          productsPage={discountProductsPage} 
+          productsNumberOfPages={discountProductsNumberOfPages} 
+          fetchProducts={()=> fetchDiscountProducts(id)} 
+          refreshList={refreshDiscountProducts}
+          />
       </div>
     </>
   );
