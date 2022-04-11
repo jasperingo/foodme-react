@@ -1,27 +1,18 @@
 
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Forbidden from '../../components/Forbidden';
-import Loading from '../../components/Loading';
-import NotFound from '../../components/NotFound';
-import DiscountProfile from '../../components/profile/DiscountProfile';
-import Reload from '../../components/Reload';
-import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
-import { useAppContext } from '../../hooks/contextHook';
-import { useDiscountFetch } from '../../hooks/discount/discountFetchHook';
-import { useHeader } from '../../hooks/headerHook';
+import Forbidden from '../components/Forbidden';
+import Loading from '../components/Loading';
+import NotFound from '../components/NotFound';
+import DiscountProfile from '../components/profile/DiscountProfile';
+import Reload from '../components/Reload';
+import NetworkErrorCodes from '../errors/NetworkErrorCodes';
+import { useDiscountFetch } from '../hooks/discount/discountFetchHook';
+import { useHeader } from '../hooks/headerHook';
 
-export default function Discount() {
+export default function Discount({ userToken, isStore }) {
 
   const { ID } = useParams();
-
-  const {
-    store: { 
-      store: {
-        storeToken
-      }
-    } 
-  } = useAppContext();
 
   const [
     fetchDiscount,
@@ -30,7 +21,7 @@ export default function Discount() {
     discountError,
     discountID,
     unfetchDiscount
-  ] = useDiscountFetch(storeToken);
+  ] = useDiscountFetch(userToken);
 
   useHeader({ 
     title: `${discount?.title ?? 'Loading...'} - Discount`,
@@ -50,7 +41,7 @@ export default function Discount() {
   return (
     <section>
      
-      { discount !== null && <DiscountProfile discount={discount} userToken={storeToken} isStore={true} /> }
+      { discount !== null && <DiscountProfile discount={discount} userToken={userToken} isStore={isStore} /> }
 
       { discountLoading && <Loading /> }
       { discountError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }

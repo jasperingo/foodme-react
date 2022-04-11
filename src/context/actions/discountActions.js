@@ -18,25 +18,3 @@ export const DISCOUNT = {
   PRODUCT_LIST_FETCHING: 'DISCOUNT_ PRODUCTS_FETCHING',
   PRODUCT_LIST_ERROR_CHANGED: 'DISCOUNT_PRODUCTS_ERROR_CHANGED',
 };
-
-export const getDiscountFetchStatusAction = (fetchStatus, id, loading) => ({
-  type: DISCOUNT.FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, id, loading
-  }
-});
-
-export const getDiscountsListFetchStatusAction = (fetchStatus, loading) => ({
-  type: DISCOUNT.LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});
-
-export const getDiscountProductsListFetchStatusAction = (fetchStatus, loading) => ({
-  type: DISCOUNT.PRODUCT_LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});
-

@@ -36,7 +36,7 @@ import WithdrawalAccountUpdate from '../pages/Customer/WithdrawalAccountUpdate';
 import SavedCart from '../pages/SavedCart';
 import DeliveryFirm from '../pages/Customer/DeliveryFirm';
 import ProductReviews from '../pages/Customer/ProductReviews';
-import Discount from '../pages/Customer/Discount';
+import Discount from '../pages/Discount';
 import CartDeliveryMethod from '../pages/Customer/CartDeliveryMethod';
 import CartDeliveryRoutes from '../pages/Customer/CartDeliveryRoutes';
 import CartDiscounts from '../pages/Customer/CartDiscounts';
@@ -144,7 +144,7 @@ export default function CustomerApp() {
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword customer={true} />} />
           <Route path="/cart" render={()=> <Cart />} />
           <Route path="/search" render={()=> <Search />} /> 
-          <Route path="/discount/:ID" render={()=> <Discount />} />
+          <Route path="/discount/:ID" render={()=> <Discount userToken={customerToken} isStore={false} />} />
           <Route path="/product/:ID/reviews" render={()=> <ProductReviews />} />
           <Route path="/product/:ID" render={()=> <Product />} />
           <Route path="/delivery-firm/:ID" render={()=> <DeliveryFirm />} />

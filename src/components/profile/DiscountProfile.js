@@ -124,7 +124,10 @@ export default function DiscountProfile(
 
           <H4Heading color="text-color-gray" text="_product.Products" />
 
-          <AddButton text="_product.Edit_products" href={`/discount/${id}/discount-product/create`} />
+          {
+            isStore &&
+            <AddButton text="_product.Edit_products" href={`/discount/${id}/discount-product/create`} />
+          }
           
         </div>
 

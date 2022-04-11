@@ -28,7 +28,7 @@ import SavedCarts from '../pages/Store/SavedCarts';
 import SavedCart from '../pages/Store/SavedCart';
 import Reviews from '../pages/Store/Reviews';
 import Discounts from '../pages/Store/Discounts';
-import Discount from '../pages/Store/Discount';
+import Discount from '../pages/Discount';
 import DiscountCreate from '../pages/Store/DiscountCreate';
 import DiscountUpdate from '../pages/Store/DiscountUpdate';
 import Orders from '../pages/Store/Orders';
@@ -126,7 +126,7 @@ export default function StoreApp() {
           <Route path="/discount/:ID/discount-product/create" render={()=> authMiddleware() || <DiscountProductCreate />} />
           <Route path="/discount/:ID/update" render={()=> authMiddleware() || <DiscountUpdate />} />
           <Route path="/discount/create" render={()=> authMiddleware() || <DiscountCreate />} />
-          <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount />} />
+          <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount userToken={storeToken} isStore={true} />} />
           <Route path="/discounts" render={()=> authMiddleware() || <Discounts />} />
           <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
           <Route path="/reviews" render={()=> authMiddleware() || <Reviews />} />
@@ -149,4 +149,3 @@ export default function StoreApp() {
     </>
   );
 }
-
