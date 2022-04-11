@@ -12,7 +12,7 @@ function CartCounter({ useCounter }) {
   );
 }
 
-export default function NavItem({ title, icon, href, useCounter, top=false, show = false }) {
+export default function NavItem({ title, icon, href, useCounter, top=false, show = true }) {
 
   return (
     <li className={`flex-1 text-center ${!show && 'hidden'} lg:block`}>
