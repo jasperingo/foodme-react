@@ -13,7 +13,7 @@ export default function HomeBoard({ text, links }) {
       <ul className="flex items-center gap-4">
         {
           links.map(i=> (
-            <li>
+            <li key={i.text}>
               <Link 
                 to={i.href} 
                 className="text-color-primary bg-white py-3 p-4 rounded dark:bg-gray-800 font-bold dark:text-white hover:bg-color-gray-h"

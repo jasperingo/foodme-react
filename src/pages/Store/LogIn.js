@@ -1,5 +1,6 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { storeIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
@@ -11,13 +12,14 @@ import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLi
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreLogin } from '../../hooks/store/storeLoginHook';
 
-
-export default function LogIn({ guestMiddleware }) {
+export default function LogIn({ redirectTo }) {
 
   useHeader({ 
     title: `Log in store - DailyNeeds`,
     headerTitle: '_user.Log_in',
   });
+
+  const history = useHistory();
 
   const nameInput = useRef(null);
 
@@ -25,9 +27,14 @@ export default function LogIn({ guestMiddleware }) {
 
   const passwordInput = useRef(null);
 
+  const [onSubmit, loading, success, formError] = useStoreLogin();
 
-  const [onSubmit, dialog, formError] = useStoreLogin();
-
+  useEffect(
+    function() {
+      if (success && !loading) history.replace(redirectTo);
+    },
+    [success, loading, history, redirectTo]
+  );
   
   function onLoginSubmit(e) {
     e.preventDefault();
@@ -41,14 +48,14 @@ export default function LogIn({ guestMiddleware }) {
     );
   }
   
-  return guestMiddleware() || (
+  return (
     <section>
 
       <div className="container-x">
 
         <form method="POST" action="" onSubmit={onLoginSubmit} className="form-1-x" noValidate>
 
-          <AuthFormHeader icon={storeIcon} text="_user.Welcome_back" />
+          <AuthFormHeader icon={storeIcon} text="_store.Store_login_note" />
 
           <FormMessage error={formError} />
 
@@ -86,7 +93,7 @@ export default function LogIn({ guestMiddleware }) {
 
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
 
     </section>
   );

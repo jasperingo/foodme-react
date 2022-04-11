@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import LoadingDialog from '../components/dialog/LoadingDialog';
 import FormButton from '../components/form/FormButton';
 import FormField from '../components/form/FormField';
@@ -19,8 +19,18 @@ export default function ForgotBusinessPassword({ store, deliveryFirm }) {
 
   const emailInput = useRef(null);
 
-  const [onSubmit, dialog, formError, formSuccess] = usePasswordResetCreate({ store, deliveryFirm });
+  const [onSubmit, loading, formError, formSuccess] = usePasswordResetCreate({ store, deliveryFirm });
 
+  useEffect(
+    function() {
+      if (formSuccess !== null) {
+        emailInput.current.value = '';
+        nameInput.current.value = '';
+      }
+    },
+    [formSuccess]
+  );
+  
   function onFormSubmit(e) {
     e.preventDefault();
     onSubmit(
@@ -32,7 +42,6 @@ export default function ForgotBusinessPassword({ store, deliveryFirm }) {
     );
   }
   
-
   return (
    <section>
       
@@ -68,7 +77,7 @@ export default function ForgotBusinessPassword({ store, deliveryFirm }) {
 
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
 
     </section>
   );

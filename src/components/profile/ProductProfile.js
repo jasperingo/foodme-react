@@ -1,14 +1,12 @@
 
 import Icon from "@mdi/react";
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
-import { useHistory } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useLocation, useHistory, Link } from "react-router-dom";
 import { categoryIcon, editIcon, favoritedIcon, favoriteIcon, notFoundIcon, recommendedIcon, weightIcon } from "../../assets/icons";
 import { CART } from "../../context/actions/cartActions";
 import { useAppContext } from "../../hooks/contextHook";
-import { useMoneyFormat } from "../../hooks/viewHook";
+import { useMoneyFormatter } from "../../hooks/viewHook";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import AlertDialog from "../dialog/AlertDialog";
 import LoadingDialog from "../dialog/LoadingDialog";
@@ -20,7 +18,6 @@ export default function ProductProfile(
     isCustomer, 
     isStore,
     isAdmin,
-    onFavoriteSubmit,
     onUnfavoriteSubmit,
     customerToken,
     product: {
@@ -33,7 +30,18 @@ export default function ProductProfile(
       favorites,
       store,
       product_variants
-    }
+    },
+    favoriteCreateOnSubmit,
+    favoriteCreateLoading,
+    favoriteCreateFormSuccess,
+    favoriteCreateFormError,
+    favoriteCreateResetSubmit,
+
+    favoriteDeleteOnSubmit,
+    favoriteDeleteLoading,
+    favoriteDeleteFormSuccess,
+    favoriteDeleteFormError,
+    favoriteDeleteResetSubmit
   }
 ) {
 
@@ -54,13 +62,48 @@ export default function ProductProfile(
   
   const [dialog, setDialog] = useState(null);
 
-  const [loadingDialog, setLoadingDialog] = useState(false);
-
   const [quantity, setQuantity] = useState(1);
 
   const [variant, setVariant] = useState(product_variants[0]);
 
-  const price = useMoneyFormat(variant?.price || 0);
+  const moneyFormat = useMoneyFormatter();
+
+  useEffect(
+    function() {
+      if (favoriteCreateFormSuccess !== null || favoriteCreateFormError !== null) {
+        setDialog({
+          body: favoriteCreateFormSuccess || favoriteCreateFormError,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+              favoriteCreateResetSubmit();
+            }
+          }
+        });
+      }
+    },
+    [favoriteCreateFormSuccess, favoriteCreateFormError, favoriteCreateResetSubmit]
+  );
+
+  useEffect(
+    function() {
+      if (favoriteDeleteFormSuccess !== null || favoriteDeleteFormError !== null) {
+        setDialog({
+          body: favoriteDeleteFormSuccess || favoriteDeleteFormError,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+              favoriteDeleteResetSubmit();
+            }
+          }
+        });
+      }
+    },
+    [favoriteDeleteFormSuccess, favoriteDeleteFormError, favoriteDeleteResetSubmit]
+  );
+
   
   function onQuantityButtonClicked(value) {
     value = (quantity || 1) + value;
@@ -131,77 +174,11 @@ export default function ProductProfile(
   }
 
   function favoriteProduct() {
-
     if (customerToken === null) {
-
       history.push(`/login?redirect_to=${encodeURIComponent(location.pathname)}`);
-
     } else {
-
-      setLoadingDialog(true);
-      onFavoriteSubmit({
-        
-        onSuccess() {
-          setLoadingDialog(false);
-          setDialog({
-            body: '_product.Product_added_to_favorites',
-            positiveButton: {
-              text: '_extra.Done',
-              action() {
-                setDialog(null);
-              }
-            }
-          });
-        },
-
-        onError(message) {
-          setLoadingDialog(false);
-          setDialog({
-            body: message,
-            positiveButton: {
-              text: '_extra.Done',
-              action() {
-                setDialog(null);
-              }
-            }
-          });
-        }
-
-      });
+      favoriteCreateOnSubmit();
     }
-  }
-
-  function unfavoriteProduct() {
-    setLoadingDialog(true);
-    onUnfavoriteSubmit({
-      
-      onSuccess() {
-        setLoadingDialog(false);
-        setDialog({
-          body: '_product.Product_removed_from_favorites',
-          positiveButton: {
-            text: '_extra.Done',
-            action() {
-              setDialog(null);
-            }
-          }
-        });
-      },
-
-      onError(message) {
-        setLoadingDialog(false);
-        setDialog({
-          body: message,
-          positiveButton: {
-            text: '_extra.Done',
-            action() {
-              setDialog(null);
-            }
-          }
-        });
-      }
-
-    });
   }
   
   function confirmUnfavoriteProduct() {
@@ -211,7 +188,7 @@ export default function ProductProfile(
         text: '_extra.Yes',
         action() {
           setDialog(null);
-          unfavoriteProduct();
+          favoriteDeleteOnSubmit();
         }
       },
       negativeButton: {
@@ -241,7 +218,7 @@ export default function ProductProfile(
 
           { dialog && <AlertDialog dialog={dialog} /> }
 
-          { loadingDialog && <LoadingDialog /> }
+          { (favoriteCreateLoading || favoriteDeleteLoading) && <LoadingDialog /> }
 
           <div className="flex mb-2">
             <h3 className="text-xl flex-grow">{ title }</h3>
@@ -304,7 +281,7 @@ export default function ProductProfile(
             variant && 
             <>
 
-              <div className="font-bold text-2xl text-color-primary mb-2 flex-grow">{ price }</div>
+              <div className="font-bold text-2xl text-color-primary mb-2 flex-grow">{ moneyFormat(variant?.price) }</div>
 
               <div className="flex gap-2 items-center flex-wrap mb-3">
                 {

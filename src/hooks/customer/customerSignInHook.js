@@ -19,7 +19,7 @@ export function useCustomerSignIn() {
 
   const setAuthToken = useCustomerAuthSet();
 
-  const [loading, setLoaing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [success, setSuccess] = useState(false);
 
@@ -41,7 +41,8 @@ export function useCustomerSignIn() {
       return;
     }
 
-    setLoaing(true);
+    setLoading(true);
+    
     setFormError(null);
 
     try {
@@ -80,7 +81,7 @@ export function useCustomerSignIn() {
     } catch (error) {
       setFormError('_error.Something_went_wrong');
     } finally {
-      setLoaing(false);
+      setLoading(false);
     }
   }
 

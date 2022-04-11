@@ -140,8 +140,8 @@ export default function StoreApp() {
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
-          <Route path="/register" render={()=> guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
-          <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
+          <Route path="/register" render={()=> guestMiddleware() || <Register />} /> 
+          <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
           <Route path="/" render={()=> guestMiddleware() || <Home />} />
         </Switch>
       </main>

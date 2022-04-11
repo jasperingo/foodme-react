@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransactionStatus, useTransactionType } from '../../hooks/transaction/transactionViewHook';
 import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
@@ -25,7 +25,11 @@ export default function TransactionProfile(
       user, 
       order 
     },
-    onUpdateStatusSubmit
+    onUpdateStatusSubmit,
+    updateStatusLoading,
+    updateStatusFormSuccess,
+    updateStatusFormError,
+    resetUpdateStatus
   }
 ) {
 
@@ -33,61 +37,26 @@ export default function TransactionProfile(
 
   const [dialog, setDialog] = useState(null);
 
-  const [loadingDialog, setLoadingDialog] = useState(false);
-
   const [theStatus] = useTransactionStatus(status);
 
-  function onError(message) {
-    setLoadingDialog(false);
-    setDialog({
-      body: message,
-      positiveButton: {
-        text: '_extra.Done',
-        action() {
-          setDialog(null);
-        }
+  useEffect(
+    function() {
+      if (updateStatusFormSuccess !== null || updateStatusFormError !== null) {
+        setDialog({
+          body: updateStatusFormSuccess || updateStatusFormError,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+              resetUpdateStatus();
+            }
+          }
+        });
       }
-    });
-  }
-
-  const onCancelResponse = {
-
-    onSuccess() {
-      setLoadingDialog(false);
-      setDialog({
-        body: '_transaction.Transaction_cancelled',
-        positiveButton: {
-          text: '_extra.Done',
-          action() {
-            setDialog(null);
-          }
-        }
-      });
     },
-
-    onError: onError
-
-  };
-
-  const onDeclineResponse = {
-
-    onSuccess() {
-      setLoadingDialog(false);
-      setDialog({
-        body: '_transaction.Transaction_declined',
-        positiveButton: {
-          text: '_extra.Done',
-          action() {
-            setDialog(null);
-          }
-        }
-      });
-    },
-
-    onError: onError
-
-  };
-
+    [updateStatusFormSuccess, updateStatusFormError, resetUpdateStatus]
+  );
+  
   function onCancelClicked() {
     setDialog({
       body: '_transaction._confirm_cancel_transaction',
@@ -95,8 +64,7 @@ export default function TransactionProfile(
         text: '_extra.Yes',
         action() {
           setDialog(null);
-          setLoadingDialog(true);
-          onUpdateStatusSubmit(Transaction.STATUS_CANCELLED, onCancelResponse);
+          onUpdateStatusSubmit(Transaction.STATUS_CANCELLED);
         }
       },
       negativeButton: {
@@ -119,8 +87,7 @@ export default function TransactionProfile(
         text: '_extra.Yes',
         action() {
           setDialog(null);
-          setLoadingDialog(true);
-          onUpdateStatusSubmit(Transaction.STATUS_DECLINED, onDeclineResponse);
+          onUpdateStatusSubmit(Transaction.STATUS_DECLINED);
         }
       },
       negativeButton: {
@@ -240,7 +207,7 @@ export default function TransactionProfile(
 
       { dialog && <AlertDialog dialog={dialog} /> }
 
-      { loadingDialog && <LoadingDialog /> }
+      { updateStatusLoading && <LoadingDialog /> }
     </div>
   );
 }

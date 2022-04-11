@@ -385,7 +385,7 @@ export default function StoreReducer (state, action) {
     case TRANSACTION.BALANCE_WITHDRAWN:
       return {
         ...state,
-        transactionBalance: state.transactionBalance - action.payload,
+        transactionBalance: state.transactionBalance - action.payload.amount,
       };
 
 

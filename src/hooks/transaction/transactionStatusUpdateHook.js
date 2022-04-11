@@ -1,7 +1,6 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { TRANSACTION } from "../../context/actions/transactionActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import TransactionRepository from "../../repositories/TransactionRepository";
 import { useAppContext } from "../contextHook";
 
@@ -16,68 +15,68 @@ export function useTransactionStatusUpdate(userToken) {
     }
   } = useAppContext();
 
-  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [response, setResponse] = useState(null);
+  const [formError, setFormError] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const [formSuccess, setFormSuccess] = useState(null);
 
-  function onSubmit(status, response) {
+  const api = useMemo(function() { return new TransactionRepository(userToken); }, [userToken]);
+
+  const resetSubmit = useCallback(
+    function() {
+      setFormError(null);
+      setFormSuccess(null);
+    },
+    []
+  );
+
+  async function onSubmit(status) {
+    if (loading) return;
+    
     if (!window.navigator.onLine) {
-      response.onError('_errors.No_netowrk_connection');
-    } else {
-      setResponse(response);
-      setData({ status });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+    
+    setLoading(true);
+
+    try {
+
+      const res = await api.updateStatus(transaction.id, { status });
+
+      if (res.status === 200) {
+        
+        setFormSuccess(res.body.message);
+        
+        transactionDispatch({
+          type: TRANSACTION.FETCHED, 
+          payload: { 
+            id: String(transaction.id),
+            transaction: res.body.data 
+          }
+        });
+        
+      } else if (res.status === 400) {
+
+        setFormError(res.body.data[0].message);
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-      
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-
-        const api = new TransactionRepository(userToken);
-
-        api.updateStatus(transaction.id, data)
-        .then(res=> {
-
-          if (res.status === 200) {
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-            
-            response.onSuccess();
-            
-            transactionDispatch({
-              type: TRANSACTION.FETCHED, 
-              payload: {
-                transaction: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-            
-          } else if (res.status === 400) {
-            
-            setFetchStatus(FETCH_STATUSES.PENDING);
-
-            response.onError(res.body.data[0].message);
-
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          response.onError('_errors.Something_went_wrong');
-        });
-
-      }
-
-    }, 
-    [data, transaction, userToken, fetchStatus, response, transactionDispatch]
-  );
-
-  return onSubmit;
+  return [
+    onSubmit,
+    loading, 
+    formError, 
+    formSuccess,
+    resetSubmit
+  ];
 }
-

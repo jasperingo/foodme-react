@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import LoadingDialog from '../components/dialog/LoadingDialog';
 import FormButton from '../components/form/FormButton';
 import FormField from '../components/form/FormField';
@@ -18,10 +18,19 @@ export default function ResetPassword() {
 
   const passwordInput = useRef(null);
 
-  const token = useURLQuery().get('token');
+  const [token] = useURLQuery(['token']);
 
   const [onSubmit, dialog, formError, formSuccess] = usePasswordResetUpdate();
 
+  useEffect(
+    function() {
+      if (formSuccess !== null) {
+        passwordInput.current.value = '';
+      }
+    },
+    [formSuccess]
+  );
+  
   function onFormSubmit(e) {
     e.preventDefault();
     onSubmit(token ?? '', passwordInput.current.value, passwordInput.current.validity);

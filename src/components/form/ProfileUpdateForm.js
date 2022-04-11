@@ -37,10 +37,13 @@ export default function ProfileUpdateForm(
       lastNameInput.current.value,
       emailInput.current.value,
       phoneInput.current.value,
-      firstNameInput.current.validity,
-      lastNameInput.current.validity,
-      emailInput.current.validity,
-      phoneInput.current.validity
+      
+      {
+        firstNameValidity: firstNameInput.current.validity, 
+        lastNameValidity: lastNameInput.current.validity, 
+        emailValidity: emailInput.current.validity, 
+        phoneValidity: phoneInput.current.validity
+      }
     );
   }
   

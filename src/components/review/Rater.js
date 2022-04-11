@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
@@ -7,18 +7,49 @@ import ReviewItem from '../list_item/ReviewItem';
 import RatingButtons from './RatingButtons';
 import ReviewDialog from './ReviewDialog';
 
-
-export default function Rater({ title, review, onRateCreate, onRateUpdate, onRateDelete }) {
+export default function Rater(
+  { 
+    title, 
+    review, 
+    onRateCreate, 
+    onRateUpdate, 
+    
+    reviewDeleteOnSubmit,
+    reviewDeleteLoading,
+    reviewDeleteFormSuccess,
+    reviewDeleteFormError,
+    reviewDeleteResetSubmit
+  }
+) {
 
   const { t } = useTranslation();
 
-  const [rating, setRating] = useState(review?.rating || 0);
+  const [rating, setRating] = useState(review?.rating ?? 0);
 
   const [dialog, setDialog] = useState(false);
 
   const [alertDialog, setAlertDialog] = useState(null);
 
   const [loadingDialog, setLoadingDialog] = useState(null);
+
+  useEffect(
+    function() {
+      if (reviewDeleteFormError !== null || reviewDeleteFormSuccess !== null) {
+        setAlertDialog({
+          body: reviewDeleteFormError || reviewDeleteFormSuccess,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setAlertDialog(null);
+              reviewDeleteResetSubmit();
+            }
+          }
+        });
+      }
+    },
+    [reviewDeleteFormSuccess, reviewDeleteFormError, reviewDeleteResetSubmit]
+  );
+
 
   function responseHandler(message) {
     setLoadingDialog(false);
@@ -61,17 +92,6 @@ export default function Rater({ title, review, onRateCreate, onRateUpdate, onRat
     setDialog(true);
   }
 
-  function onDeleteClicked() {
-    setLoadingDialog(true);
-    onRateDelete(
-      review.id,
-      {
-        onSuccess: responseHandler,
-        onError: responseHandler
-      }
-    );
-  }
-
   function onConfirmDeleteClicked() {
     setAlertDialog({
       body: '_review._delete_review_confirm_message',
@@ -79,7 +99,7 @@ export default function Rater({ title, review, onRateCreate, onRateUpdate, onRat
         text: '_extra.Yes',
         action() {
           setAlertDialog(null);
-          onDeleteClicked();
+          reviewDeleteOnSubmit(review.id);
         }
       },
       negativeButton: {
@@ -117,7 +137,7 @@ export default function Rater({ title, review, onRateCreate, onRateUpdate, onRat
         alertDialog && <AlertDialog dialog={alertDialog} />
       }
       {
-        loadingDialog && <LoadingDialog />
+        (loadingDialog || reviewDeleteLoading) && <LoadingDialog />
       }
     </div>
   );

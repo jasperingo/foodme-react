@@ -22,7 +22,7 @@ export function useStoreTransactionBalance(userToken) {
 
   const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
 
-  function refreshStoreTransactions() {
+  function refreshStoreTransactionBalance() {
     storeDispatch({ type: TRANSACTION.BALANCE_UNFETCHED });
   }
   
@@ -81,6 +81,6 @@ export function useStoreTransactionBalance(userToken) {
     transactionBalance, 
     transactionBalanceLoading,
     transactionBalanceError,
-    refreshStoreTransactions
+    refreshStoreTransactionBalance
   ];
 }

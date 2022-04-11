@@ -1,26 +1,14 @@
-import { useEffect, useState } from "react";
-import { STORE } from "../../context/actions/storeActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useMemo, useState } from "react";
 import StoreRepository from "../../repositories/StoreRepository";
-import { useAppContext } from "../contextHook";
-import { useMessageFetch } from "../message/messageFetchHook";
-import { useSaveStoreToken } from "./saveStoreTokenHook";
+import { useStoreCreateValidation } from "./storeValidationHook";
 
 export function useStoreCreate() {
 
-  const { 
-    store: { storeDispatch } 
-  } = useAppContext();
-
-  const newMessage = useMessageFetch();
-
-  const saveToken = useSaveStoreToken();
-
-  const [data, setData] = useState(null);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
+
+  const [formSuccess, setFormSuccess] = useState(null);
 
   const [nameError, setNameError] = useState('');
 
@@ -34,78 +22,38 @@ export function useStoreCreate() {
 
   const [adminPasswordError, setAdminPasswordError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const validator = useStoreCreateValidation();
 
-  function onSubmit(
-    name, 
-    category, 
-    email, 
-    phone, 
-    adminEmail,
-    adminPassword, 
-    nameValidity, 
-    categoryValidity, 
-    emailValidity, 
-    phoneValidity, 
-    adminEmailValidity, 
-    adminPasswordValidity
-  ) {
+  const api = useMemo(function() { return new StoreRepository(); }, []);
 
-    let error = false;
+  async function onSubmit(name, category, email, phone, adminEmail, adminPassword, validity) {
+
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
 
     setFormError(null);
+    setFormSuccess(null);
+
+    const [error, nameError, categoryError, emailError, phoneError, adminEmailError, adminPasswordError] = validator(validity);
+
+    setNameError(nameError);
+    setCategoryError(categoryError);
+    setEmailError(emailError);
+    setPhoneError(phoneError);
+    setAdminEmailError(adminEmailError);
+    setAdminPasswordError(adminPasswordError);
     
-    if (!nameValidity.valid) {
-      error = true;
-      setNameError('_errors.This_field_is_required');
-    } else {
-      setNameError('');
-    }
+    if (error) return;
 
-    if (!categoryValidity.valid) {
-      error = true;
-      setCategoryError('_errors.This_field_is_required');
-    } else {
-      setCategoryError('');
-    }
+    setLoading(true);
 
-    if (!emailValidity.valid) {
-      error = true;
-      setEmailError('_errors.This_field_is_required');
-    } else {
-      setEmailError('');
-    }
+    try {
 
-    if (!phoneValidity.valid) {
-      error = true;
-      setPhoneError('_errors.This_field_is_required');
-    } else {
-      setPhoneError('');
-    }
-
-    if (!adminEmailValidity.valid) {
-      error = true;
-      setAdminEmailError('_errors.This_field_is_required');
-    } else {
-      setAdminEmailError('');
-    }
-
-    if (!adminPasswordValidity.valid) {
-
-      error = true;
-      
-      if (adminPasswordValidity.tooShort) 
-        setAdminPasswordError('_errors.Password_must_be_a_minimium_of_5_characters');
-      else 
-        setAdminPasswordError('_errors.This_field_is_required');
-
-    } else {
-      setAdminPasswordError('');
-    }
-    
-    if (!error) {
-      setDialog(true);
-      setData({
+      const res = await api.create({
         name,
         email,
         phone_number: phone,
@@ -114,97 +62,66 @@ export function useStoreCreate() {
         administrator_password: adminPassword,
         administrator_password_confirmation: adminPassword
       });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      
+      if (res.status === 201) {
+
+        setFormSuccess(res.body.message);
+
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'name':
+              setNameError(error.message);
+              break;
+
+            case 'sub_cateogry_id':
+              setCategoryError(error.message);
+              break;
+
+            case 'email':
+              setEmailError(error.message);
+              break;
+
+            case 'phone_number':
+              setPhoneError(error.message);
+              break;
+
+            case 'administrator_email':
+              setAdminEmailError(error.message);
+              break;
+
+            case 'administrator_password':
+            case 'administrator_password_confirmation':
+              setAdminPasswordError(error.message);
+              break;
+
+            default:
+          }
+        }
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-
-  useEffect(()=> {
-
-    if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-      const api = new StoreRepository();
-
-      api.create(data)
-      .then(res=> {
-        
-        if (res.status === 201) {
-
-          setFetchStatus(FETCH_STATUSES.PENDING);
-
-          saveToken(
-            res.body.data.store.id, 
-            res.body.data.api_token.token,
-            res.body.data.store.administrators[0].id
-          );
-          
-          storeDispatch({
-            type: STORE.AUTHED, 
-            payload: { 
-              store: res.body.data.store, 
-              token: res.body.data.api_token.token, 
-              adminID: res.body.data.store.administrators[0].id,
-              fetchStatus: FETCH_STATUSES.DONE 
-            }
-          });
-
-          newMessage(res.body.data.api_token.token, res.body.data.store.user.id);
-
-        } else if (res.status === 400) {
-
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          
-          for (let error of res.body.data) {
-
-            switch(error.name) {
-
-              case 'name':
-                setNameError(error.message);
-                break;
-
-              case 'sub_cateogry_id':
-                setCategoryError(error.message);
-                break;
-
-              case 'email':
-                setEmailError(error.message);
-                break;
-
-              case 'phone_number':
-                setPhoneError(error.message);
-                break;
-
-              case 'administrator_email':
-                setAdminEmailError(error.message);
-                break;
-
-              case 'administrator_password':
-              case 'administrator_password_confirmation':
-                setAdminPasswordError(error.message);
-                break;
-
-              default:
-
-            }
-
-          }
-
-        } else {
-          throw new Error();
-        }
-
-      })
-      .catch(()=> {
-        setFetchStatus(FETCH_STATUSES.PENDING);
-        setFormError('_errors.Something_went_wrong');
-      });
-
-    } else if (dialog !== false) {
-      setDialog(false);
-    }
-
-  }, [data, fetchStatus, dialog, storeDispatch, saveToken, newMessage]);
-
-
-  return [onSubmit, dialog, formError, nameError, categoryError, emailError, phoneError, adminEmailError, adminPasswordError];
+  return [
+    onSubmit, 
+    loading, 
+    formSuccess, 
+    formError, 
+    nameError, 
+    categoryError, 
+    emailError, 
+    phoneError, 
+    adminEmailError, 
+    adminPasswordError
+  ];
 }

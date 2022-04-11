@@ -1,24 +1,12 @@
 import { useState, useMemo } from 'react';
-import { CUSTOMER } from '../../context/actions/customerActions';
 import CustomerRepository from '../../repositories/CustomerRepository';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
-import { useAppContext } from '../contextHook';
-import { useMessageFetch } from '../message/messageFetchHook';
-import { useCustomerAuthSet } from './customerAuthStorageHook';
+import { useCustomerCreateValidation } from './customerValidationHook';
 
 export function useCustomerCreate() {
 
-  const { 
-    customer: { dispatch } 
-  } = useAppContext();
-
-  const newMessage = useMessageFetch();
-
-  const setAuthToken = useCustomerAuthSet();
-
   const [loading, setLoading] = useState(false);
 
-  const [success, setSuccess] = useState(false);
+  const [formSuccess, setFormSuccess] = useState(null);
 
   const [formError, setFormError] = useState(null);
 
@@ -32,20 +20,11 @@ export function useCustomerCreate() {
 
   const [passwordError, setPasswordError] = useState('');
 
+  const validator = useCustomerCreateValidation();
+
   const api = useMemo(function() { return new CustomerRepository(); }, []);
 
-  async function onSubmit(
-    firstName, 
-    lastName, 
-    email, 
-    phone, 
-    password, 
-    firstNameValidity, 
-    lastNameValidity, 
-    emailValidity, 
-    phoneValidity, 
-    passwordValidity
-  ) {
+  async function onSubmit(firstName, lastName, email, phone, password, validity) {
 
     if (loading) return;
     
@@ -54,50 +33,23 @@ export function useCustomerCreate() {
       return;
     }
 
-    let error = false;
-
     setFormError(null);
+    setFormSuccess(null);
+
+    const [
+      error, 
+      firstNameError, 
+      lastNameError, 
+      emailError, 
+      phoneError, 
+      passwordError
+    ] = validator(validity);
     
-    if (!firstNameValidity.valid) {
-      error = true;
-      setFirstNameError('_errors.This_field_is_required');
-    } else {
-      setFirstNameError('');
-    }
-
-    if (!lastNameValidity.valid) {
-      error = true;
-      setLastNameError('_errors.This_field_is_required');
-    } else {
-      setLastNameError('');
-    }
-
-    if (!emailValidity.valid) {
-      error = true;
-      setEmailError('_errors.This_field_is_required');
-    } else {
-      setEmailError('');
-    }
-
-    if (!phoneValidity.valid) {
-      error = true;
-      setPhoneError('_errors.This_field_is_required');
-    } else {
-      setPhoneError('');
-    }
-
-    if (!passwordValidity.valid) {
-
-      error = true;
-      
-      if (passwordValidity.tooShort) 
-        setPasswordError('_errors.Password_must_be_a_minimium_of_5_characters');
-      else 
-        setPasswordError('_errors.This_field_is_required');
-
-    } else {
-      setPasswordError('');
-    }
+    setFirstNameError(firstNameError);
+    setLastNameError(lastNameError);
+    setEmailError(emailError);
+    setPhoneError(phoneError);
+    setPasswordError(passwordError);
     
     if (error) return;
 
@@ -116,20 +68,7 @@ export function useCustomerCreate() {
 
       if (res.status === 201) {
 
-        setAuthToken(res.body.data.customer.id, res.body.data.api_token.token);
-        
-        dispatch({
-          type: CUSTOMER.AUTHED, 
-          payload: { 
-            customer: res.body.data.customer, 
-            token: res.body.data.api_token.token, 
-            fetchStatus: FETCH_STATUSES.DONE 
-          }
-        });
-
-        newMessage(res.body.data.api_token.token, res.body.data.customer.user.id);
-
-        setSuccess(true);
+        setFormSuccess(res.body.message);
 
       } else if (res.status === 400) {
 
@@ -176,7 +115,7 @@ export function useCustomerCreate() {
   return [
     onSubmit, 
     loading, 
-    success,
+    formSuccess,
     formError, 
     firstNameError, 
     lastNameError, 

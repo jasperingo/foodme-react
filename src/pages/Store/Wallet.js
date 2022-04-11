@@ -75,6 +75,7 @@ export default function Wallet() {
     transactionBalance, 
     transactionBalanceLoading,
     transactionBalanceError,
+    refreshStoreTransactionBalance
   ] = useStoreTransactionBalance(storeToken);
 
   const [
@@ -96,7 +97,7 @@ export default function Wallet() {
     <section>
       
       {
-        transactionBalance && 
+        transactionBalance !== null && 
         <>
           <div className="container-x">
             <WalletAmount 
@@ -105,6 +106,7 @@ export default function Wallet() {
               withdrawDialog={withdrawDialog} 
               withdrawFormError={withdrawFormError}
               withdrawFormSuccess={withdrawFormSuccess}
+              onRefreshClicked={refreshStoreTransactionBalance}
               />
           </div>
           <StoreTransactionsList />

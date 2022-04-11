@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { storeIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
@@ -12,12 +12,12 @@ import LoginIfHasAccountLink from '../../components/form/LoginIfHasAccountLink';
 import RegistrationAgreementLink from '../../components/form/RegistrationAgreementLink';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreCreate } from '../../hooks/store/storeCreateHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
-function RegisterForm({ guestMiddleware, stores }) {
+function RegisterForm({ stores }) {
 
   const nameInput = useRef(null);
 
@@ -35,7 +35,8 @@ function RegisterForm({ guestMiddleware, stores }) {
 
   const [
     onSubmit, 
-    dialog, 
+    loading, 
+    formSuccess, 
     formError, 
     nameError, 
     categoryError, 
@@ -45,6 +46,20 @@ function RegisterForm({ guestMiddleware, stores }) {
     adminPasswordError
   ] = useStoreCreate();
 
+  useEffect(
+    function() {
+      if (formSuccess !== null) {
+        nameInput.current.value = ''; 
+        categoryInput.current.value = '';  
+        emailInput.current.value = '';  
+        phoneInput.current.value = '';  
+        adminEmailInput.current.value = ''; 
+        adminPasswordInput.current.value = ''; 
+      }
+    },
+    [formSuccess]
+  );
+  
   function onRegisterSubmit(e) {
     e.preventDefault();
     onSubmit(
@@ -54,25 +69,28 @@ function RegisterForm({ guestMiddleware, stores }) {
       phoneInput.current.value, 
       adminEmailInput.current.value,
       adminPasswordInput.current.value, 
-      nameInput.current.validity, 
-      categoryInput.current.validity, 
-      emailInput.current.validity, 
-      phoneInput.current.validity, 
-      adminEmailInput.current.validity, 
-      adminPasswordInput.current.validity
+
+      {
+        nameValidity: nameInput.current.validity, 
+        categoryValidity: categoryInput.current.validity, 
+        emailValidity: emailInput.current.validity, 
+        phoneValidity: phoneInput.current.validity, 
+        adminEmailValidity: adminEmailInput.current.validity, 
+        adminPasswordValidity: adminPasswordInput.current.validity
+      }
     );
   }
 
-  return guestMiddleware() || (
+  return (
     <section>
 
       <div className="container-x">
 
         <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-2-x" noValidate>
 
-          <AuthFormHeader icon={storeIcon} text="_user.Join_us" />
+          <AuthFormHeader icon={storeIcon} text="_store.Store_register_note" />
 
-          <FormMessage error={formError} />
+          <FormMessage error={formError} success={formSuccess} />
 
           <div className="md:flex gap-4 items-start">
 
@@ -161,13 +179,13 @@ function RegisterForm({ guestMiddleware, stores }) {
         
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
       
     </section>
   );
 }
 
-export default function Register({ guestMiddleware }) {
+export default function Register() {
 
   useHeader({ 
     title: 'Register store - DailyNeeds',
@@ -175,27 +193,29 @@ export default function Register({ guestMiddleware }) {
   });
 
   const [
-    stores, 
-    storesFetchStatus, 
-    refetchStores
+    fetchStoreCategories, 
+    stores,
+    storesLoading,
+    storesLoaded,
+    storesError
   ] = useStoreCategoryList();
+
+  useEffect(
+    function() { 
+      if (!storesLoaded && storesError === null) 
+        fetchStoreCategories(); 
+    },
+    [storesLoaded, storesError, fetchStoreCategories]
+  );
 
   return (
     <section>
-
       <div className="container-x">
-
-        {
-          useRenderOnDataFetched(
-            storesFetchStatus,
-            ()=> <RegisterForm guestMiddleware={guestMiddleware} stores={stores} />,
-            ()=> <Loading />,
-            ()=> <Reload action={refetchStores} />,
-          )
-        }
-        
+        { storesLoaded && <RegisterForm stores={stores} /> }
+        { storesLoading && <Loading /> }
+        { storesError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={fetchStoreCategories} /> }
+        { storesError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={fetchStoreCategories} /> }
       </div>
-
     </section>
   );
 }

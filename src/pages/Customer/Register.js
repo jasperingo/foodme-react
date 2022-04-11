@@ -9,16 +9,13 @@ import { useHeader } from '../../hooks/headerHook';
 import RegistrationAgreementLink from '../../components/form/RegistrationAgreementLink';
 import LoginIfHasAccountLink from '../../components/form/LoginIfHasAccountLink';
 import { useCustomerCreate } from '../../hooks/customer/customerCreateHook';
-import { useHistory } from 'react-router-dom';
 
-export default function Register({ redirectTo }) {
+export default function Register() {
 
   useHeader({ 
     title: `Register - DailyNeeds`,
     headerTitle: '_user.Register'
   });
-
-  const history = useHistory();
 
   const firstNameInput = useRef(null);
 
@@ -33,7 +30,7 @@ export default function Register({ redirectTo }) {
   const [
     onSubmit, 
     loading, 
-    success,
+    formSuccess,
     formError, 
     firstNameError, 
     lastNameError, 
@@ -41,14 +38,20 @@ export default function Register({ redirectTo }) {
     phoneError, 
     passwordError
   ] = useCustomerCreate();
-
+  
   useEffect(
     function() {
-      if (success && !loading) history.replace(redirectTo);
+      if (formSuccess !== null) {
+        firstNameInput.current.value = ''; 
+        lastNameInput.current.value = '';  
+        emailInput.current.value = '';  
+        phoneInput.current.value = '';  
+        passwordInput.current.value = ''; 
+      }
     },
-    [success, loading, history, redirectTo]
+    [formSuccess]
   );
-  
+
   function onRegisterSubmit(e) {
     e.preventDefault();
     onSubmit(
@@ -57,11 +60,14 @@ export default function Register({ redirectTo }) {
       emailInput.current.value,
       phoneInput.current.value,
       passwordInput.current.value,
-      firstNameInput.current.validity,
-      lastNameInput.current.validity,
-      emailInput.current.validity,
-      phoneInput.current.validity,
-      passwordInput.current.validity,
+      
+      {
+        firstNameValidity: firstNameInput.current.validity, 
+        lastNameValidity: lastNameInput.current.validity, 
+        emailValidity: emailInput.current.validity, 
+        phoneValidity: phoneInput.current.validity, 
+        passwordValidity: passwordInput.current.validity
+      }
     );
   }
   
@@ -72,7 +78,7 @@ export default function Register({ redirectTo }) {
 
         <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-1-x" noValidate>
 
-          <FormMessage error={formError} />
+          <FormMessage error={formError} success={formSuccess} />
 
           <FormField 
             ref={firstNameInput}
@@ -137,4 +143,3 @@ export default function Register({ redirectTo }) {
     </section>
   );
 }
-

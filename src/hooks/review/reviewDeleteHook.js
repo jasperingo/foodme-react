@@ -1,10 +1,8 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { REVIEW } from "../../context/actions/reviewActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import ReviewRepository from "../../repositories/ReviewRepository";
 import { useAppContext } from "../contextHook";
-
 
 export function useReviewDelete({ product, store, deliveryFirm }) {
 
@@ -27,66 +25,67 @@ export function useReviewDelete({ product, store, deliveryFirm }) {
     }
   } = useAppContext();
 
-  const [id, setId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [response, setResponse] = useState(null);
+  const [formError, setFormError] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const [formSuccess, setFormSuccess] = useState(null);
 
-  function onSubmit(id, response) {
+  const api = useMemo(function() { return new ReviewRepository(customerToken); }, [customerToken]);
+
+  const resetSubmit = useCallback(
+    function() {
+      setFormError(null);
+      setFormSuccess(null);
+    },
+    []
+  );
+
+  async function onSubmit(id) {
+    
+    if (loading) return;
+    
     if (!window.navigator.onLine) {
-      response.onError('_errors.No_netowrk_connection');
-    } else {
-      setId(id);
-      setResponse(response);
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+    
+    resetSubmit();
+  
+    setLoading(true);
+    
+    try {
+
+      const res = await api.delete(id);
+
+      if (res.status === 200) {
+
+        setFormSuccess(res.body.message);
+
+        if (product) {
+          productDispatch({ type: REVIEW.DELETED });
+        } else if (store) {
+          storeDispatch({ type: REVIEW.DELETED });
+        } else if (deliveryFirm) {
+          deliveryFirmDispatch({ type: REVIEW.DELETED });
+        }
+
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new ReviewRepository(customerToken);
-        api.delete(id)
-        .then(res=> {
-
-          if (res.status === 200) {
-
-            response.onSuccess(res.body.message);
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-
-            if (product) {
-              productDispatch({ type: REVIEW.DELETED });
-            }
-
-            if (store) {
-              storeDispatch({ type: REVIEW.DELETED });
-            }
-
-            if (deliveryFirm) {
-              deliveryFirmDispatch({ type: REVIEW.DELETED });
-            }
-
-          } else {
-            throw new Error();
-          }
-
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          response.onError('_errors.Something_went_wrong');
-        });
-        
-      }
-
-    }, 
-    [id, product, store, deliveryFirm, fetchStatus, customerToken, response, storeDispatch, productDispatch, deliveryFirmDispatch]
-  );
-
-
-  return onSubmit;
+  return [
+    onSubmit,
+    loading,
+    formSuccess,
+    formError,
+    resetSubmit
+  ];
 }
-

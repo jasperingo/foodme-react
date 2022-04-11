@@ -3,7 +3,21 @@ import React from 'react';
 import Rater from './Rater';
 import ReviewSummary from './ReviewSummary';
 
-export default function ReviewRaterAndSummary({ title, review, summary, onReviewCreate, onReviewUpdate, onReviewDelete }) {
+export default function ReviewRaterAndSummary(
+  { 
+    title, 
+    review, 
+    summary, 
+    onReviewCreate, 
+    onReviewUpdate, 
+    
+    reviewDeleteOnSubmit,
+    reviewDeleteLoading,
+    reviewDeleteFormSuccess,
+    reviewDeleteFormError,
+    reviewDeleteResetSubmit
+  }
+) {
   return (
     <div className="md:flex md:gap-5">
       {
@@ -14,7 +28,12 @@ export default function ReviewRaterAndSummary({ title, review, summary, onReview
             review={review}
             onRateCreate={onReviewCreate}
             onRateUpdate={onReviewUpdate}
-            onRateDelete={onReviewDelete}
+            
+            reviewDeleteOnSubmit={reviewDeleteOnSubmit}
+            reviewDeleteLoading={reviewDeleteLoading}
+            reviewDeleteFormSuccess={reviewDeleteFormSuccess}
+            reviewDeleteFormError={reviewDeleteFormError}
+            reviewDeleteResetSubmit={reviewDeleteResetSubmit}
             />
         </div>
       }

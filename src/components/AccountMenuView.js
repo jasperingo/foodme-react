@@ -70,7 +70,7 @@ function AccountMenuList({ items, onLogout }) {
   );
 }
 
-function AccountMenuTop({ photo, name, status }) {
+function AccountMenuTop({ photo, name, status, toActivate = [] }) {
 
   const { t } = useTranslation();
 
@@ -90,14 +90,23 @@ function AccountMenuTop({ photo, name, status }) {
         status && 
         <div className="text-center text-sm bg-color-gray rounded w-min mx-auto px-2 mt-1">{ t(status) }</div>
       }
+
+      {
+        toActivate.length > 0 &&
+        <div className="text-center text-sm text-color-primary font-bold mx-auto my-2">To activate your account</div>
+      }
+
+      {
+        toActivate.map((item, i)=> <div key={i} className="text-center text-sm mx-auto mb-1">{ item }</div>)
+      }
     </div>
   );
 }
 
-export default function AccountMenuView({ photo, name, status, items, onLogOut }) {
+export default function AccountMenuView({ photo, name, status, items, onLogOut, toActivate = [] }) {
   return (
     <div className="max-w-lg mx-auto md:shadow md:my-6 md:py-2 md:px-4 md:rounded">
-      <AccountMenuTop photo={photo} name={name} status={status} />
+      <AccountMenuTop photo={photo} name={name} status={status} toActivate={toActivate} />
       <AccountMenuList items={items} onLogout={onLogOut} />
     </div>
   );

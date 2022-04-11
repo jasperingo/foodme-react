@@ -8,21 +8,17 @@ import { backIcon } from '../../assets/icons';
 import NavItem from './NavItem';
 import { useAppContext } from '../../hooks/contextHook';
 
-
 export default function Header({ navLinks, topNavLinks, searchable = false }) {
 
   const {
     header: {
       header: {
-        //path,
         headerTitle,
         searchPage,
         topNavPaths
       }
     }
   } = useAppContext();
-
-  //console.log(headerTitle);
 
   const history = useHistory();
 
@@ -74,7 +70,6 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
             <ul className={`${searchPage && 'hidden'} flex lg:flex lg:flex-grow`}>
               {
                 topNavLinks
-                .filter(item=> topNavPaths.includes(item.href))
                 .map((item, i)=> (
                   <NavItem 
                     key={i}
@@ -83,6 +78,7 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
                     useCounter={item.useCounter} 
                     title={ t(item.title) } 
                     top={true}
+                    show={topNavPaths.includes(item.href)}
                     />
                 ))
               }

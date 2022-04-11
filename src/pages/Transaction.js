@@ -29,7 +29,13 @@ export default function Transaction({ userToken, canCancel, canProcessAndDecline
     headerTitle: "_transaction.Transaction"
   });
 
-  const onUpdateStatusSubmit = useTransactionStatusUpdate(userToken);
+  const [
+    onSubmit,
+    loading, 
+    formError, 
+    formSuccess,
+    resetSubmit
+  ] = useTransactionStatusUpdate(userToken);
 
   useEffect(
     function() {
@@ -51,7 +57,11 @@ export default function Transaction({ userToken, canCancel, canProcessAndDecline
               transaction={transaction} 
               canCancel={canCancel} 
               canProcessAndDecline={canProcessAndDecline} 
-              onUpdateStatusSubmit={onUpdateStatusSubmit}
+              onUpdateStatusSubmit={onSubmit}
+              updateStatusLoading={loading}
+              updateStatusFormSuccess={formSuccess}
+              updateStatusFormError={formError}
+              resetUpdateStatus={resetSubmit}
               />
           ) 
         }

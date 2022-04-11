@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { CUSTOMER } from '../../context/actions/customerActions';
 import CustomerRepository from '../../repositories/CustomerRepository';
 import { useAppContext } from '../contextHook';
+import { useCustomerUpdateValidation } from './customerValidationHook';
 
 export function useCustomerUpdate() {
 
@@ -33,6 +34,8 @@ export function useCustomerUpdate() {
 
   const [phoneError, setPhoneError] = useState('');
 
+  const validator = useCustomerUpdateValidation();
+
   const api = useMemo(function() { return new CustomerRepository(customerToken); }, [customerToken]);
   
   async function onSubmit(
@@ -40,11 +43,7 @@ export function useCustomerUpdate() {
     lastName, 
     email, 
     phone_number,
-
-    firstNameValidity, 
-    lastNameValidity, 
-    emailValidity, 
-    phoneValidity
+    validity
   ) {
 
     if (loading) return;
@@ -54,38 +53,18 @@ export function useCustomerUpdate() {
       return;
     }
     
-    let error = false;
-
-    setFormError(null);
-    setFormSuccess(null);
+    const [
+      error, 
+      firstNameError, 
+      lastNameError, 
+      emailError, 
+      phoneError, 
+    ] = validator(validity);
     
-    if (!firstNameValidity.valid) {
-      error = true;
-      setFirstNameError('_errors.This_field_is_required');
-    } else {
-      setFirstNameError('');
-    }
-
-    if (!lastNameValidity.valid) {
-      error = true;
-      setLastNameError('_errors.This_field_is_required');
-    } else {
-      setLastNameError('');
-    }
-
-    if (!emailValidity.valid) {
-      error = true;
-      setEmailError('_errors.This_field_is_required');
-    } else {
-      setEmailError('');
-    }
-
-    if (!phoneValidity.valid) {
-      error = true;
-      setPhoneError('_errors.This_field_is_required');
-    } else {
-      setPhoneError('');
-    }
+    setFirstNameError(firstNameError);
+    setLastNameError(lastNameError);
+    setEmailError(emailError);
+    setPhoneError(phoneError);
     
     if (error) return;
 

@@ -1,6 +1,6 @@
 import { STORE } from "../../context/actions/storeActions";
 import { useAppContext } from "../contextHook";
-import { STORE_ADMIN_ID, STORE_ID, STORE_TOKEN } from "./storeConstants";
+import { useStoreAuthUnset } from "./storeAuthStorageHook";
 
 export function useStoreLogOut() {
 
@@ -8,13 +8,10 @@ export function useStoreLogOut() {
     store: { storeDispatch } 
   } = useAppContext();
 
-  return ()=> {
-    window.localStorage.removeItem(STORE_ID);
-    window.localStorage.removeItem(STORE_TOKEN);
-    window.localStorage.removeItem(STORE_ADMIN_ID);
+  const unauth = useStoreAuthUnset();
 
+  return function() {
+    unauth();
     storeDispatch({ type: STORE.UNAUTHED });
   }
-
 }
-

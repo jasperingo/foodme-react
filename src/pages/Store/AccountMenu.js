@@ -34,6 +34,16 @@ export default function AccountMenu() {
 
   const onLogOut = useStoreLogOut();
 
+  const toActivate = [];
+
+  if (store.user.addresses.length === 0) {
+    toActivate.push('Update your business address.');
+  }
+
+  if (store.user.working_hours.length === 0) {
+    toActivate.push('Update your business working hours.');
+  }
+
   return (
     <section>
       <div className="container-x">
@@ -43,6 +53,7 @@ export default function AccountMenu() {
           name={store.user.name} 
           status={store.user.status} 
           items={MENU_ITEMS} 
+          toActivate={toActivate}
           />
       </div>
     </section>

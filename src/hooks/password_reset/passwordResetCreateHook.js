@@ -1,84 +1,72 @@
-import { useEffect, useState } from "react";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useMemo, useState } from "react";
 import PasswordResetRepository from "../../repositories/PasswordResetRepository";
-
 
 export function usePasswordResetCreate({ administrator, customer, store, deliveryFirm }) {
 
-  const [data, setData] = useState(null);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
   const [formSuccess, setFormSuccess] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const api = useMemo(function() { return new PasswordResetRepository(); }, []);
   
-  function onSubmit(email, name, emailValidity, nameValidity) {
+  async function onSubmit(email, name, emailValidity, nameValidity) {
+
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
 
     setFormError(null);
     setFormSuccess(null);
-
+    
     if (!emailValidity.valid || (nameValidity && !nameValidity.valid)) {
       setFormError('_errors.Fill_form_correctly');
-    } else {
-      setDialog(true);
-      setData((store || deliveryFirm) ? { name, administrator_email: email } : { email });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      return;
+    }
+  
+    setLoading(true);
+    
+    try {
+
+      const res = await getRequest((store || deliveryFirm) ? { name, administrator_email: email } : { email });
+
+      if (res.status === 201) {
+  
+        setFormSuccess('_user._forgot_password_success');
+
+      } else if (res.status === 400) {
+        
+        setFormError(res.body.data[0].message);
+               
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
+  function getRequest(data) {
 
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new PasswordResetRepository();
-
-        let request;
-
-        if (administrator) {
-          request = api.createForAdministrator(data);
-        } else if (store) {
-          request = api.createForStore(data);
-        } else if (deliveryFirm) {
-          request = api.createForDeliveryFirm(data);
-        } else if (customer) {
-          request = api.createForCustomer(data);
-        } else {
-          request = Promise.reject();
-        }
-
-        request
-        .then(res=> {
+    if (administrator) {
+      return api.createForAdministrator(data);
+    } else if (store) {
+      return api.createForStore(data);
+    } else if (deliveryFirm) {
+      return api.createForDeliveryFirm(data);
+    } else if (customer) {
+      return api.createForCustomer(data);
+    } else {
+      throw new Error('User type not specified');
+    }
+  }
   
-          if (res.status === 201) {
-  
-            setFormSuccess('_user._forgot_password_success');
-  
-          } else if (res.status === 400) {
-            
-            setFormError(res.body.data[0].message);
-                   
-          } else {
-            throw new Error();
-          }
-  
-        })
-        .catch(()=> {
-          setFormError('_errors.Something_went_wrong');
-        })
-        .finally(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING)
-        });
-        
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    }, 
-    [data, administrator, store, deliveryFirm, customer, fetchStatus, dialog]
-  );
-  
-  return [onSubmit, dialog, formError, formSuccess];
+  return [onSubmit, loading, formError, formSuccess];
 }

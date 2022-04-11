@@ -107,7 +107,13 @@ function ProductReviewList() {
 
   const onReviewUpdate = useReviewUpdate();
 
-  const onReviewDelete = useReviewDelete({ product: true });
+  const [
+    reviewDeleteOnSubmit,
+    reviewDeleteLoading,
+    reviewDeleteFormSuccess,
+    reviewDeleteFormError,
+    reviewDeleteResetSubmit
+  ] = useReviewDelete({ product: true });
   
   const onReviewCreate = useReviewCreate({ product: product.id });
 
@@ -126,10 +132,15 @@ function ProductReviewList() {
       <ReviewRaterAndSummary 
         onReviewCreate={onReviewCreate}
         onReviewUpdate={onReviewUpdate}
-        onReviewDelete={onReviewDelete}
         summary={product.review_summary}
         title="_review.Rate_this_product"
         review={customerToken === null || !product?.reviews?.length ? null : product.reviews[0]}
+
+        reviewDeleteOnSubmit={reviewDeleteOnSubmit}
+        reviewDeleteLoading={reviewDeleteLoading}
+        reviewDeleteFormSuccess={reviewDeleteFormSuccess}
+        reviewDeleteFormError={reviewDeleteFormError}
+        reviewDeleteResetSubmit={reviewDeleteResetSubmit}
         />
 
       <ReviewList 
@@ -173,9 +184,21 @@ export default function Product() {
     unfetchProduct
   ] = useProductFetch(customerToken);
 
-  const onFavoriteCreateSubmit = useFavoriteCreate();
+  const [
+    favoriteCreateOnSubmit,
+    favoriteCreateLoading,
+    favoriteCreateFormSuccess,
+    favoriteCreateFormError,
+    favoriteCreateResetSubmit
+  ] = useFavoriteCreate();
 
-  const onFavoriteDeleteSubmit = useFavoriteDelete();
+  const [
+    favoriteDeleteOnSubmit,
+    favoriteDeleteLoading,
+    favoriteDeleteFormSuccess,
+    favoriteDeleteFormError,
+    favoriteDeleteResetSubmit
+  ] = useFavoriteDelete();
 
   useHeader({ 
     title: `${product?.title ?? 'Loading...'} - Product`,
@@ -203,8 +226,18 @@ export default function Product() {
             product={product} 
             isCustomer={true} 
             customerToken={customerToken} 
-            onFavoriteSubmit={onFavoriteCreateSubmit} 
-            onUnfavoriteSubmit={onFavoriteDeleteSubmit} 
+
+            favoriteCreateOnSubmit={favoriteCreateOnSubmit}
+            favoriteCreateLoading={favoriteCreateLoading}
+            favoriteCreateFormSuccess={favoriteCreateFormSuccess}
+            favoriteCreateFormError={favoriteCreateFormError}
+            favoriteCreateResetSubmit={favoriteCreateResetSubmit} 
+
+            favoriteDeleteOnSubmit={favoriteDeleteOnSubmit}
+            favoriteDeleteLoading={favoriteDeleteLoading}
+            favoriteDeleteFormSuccess={favoriteDeleteFormSuccess}
+            favoriteDeleteFormError={favoriteDeleteFormError}
+            favoriteDeleteResetSubmit={favoriteDeleteResetSubmit}
             />
         )
       }
