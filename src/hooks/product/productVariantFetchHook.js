@@ -1,14 +1,12 @@
 
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { getProductVariantFetchStatusAction, PRODUCT } from "../../context/actions/productActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { PRODUCT } from "../../context/actions/productActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import ProductVariantRepository from "../../repositories/ProductVariantRepository";
 import { useAppContext } from "../contextHook";
 
 export function useProductVariantFetch(userToken) {
-
-  const { ID } = useParams();
 
   const { 
     product: {
@@ -17,67 +15,75 @@ export function useProductVariantFetch(userToken) {
         productVariant,
         productVariantID,
         productVariantLoading,
-        productVariantFetchStatus
+        productVariantError
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (productVariantFetchStatus !== FETCH_STATUSES.LOADING && productVariantFetchStatus !== FETCH_STATUSES.DONE)
-        productDispatch(getProductVariantFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
-    },
-    [ID, productVariantFetchStatus, productDispatch]
+  const api = useMemo(function() { return new ProductVariantRepository(userToken); }, [userToken]);
+
+  const unfetchProductVariant = useCallback(
+    function() { productDispatch({ type: PRODUCT.VARIANT_UNFETCHED }); },
+    [productDispatch]
   );
-  
-  useEffect(
-    ()=> {
 
-      if (productVariantID !== null && productVariantID !== Number(ID)) {
-        
-        productDispatch({ type: PRODUCT.VARIANT_UNFETCHED });
+  const fetchProductVariant = useCallback(
+    async function(ID) {
 
-      } else if (productVariantLoading && productVariantFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (productVariantLoading) return;
 
-        productDispatch(getProductVariantFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
-
-      } else if (productVariantLoading && productVariantFetchStatus === FETCH_STATUSES.LOADING) {
-
-        productDispatch(getProductVariantFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
-
-        const api = new ProductVariantRepository(userToken);
-        api.get(ID)
-        .then(res=> {
-          
-          if (res.status === 200) {
-
-            productDispatch({
-              type: PRODUCT.VARIANT_FETCHED, 
-              payload: {
-                productVariant: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-
-          } else if (res.status === 404) {
-
-            productDispatch(getProductVariantFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
-
-          } else if (res.status === 403) {
-
-            productDispatch(getProductVariantFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
-
-          } else {
-            throw new Error();
+      if (!window.navigator.onLine) {
+        productDispatch({
+          type: PRODUCT.VARIANT_ERROR_CHANGED,
+          payload: { 
+            id: ID,
+            error: NetworkErrorCodes.NO_NETWORK_CONNECTION 
           }
-        })
-        .catch(()=> {
-          productDispatch(getProductVariantFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
+        });
+        return;
+      }
+
+      productDispatch({ type: PRODUCT.VARIANT_FETCHING });
+
+      try {
+
+        const res = await api.get(ID);
+          
+        if (res.status === 200) {
+          productDispatch({
+            type: PRODUCT.VARIANT_FETCHED, 
+            payload: {
+              id: ID,
+              productVariant: res.body.data 
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+
+      } catch(error) {
+        productDispatch({
+          type: PRODUCT.VARIANT_ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
+          }
         });
       }
-    }
+    },
+    [api, productVariantLoading, productDispatch]
   );
 
-  return [productVariant, productVariantFetchStatus, refetch];
+  return [
+    fetchProductVariant,
+    productVariant,
+    productVariantLoading,
+    productVariantError,
+    productVariantID,
+    unfetchProductVariant
+  ];
 }
-

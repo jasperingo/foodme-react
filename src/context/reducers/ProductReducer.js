@@ -13,12 +13,14 @@ export default function ProductReducer (state, action) {
         productID: productState.productID,
         productError: productState.productError,
         productLoading: productState.productLoading,
+
         reviews: productState.reviews,
         reviewsPage: productState.reviewsPage,
         reviewsError: productState.reviewsError,
         reviewsLoaded: productState.reviewsLoaded,
         reviewsLoading: productState.reviewsLoading,
         reviewsNumberOfPages: productState.reviewsNumberOfPages,
+
         related: productState.related,
         relatedPage: productState.relatedPage,
         relatedError: productState.relatedError,
@@ -56,25 +58,31 @@ export default function ProductReducer (state, action) {
         ...state,
         productVariant: productState.productVariant,
         productVariantID: productState.productVariantID,
-        productVariantLoading: productState.productVariantLoading,
-        productVariantFetchStatus: productState.productVariantFetchStatus
+        productVariantError: productState.productVariantError,
+        productVariantLoading: productState.productVariantLoading
       };
     
-    case PRODUCT.VARIANT_FETCH_STATUS_CHANGED:
+    case PRODUCT.VARIANT_FETCHING:
       return {
         ...state,
+        productVariantError: null,
+        productVariantLoading: true
+      };
+
+    case PRODUCT.VARIANT_ERROR_CHANGED:
+      return {
+        ...state,
+        productVariantLoading: false,
         productVariantID: action.payload.id,
-        productVariantLoading: action.payload.loading,
-        productVariantFetchStatus: action.payload.fetchStatus
+        productVariantError: action.payload.error
       };
     
     case PRODUCT.VARIANT_FETCHED:
       return {
         ...state,
         productVariantLoading: false,
-        productVariant: action.payload.productVariant,
-        productVariantID: action.payload.productVariant.id,
-        productVariantFetchStatus: action.payload.fetchStatus
+        productVariantID: action.payload.id,
+        productVariant: action.payload.productVariant
       };
 
 
@@ -112,34 +120,6 @@ export default function ProductReducer (state, action) {
         reviewsNumberOfPages: action.payload.numberOfPages,
         reviews: [...state.reviews, ...action.payload.list],
       };
-
-
-    case PRODUCT.LIST_UNFETCHED:
-      return {
-        ...state,
-        productsPage: 1,
-        productsLoading: true,
-        productsNumberOfPages: 0,
-        products: productState.products,
-        productsFetchStatus: productState.productsFetchStatus
-      }
-
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
-      return {
-        ...state,
-        productsLoading: action.payload.loading,
-        productsFetchStatus: action.payload.fetchStatus
-      };
-    
-    case PRODUCT.LIST_FETCHED:
-      return {
-        ...state,
-        productsLoading: false,
-        productsPage: state.productsPage+1,
-        productsFetchStatus: action.payload.fetchStatus,
-        productsNumberOfPages: action.payload.numberOfPages,
-        products: [...state.products, ...action.payload.list],
-      };
       
 
     case PRODUCT.RELATED_LIST_ERROR_CHANGED:
@@ -168,19 +148,6 @@ export default function ProductReducer (state, action) {
 
 
     case PRODUCT.VARIANT_CREATED: 
-    if (!state.product) {
-      return state;
-    } else {
-      return {
-        ...state,
-        product: { 
-          ...state.product, 
-          product_variants: [...state.product.product_variants, action.payload] 
-        } 
-      };
-    }
-
-    case PRODUCT.VARIANT_UPDATED: 
       if (!state.product) {
         return state;
       } else {
@@ -188,13 +155,25 @@ export default function ProductReducer (state, action) {
           ...state,
           product: { 
             ...state.product, 
-            product_variants: [...state.product.product_variants.map(i=> 
-              (i.id === action.payload.id) ? action.payload : i
-            )] 
+            product_variants: [...state.product.product_variants, action.payload.productVariant] 
           } 
         };
       }
 
+    case PRODUCT.VARIANT_UPDATED: 
+      if (!state.product) {
+        return state;
+      } else {
+        const variant = action.payload.productVariant;
+        return {
+          ...state,
+          product: { 
+            ...state.product, 
+            product_variants: state.product.product_variants.map(i=> (i.id === variant.id) ? variant : i)
+          } 
+        };
+      }
+      
     case PRODUCT.VARIANT_DELETED: 
       if (!state.product) {
         return state;
@@ -203,11 +182,12 @@ export default function ProductReducer (state, action) {
           ...state,
           product: { 
             ...state.product, 
-            product_variants: [...state.product.product_variants.filter(i=> i.id !== action.payload)] 
+            product_variants: state.product.product_variants.filter(i=> i.id !== action.payload.id) 
           } 
         };
       }
       
+
     case PRODUCT.FAVORITED:
       return {
         ...state,

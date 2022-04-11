@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
@@ -183,21 +183,14 @@ export default function Product() {
     topNavPaths: ['/cart', '/search']
   });
 
-  const productFetch = useCallback(
-    function(ID) {
-      if (!productLoading) fetchProduct(ID);
-    },
-    [productLoading, fetchProduct]
-  );
-
   useEffect(
     function() {
       if ((product !== null || productError !== null) && productID !== ID) 
         unfetchProduct();
       else if (product === null && productError === null)
-        productFetch(ID);
+        fetchProduct(ID);
     },
-    [ID, product, productError, productID, productFetch, unfetchProduct]
+    [ID, product, productError, productID, fetchProduct, unfetchProduct]
   );
   
   return (
@@ -222,8 +215,8 @@ export default function Product() {
           { productLoading && <Loading /> }
           { productError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
           { productError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
-          { productError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> productFetch(ID)} /> }
-          { productError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> productFetch(ID)} /> }
+          { productError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchProduct(ID)} /> }
+          { productError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchProduct(ID)} /> }
         </div>
       }
 

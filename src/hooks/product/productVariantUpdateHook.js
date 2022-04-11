@@ -1,9 +1,9 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { PRODUCT } from "../../context/actions/productActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import ProductVariantRepository from "../../repositories/ProductVariantRepository";
 import { useAppContext } from "../contextHook";
+import { useProductVariantValidation } from "./productVariantValidationHook";
 
 export function useProductVariantUpdate() {
 
@@ -21,9 +21,7 @@ export function useProductVariantUpdate() {
     }
   } = useAppContext();
 
-  const [data, setData] = useState(null);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
@@ -39,147 +37,105 @@ export function useProductVariantUpdate() {
 
   const [availableError, setAvailableError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const validator = useProductVariantValidation();
 
-  function onSubmit(
-    name,
-    price,
-    quantity,
-    weight,
-    available,
-    nameValidity,
-    priceValidity,
-    quantityValidity,
-    weightValidity,
-    availableValidity
-  ) {
+  const api = useMemo(function() { return new ProductVariantRepository(storeToken); }, [storeToken]);
+
+  async function onSubmit(name, price, quantity, weight, available, validity) {
     
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+
     setFormError(null);
     setFormSuccess(null);
     
-    let error = false;
-
-    setFormError('');
-
-    setFormSuccess('');
+    const [
+      error, 
+      nameError, 
+      priceError, 
+      quantityError, 
+      weightError,
+      availableError
+    ] = validator(validity);
     
-    if (!nameValidity.valid) {
-      error = true;
-      setNameError('_errors.This_field_is_required');
-    } else {
-      setNameError('');
-    }
-
-    if (!quantityValidity.valid) {
-      error = true;
-      setQuantityError('_errors.This_field_is_required');
-    } else {
-      setQuantityError('');
-    }
+    setNameError(nameError);
+    setPriceError(priceError);
+    setQuantityError(quantityError);
+    setWeightError(weightError);
+    setAvailableError(availableError);
     
-    if (!priceValidity.valid) {
-      error = true;
-      setPriceError('_errors.This_field_is_required');
-    } else {
-      setPriceError('');
-    }
+    if (error) return;
 
-    if (!weightValidity.valid) {
-      error = true;
-      setWeightError('_errors.This_field_is_required');
-    } else {
-      setWeightError('');
-    }
+    setLoading(true);
 
-    if (!availableValidity.valid) {
-      error = true;
-      setAvailableError('_errors.This_field_is_required');
-    } else {
-      setAvailableError('');
-    }
+    try {
+      const res = await api.update(productVariant.id, { name, price, quantity, weight, available });
 
-    if (!window.navigator.onLine) {
-      setFormError('_errors.No_netowrk_connection');
-    } else if (!error) {
-      setDialog(true);
-      setData({ name, price, quantity, weight, available });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      if (res.status === 200) {
+        
+        setFormSuccess(res.body.message);
+
+        productDispatch({
+          type: PRODUCT.VARIANT_UPDATED,
+          payload: { productVariant: res.body.data }
+        });
+
+        productDispatch({
+          type: PRODUCT.VARIANT_FETCHED, 
+          payload: {
+            id: String(productVariant.id),
+            productVariant: res.body.data 
+          }
+        });
+        
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'name':
+              setNameError(error.message);
+              break;
+
+            case 'price':
+              setPriceError(error.message);
+              break;
+
+            case 'quantity':
+              setQuantityError(error.message);
+              break;
+
+            case 'weight':
+              setWeightError(error.message);
+              break;
+
+            case 'available':
+              setAvailableError(error.message);
+              break;
+
+            default:
+          }
+        }
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-     
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new ProductVariantRepository(storeToken);
-
-        api.update(productVariant.id, data)
-        .then(res=> {
-
-          if (res.status === 200) {
-            
-            setFormSuccess(res.body.message);
-
-            productDispatch({
-              type: PRODUCT.VARIANT_UPDATED,
-              payload: res.body.data
-            });
-            
-            setFetchStatus(FETCH_STATUSES.PENDING);
-            
-          } else if (res.status === 400) {
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-            
-            for (let error of res.body.data) {
-
-              switch(error.name) {
-
-                case 'name':
-                  setNameError(error.message);
-                  break;
-
-                case 'price':
-                  setPriceError(error.message);
-                  break;
-
-                case 'quantity':
-                  setQuantityError(error.message);
-                  break;
-
-                case 'weight':
-                  setWeightError(error.message);
-                  break;
-
-                case 'available':
-                  setAvailableError(error.message);
-                  break;
-
-                default:
-              }
-            }
-
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          setFormError('_errors.Something_went_wrong');
-        });
-
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    }, 
-    [productVariant, fetchStatus, dialog, storeToken, data, productDispatch]
-  );
-
   return [
     onSubmit, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     nameError,

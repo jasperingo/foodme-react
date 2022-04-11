@@ -1,14 +1,11 @@
 
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
 import FormButton from './FormButton';
 import FormMessage from './FormMessage';
 
-export default function ProductDeleteForm({ onSubmit, dialog, formError, formSuccess }) {
-
-  const history = useHistory();
+export default function ProductDeleteForm({ onSubmit, dialog, formError }) {
 
   const [confirmDialog, setConfirmDialog] = useState(null);
 
@@ -32,23 +29,11 @@ export default function ProductDeleteForm({ onSubmit, dialog, formError, formSuc
       }
     });
   }
-  
-  useEffect(
-    ()=> {
-      if (formSuccess) {
-        history.push('/products');
-      }
-    }, 
-    [formSuccess, history]
-  );
 
   return (
     <form method="POST" action="" className="form-1-x" onSubmit={onDeleteSubmit}>
 
-      <FormMessage 
-        error={formError} 
-        success={formSuccess} 
-        />
+      <FormMessage error={formError} />
 
       <FormButton text="_extra.Delete" color='btn-color-red' />
 

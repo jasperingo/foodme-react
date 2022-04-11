@@ -9,7 +9,6 @@ import { useHeader } from '../../hooks/headerHook';
 import { useStoreTransactionBalance } from '../../hooks/store/storeTransactionBalanceHook';
 import { useStoreTransactionList } from '../../hooks/store/storeTransactionListHook';
 import { useTransactionWithdraw } from '../../hooks/transaction/transactionWithdrawHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 function StoreTransactionsList() {
 
@@ -72,9 +71,10 @@ export default function Wallet() {
   });
 
   const [
+    fetchStoreTransactionBalance,
     transactionBalance, 
-    transactionBalanceFetchStatus, 
-    refetch
+    transactionBalanceLoading,
+    transactionBalanceError,
   ] = useStoreTransactionBalance(storeToken);
 
   const [
@@ -84,29 +84,37 @@ export default function Wallet() {
     withdrawFormSuccess
   ] = useTransactionWithdraw(storeToken, { store: true });
   
+  useEffect(
+    function() {
+      if (transactionBalance === null && transactionBalanceError === null)
+        fetchStoreTransactionBalance(store.id);
+    },
+    [store.id, transactionBalance, transactionBalanceError, fetchStoreTransactionBalance]
+  );
+
   return (
     <section>
+      
       {
-        useRenderOnDataFetched(
-          transactionBalanceFetchStatus,
-          ()=> (
-            <>
-              <div className="container-x">
-                <WalletAmount 
-                  amount={transactionBalance} 
-                  onSubmitWithdraw={withdraw} 
-                  withdrawDialog={withdrawDialog} 
-                  withdrawFormError={withdrawFormError}
-                  withdrawFormSuccess={withdrawFormSuccess}
-                  />
-              </div>
-              <StoreTransactionsList />
-            </>
-          ),
-          ()=> <Loading />,
-          ()=> <Reload action={refetch} />,
-        )
+        transactionBalance && 
+        <>
+          <div className="container-x">
+            <WalletAmount 
+              amount={transactionBalance} 
+              onSubmitWithdraw={withdraw} 
+              withdrawDialog={withdrawDialog} 
+              withdrawFormError={withdrawFormError}
+              withdrawFormSuccess={withdrawFormSuccess}
+              />
+          </div>
+          <StoreTransactionsList />
+        </>
       }
+
+      { transactionBalanceLoading && <Loading /> }
+
+      { transactionBalanceError !== null && <Reload action={()=> fetchStoreTransactionBalance(store.id)} /> }
+       
     </section>
   );
 }

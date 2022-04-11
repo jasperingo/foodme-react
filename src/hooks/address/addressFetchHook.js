@@ -36,6 +36,8 @@ export function useAddressFetch() {
   const fetchAddress = useCallback(
     async function(ID) {
 
+      if (addressLoading) return;
+
       if (!window.navigator.onLine) {
         addressDispatch({
           type: ADDRESS.ERROR_CHANGED,
@@ -80,7 +82,7 @@ export function useAddressFetch() {
       };
       
     },
-    [api, addressDispatch]
+    [api, addressLoading, addressDispatch]
   );
 
   return [

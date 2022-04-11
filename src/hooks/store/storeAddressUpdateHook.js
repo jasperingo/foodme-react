@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { STORE } from "../../context/actions/storeActions";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 import { useAddressValidation } from "../address/addressValidationHook";
-
 
 export function useStoreAddressUpdate() {
 
@@ -18,10 +17,7 @@ export function useStoreAddressUpdate() {
     }
   } = useAppContext();
 
-
-  const [data, setData] = useState(null);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
@@ -33,11 +29,11 @@ export function useStoreAddressUpdate() {
 
   const [stateError, setStateError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const api = useMemo(function() { return new StoreRepository(storeToken); }, [storeToken]);
 
   const validator = useAddressValidation();
 
-  function onSubmit(
+  async function onSubmit(
     street,
     state,
     city,
@@ -46,6 +42,13 @@ export function useStoreAddressUpdate() {
     cityValidity,
   ) {
     
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+
     setFormError(null);
     setFormSuccess(null);
     
@@ -62,79 +65,58 @@ export function useStoreAddressUpdate() {
     setCityError(stateError);
     setStateError(cityError);
 
-    if (!window.navigator.onLine) {
-      setFormError('_errors.No_netowrk_connection');
-    } else if (!error) {
-      setDialog(true);
-      setData({ street, city, state });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+    if (error) return;
+
+    setLoading(true);
+
+    try {
+      
+      const res = await api.updateAddress(store.id, { street, city, state });
+
+      if (res.status === 200) {
+        
+        setFormSuccess(res.body.message);
+        
+        storeDispatch({
+          type: STORE.FETCHED, 
+          payload: {
+            store: res.body.data, 
+            fetchStatus: FETCH_STATUSES.DONE 
+          }
+        });
+
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'street':
+              setStreetError(error.message);
+              break;
+
+            case 'city':
+              setCityError(error.message);
+                break;
+
+            case 'state':
+              setStateError(error.message);
+              break;
+
+            default:
+          }
+        }
+
+      } else {
+        throw new Error();
+      }
+        
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false)
     }
   }
 
-  useEffect(
-    ()=> {
-      
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-
-        const api = new StoreRepository(storeToken);
-
-        api.updateAddress(store.id, data)
-        .then(res=> {
-
-          if (res.status === 200) {
-            
-            setFormSuccess(res.body.message);
-            
-            storeDispatch({
-              type: STORE.FETCHED, 
-              payload: {
-                store: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-
-          } else if (res.status === 400) {
-            
-            for (let error of res.body.data) {
-
-              switch(error.name) {
-
-                case 'street':
-                  setStreetError(error.message);
-                  break;
-
-                case 'city':
-                  setCityError(error.message);
-                    break;
-
-                case 'state':
-                  setStateError(error.message);
-                  break;
-
-                default:
-              }
-            }
-
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFormError('_errors.Something_went_wrong');
-        })
-        .finally(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-        });
-
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-
-    }, 
-    [data, store.id, storeToken, fetchStatus, dialog, storeDispatch]
-  );
-
-  return [onSubmit, dialog, formError, formSuccess, streetError, cityError, stateError];
+  return [onSubmit, loading, formError, formSuccess, streetError, cityError, stateError];
 }
-

@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
 import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
@@ -8,11 +8,12 @@ import FormPhotoField from '../../components/form/FormPhotoField';
 import FormSelect from '../../components/form/FormSelect';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
+import { useStorePhotoUpdate } from '../../hooks/store/storePhotoUpdateHook';
 import { useStoreUpdate } from '../../hooks/store/storeUpdateHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 function ProfileForm({ stores }) {
 
@@ -25,11 +26,11 @@ function ProfileForm({ stores }) {
   const phoneInput = useRef(null);
 
   const [
-    onSubmit,
-    onPhotoChoose,
-    photoUploaded,
-    store,
-    dialog, 
+    onSubmit, 
+    store, 
+    loading, 
+    success,
+    setSuccess,
     formError, 
     formSuccess, 
     nameError, 
@@ -38,6 +39,25 @@ function ProfileForm({ stores }) {
     phoneError
   ] = useStoreUpdate();
 
+  const [
+    photoSubmit,
+    photo,
+    setPhoto,
+    photoLoading,
+    photoUploaded,
+    photoFormError
+  ] = useStorePhotoUpdate();
+
+  useEffect(
+    function() {
+      if (success && photo !== null && !photoUploaded && photoFormError === null)
+        photoSubmit();
+      else if (success) 
+        setSuccess(false);
+    }, 
+    [success, photo, photoUploaded, photoFormError, photoSubmit, setSuccess]
+  );
+
   function updateProfile(e) {
     e.preventDefault();
     onSubmit(
@@ -45,10 +65,13 @@ function ProfileForm({ stores }) {
       categoryInput.current.value, 
       emailInput.current.value, 
       phoneInput.current.value,
-      nameInput.current.validity, 
-      categoryInput.current.validity, 
-      emailInput.current.validity, 
-      phoneInput.current.validity
+      
+      { 
+        nameValidity: nameInput.current.validity, 
+        categoryValidity: categoryInput.current.validity, 
+        emailValidity: emailInput.current.validity, 
+        phoneValidity: phoneInput.current.validity
+      }
     );
   }
 
@@ -60,15 +83,15 @@ function ProfileForm({ stores }) {
         <form method="POST" action="" className="form-1-x" onSubmit={updateProfile}>
           
           <FormMessage 
-            error={formError} 
             success={formSuccess} 
+            error={formError || photoFormError} 
             /> 
 
           <FormPhotoField 
             alt={store.user.name} 
             src={store.user.photo.href} 
             text="_extra.Edit_photo" 
-            onChoose={onPhotoChoose}
+            onChoose={setPhoto}
             uploaded={photoUploaded}
             />
           
@@ -117,7 +140,7 @@ function ProfileForm({ stores }) {
         
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { (loading || photoLoading) && <LoadingDialog /> }
 
     </section>
   );
@@ -134,9 +157,11 @@ export default function Profile() {
   } = useAppContext();
 
   const [
-    stores, 
-    storesFetchStatus, 
-    refetchStores
+    fetchStoreCategories, 
+    stores,
+    storesLoading,
+    storesLoaded,
+    storesError
   ] = useStoreCategoryList();
 
   useHeader({ 
@@ -144,23 +169,22 @@ export default function Profile() {
     headerTitle: "_user.Profile"
   });
 
+  useEffect(
+    function() { 
+      if (!storesLoaded && storesError === null) 
+        fetchStoreCategories(); 
+    },
+    [storesLoaded, storesError, fetchStoreCategories]
+  );
+
   return (
     <section>
-
       <div className="container-x">
-
-        {
-          useRenderOnDataFetched(
-            storesFetchStatus,
-            ()=> <ProfileForm stores={stores} />,
-            ()=> <Loading />,
-            ()=> <Reload action={refetchStores} />,
-          )
-        }
-        
+        { storesLoaded && <ProfileForm stores={stores} /> }
+        { storesLoading && <Loading /> }
+        { storesError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={fetchStoreCategories} /> }
+        { storesError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={fetchStoreCategories} /> }
       </div>
-
     </section>
   );
 }
-

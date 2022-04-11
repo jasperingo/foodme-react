@@ -63,9 +63,9 @@ export const storeState = {
   transactionsNumberOfPages: 0,
 
   transactionBalance: null,
-  transactionBalanceLoading: true,
   transactionBalanceError: null,
-
+  transactionBalanceLoading: false
+  
 };
 
 export default storeState;

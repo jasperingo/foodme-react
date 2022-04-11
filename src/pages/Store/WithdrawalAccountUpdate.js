@@ -1,13 +1,13 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import UpdateWithdrawalAccountForm from '../../components/form/WithdrawalAccountUpdateForm';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useBankList } from '../../hooks/bankHook';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreWithdrawalAccountUpdate } from '../../hooks/store/storeWithdrawalAccountHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function WithdrawalAccountUpdate() {
 
@@ -25,9 +25,11 @@ export default function WithdrawalAccountUpdate() {
   });
 
   const [
-    banks,
-    banksFetchStatus,
-    retry
+    fetchBanks, 
+    banks,  
+    banksLoading,
+    banksLoaded,
+    banksError
   ] = useBankList();
 
   const [
@@ -41,30 +43,39 @@ export default function WithdrawalAccountUpdate() {
     typeError
   ] = useStoreWithdrawalAccountUpdate();
 
+  useEffect(
+    function() { 
+      if (!banksLoaded && banksError === null) 
+        fetchBanks(); 
+    },
+    [banksLoaded, banksError, fetchBanks]
+  );
+
   return (
     <section>
       <div className="container-x">
         {
-          useRenderOnDataFetched(
-            banksFetchStatus,
-            ()=> (
-              <UpdateWithdrawalAccountForm 
-                banks={banks} 
-                account={store.user.withdrawal_account} 
-                dialog={dialog}
-                onSubmit={onSubmit}
-                formError={formError} 
-                formSuccess={formSuccess}
-                bankCodeError={bankCodeError}
-                nameError={nameError}
-                numberError={numberError}
-                typeError={typeError}
-                />
-            ),
-            ()=> <Loading />,
-            ()=> <Reload action={retry} />
-          )
+          banksLoaded && 
+          <UpdateWithdrawalAccountForm 
+            banks={banks} 
+            account={store.user.withdrawal_account} 
+            dialog={dialog}
+            onSubmit={onSubmit}
+            formError={formError} 
+            formSuccess={formSuccess}
+            bankCodeError={bankCodeError}
+            nameError={nameError}
+            numberError={numberError}
+            typeError={typeError}
+            />
         }
+        
+        { banksLoading && <Loading /> }
+
+        { banksError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={fetchBanks} /> }
+
+        { banksError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={fetchBanks} /> }
+
       </div>
     </section>
   );

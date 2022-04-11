@@ -10,12 +10,10 @@ import { CART } from "../../context/actions/cartActions";
 import { useAppContext } from "../../hooks/contextHook";
 import { useMoneyFormat } from "../../hooks/viewHook";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
-import AddButton from "../AddButton";
 import AlertDialog from "../dialog/AlertDialog";
 import LoadingDialog from "../dialog/LoadingDialog";
 import H4Heading from "../H4Heading";
 import QuantityChooser from "../QuantityChooser";
-
 
 export default function ProductProfile(
   { 
@@ -287,11 +285,6 @@ export default function ProductProfile(
             </div>
           }
 
-          { 
-            isStore && 
-            <AddButton text="_product.Add_product_variant" href={`/product-variant/create?product=${id}`} />
-          }
-          
           <ul className="flex gap-2 overflow-x-auto mb-3">
             {
               product_variants.map(v=> (
@@ -310,16 +303,6 @@ export default function ProductProfile(
           {
             variant && 
             <>
-              { 
-                isStore && 
-                <Link 
-                  to={`/product-variant/${variant.id}`}
-                  className="inline-flex gap-1 items-center my-2 text-sm btn-color-primary p-1 rounded"
-                  >
-                  <Icon path={editIcon} className="w-4 h-4" />
-                  <span>{ t('_product.Edit_product_variant') }</span>
-                </Link>
-              }
 
               <div className="font-bold text-2xl text-color-primary mb-2 flex-grow">{ price }</div>
 
@@ -374,24 +357,26 @@ export default function ProductProfile(
           <p className="max-h-40 overflow-auto">{ description }</p>
         </div>
 
-        <div className="md:p-2 md:shadow">
-          <H4Heading text="_store.Store" />
-          <Link 
-            to={isStore ? '/profile' : `/store/${store.id}`} 
-            className="flex gap-2 bg-color items-center hover:bg-color-gray-h md:block"
-            >
-            <img 
-              src={ store.user.photo.href } 
-              alt={ store.user.name } 
-              className="w-12 h-12 border rounded block md:w-full md:h-36" 
-              />
-            <div className="font-bold flex-grow md:p-2">{ store.user.name }</div>
-          </Link>   
-        </div>
+        {
+          !isStore &&
+          <div className="md:p-2 md:shadow">
+            <H4Heading text="_store.Store" />
+            <Link 
+              to={isStore ? '/profile' : `/store/${store.id}`} 
+              className="flex gap-2 bg-color items-center hover:bg-color-gray-h md:block"
+              >
+              <img 
+                src={ store.user.photo.href } 
+                alt={ store.user.name } 
+                className="w-12 h-12 border rounded block md:w-full md:h-36" 
+                />
+              <div className="font-bold flex-grow md:p-2">{ store.user.name }</div>
+            </Link>   
+          </div>
+        }
 
       </div>
 
     </div>
   );
 }
-

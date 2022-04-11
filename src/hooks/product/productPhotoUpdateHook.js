@@ -1,23 +1,19 @@
 import { useState, useMemo } from 'react';
-import { CUSTOMER } from '../../context/actions/customerActions';
-import CustomerRepository from '../../repositories/CustomerRepository';
+import { PRODUCT } from '../../context/actions/productActions';
+import ProductRepository from '../../repositories/ProductRepository';
 import { useAppContext } from '../contextHook';
 
-export function useCustomerPhotoUpdate() {
+export function useProductPhotoUpdate() {
 
   const { 
-    customer: { 
-      dispatch,
-      customer: {
-        customer: {
-          customer,
-          customerToken
-        }
-      } 
-    } 
+    store: { 
+      storeDispatch,
+      store: {
+        storeToken
+      }
+    }
   } = useAppContext();
 
-  
   const [photo, setPhoto] = useState(null);
   
   const [loading, setLoading] = useState(false);
@@ -28,9 +24,9 @@ export function useCustomerPhotoUpdate() {
   
   const form = useMemo(function() { return new FormData(); }, []);
 
-  const api = useMemo(function() { return new CustomerRepository(customerToken, null); }, [customerToken]);
+  const api = useMemo(function() { return new ProductRepository(storeToken, null); }, [storeToken]);
 
-  async function submit() {
+  async function submit(ID, isUpdate) {
 
     if (loading || photo === null) return;
 
@@ -45,22 +41,25 @@ export function useCustomerPhotoUpdate() {
     
     try {
     
-      const res = await api.updatePhoto(customer.id, form);
+      const res = await api.updatePhoto(ID, form);
 
       if (res.status === 200) {
 
         setPhotoUploaded(true);
 
-        dispatch({
-          type: CUSTOMER.FETCHED, 
-          payload: { 
-            customer: res.body.data, 
-          }
-        });
+        if (isUpdate)
+          storeDispatch({
+            type: PRODUCT.FETCHED, 
+            payload: { 
+              id: String(ID),
+              product: res.body.data, 
+            }
+          });
 
       } else if (res.status === 400) {
 
         const error = res.body.data[0];
+        
         if (error.name === 'photo') 
           setFormError(error.message);
 

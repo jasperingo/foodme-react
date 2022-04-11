@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import AddressForm from '../../components/form/AddressForm';
@@ -59,25 +59,12 @@ export default function AddressUpdate() {
     deleteFormError, 
   ] = useAddressDelete();
 
-  const locationFetch = useCallback(
-    function() {
-      if (!locationsLoading) 
-        fetchLocations();
-    },
-    [locationsLoading, fetchLocations]
-  );
-
-  const addressFetch = useCallback(
-    function(ID) {
-      if (!addressLoading) 
-        fetchAddress(ID);
-    },
-    [addressLoading, fetchAddress]
-  );
-
   useEffect(
-    function() { if (!locationsLoaded) locationFetch(); },
-    [locationsLoaded, locationFetch]
+    function() { 
+      if (!locationsLoaded && locationsError === null) 
+        fetchLocations(); 
+    },
+    [locationsLoaded, locationsError, fetchLocations]
   );
 
   useEffect(
@@ -85,14 +72,14 @@ export default function AddressUpdate() {
       if ((address !== null || addressError !== null) && addressID !== ID) 
         unfetchAddress();
       else if (address === null && addressError === null)
-        addressFetch(ID);
+        fetchAddress(ID);
     },
-    [ID, address, addressError, addressID, addressFetch, unfetchAddress]
+    [ID, address, addressError, addressID, fetchAddress, unfetchAddress]
   );
 
   function retryLoad() {
-    if (!locationsLoaded) locationFetch();
-    if (address === null) addressFetch(ID);
+    if (!locationsLoaded) fetchLocations();
+    if (address === null) fetchAddress(ID);
   }
 
   return (

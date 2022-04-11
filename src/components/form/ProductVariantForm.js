@@ -40,11 +40,13 @@ export default function ProductVariantForm(
       weightInput.current.value,
       availableInput.current.value,
 
-      nameInput.current.validity,
-      priceInput.current.validity,
-      quantityInput.current.validity,
-      weightInput.current.validity,
-      availableInput.current.validity,
+      { 
+        nameValidity: nameInput.current.validity, 
+        priceValidity: priceInput.current.validity, 
+        quantityValidity: quantityInput.current.validity, 
+        weightValidity: weightInput.current.validity, 
+        availableValidity: availableInput.current.validity
+      }
     );
   }
 

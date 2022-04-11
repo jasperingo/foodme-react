@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
-import { useDateFormat } from '../../hooks/viewHook';
+import { useDateFormat, useDateFormatter, useWorkingHoursDay } from '../../hooks/viewHook';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
 import ProfileDetailsText from './ProfileDetailsText';
@@ -31,6 +31,12 @@ export default function DeliveryFirmProfile(
 ) {
 
   const { t } = useTranslation();
+
+  const workingDayText = useWorkingHoursDay();
+
+  const dateFormat = useDateFormatter();
+
+  const workingHourFormatOpts = { time: true, addDate: true };
 
   const details = [
     {
@@ -108,8 +114,8 @@ export default function DeliveryFirmProfile(
           <ProfileDetailsText
             details={
               working_hours.map(i=> ({
-                title: i.day,
-                body: `${i.opening} - ${i.closing}`
+                title: workingDayText(i.day),
+                body: `${dateFormat(i.opening, workingHourFormatOpts)} - ${dateFormat(i.closing, workingHourFormatOpts)}`
               }))
               }
             />
@@ -121,4 +127,3 @@ export default function DeliveryFirmProfile(
     </div>
   );
 }
-

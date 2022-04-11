@@ -23,6 +23,8 @@ export function useLocationList() {
   const fetchLocations = useCallback(
     async function() {
 
+      if (locationsLoading) return;
+
       if (!window.navigator.onLine) {
         addressDispatch({
           type: ADDRESS.LOCATIONS_LIST_ERROR_CHANGED,
@@ -52,7 +54,7 @@ export function useLocationList() {
         });
       }
     },
-    [api, addressDispatch]
+    [api, locationsLoading, addressDispatch]
   );
 
   return [

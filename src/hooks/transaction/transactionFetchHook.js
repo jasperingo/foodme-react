@@ -29,6 +29,8 @@ export function useTransactionFetch(userToken) {
   const fetchTransaction = useCallback(
     async function(ID) {
 
+      if (transactionLoading) return;
+
       if (!window.navigator.onLine) {
         transactionDispatch({
           type: TRANSACTION.ERROR_CHANGED,
@@ -71,7 +73,7 @@ export function useTransactionFetch(userToken) {
         });
       }
     },
-    [api, transactionDispatch]
+    [api, transactionLoading, transactionDispatch]
   );
 
   return [

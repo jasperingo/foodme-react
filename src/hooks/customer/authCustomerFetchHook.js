@@ -46,8 +46,6 @@ export function useAuthCustomerFetch() {
         const res = await api.get(customerId);
 
         if (res.status === 200) {
-
-          setSuccess(true);
             
           dispatch({
             type: CUSTOMER.AUTHED, 
@@ -61,6 +59,8 @@ export function useAuthCustomerFetch() {
 
           newMessage(customerToken, res.body.data.user.id);
 
+          setSuccess(true);
+          
         } else if (res.status === 401) {
           unsetAuth();
         } else {

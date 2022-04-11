@@ -47,8 +47,6 @@ export function useStoreAuthFetch() {
 
         if (res.status === 200) {
           
-          setSuccess(true);
-
           storeDispatch({
             type: STORE.AUTHED, 
             payload: { 
@@ -57,10 +55,12 @@ export function useStoreAuthFetch() {
               store: res.body.data
             }
           });
-
+          
           messageCount(storeToken);
-
+          
           newMessage(storeToken, res.body.data.user.id);
+
+          setSuccess(true);
 
         } else if (res.status === 401) {
           unsetAuth();

@@ -48,13 +48,13 @@ export function useCustomerUpdate() {
   ) {
 
     if (loading) return;
-
-    let error = false;
-
+    
     if (!window.navigator.onLine) {
       setFormError('_errors.No_netowrk_connection');
       return;
     }
+    
+    let error = false;
 
     setFormError(null);
     setFormSuccess(null);
@@ -88,7 +88,6 @@ export function useCustomerUpdate() {
     }
     
     if (error) return;
-
 
     setLoading(true);
 

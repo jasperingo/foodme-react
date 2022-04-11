@@ -32,7 +32,6 @@ import Discount from '../pages/Store/Discount';
 import DiscountCreate from '../pages/Store/DiscountCreate';
 import DiscountUpdate from '../pages/Store/DiscountUpdate';
 import Orders from '../pages/Store/Orders';
-import Order from '../pages/Store/Order';
 import Products from '../pages/Store/Products';
 import ProductCreate from '../pages/Store/ProductCreate';
 import Product from '../pages/Store/Product';
@@ -43,6 +42,8 @@ import Cart from '../pages/Store/Cart';
 import DiscountProductCreate from '../pages/Store/DiscountProductCreate';
 import Home from '../pages/Store/Home';
 import Chats from '../pages/Store/Chats';
+import Order from '../pages/Order';
+import DeliveryFirm from '../pages/Store/DeliveryFirm';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -112,13 +113,15 @@ export default function StoreApp() {
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword store={true} />} />
 
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
+          
+          <Route path="/delivery-firm/:ID" render={()=> authMiddleware() || <DeliveryFirm />} />
           <Route path="/product-variant/create" render={()=> authMiddleware() || <ProductVariantCreate />} />
           <Route path="/product-variant/:ID" render={()=> authMiddleware() || <ProductVariantUpdate />} />
           <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />
           <Route path="/product/create" render={()=> authMiddleware() || <ProductCreate />} />
           <Route path="/product/:ID" render={()=> authMiddleware() || <Product />} />
           <Route path="/products" render={()=> authMiddleware() || <Products />} />
-          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order userToken={storeToken} isStore={true} />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/discount/:ID/discount-product/create" render={()=> authMiddleware() || <DiscountProductCreate />} />
           <Route path="/discount/:ID/update" render={()=> authMiddleware() || <DiscountUpdate />} />

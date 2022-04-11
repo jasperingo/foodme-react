@@ -20,8 +20,7 @@ export default function StoreReducer (state, action) {
         ...state,
         store: action.payload.store,
         storeToken: action.payload.token,
-        storeAdminID: action.payload.adminID,
-        storeFetchStatus: action.payload.fetchStatus
+        storeAdminID: action.payload.adminID
       };
 
     case STORE.UNFETCHED: 

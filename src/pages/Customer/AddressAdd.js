@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import AddressForm from '../../components/form/AddressForm';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
@@ -35,17 +35,12 @@ export default function AddressAdd() {
     defaultError
   ] = useAddressAdd();
 
-  const locationFetch = useCallback(
-    function() {
-      if (!locationsLoading) 
-        fetchLocations();
-    },
-    [locationsLoading, fetchLocations]
-  );
-
   useEffect(
-    function() { if (!locationsLoaded) locationFetch(); },
-    [locationsLoaded, locationFetch]
+    function() { 
+      if (!locationsLoaded && locationsError === null) 
+        fetchLocations(); 
+    },
+    [locationsLoaded, locationsError, fetchLocations]
   );
 
   return (
@@ -72,9 +67,9 @@ export default function AddressAdd() {
 
         { locationsLoading && <Loading /> }
 
-        { locationsError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={locationFetch} /> }
+        { locationsError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={fetchLocations} /> }
 
-        { locationsError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={locationFetch} /> }
+        { locationsError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={fetchLocations} /> }
         
       </div>
     </section>

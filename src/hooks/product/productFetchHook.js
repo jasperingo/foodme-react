@@ -30,6 +30,8 @@ export function useProductFetch(userToken) {
   const fetchProduct = useCallback(
     async function(ID) {
 
+      if (productLoading) return;
+
       if (!window.navigator.onLine) {
         productDispatch({
           type: PRODUCT.ERROR_CHANGED,
@@ -55,8 +57,6 @@ export function useProductFetch(userToken) {
               product: res.body.data
             }
           });
-        } else if (res.status === 401) {
-          throw new NetworkError(NetworkErrorCodes.UNAUTHORIZED);
         } else if (res.status === 404) {
           throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
         } else if (res.status === 403) {
@@ -75,7 +75,7 @@ export function useProductFetch(userToken) {
         });
       }
     },
-    [api, productDispatch]
+    [api, productLoading, productDispatch]
   );
 
   return [

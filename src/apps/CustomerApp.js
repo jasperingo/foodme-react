@@ -37,17 +37,16 @@ import SavedCart from '../pages/SavedCart';
 import DeliveryFirm from '../pages/Customer/DeliveryFirm';
 import ProductReviews from '../pages/Customer/ProductReviews';
 import Discount from '../pages/Customer/Discount';
-
-import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
-import { useAppContext } from '../hooks/contextHook';
-import { useCartCounter } from '../hooks/viewHook';
 import CartDeliveryMethod from '../pages/Customer/CartDeliveryMethod';
-import DeliveryRoute from '../pages/Customer/DeliveryRoute';
 import CartDeliveryRoutes from '../pages/Customer/CartDeliveryRoutes';
 import CartDiscounts from '../pages/Customer/CartDiscounts';
 import CartDeliveryAddress from '../pages/Customer/CartDeliveryAddress';
 import CartSummary from '../pages/Customer/CartSummary';
 import CartDone from '../pages/Customer/CartDone';
+
+import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } from '../assets/icons';
+import { useAppContext } from '../hooks/contextHook';
+import { useCartCounter } from '../hooks/viewHook';
 import { useMessageUnreceivedCounter } from '../hooks/message/messageUnreceivedCounterHook';
 import { useAuthCustomerFetch } from '../hooks/customer/authCustomerFetchHook';
 
@@ -148,7 +147,6 @@ export default function CustomerApp() {
           <Route path="/discount/:ID" render={()=> <Discount />} />
           <Route path="/product/:ID/reviews" render={()=> <ProductReviews />} />
           <Route path="/product/:ID" render={()=> <Product />} />
-          <Route path="/delivery-route/:ID" render={()=> <DeliveryRoute />} />
           <Route path="/delivery-firm/:ID" render={()=> <DeliveryFirm />} />
           <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/category/:ID" render={()=> <Category isAdmin={false} />} /> 
@@ -160,4 +158,3 @@ export default function CustomerApp() {
     </>
   );
 }
-

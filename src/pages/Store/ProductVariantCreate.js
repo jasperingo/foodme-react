@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Redirect, useHistory } from 'react-router-dom';
 import ProductVariantForm from '../../components/form/ProductVariantForm';
 import { useHeader } from '../../hooks/headerHook';
 import { useProductVariantCreate } from '../../hooks/product/productVariantCreateHook';
@@ -8,13 +8,9 @@ import { useURLQuery } from '../../hooks/viewHook';
 
 export default function ProductVariantCreate() {
 
-  const product = useURLQuery().get('product');
-
   const history = useHistory();
 
-  if (!product) {
-    history.replace('/products');
-  }
+  const [product] = useURLQuery(['product']);
 
   useHeader({ 
     title: `Create Product variant - DailyNeeds`,
@@ -23,7 +19,7 @@ export default function ProductVariantCreate() {
 
   const [
     onSubmit, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     nameError,
@@ -31,15 +27,27 @@ export default function ProductVariantCreate() {
     quantityError,
     weightError,
     availableError
-  ] = useProductVariantCreate();
+  ] = useProductVariantCreate(Number(product));
 
+  useEffect(
+    function() {
+      if (formSuccess !== null) 
+        history.replace(`/product/${product}`);
+    },
+    [product, history, formSuccess]
+  );
+  
+  if (!product) {
+    return <Redirect to="/products" />
+  }
+  
   return (
     <section>
       <div className="container-x">
         <ProductVariantForm 
           productVariant={{}}
           onSubmit={onSubmit}
-          dialog={dialog}
+          dialog={loading}
           formError={formError}
           formSuccess={formSuccess}
           nameError={nameError}

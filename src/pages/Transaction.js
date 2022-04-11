@@ -1,5 +1,5 @@
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Forbidden from '../components/Forbidden';
 import Loading from '../components/Loading';
@@ -30,22 +30,15 @@ export default function Transaction({ userToken, canCancel, canProcessAndDecline
   });
 
   const onUpdateStatusSubmit = useTransactionStatusUpdate(userToken);
-  
-  const fetch = useCallback(
-    function(ID) {
-      if (!transactionLoading) fetchTransaction(ID);
-    },
-    [transactionLoading, fetchTransaction]
-  );
 
   useEffect(
     function() {
       if ((transaction !== null || transactionError !== null) && transactionID !== ID) 
         unfetchTransaction();
       else if (transaction === null && transactionError === null)
-        fetch(ID);
+        fetchTransaction(ID);
     },
-    [ID, transaction, transactionError, transactionID, fetch, unfetchTransaction]
+    [ID, transaction, transactionError, transactionID, fetchTransaction, unfetchTransaction]
   );
 
   return (
@@ -69,9 +62,9 @@ export default function Transaction({ userToken, canCancel, canProcessAndDecline
 
         { transactionError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
 
-        { transactionError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetch(ID)} /> }
+        { transactionError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchTransaction(ID)} /> }
 
-        { transactionError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetch(ID)} /> }
+        { transactionError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchTransaction(ID)} /> }
         
       </div>
     </section>

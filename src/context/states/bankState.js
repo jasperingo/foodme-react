@@ -1,14 +1,11 @@
 
-import { FETCH_STATUSES } from "../../repositories/Fetch";
-
 const bankState = {
   
-  banks: {
-    banks: [],
-    banksFetchStatus: FETCH_STATUSES.LOADING
-  },
+  banks: [],
+  banksLoaded: false,
+  banksLoading: false,
+  banksError: null
 
 };
 
 export default bankState;
-

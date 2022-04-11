@@ -1,20 +1,18 @@
 import { useState, useMemo } from 'react';
-import { CUSTOMER } from '../../context/actions/customerActions';
-import CustomerRepository from '../../repositories/CustomerRepository';
+import { STORE } from '../../context/actions/storeActions';
+import StoreRepository from '../../repositories/StoreRepository';
 import { useAppContext } from '../contextHook';
 
-export function useCustomerPhotoUpdate() {
+export function useStorePhotoUpdate() {
 
   const { 
-    customer: { 
-      dispatch,
-      customer: {
-        customer: {
-          customer,
-          customerToken
-        }
+    store: { 
+      storeDispatch,
+      store: {
+        store,
+        storeToken
       } 
-    } 
+    }
   } = useAppContext();
 
   
@@ -28,7 +26,7 @@ export function useCustomerPhotoUpdate() {
   
   const form = useMemo(function() { return new FormData(); }, []);
 
-  const api = useMemo(function() { return new CustomerRepository(customerToken, null); }, [customerToken]);
+  const api = useMemo(function() { return new StoreRepository(storeToken, null); }, [storeToken]);
 
   async function submit() {
 
@@ -45,22 +43,21 @@ export function useCustomerPhotoUpdate() {
     
     try {
     
-      const res = await api.updatePhoto(customer.id, form);
+      const res = await api.updatePhoto(store.id, form);
 
       if (res.status === 200) {
 
         setPhotoUploaded(true);
 
-        dispatch({
-          type: CUSTOMER.FETCHED, 
-          payload: { 
-            customer: res.body.data, 
-          }
+        storeDispatch({
+          type: STORE.FETCHED, 
+          payload: { store: res.body.data }
         });
 
       } else if (res.status === 400) {
 
         const error = res.body.data[0];
+
         if (error.name === 'photo') 
           setFormError(error.message);
 

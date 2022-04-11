@@ -19,8 +19,7 @@ export default function CustomerReducer (state, action) {
         ...state,
         customer: {
           customer: action.payload.customer,
-          customerToken: action.payload.token,
-          customerFetchStatus: action.payload.fetchStatus
+          customerToken: action.payload.token
         }
       };
 

@@ -1,9 +1,8 @@
-import { useCallback, useEffect } from "react";
-import { FETCH_STATUSES } from "../repositories/Fetch";
+import { useCallback, useMemo } from "react";
 import { useAppContext } from "./contextHook";
 import BankRepository from '../repositories/BankRepository';
-import { BANK, getBanksListFetchStatusAction } from "../context/actions/bankActions";
-
+import { BANK } from "../context/actions/bankActions";
+import NetworkErrorCodes from "../errors/NetworkErrorCodes";
 
 export function useWithdrawalAccountValidation() {
 
@@ -45,53 +44,58 @@ export function useBankList() {
     bank: { 
       bankDispatch,
       bank: {
-        banks: {
-          banks,
-          banksFetchStatus
-        }
+        banks,
+        banksLoading,
+        banksLoaded,
+        banksError,
       } 
     } 
   } = useAppContext();
 
-  const retry = useCallback(
-    () => {
-      bankDispatch(getBanksListFetchStatusAction(FETCH_STATUSES.LOADING));
-    },
-    [bankDispatch]
-  );
+  const api = useMemo(function() { return new BankRepository(); }, []);
 
-  useEffect(
-    ()=> {
+  const fetchBanks = useCallback(
+    async function() {
 
-      if (banksFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-        bankDispatch(getBanksListFetchStatusAction(FETCH_STATUSES.ERROR));
-      } else if (banksFetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new BankRepository();
-        api.getList()
-        .then(res=> {
+      if (banksLoading) return;
 
-          if (res.status === 200) {
-            bankDispatch({
-              type: BANK.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          bankDispatch(getBanksListFetchStatusAction(FETCH_STATUSES.ERROR));
-        })
+      if (!window.navigator.onLine) {
+        bankDispatch({
+          type: BANK.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
+
+      bankDispatch({ type: BANK.LIST_FETCHING });
+
+      try {
+
+        const res = await api.getList();
+
+        if (res.status === 200) {
+          bankDispatch({
+            type: BANK.LIST_FETCHED, 
+            payload: { list: res.body.data }
+          });
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        bankDispatch({
+          type: BANK.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
+        });
       }
     },
-    [banksFetchStatus, bankDispatch]
+    [api, banksLoading, bankDispatch]
   );
 
-
-  return [banks, banksFetchStatus, retry];
+  return [
+    fetchBanks, 
+    banks,  
+    banksLoading,
+    banksLoaded,
+    banksError
+  ];
 }
-
-

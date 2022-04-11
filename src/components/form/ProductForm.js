@@ -37,10 +37,12 @@ export default function ProductForm(
       titleInput.current.value,
       categoryInput.current.value,
       descriptionInput.current.value,
-      
-      titleInput.current.validity,
-      categoryInput.current.validity,
-      descriptionInput.current.validity,
+
+      {
+        titleValidity: titleInput.current.validity, 
+        categoryValidity: categoryInput.current.validity, 
+        descriptionValidity: descriptionInput.current.validity
+      }
     );
   }
   

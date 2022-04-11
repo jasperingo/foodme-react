@@ -9,7 +9,6 @@ import Reload from '../../components/Reload';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
 import { useAppContext } from '../../hooks/contextHook';
 import { useDeliveryFirmReviewList } from '../../hooks/delivery_firm/deliveryFirmReviewListHook';
-// import { useDeliveryFirmRouteList } from '../../hooks/delivery_firm/deliveryFirmRouteListHook';
 import { useDeliveryFirmFetch } from '../../hooks/delivery_firm/deliveryFirmFetchHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
@@ -17,7 +16,6 @@ import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
 import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useParams } from 'react-router-dom';
-// import RouteList from '../../components/list/RouteList';
 import ReviewList from '../../components/list/ReviewList';
 
 const NAV_LINKS = [
@@ -93,54 +91,6 @@ function DeliveryFirmReviewsList() {
     </>
   );
 }
-
-// function DeliveryFirmRoutesList() {
-
-//   const {
-//     customer: {
-//       customer: {
-//         customer: {
-//           customerToken
-//         }
-//       } 
-//     },
-//     deliveryFirm: {
-//       deliveryFirm: {
-//         deliveryFirm
-//       }
-//     } 
-//   } = useAppContext();
-
-//   const [
-//     fetchDeliveryFirmRoutes,
-//     routes, 
-//     routesLoading,
-//     routesError,
-//     routesLoaded,
-//     routesPage, 
-//     routesNumberOfPages,
-//   ] = useDeliveryFirmRouteList(customerToken);
-  
-//   useEffect(
-//     function() {
-//       if (!routesLoaded && routesError === null) 
-//         fetchDeliveryFirmRoutes(deliveryFirm.id); 
-//     },
-//     [deliveryFirm.id, routesError, routesLoaded, fetchDeliveryFirmRoutes]
-//   );
-
-//   return (
-//     <RouteList 
-//       routes={routes}
-//       routesPage={routesPage}
-//       routesError={routesError}
-//       routesLoaded={routesLoaded}
-//       routesLoading={routesLoading}
-//       routesNumberOfPages={routesNumberOfPages}
-//       fetchRoutes={()=> fetchDeliveryFirmRoutes(deliveryFirm.id)}
-//       />
-//   );
-// }
 
 export default function DeliveryFirm() {
 
