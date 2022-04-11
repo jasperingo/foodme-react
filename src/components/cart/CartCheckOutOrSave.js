@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../hooks/contextHook';
@@ -10,7 +10,7 @@ import LoadingDialog from '../dialog/LoadingDialog';
 import CartSavedDialog from './CartSavedDialog';
 import SaveCartDialog from './SaveCartDialog';
 
-export default function CartCheckOutOrSave({ saveOnly }) {
+export default function CartCheckOutOrSave({ userToken, saveOnly }) {
   
   const { t } = useTranslation();
 
@@ -18,14 +18,7 @@ export default function CartCheckOutOrSave({ saveOnly }) {
 
   const location = useLocation();
 
-  const { 
-    customer: { 
-      customer: {
-        customer: {
-          customerToken
-        }
-      } 
-    },
+  const {
     cart: {
       cart: {
         cartItems
@@ -35,16 +28,49 @@ export default function CartCheckOutOrSave({ saveOnly }) {
 
   const [dialog, setDialog] = useState(null);
 
-  const [loadingDialog, setLoadingDialog] = useState(false);
-
   const [saveCartDialog, setSaveCartDialog] = useState(false);
 
   const [cartSavedDialog, setCartSavedDialog] = useState(null);
 
-  const onSubmitSaveCart = useSavedCartCreate(customerToken);
+  const [
+    onSubmit,
+    loading,
+    formSuccess,
+    formError, 
+    resetSubmit
+  ] = useSavedCartCreate(userToken);
+
+  useEffect(
+    function() {
+
+      if (formSuccess !== null) {
+        setCartSavedDialog({
+          code: formSuccess,
+          onDone() {
+            setCartSavedDialog(null);
+            resetSubmit();
+          }
+        });
+      }
+
+      if (formError !== null) {
+        setDialog({
+          body: formError,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setDialog(null);
+              resetSubmit();
+            }
+          }
+        });
+      }
+    },
+    [formSuccess, formError, resetSubmit]
+  );
 
   function getSaveCartTitle() {
-    if (customerToken === null) {
+    if (userToken === null) {
       history.push(`/login?redirect_to=${encodeURIComponent(location.pathname)}`);
     } else {
       setSaveCartDialog(true);
@@ -52,35 +78,8 @@ export default function CartCheckOutOrSave({ saveOnly }) {
   }
 
   function saveCart(title) {
-    setLoadingDialog(true);
     setSaveCartDialog(false);
-
-    onSubmitSaveCart(title, {
-      
-      onSuccess(code) {
-        setLoadingDialog(false);
-        setCartSavedDialog({
-          code: code,
-          onDone() {
-            setCartSavedDialog(null)
-          }
-        })
-      },
-
-      onError(message) {
-        setLoadingDialog(false);
-        setDialog({
-          body: message,
-          positiveButton: {
-            text: '_extra.Done',
-            action() {
-              setDialog(null);
-            }
-          }
-        });
-      }
-
-    });
+    onSubmit(title);
   }
 
   return (
@@ -118,7 +117,7 @@ export default function CartCheckOutOrSave({ saveOnly }) {
       { cartSavedDialog && <CartSavedDialog dialog={cartSavedDialog} /> }
 
       {
-        loadingDialog && <LoadingDialog />
+        loading && <LoadingDialog />
       }
 
       {

@@ -17,7 +17,7 @@ export default function CartCodeForm() {
   const [
     onSubmit, 
     openCart, 
-    reset,
+    resetSavedCart,
     isLoading, 
     error, 
     itemsUnavailable
@@ -29,7 +29,7 @@ export default function CartCodeForm() {
   }
 
   useEffect(
-    ()=> {
+    function() {
       if (itemsUnavailable > 0 && dialog === null) {
         setDialog({
           body: t('_cart._num_products_are_available', { count: itemsUnavailable }),
@@ -43,32 +43,32 @@ export default function CartCodeForm() {
           negativeButton: {
             text: '_extra.No',
             action() {
-              reset();
+              resetSavedCart();
               setDialog(null);
             }
           }
         });
       }
     },
-    [dialog, itemsUnavailable, openCart, reset, t]
+    [dialog, itemsUnavailable, openCart, resetSavedCart, t]
   );
 
   useEffect(
-    ()=> {
+    function() {
       if (error !== null && dialog === null) {
         setDialog({
           body: error,
           positiveButton: {
             text: '_extra.Done',
             action() {
-              reset();
+              resetSavedCart();
               setDialog(null);
             }
           }
         });
       }
     },
-    [dialog, error, reset]
+    [dialog, error, resetSavedCart]
   );
 
   return (

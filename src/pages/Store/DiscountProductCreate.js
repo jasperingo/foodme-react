@@ -1,5 +1,6 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { productIcon } from '../../assets/icons';
 import EmptyList from '../../components/EmptyList';
@@ -16,7 +17,8 @@ import { useDiscountProductCreate } from '../../hooks/discount/discountProductCr
 import { useDiscountProductDelete } from '../../hooks/discount/discountProductDeleteHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreProductWithDiscountList } from '../../hooks/store/storeProductWithDiscountListHook';
-import { useHasMoreToFetchViaScroll, useRenderListFooter, useRenderOnDataFetched } from '../../hooks/viewHook';
+import { useListFooter, useLoadOnListScroll } from '../../hooks/viewHook';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 
 function ChooseDiscountProductItem(
   {
@@ -76,32 +78,59 @@ function ChooseDiscountProductItem(
 
           { (addDialog || deleteDialog) && <Loading /> }
 
-          <FormMessage error={addFormError} />
-
-          <FormMessage error={deleteFormError} />
+          <FormMessage error={addFormError || deleteFormError} />
+          
         </div>
       </div>
     </li>
   );
 }
 
-function DiscountProductList({ userToken }) {
+function DiscountProductList() {
+
+  const {
+    store: { 
+      store: {
+        store,
+        storeToken
+      }
+    },
+    discount: {
+      discount: {
+        discount,
+      } 
+    }
+  } = useAppContext();
 
   const [
+    fetchStoreProducts,
     products, 
-    productsFetchStatus, 
+    productsLoading,
+    productsError,
+    productsLoaded,
     productsPage, 
-    productsNumberOfPages, 
-    refetch, 
-    refresh
-  ] = useStoreProductWithDiscountList(userToken);
+    productsNumberOfPages,
+    refreshStoreProducts
+  ] = useStoreProductWithDiscountList(storeToken);
+
+  useEffect(
+    function() {
+      if (!productsLoaded && productsError === null) 
+        fetchStoreProducts(store.id, discount.id); 
+    },
+    [store.id, discount.id, productsError, productsLoaded, fetchStoreProducts]
+  );
+
+  const listFooter = useListFooter();
+
+  const loadOnScroll = useLoadOnListScroll();
 
   return (
     <ScrollList
       data={products}
-      nextPage={refetch}
-      refreshPage={refresh}
-      hasMore={useHasMoreToFetchViaScroll(productsPage, productsNumberOfPages, productsFetchStatus)}
+      refreshPage={refreshStoreProducts}
+      nextPage={()=> fetchStoreProducts(store.id, discount.id)}
+      hasMore={loadOnScroll(productsPage, productsNumberOfPages, productsError)}
       className="list-3-x"
       renderDataItem={(item)=> (
         <ChooseDiscountProductItem 
@@ -109,15 +138,62 @@ function DiscountProductList({ userToken }) {
           product={item} 
           />
       )}
-      footer={useRenderListFooter(
-        productsFetchStatus,
-        ()=> <li key="discount-product-footer"> <Loading /> </li>, 
-        ()=> <li key="discount-product-footer"> <Reload action={refetch} /> </li>,
-        ()=> <li key="discount-product-footer"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>,
-        ()=> <li key="discount-product-footer"> <FetchMoreButton action={refetch} /> </li>,
-        ()=> <li key="discount-product-footer"> <NotFound /> </li>,
-        ()=> <li key="discount-product-footer"> <Forbidden /> </li>,
-      )}
+      footer={listFooter([
+        
+        { 
+          canRender: productsLoading, 
+          render() { 
+            return <li key="discount-product-footer" className="list-3-x-col-span"> <Loading /> </li>;
+          }
+        },
+
+        { 
+          canRender: productsError === NetworkErrorCodes.UNKNOWN_ERROR, 
+          render() { 
+            return <li key="discount-product-footer" className="list-3-x-col-span"> <Reload action={()=> fetchStoreProducts(store.id, discount.id)} /> </li>;
+          }
+        },
+
+        { 
+          canRender: productsLoaded && products.length === 0, 
+          render() { 
+            return <li key="discount-product-footer" className="list-3-x-col-span"> <EmptyList text="_empty.No_product" icon={productIcon} /> </li>;
+          }
+        },
+
+        { 
+          canRender: productsPage <= productsNumberOfPages, 
+          render() { 
+            return <li key="discount-product-footer" className="list-3-x-col-span"> <FetchMoreButton action={()=> fetchStoreProducts(store.id, discount.id)} /> </li>;
+          }
+        },
+
+        { 
+          canRender: productsError === NetworkErrorCodes.NOT_FOUND, 
+          render() { 
+            return <li key="discount-product-footer" className="list-3-x-col-span"> <NotFound /> </li>;
+          }
+        },
+
+        { 
+          canRender: productsError === NetworkErrorCodes.FORBIDDEN, 
+          render() { 
+            return <li key="discount-product-footer" className="list-3-x-col-span"> <Forbidden /> </li>;
+          }
+        },
+
+        {
+          canRender: productsError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+          render() {
+            return (
+              <li key="discount-product-footer" className="list-3-x-col-span">
+                <Reload message="_errors.No_netowrk_connection" action={()=> fetchStoreProducts(store.id, discount.id)} />
+              </li>
+            );
+          }
+        },
+
+      ])}
       />
   );
 }
@@ -132,10 +208,15 @@ export default function DiscountProductCreate() {
     } 
   } = useAppContext();
 
+  const { ID } = useParams();
+
   const [
-    discount, 
-    discountFetchStatus, 
-    refetch
+    fetchDiscount,
+    discount,
+    discountLoading,
+    discountError,
+    discountID,
+    unfetchDiscount
   ] = useDiscountFetch(storeToken);
 
   useHeader({ 
@@ -143,19 +224,29 @@ export default function DiscountProductCreate() {
     headerTitle: "_discount.Edit_discount_product"
   });
 
+  useEffect(
+    function() {
+      if ((discount !== null || discountError !== null) && discountID !== ID) 
+        unfetchDiscount();
+      else if (discount === null && discountError === null)
+        fetchDiscount(ID);
+    },
+    [ID, discount, discountError, discountID, fetchDiscount, unfetchDiscount]
+  );
+
+
   return (
     <section>
       <div className="container-x">
-      {
-        useRenderOnDataFetched(
-          discountFetchStatus,
-          ()=> <DiscountProductList userToken={storeToken} />,
-          ()=> <Loading />,
-          ()=> <Reload action={refetch} />,
-          ()=> <NotFound />,
-          ()=> <Forbidden />,
-        )
-      }
+
+        { discount !== null && <DiscountProductList userToken={storeToken} /> }
+
+        { discountLoading && <Loading /> }
+        { discountError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+        { discountError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+        { discountError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchDiscount(ID)} /> }
+        { discountError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchDiscount(ID)} /> }
+
       </div>
     </section>
   );

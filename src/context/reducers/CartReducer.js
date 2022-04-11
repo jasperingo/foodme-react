@@ -23,14 +23,12 @@ export default function CartReducer (state, { type, payload }) {
       
       return {
         ...state,
-        cartItemsFetchStatus: payload.fetchStatus,
         cartItems: [item, ...state.cartItems.filter(i=> i.product_variant.id !== item.product_variant.id)]
       };
     
     case CART.ITEM_REMOVED:
       return {
         ...state,
-        cartItemsFetchStatus: payload.fetchStatus,
         cartItems: [...state.cartItems.filter(item=> item.product_variant.id !== payload.item.product_variant.id)]
       };
     
@@ -55,8 +53,7 @@ export default function CartReducer (state, { type, payload }) {
     case CART.ITEMS_REPLACED:
       return {
         ...state,
-        cartItems: [...payload.list],
-        cartItemsFetchStatus: payload.fetchStatus
+        cartItems: [...payload.list]
       };
 
     case CART.DELIVERY_METHOD_CHOOSEN:

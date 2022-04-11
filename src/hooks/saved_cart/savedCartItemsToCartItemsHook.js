@@ -1,9 +1,10 @@
 
 export function useSavedCartItemsToCartItems()  {
 
-  return (saved_cart_items)=> {
+  return function(saved_cart_items) {
     
     const cartItems = [];
+    
     let itemsUnavailable = 0;
 
     for (let item of saved_cart_items) {

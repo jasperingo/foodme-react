@@ -4,11 +4,9 @@ import EmptyList from '../../components/EmptyList';
 import CartCheckOutOrSave from '../../components/cart/CartCheckOutOrSave';
 import { cartIcon } from '../../assets/icons';
 import { useAppContext } from '../../hooks/contextHook';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
 import CartItem from '../../components/list_item/CartItem';
 import { useHeader } from '../../hooks/headerHook';
 import CartCodeForm from '../../components/cart/CartCodeForm';
-
 
 export default function Cart() {
 
@@ -19,10 +17,16 @@ export default function Cart() {
   });
 
   const { 
+    customer: { 
+      customer: {
+        customer: {
+          customerToken
+        }
+      } 
+    },
     cart: {
       cart: {
-        cartItems,
-        cartItemsFetchStatus
+        cartItems
       } 
     }
   } = useAppContext();
@@ -44,15 +48,13 @@ export default function Cart() {
               ))
             }
             {
-              cartItemsFetchStatus === FETCH_STATUSES.EMPTY && 
+              cartItems.length === 0 && 
               <EmptyList text="_empty.Your_cart_is_empty" icon={cartIcon} />
             }
           </ul>
-          { cartItemsFetchStatus === FETCH_STATUSES.DONE && <CartCheckOutOrSave /> }
+          {  cartItems.length > 0 && <CartCheckOutOrSave userToken={customerToken} /> }
         </div>
       </div>
     </section>
   );
 }
-
-

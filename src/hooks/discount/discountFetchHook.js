@@ -5,7 +5,6 @@ import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DiscountRepository from "../../repositories/DiscountRepository";
 import { useAppContext } from "../contextHook";
 
-
 export function useDiscountFetch(userToken) {
 
   const { 

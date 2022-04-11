@@ -21,7 +21,7 @@ export default function DiscountReducer (state, { type, payload }) {
         ...state,
         discountLoading: false,
         discountID: payload.id,
-        discountFetchStatus: payload.error
+        discountError: payload.error
       };
 
     case DISCOUNT.FETCHED:
@@ -72,7 +72,7 @@ export default function DiscountReducer (state, { type, payload }) {
     case DISCOUNT.PRODUCT_CREATED:
       return {
         ...state,
-        products: [...state.products.map(i=> {
+        products: state.products.map(i=> {
           if (i.id === payload.discountProduct.product_id) {
             return {
               ...i,
@@ -80,13 +80,13 @@ export default function DiscountReducer (state, { type, payload }) {
             }
           }
           return i;
-        })]
+        })
       };
     
     case DISCOUNT.PRODUCT_DELETED:
       return {
         ...state,
-        products: [...state.products.map(i=> {
+        products: state.products.map(i=> {
           if (i.discount_products.length > 0 && i.discount_products[0].id === payload.discountProductID) {
             return {
               ...i,
@@ -94,36 +94,45 @@ export default function DiscountReducer (state, { type, payload }) {
             }
           }
           return i;
-        })]
+        })
       };
 
+    
     case PRODUCT.LIST_UNFETCHED:
       return {
         ...state,
-        productsPage: 1,
-        productsLoading: true,
-        productsNumberOfPages: 0,
         products: discountState.products,
-        productsFetchStatus: discountState.productsFetchStatus
+        productsPage: discountState.productsPage,
+        productsError: discountState.productsError,
+        productsLoaded: discountState.productsLoaded,
+        productsLoading: discountState.productsLoading,
+        productsNumberOfPages: discountState.productsNumberOfPages
       };
-  
-    case PRODUCT.LIST_FETCH_STATUS_CHANGED:
-      return {
-        ...state,
-        productsLoading: payload.loading,
-        productsFetchStatus: payload.fetchStatus
-      };
-      
-    case PRODUCT.LIST_FETCHED:
+
+    case PRODUCT.LIST_ERROR_CHANGED:
       return {
         ...state,
         productsLoading: false,
-        productsPage: state.productsPage+1,
-        productsFetchStatus: payload.fetchStatus,
+        productsError: payload.error
+      };
+
+    case PRODUCT.LIST_FETCHING:
+      return {
+        ...state,
+        productsError: null,
+        productsLoading: true
+      };
+    
+    case PRODUCT.LIST_FETCHED:
+      return {
+        ...state,
+        productsLoaded: true,
+        productsLoading: false,
+        productsPage: state.productsPage + 1,
         productsNumberOfPages: payload.numberOfPages,
         products: [...state.products, ...payload.list],
       };
-    
+  
     
     default:
       return state;

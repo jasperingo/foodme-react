@@ -1,59 +1,63 @@
 
-import { useEffect, useState } from "react";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useMemo, useState, useCallback } from "react";
 import SavedCartRepository from "../../repositories/SavedCartRepository";
-
 
 export function useSavedCartDelete(userToken) {
 
-  const [id, setId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [response, setResponse] = useState(null);
+  const [formError, setFormError] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const [formSuccess, setFormSuccess] = useState(null);
 
-  function onSubmit(id, response) {
+  const api = useMemo(function() { return new SavedCartRepository(userToken); }, [userToken]);
+
+  const resetSubmit = useCallback(
+    function() {
+      setFormError(null);
+      setFormSuccess(null);
+    },
+    []
+  );
+
+  async function onSubmit(id) {
+
+    if (loading) return;
+    
     if (!window.navigator.onLine) {
-      response.onError('_errors.No_netowrk_connection');
-    } else {
-      setId(id);
-      setResponse(response);
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+
+    setFormError(null);
+    setFormSuccess(null);
+
+    setLoading(true);
+
+    try {
+
+      const res = await api.delete(id);
+
+      if (res.status === 200) {
+        
+        setFormSuccess(res.body.message);
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new SavedCartRepository(userToken);
-
-        api.delete(id)
-        .then(res=> {
-
-          if (res.status === 200) {
-
-            response.onSuccess();
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-
-          } else {
-            throw new Error();
-          }
-
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          response.onError('_errors.Something_went_wrong');
-        });
-        
-      }
-
-    }, 
-    [id, fetchStatus, userToken, response]
-  );
-
-
-  return onSubmit;
+  return [
+    onSubmit,
+    loading,
+    formSuccess,
+    formError,
+    resetSubmit
+  ];
 }

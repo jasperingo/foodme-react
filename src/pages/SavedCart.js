@@ -1,6 +1,6 @@
 
 import React, { useCallback, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import Forbidden from '../components/Forbidden';
 import Loading from '../components/Loading';
 import NotFound from '../components/NotFound';
@@ -15,6 +15,8 @@ export default function SavedCart({ userToken }) {
 
   const { ID } = useParams();
 
+  const history = useHistory();
+
   const [
     fetchSavedCart,
     savedCart,
@@ -24,7 +26,13 @@ export default function SavedCart({ userToken }) {
     unfetchSavedCart
   ] = useSavedCartFetch(userToken);
 
-  const onDeleteSubmit = useSavedCartDelete(userToken);
+  const [
+    onSubmit,
+    loading,
+    formSuccess,
+    formError,
+    resetSubmit
+  ] = useSavedCartDelete(userToken);
   
   useHeader({ 
     title: `${savedCart?.code ?? 'Loading...'} - Saved Cart`,
@@ -49,10 +57,26 @@ export default function SavedCart({ userToken }) {
     [ID, savedCart, savedCartError, savedCartID, savedCartsFetch, unfetchSavedCart]
   );
 
+  useEffect(
+    function() {
+      if (formSuccess !== null) history.push('/saved-carts');
+    }, 
+    [formSuccess, history]
+  );
+
   return (
     <section>
       
-      { savedCart !== null && <SavedCartProfile savedCart={savedCart} onDeleteSubmit={onDeleteSubmit} /> }
+      { 
+        savedCart !== null && 
+        <SavedCartProfile 
+          savedCart={savedCart} 
+          onDeleteSubmit={onSubmit} 
+          deleteLoading={loading}
+          deleteFormError={formError}
+          resetDeleteSubmit={resetSubmit}
+          /> 
+      }
 
       {
         savedCart === null &&

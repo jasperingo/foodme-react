@@ -7,7 +7,6 @@ import EmptyList from '../../components/EmptyList';
 import CartItem from '../../components/list_item/CartItem';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
 
 export default function Cart() {
 
@@ -18,10 +17,14 @@ export default function Cart() {
   });
 
   const { 
+    store: { 
+      store: {
+        storeToken
+      }
+    },
     cart: {
       cart: {
-        cartItems,
-        cartItemsFetchStatus
+        cartItems
       } 
     }
   } = useAppContext();
@@ -43,11 +46,11 @@ export default function Cart() {
               ))
             }
             {
-              cartItemsFetchStatus === FETCH_STATUSES.EMPTY && 
+               cartItems.length === 0 &&  
               <EmptyList text="_empty.Your_cart_is_empty" icon={cartIcon} />
             }
           </ul>
-          { cartItemsFetchStatus === FETCH_STATUSES.DONE && <CartCheckOutOrSave saveOnly={true} /> }
+          {  cartItems.length > 0 &&  <CartCheckOutOrSave userToken={storeToken} saveOnly={true} /> }
         </div>
       </div>
     </section>

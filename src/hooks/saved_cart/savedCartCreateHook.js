@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useMemo, useState, useCallback } from "react";
 import SavedCartRepository from "../../repositories/SavedCartRepository";
 import { useAppContext } from "../contextHook";
-
 
 export function useSavedCartCreate(userToken) {
 
@@ -14,64 +12,71 @@ export function useSavedCartCreate(userToken) {
     }
   } = useAppContext();
 
-  const [title, setTitle] = useState(null);
 
-  const [response, setResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const [formError, setFormError] = useState(null);
 
-  function onSubmit(title, response) {
+  const [formSuccess, setFormSuccess] = useState(null);
+
+  const api = useMemo(function() { return new SavedCartRepository(userToken); }, [userToken]);
+
+  const resetSubmit = useCallback(
+    function() {
+      setFormError(null);
+      setFormSuccess(null);
+    },
+    []
+  );
+
+  async function onSubmit(title) {
+    
+    if (loading) return;
+    
     if (!window.navigator.onLine) {
-      response.onError('_errors.No_netowrk_connection');
-    } else {
-      setTitle(title);
-      setResponse(response);
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+    
+    resetSubmit();
+  
+    setLoading(true);
+
+    try {
+
+      const res = await api.create({ 
+        title, 
+        saved_cart_items: cartItems.map(i=> ({
+          quantity: i.quantity,
+          product_variant_id: i.product_variant.id, 
+        })) 
+      });
+
+
+      if (res.status === 201) {
+
+        setFormSuccess(res.body.data.code);
+
+      } else if (res.status === 400) {
+        
+        setFormError(res.body.data[0].message);
+
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new SavedCartRepository(userToken);
-
-        api.create({ 
-          title, 
-          saved_cart_items: cartItems.map(i=> ({
-            quantity: i.quantity,
-            product_variant_id: i.product_variant.id, 
-          })) 
-        })
-        .then(res=> {
-
-          if (res.status === 201) {
-
-            response.onSuccess(res.body.data.code);
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-
-          } else if (res.status === 400) {
-            
-            response.onError(res.body.data[0].message);
-
-          } else {
-            throw new Error();
-          }
-
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          response.onError('_errors.Something_went_wrong');
-        });
-        
-      }
-
-    }, 
-    [title, cartItems, fetchStatus, userToken, response]
-  );
-
-
-  return onSubmit;
+  return [
+    onSubmit,
+    loading,
+    formSuccess,
+    formError, 
+    resetSubmit
+  ];
 }

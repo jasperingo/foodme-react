@@ -1,11 +1,9 @@
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { CART } from "../../context/actions/cartActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import SavedCartRepository from "../../repositories/SavedCartRepository";
 import { useAppContext } from "../contextHook";
 import { useSavedCartItemsToCartItems } from "./savedCartItemsToCartItemsHook";
-
 
 export function useSavedCartFetchByCode() {
 
@@ -14,8 +12,6 @@ export function useSavedCartFetchByCode() {
       cartDispatch
     }
   } = useAppContext();
-
-  const [code, setCode] = useState(null);
 
   const [cartItems, setCartItems] = useState(null);
 
@@ -27,83 +23,80 @@ export function useSavedCartFetchByCode() {
 
   const convertToCartItems = useSavedCartItemsToCartItems();
 
-  function onSubmit(code, codeValidity) {
-    if (!codeValidity.valid) {
-      setError('_errors.Cart_code_is_invalid');
-    } else if (!window.navigator.onLine) {
-      setError('_errors.No_netowrk_connection');
-    } else {
-      setCode(code);
-      setIsLoading(true);
-    }
-  }
+  const api = useMemo(function() { return new SavedCartRepository(); }, []);
 
-  const reset = useCallback(
-    ()=> {
+  const resetSavedCart = useCallback(
+    function() {
       setError(null);
       setCartItems(null);
       setItemsUnavailable(0);
     },
     []
   );
-  
+
   const openCart = useCallback(
-    ()=> {
+    function(list) {
       cartDispatch({
         type: CART.ITEMS_REPLACED,
-        payload: {
-          list: cartItems,
-          fetchStatus: cartItems.length > 0 ? FETCH_STATUSES.DONE : FETCH_STATUSES.EMPTY
-        }
+        payload: { list }
       });
-      reset();
+      resetSavedCart();
     },
-    [cartItems, cartDispatch, reset]
-  );
-
-  useEffect(
-    ()=> {
-
-      async function send() {
-
-        try {
-          const api = new SavedCartRepository();
-          
-          const res = await api.get(code);
-          
-          setIsLoading(false);
-
-          if (res.status === 200) {
-            
-            const [cart, unavailable] = convertToCartItems(res.body.data.saved_cart_items);
-
-            setCartItems(cart);
-
-            if (unavailable > 0) {
-              setItemsUnavailable(unavailable);
-            } else {
-              openCart();
-            }
-            
-          } else if (res.status === 404) {
-
-            setError('_errors.Cart_not_found');
-
-          } else {
-            throw new Error();
-          }
-          
-        } catch {
-          setIsLoading(false);
-          setError('_errors.Something_went_wrong');
-        }
-      }
-
-      if (isLoading) send();
-    },
-    [isLoading, code, convertToCartItems, openCart]
+    [cartDispatch, resetSavedCart]
   );
   
-  return [onSubmit, openCart, reset, isLoading, error, itemsUnavailable];
-}
+  const openCartFromItems = useCallback(
+    function() {
+      openCart(cartItems);
+    },
+    [cartItems, openCart]
+  );
 
+  async function onSubmit(code, codeValidity) {
+
+    if (isLoading) return;
+    
+    if (!window.navigator.onLine) {
+      setError('_errors.No_netowrk_connection');
+      return;
+    }
+
+    if (!codeValidity.valid) {
+      setError('_errors.Cart_code_is_invalid');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      
+      const res = await api.get(code);
+      
+      setIsLoading(false);
+
+      if (res.status === 200) {
+        
+        const [cart, unavailable] = convertToCartItems(res.body.data.saved_cart_items);
+
+        if (unavailable > 0) {
+          setCartItems(cart);
+          setItemsUnavailable(unavailable);
+        } else {
+          openCart(cart);
+        }
+        
+      } else if (res.status === 404) {
+        setError('_errors.Cart_not_found');
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setError('_errors.Something_went_wrong');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return [onSubmit, openCartFromItems, resetSavedCart, isLoading, error, itemsUnavailable];
+}

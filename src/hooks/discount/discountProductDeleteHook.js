@@ -1,8 +1,7 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { DISCOUNT } from "../../context/actions/discountActions";
 import DiscountProductRepository from "../../repositories/DiscountProductRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
 export function useDiscountProductDelete() {
@@ -18,75 +17,56 @@ export function useDiscountProductDelete() {
     }
   } = useAppContext();
 
-  const [id, setId] = useState(0);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
   const [formSuccess, setFormSuccess] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const api = useMemo(function() { return new DiscountProductRepository(storeToken); }, [storeToken]);
 
-  function onSubmit(discount_product_id) {
+  async function onSubmit(discount_product_id) {
     
-    setFormError(null);
-    setFormSuccess(null);
-  
+    if (loading) return;
+    
     if (!window.navigator.onLine) {
       setFormError('_errors.No_netowrk_connection');
-    } else {
-      setDialog(true);
-      setId(discount_product_id);
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      return;
+    }
+
+    setFormError(null);
+    setFormSuccess(null);
+
+    setLoading(true);
+
+    try {
+
+      const res = await api.delete(discount_product_id);
+
+      if (res.status === 200) {
+        
+        setFormSuccess(res.body.message);
+
+        discountDispatch({
+          type: DISCOUNT.PRODUCT_DELETED,
+          payload: { discountProductID: discount_product_id }
+        });
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
   
-  useEffect(
-    ()=> {
-     
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new DiscountProductRepository(storeToken);
-
-        api.delete(id)
-        .then(res=> {
-
-          if (res.status === 200) {
-            
-            setFormSuccess(res.body.message);
-
-            discountDispatch({
-              type: DISCOUNT.PRODUCT_DELETED,
-              payload: {
-                discountProductID: id
-              }
-            });
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          setFormError('_errors.Something_went_wrong');
-        });
-
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    }, 
-    [fetchStatus, dialog, storeToken, id, discountDispatch]
-  );
-
   return [
     onSubmit, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
   ];
 }
-

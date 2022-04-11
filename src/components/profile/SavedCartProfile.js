@@ -1,12 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useHistory } from 'react-router-dom';
 import { CART } from '../../context/actions/cartActions';
 import { useAppContext } from '../../hooks/contextHook';
 import { useSavedCartItemsToCartItems } from '../../hooks/saved_cart/savedCartItemsToCartItemsHook';
 import { useCopyText, useDateFormat } from '../../hooks/viewHook';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
 import H4Heading from '../H4Heading';
@@ -14,7 +12,15 @@ import SavedCartSavedItem from '../list_item/SavedCartSavedItem';
 import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeaderText from './ProfileHeaderText';
 
-export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code, title, created_at, saved_cart_items } }) {
+export default function SavedCartProfile(
+  { 
+    onDeleteSubmit, 
+    deleteLoading,
+    deleteFormError,
+    resetDeleteSubmit,
+    savedCart: { id, code, title, created_at, saved_cart_items } 
+  }
+) {
 
   const {
     cart: {
@@ -24,15 +30,30 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
 
   const { t } = useTranslation();
 
-  const history = useHistory();
-
   const copy = useCopyText();
 
   const [alertDialog, setAlertDialog] = useState(null);
-  
-  const [loadingDialog, setLoadingDialog] = useState(null);
 
   const convertToCartItems = useSavedCartItemsToCartItems();
+
+  useEffect(
+    function() {
+
+      if (deleteFormError !== null) {
+        setAlertDialog({
+          body: deleteFormError,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setAlertDialog(null);
+              resetDeleteSubmit();
+            }
+          }
+        });
+      }
+    },
+    [deleteFormError, resetDeleteSubmit]
+  );
 
   function copyCode() {
 
@@ -69,32 +90,8 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
   }
 
   function deleteCart() {
-    
     setAlertDialog(null);
-
-    setLoadingDialog(true);
-
-    onDeleteSubmit(id, {
-
-      onSuccess() {
-        setLoadingDialog(false);
-        history.goBack();
-      },
-
-      onError(message) {
-        setLoadingDialog(false);
-        setAlertDialog({
-          body: message,
-          positiveButton: {
-            text: '_extra.Done',
-            action() {
-              setAlertDialog(null);
-            }
-          }
-        });
-      }
-
-    });
+    onDeleteSubmit(id);
   }
 
   function openCartConfirm() {
@@ -127,10 +124,7 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
   function openCart(cartItems) {
     cartDispatch({
       type: CART.ITEMS_REPLACED,
-      payload: {
-        list: cartItems,
-        fetchStatus: cartItems.length > 0 ? FETCH_STATUSES.DONE : FETCH_STATUSES.EMPTY
-      }
+      payload: { list: cartItems }
     });
 
     setAlertDialog({
@@ -198,7 +192,7 @@ export default function SavedCartProfile({ onDeleteSubmit, savedCart: { id, code
       </div>
       
       {
-        loadingDialog && <LoadingDialog />
+        deleteLoading && <LoadingDialog />
       }
       {
         alertDialog && <AlertDialog dialog={alertDialog} />

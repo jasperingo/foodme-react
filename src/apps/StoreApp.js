@@ -25,7 +25,7 @@ import WorkingHoursUpdate from '../pages/Store/WorkingHoursUpdate';
 import Wallet from '../pages/Store/Wallet';
 import Transaction from '../pages/Transaction';
 import SavedCarts from '../pages/Store/SavedCarts';
-import SavedCart from '../pages/Store/SavedCart';
+import SavedCart from '../pages/SavedCart';
 import Reviews from '../pages/Store/Reviews';
 import Discounts from '../pages/Store/Discounts';
 import Discount from '../pages/Discount';
@@ -130,7 +130,7 @@ export default function StoreApp() {
           <Route path="/discounts" render={()=> authMiddleware() || <Discounts />} />
           <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
           <Route path="/reviews" render={()=> authMiddleware() || <Reviews />} />
-          <Route path="/saved-cart/:ID" render={()=> authMiddleware() || <SavedCart />} />
+          <Route path="/saved-cart/:ID" render={()=> authMiddleware() || <SavedCart userToken={storeToken} />} />
           <Route path="/saved-carts" render={()=> authMiddleware() || <SavedCarts />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={storeToken} canCancel={true} />} />
           <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
