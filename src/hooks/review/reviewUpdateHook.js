@@ -1,10 +1,8 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { REVIEW } from "../../context/actions/reviewActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import ReviewRepository from "../../repositories/ReviewRepository";
 import { useAppContext } from "../contextHook";
-
 
 export function useReviewUpdate() {
 
@@ -27,87 +25,89 @@ export function useReviewUpdate() {
     }
   } = useAppContext();
 
-  const [id, setId] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [data, setData] = useState(null);
+  const [formError, setFormError] = useState(null);
 
-  const [response, setResponse] = useState(null);
+  const [formSuccess, setFormSuccess] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const api = useMemo(function() { return new ReviewRepository(customerToken); }, [customerToken]);
 
-  function onSubmit(id, data, response) {
+  const resetSubmit = useCallback(
+    function() {
+      setFormError(null);
+      setFormSuccess(null);
+    },
+    []
+  );
+
+  async function onSubmit(id, rating, description) {
+    
+    if (loading) return;
+    
     if (!window.navigator.onLine) {
-      response.onError('_errors.No_netowrk_connection');
-    } else {
-      setId(id);
-      setData(data);
-      setResponse(response);
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+    
+    resetSubmit();
+  
+    setLoading(true);
+
+    try {
+
+      const res = await api.update(id, { rating, description });
+
+      if (res.status === 200) {
+
+        setFormSuccess(res.body.message);
+
+        const review = res.body.data;
+
+        if (review.product !== null) {
+          review.product = undefined;
+          productDispatch({
+            type: REVIEW.UPDATED,
+            payload: { review }
+          });
+        }
+
+        if (review.store !== null) {
+          review.store = undefined;
+          storeDispatch({
+            type: REVIEW.UPDATED,
+            payload: { review }
+          });
+        }
+
+        if (review.delivery_firm !== null) {
+          review.delivery_firm = undefined;
+          deliveryFirmDispatch({
+            type: REVIEW.UPDATED,
+            payload: { review }
+          });
+        }
+
+      } else if (res.status === 400) {
+        
+        setFormError(res.body.data[0].message);
+
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new ReviewRepository(customerToken);
-        api.update(id, data)
-        .then(res=> {
-
-          if (res.status === 200) {
-
-            response.onSuccess(res.body.message);
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-
-            const review = res.body.data;
-
-            if (review.product !== null) {
-              review.product = undefined;
-              productDispatch({
-                type: REVIEW.UPDATED,
-                payload: review
-              });
-            }
-
-            if (review.store !== null) {
-              review.store = undefined;
-              storeDispatch({
-                type: REVIEW.UPDATED,
-                payload: review
-              });
-            }
-
-            if (review.delivery_firm !== null) {
-              review.delivery_firm = undefined;
-              deliveryFirmDispatch({
-                type: REVIEW.UPDATED,
-                payload: review
-              });
-            }
-
-          } else if (res.status === 400) {
-            
-            response.onError(res.body.data[0].message);
-
-          } else {
-            throw new Error();
-          }
-
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          response.onError('_errors.Something_went_wrong');
-        });
-        
-      }
-
-    }, 
-    [id, data, fetchStatus, customerToken, response, storeDispatch, productDispatch, deliveryFirmDispatch]
-  );
-
-
-  return onSubmit;
+  return  [
+    onSubmit,
+    loading,
+    formSuccess,
+    formError,
+    resetSubmit
+  ];
 }
-

@@ -11,9 +11,6 @@ import { useAppContext } from '../../hooks/contextHook';
 import { useDeliveryFirmReviewList } from '../../hooks/delivery_firm/deliveryFirmReviewListHook';
 import { useDeliveryFirmFetch } from '../../hooks/delivery_firm/deliveryFirmFetchHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useReviewCreate } from '../../hooks/review/reviewCreateHook';
-import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
-import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useParams } from 'react-router-dom';
 import ReviewList from '../../components/list/ReviewList';
@@ -25,12 +22,10 @@ const NAV_LINKS = [
 function DeliveryFirmReviewsList() {
 
   const {
-    customer: {
-      customer: {
-        customer: {
-          customerToken
-        }
-      } 
+    store: { 
+      store: {
+        storeToken
+      }
     },
     deliveryFirm: {
       deliveryFirm: {
@@ -47,13 +42,7 @@ function DeliveryFirmReviewsList() {
     reviewsError,
     reviewsPage, 
     reviewsNumberOfPages
-  ] = useDeliveryFirmReviewList(customerToken);
-
-  const onReviewUpdate = useReviewUpdate();
-
-  const onReviewDelete = useReviewDelete({ deliveryFirm: true });
-
-  const onReviewCreate = useReviewCreate({ deliveryFirm: deliveryFirm.id });
+  ] = useDeliveryFirmReviewList(storeToken);
 
   useEffect(
     function() {
@@ -68,12 +57,8 @@ function DeliveryFirmReviewsList() {
       <div className="container-x">
 
         <ReviewRaterAndSummary
-          onReviewCreate={onReviewCreate} 
-          onReviewUpdate={onReviewUpdate}
-          onReviewDelete={onReviewDelete}
           summary={deliveryFirm.review_summary}
           title="_review.Rate_this_store"
-          review={customerToken === null || !deliveryFirm?.reviews?.length ? null : deliveryFirm.reviews[0]}
           />
 
       </div>
@@ -99,12 +84,10 @@ export default function DeliveryFirm() {
   const match = useRouteMatch();
 
   const {
-    customer: {
-      customer: {
-        customer: {
-          customerToken
-        }
-      } 
+    store: { 
+      store: {
+        storeToken
+      }
     } 
   } = useAppContext();
 
@@ -115,7 +98,7 @@ export default function DeliveryFirm() {
     deliveryFirmError,
     deliveryFirmID,
     unfetchDeliveryFirm
-  ] = useDeliveryFirmFetch(customerToken);
+  ] = useDeliveryFirmFetch(storeToken);
 
   useHeader({ 
     title: `${deliveryFirm?.user.name ?? 'Loading...'} - Delivery Firm`,

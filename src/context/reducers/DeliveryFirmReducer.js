@@ -1,3 +1,4 @@
+import { useReviewCreatedSummary, useReviewDeletedSummary, useReviewUpdatedSummary } from "../../hooks/review/reviewSummaryHook";
 import { DELIVERY_FIRM } from "../actions/deliveryFirmActions";
 import { DELIVERY_ROUTE } from "../actions/deliveryRouteActions";
 import { ORDER } from "../actions/orderActions";
@@ -6,6 +7,10 @@ import { TRANSACTION } from "../actions/transactionActions";
 import deliveryFirmState from "../states/deliveryFirmState";
 
 export default function DeliveryFirmReducer(state, { type, payload }) {
+
+  const onReviewCreated = useReviewCreatedSummary();
+  const onReviewUpdated = useReviewUpdatedSummary();
+  const onReviewDeleted = useReviewDeletedSummary();
   
   switch (type) {  
 
@@ -242,75 +247,37 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
 
     case REVIEW.CREATED:
 
-      const review = payload;
-
-      const summary = { ...state.deliveryFirm.review_summary };
-
-      summary.total++;
-
-      summary.ratings[review.rating-1] = summary.ratings[review.rating-1] + 1;
-
-      const average = summary.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
-      
-      summary.average = average / summary.total;
+      const review = payload.review;
 
       return {
         ...state,
         deliveryFirm: {
           ...state.deliveryFirm,
           reviews: [ review ],
-          review_summary: summary
+          review_summary: onReviewCreated(review, { ...state.deliveryFirm.review_summary })
         }
       };
 
     case REVIEW.UPDATED:
 
-      const reviewCur = payload;
-
-      const reviewPrev = state.deliveryFirm.reviews[0];
-
-      const summaryY = { ...state.deliveryFirm.review_summary };
-
-      summaryY.ratings[reviewCur.rating-1] = summaryY.ratings[reviewCur.rating-1] + 1;
-
-      summaryY.ratings[reviewPrev.rating-1] = summaryY.ratings[reviewPrev.rating-1] - 1;
-
-      const averageY = summaryY.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
-
-      summaryY.average = averageY / summaryY.total;
+      const reviewCur = payload.review;
       
       return {
         ...state,
         deliveryFirm: {
           ...state.deliveryFirm,
           reviews: [ reviewCur ],
-          review_summary: summaryY,
+          review_summary: onReviewUpdated(reviewCur, state.deliveryFirm.reviews[0], { ...state.deliveryFirm.review_summary }),
         }
       };
 
     case REVIEW.DELETED:
-
-      const reviewX = state.deliveryFirm.reviews[0];
-
-      const summaryX = { ...state.deliveryFirm.review_summary };
-
-      summaryX.total--;
-
-      summaryX.ratings[reviewX.rating-1] = summaryX.ratings[reviewX.rating-1] - 1;
-
-      if (summaryX.total > 0) {
-        const averageX = summaryX.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
-        summaryX.average = averageX / summaryX.total;
-      } else {
-        summaryX.average = 0;
-      }
-
       return {
         ...state,
         deliveryFirm: {
           ...state.deliveryFirm,
           reviews: undefined,
-          review_summary: summaryX
+          review_summary: onReviewDeleted(state.deliveryFirm.reviews[0], { ...state.deliveryFirm.review_summary })
         }
       };
 
@@ -319,4 +286,3 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
       return state;
   }
 }
-

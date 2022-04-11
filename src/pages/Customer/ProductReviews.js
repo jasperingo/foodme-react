@@ -45,11 +45,29 @@ function ProductReviewList() {
     refreshProductReviews
   ] = useProductReviewList(customerToken);
 
-  const onReviewUpdate = useReviewUpdate();
+  const [
+    reviewUpdateOnSubmit,
+    reviewUpdateLoading,
+    reviewUpdateFormSuccess,
+    reviewUpdateFormError,
+    reviewUpdateResetSubmit
+  ] = useReviewUpdate();
 
-  const onReviewDelete = useReviewDelete({ product: true });
+  const [
+    reviewDeleteOnSubmit,
+    reviewDeleteLoading,
+    reviewDeleteFormSuccess,
+    reviewDeleteFormError,
+    reviewDeleteResetSubmit
+  ] = useReviewDelete({ product: true });
   
-  const onReviewCreate = useReviewCreate({ product: product.id });
+  const [
+    reviewCreateOnSubmit,
+    reviewCreateLoading,
+    reviewCreateFormSuccess,
+    reviewCreateFormError,
+    reviewCreateResetSubmit
+  ] = useReviewCreate({ product: product.id });
 
   useEffect(
     function() { 
@@ -63,12 +81,27 @@ function ProductReviewList() {
     <div className="container-x">
 
       <ReviewRaterAndSummary 
-        onReviewCreate={onReviewCreate}
-        onReviewUpdate={onReviewUpdate}
-        onReviewDelete={onReviewDelete}
         summary={product.review_summary}
         title="_review.Rate_this_product"
         review={customerToken === null || !product?.reviews?.length ? null : product.reviews[0]}
+
+        reviewDeleteOnSubmit={reviewDeleteOnSubmit}
+        reviewDeleteLoading={reviewDeleteLoading}
+        reviewDeleteFormSuccess={reviewDeleteFormSuccess}
+        reviewDeleteFormError={reviewDeleteFormError}
+        reviewDeleteResetSubmit={reviewDeleteResetSubmit}
+
+        reviewCreateOnSubmit={reviewCreateOnSubmit}
+        reviewCreateLoading={reviewCreateLoading}
+        reviewCreateFormSuccess={reviewCreateFormSuccess}
+        reviewCreateFormError={reviewCreateFormError}
+        reviewCreateResetSubmit={reviewCreateResetSubmit}
+
+        reviewUpdateOnSubmit={reviewUpdateOnSubmit}
+        reviewUpdateLoading={reviewUpdateLoading}
+        reviewUpdateFormSuccess={reviewUpdateFormSuccess}
+        reviewUpdateFormError={reviewUpdateFormError}
+        reviewUpdateResetSubmit={reviewUpdateResetSubmit}
         />
 
       <ReviewList

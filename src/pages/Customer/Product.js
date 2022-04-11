@@ -105,7 +105,13 @@ function ProductReviewList() {
     reviewsError,
   ] = useProductReviewList(customerToken);
 
-  const onReviewUpdate = useReviewUpdate();
+  const [
+    reviewUpdateOnSubmit,
+    reviewUpdateLoading,
+    reviewUpdateFormSuccess,
+    reviewUpdateFormError,
+    reviewUpdateResetSubmit
+  ] = useReviewUpdate();
 
   const [
     reviewDeleteOnSubmit,
@@ -115,7 +121,13 @@ function ProductReviewList() {
     reviewDeleteResetSubmit
   ] = useReviewDelete({ product: true });
   
-  const onReviewCreate = useReviewCreate({ product: product.id });
+  const [
+    reviewCreateOnSubmit,
+    reviewCreateLoading,
+    reviewCreateFormSuccess,
+    reviewCreateFormError,
+    reviewCreateResetSubmit
+  ] = useReviewCreate({ product: product.id });
 
   useEffect(
     function() { 
@@ -130,8 +142,6 @@ function ProductReviewList() {
       <H4Heading text="_review.Reviews" href={`/product/${product.id}/reviews`} />
 
       <ReviewRaterAndSummary 
-        onReviewCreate={onReviewCreate}
-        onReviewUpdate={onReviewUpdate}
         summary={product.review_summary}
         title="_review.Rate_this_product"
         review={customerToken === null || !product?.reviews?.length ? null : product.reviews[0]}
@@ -141,6 +151,18 @@ function ProductReviewList() {
         reviewDeleteFormSuccess={reviewDeleteFormSuccess}
         reviewDeleteFormError={reviewDeleteFormError}
         reviewDeleteResetSubmit={reviewDeleteResetSubmit}
+
+        reviewCreateOnSubmit={reviewCreateOnSubmit}
+        reviewCreateLoading={reviewCreateLoading}
+        reviewCreateFormSuccess={reviewCreateFormSuccess}
+        reviewCreateFormError={reviewCreateFormError}
+        reviewCreateResetSubmit={reviewCreateResetSubmit}
+
+        reviewUpdateOnSubmit={reviewUpdateOnSubmit}
+        reviewUpdateLoading={reviewUpdateLoading}
+        reviewUpdateFormSuccess={reviewUpdateFormSuccess}
+        reviewUpdateFormError={reviewUpdateFormError}
+        reviewUpdateResetSubmit={reviewUpdateResetSubmit}
         />
 
       <ReviewList 

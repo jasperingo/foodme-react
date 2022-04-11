@@ -1,8 +1,13 @@
+import { useReviewCreatedSummary, useReviewDeletedSummary, useReviewUpdatedSummary } from "../../hooks/review/reviewSummaryHook";
 import { PRODUCT } from "../actions/productActions";
 import { REVIEW } from "../actions/reviewActions";
 import productState from "../states/productState";
 
 export default function ProductReducer (state, action) {
+
+  const onReviewCreated = useReviewCreatedSummary();
+  const onReviewUpdated = useReviewUpdatedSummary();
+  const onReviewDeleted = useReviewDeletedSummary();
   
   switch (action.type) {  
 
@@ -208,75 +213,37 @@ export default function ProductReducer (state, action) {
 
     case REVIEW.CREATED:
 
-      const review = action.payload;
-
-      const summary = { ...state.product.review_summary };
-
-      summary.total++;
-
-      summary.ratings[review.rating-1] = summary.ratings[review.rating-1] + 1;
-
-      const average = summary.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
+      const review = action.payload.review;
       
-      summary.average = average / summary.total;
-
       return {
         ...state,
         product: {
           ...state.product,
           reviews: [ review ],
-          review_summary: summary
+          review_summary: onReviewCreated(review, { ...state.product.review_summary })
         }
       };
       
     case REVIEW.UPDATED:
 
-      const reviewCur = action.payload;
-
-      const reviewPrev = state.product.reviews[0];
-
-      const summaryY = { ...state.product.review_summary };
-
-      summaryY.ratings[reviewCur.rating-1] = summaryY.ratings[reviewCur.rating-1] + 1;
-
-      summaryY.ratings[reviewPrev.rating-1] = summaryY.ratings[reviewPrev.rating-1] - 1;
-
-      const averageY = summaryY.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
-
-      summaryY.average = averageY / summaryY.total;
+      const reviewCur = action.payload.review;
 
       return {
         ...state,
         product: {
           ...state.product,
           reviews: [ reviewCur ],
-          review_summary: summaryY,
+          review_summary: onReviewUpdated(reviewCur, state.product.reviews[0], { ...state.product.review_summary }),
         }
       };
       
     case REVIEW.DELETED:
-
-      const reviewX = state.product.reviews[0];
-
-      const summaryX = { ...state.product.review_summary };
-
-      summaryX.total--;
-
-      summaryX.ratings[reviewX.rating-1] = summaryX.ratings[reviewX.rating-1] - 1;
-
-      if (summaryX.total > 0) {
-        const averageX = summaryX.ratings.reduce((prev, cur, i) => prev + (cur * (i+1)), 0);
-        summaryX.average = averageX / summaryX.total;
-      } else {
-        summaryX.average = 0;
-      }
-
       return {
         ...state,
         product: {
           ...state.product,
           reviews: undefined,
-          review_summary: summaryX
+          review_summary: onReviewDeleted(state.product.reviews[0], { ...state.product.review_summary })
         }
       };
 

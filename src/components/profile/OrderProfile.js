@@ -67,7 +67,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   ] = useRefundTransactionCreate(userToken);
 
   useEffect(
-    ()=> {
+    function() {
       if (cancelSuccess)
         setDialog({
           body: '_order._order_cancelled',
@@ -94,7 +94,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   );
 
   useEffect(
-    ()=> {
+    function() {
       if (storeStatusSuccess)
         setDialog({
           body: storeStatusSuccessMessage,
@@ -121,7 +121,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   );
 
   useEffect(
-    ()=> {
+    function() {
       if (deliveryFirmStatusSuccess)
         setDialog({
           body: deliveryFirmStatusSuccessMessage,
@@ -148,7 +148,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   );
   
   useEffect(
-    ()=> {
+    function() {
       if (transactionSuccess)
         setShowPay(true);
 
@@ -167,7 +167,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   );
 
   useEffect(
-    ()=> {
+    function() {
       if (refundSuccess)
         setDialog({
           body: '_transaction._refund_request_sent',

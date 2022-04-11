@@ -10,15 +10,25 @@ import ReviewDialog from './ReviewDialog';
 export default function Rater(
   { 
     title, 
-    review, 
-    onRateCreate, 
-    onRateUpdate, 
+    review,  
     
     reviewDeleteOnSubmit,
     reviewDeleteLoading,
-    reviewDeleteFormSuccess,
-    reviewDeleteFormError,
-    reviewDeleteResetSubmit
+    reviewDeleteFormSuccess = null,
+    reviewDeleteFormError = null,
+    reviewDeleteResetSubmit,
+
+    reviewCreateOnSubmit,
+    reviewCreateLoading,
+    reviewCreateFormSuccess = null,
+    reviewCreateFormError = null,
+    reviewCreateResetSubmit,
+
+    reviewUpdateOnSubmit,
+    reviewUpdateLoading,
+    reviewUpdateFormSuccess = null,
+    reviewUpdateFormError = null,
+    reviewUpdateResetSubmit
   }
 ) {
 
@@ -30,7 +40,23 @@ export default function Rater(
 
   const [alertDialog, setAlertDialog] = useState(null);
 
-  const [loadingDialog, setLoadingDialog] = useState(null);
+  useEffect(
+    function() {
+      if (reviewCreateFormError !== null || reviewCreateFormSuccess !== null) {
+        setAlertDialog({
+          body: reviewCreateFormError || reviewCreateFormSuccess,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setAlertDialog(null);
+              reviewCreateResetSubmit();
+            }
+          }
+        });
+      }
+    },
+    [reviewCreateFormSuccess, reviewCreateFormError, reviewCreateResetSubmit]
+  );
 
   useEffect(
     function() {
@@ -50,48 +76,33 @@ export default function Rater(
     [reviewDeleteFormSuccess, reviewDeleteFormError, reviewDeleteResetSubmit]
   );
 
-
-  function responseHandler(message) {
-    setLoadingDialog(false);
-    setAlertDialog({
-      body: message,
-      positiveButton: {
-        text: '_extra.Done',
-        action() {
-          setAlertDialog(null);
-        }
+  useEffect(
+    function() {
+      if (reviewUpdateFormError !== null || reviewUpdateFormSuccess !== null) {
+        setAlertDialog({
+          body: reviewUpdateFormError || reviewUpdateFormSuccess,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setAlertDialog(null);
+              reviewUpdateResetSubmit();
+            }
+          }
+        });
       }
-    });
-  }
+    },
+    [reviewUpdateFormSuccess, reviewUpdateFormError, reviewUpdateResetSubmit]
+  );
 
   function rateSubmitted(rate, text) {
     setDialog(false);
-    setLoadingDialog(true);
     if (review !== null) {
-      onRateUpdate(
-        review.id, 
-        { rating: rate, description: text },
-        {
-          onSuccess: responseHandler,
-          onError: responseHandler
-        }
-      );
+      reviewUpdateOnSubmit(review.id, rate, text );
     } else {
-      onRateCreate(
-        { rating: rate, description: text },
-        {
-          onSuccess: responseHandler,
-          onError: responseHandler
-        }
-      );
+      reviewCreateOnSubmit(rate, text);
     }
   }
   
-  function onRateClicked(num) {
-    setRating(num);
-    setDialog(true);
-  }
-
   function onConfirmDeleteClicked() {
     setAlertDialog({
       body: '_review._delete_review_confirm_message',
@@ -109,6 +120,11 @@ export default function Rater(
         }
       }
     })
+  }
+  
+  function onRateClicked(num) {
+    setRating(num);
+    setDialog(true);
   }
 
   return (
@@ -137,9 +153,8 @@ export default function Rater(
         alertDialog && <AlertDialog dialog={alertDialog} />
       }
       {
-        (loadingDialog || reviewDeleteLoading) && <LoadingDialog />
+        (reviewDeleteLoading || reviewCreateLoading || reviewUpdateLoading) && <LoadingDialog />
       }
     </div>
   );
 }
-

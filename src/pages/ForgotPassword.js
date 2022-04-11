@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import FormButton from '../components/form/FormButton';
 import FormField from '../components/form/FormField';
 import FormTopTip from '../components/form/FormTopTip';
@@ -16,9 +16,17 @@ export default function ForgotPassword({ customer, administrator }) {
   });
 
   const emailInput = useRef(null);
+  
+  const [onSubmit, loading, formError, formSuccess] = usePasswordResetCreate({ customer, administrator });
 
-  const [onSubmit, dialog, formError, formSuccess] = usePasswordResetCreate({ customer, administrator });
-
+  useEffect(
+    function() {
+      if (formSuccess !== null)
+        emailInput.current.value = '';
+    },
+    [formSuccess]
+  );
+  
   function onFormSubmit(e) {
     e.preventDefault();
     onSubmit(emailInput.current.value, undefined, emailInput.current.validity);
@@ -52,7 +60,7 @@ export default function ForgotPassword({ customer, administrator }) {
 
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
 
     </section>
   );

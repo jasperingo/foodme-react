@@ -51,11 +51,29 @@ function DeliveryFirmReviewsList() {
     reviewsNumberOfPages
   ] = useDeliveryFirmReviewList(customerToken);
 
-  const onReviewUpdate = useReviewUpdate();
+  const [
+    reviewUpdateOnSubmit,
+    reviewUpdateLoading,
+    reviewUpdateFormSuccess,
+    reviewUpdateFormError,
+    reviewUpdateResetSubmit
+  ] = useReviewUpdate();
 
-  const onReviewDelete = useReviewDelete({ deliveryFirm: true });
-
-  const onReviewCreate = useReviewCreate({ deliveryFirm: deliveryFirm.id });
+  const [
+    reviewDeleteOnSubmit,
+    reviewDeleteLoading,
+    reviewDeleteFormSuccess,
+    reviewDeleteFormError,
+    reviewDeleteResetSubmit
+  ] = useReviewDelete({ deliveryFirm: true });
+  
+  const [
+    reviewCreateOnSubmit,
+    reviewCreateLoading,
+    reviewCreateFormSuccess,
+    reviewCreateFormError,
+    reviewCreateResetSubmit
+  ] = useReviewCreate({ deliveryFirm: deliveryFirm.id });
 
   useEffect(
     function() {
@@ -70,12 +88,27 @@ function DeliveryFirmReviewsList() {
       <div className="container-x">
 
         <ReviewRaterAndSummary
-          onReviewCreate={onReviewCreate} 
-          onReviewUpdate={onReviewUpdate}
-          onReviewDelete={onReviewDelete}
           summary={deliveryFirm.review_summary}
           title="_review.Rate_this_store"
           review={customerToken === null || !deliveryFirm?.reviews?.length ? null : deliveryFirm.reviews[0]}
+
+          reviewDeleteOnSubmit={reviewDeleteOnSubmit}
+          reviewDeleteLoading={reviewDeleteLoading}
+          reviewDeleteFormSuccess={reviewDeleteFormSuccess}
+          reviewDeleteFormError={reviewDeleteFormError}
+          reviewDeleteResetSubmit={reviewDeleteResetSubmit}
+
+          reviewCreateOnSubmit={reviewCreateOnSubmit}
+          reviewCreateLoading={reviewCreateLoading}
+          reviewCreateFormSuccess={reviewCreateFormSuccess}
+          reviewCreateFormError={reviewCreateFormError}
+          reviewCreateResetSubmit={reviewCreateResetSubmit}
+
+          reviewUpdateOnSubmit={reviewUpdateOnSubmit}
+          reviewUpdateLoading={reviewUpdateLoading}
+          reviewUpdateFormSuccess={reviewUpdateFormSuccess}
+          reviewUpdateFormError={reviewUpdateFormError}
+          reviewUpdateResetSubmit={reviewUpdateResetSubmit}
           />
 
       </div>

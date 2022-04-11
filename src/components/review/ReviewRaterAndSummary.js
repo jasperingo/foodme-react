@@ -15,7 +15,19 @@ export default function ReviewRaterAndSummary(
     reviewDeleteLoading,
     reviewDeleteFormSuccess,
     reviewDeleteFormError,
-    reviewDeleteResetSubmit
+    reviewDeleteResetSubmit,
+
+    reviewCreateOnSubmit,
+    reviewCreateLoading,
+    reviewCreateFormSuccess,
+    reviewCreateFormError,
+    reviewCreateResetSubmit,
+
+    reviewUpdateOnSubmit,
+    reviewUpdateLoading,
+    reviewUpdateFormSuccess,
+    reviewUpdateFormError,
+    reviewUpdateResetSubmit
   }
 ) {
   return (
@@ -34,6 +46,18 @@ export default function ReviewRaterAndSummary(
             reviewDeleteFormSuccess={reviewDeleteFormSuccess}
             reviewDeleteFormError={reviewDeleteFormError}
             reviewDeleteResetSubmit={reviewDeleteResetSubmit}
+
+            reviewCreateOnSubmit={reviewCreateOnSubmit}
+            reviewCreateLoading={reviewCreateLoading}
+            reviewCreateFormSuccess={reviewCreateFormSuccess}
+            reviewCreateFormError={reviewCreateFormError}
+            reviewCreateResetSubmit={reviewCreateResetSubmit}
+
+            reviewUpdateOnSubmit={reviewUpdateOnSubmit}
+            reviewUpdateLoading={reviewUpdateLoading}
+            reviewUpdateFormSuccess={reviewUpdateFormSuccess}
+            reviewUpdateFormError={reviewUpdateFormError}
+            reviewUpdateResetSubmit={reviewUpdateResetSubmit}
             />
         </div>
       }

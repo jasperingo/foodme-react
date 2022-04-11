@@ -1,7 +1,6 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { REVIEW } from "../../context/actions/reviewActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import ReviewRepository from "../../repositories/ReviewRepository";
 import { useAppContext } from "../contextHook";
 
@@ -26,99 +25,104 @@ export function useReviewCreate({ product, store, deliveryFirm }) {
     }
   } = useAppContext();
 
-  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [response, setResponse] = useState(null);
+  const [formError, setFormError] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const [formSuccess, setFormSuccess] = useState(null);
 
-  function onSubmit(data, response) {
+  const api = useMemo(function() { return new ReviewRepository(customerToken); }, [customerToken]);
+
+  const resetSubmit = useCallback(
+    function() {
+      setFormError(null);
+      setFormSuccess(null);
+    },
+    []
+  );
+
+  async function onSubmit(rating, description) {
+
+    if (loading) return;
+    
     if (!window.navigator.onLine) {
-      response.onError('_errors.No_netowrk_connection');
-    } else {
-      setData(data);
-      setResponse(response);
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+    
+    resetSubmit();
+  
+    setLoading(true);
+    
+    try {
+
+      const res = await getRequest({ rating, description });
+
+      if (res.status === 201) {
+
+        setFormSuccess(res.body.message);
+
+        const review = res.body.data;
+
+        if (product) {
+          review.product = undefined;
+          productDispatch({
+            type: REVIEW.CREATED,
+            payload: { review }
+          });
+        }
+
+        if (store) {
+          review.store = undefined;
+          storeDispatch({
+            type: REVIEW.CREATED,
+            payload: { review }
+          });
+        }
+
+        if (deliveryFirm) {
+          review.delivery_firm = undefined;
+          deliveryFirmDispatch({
+            type: REVIEW.CREATED,
+            payload: { review }
+          });
+        }
+
+      } else if (res.status === 400) {
+        
+        setFormError(res.body.data[0].message);
+
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
+  function getRequest(data) {
+    if (product) {
+      data.product_id = product;
+      return api.createForProduct(data);
+    } else if (store) {
+      data.store_id = store;
+      return api.createForStore(data);
+    } else if (deliveryFirm) {
+      data.delivery_firm = deliveryFirm;
+      return api.createForDeliveryFirm(data);
+    } else {
+      throw new Error('');
+    }  
+  }
 
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new ReviewRepository(customerToken);
-
-        let request;
-
-        if (product) {
-          data.product_id = product;
-          request = api.createForProduct(data);
-        } else if (store) {
-          data.store_id = store;
-          request = api.createForStore(data);
-        } else if (deliveryFirm) {
-          data.delivery_firm = deliveryFirm;
-          request = api.createForDeliveryFirm(data);
-        } else {
-          request = Promise.reject();
-        }
-
-        request
-        .then(res=> {
-
-          if (res.status === 201) {
-
-            response.onSuccess(res.body.message);
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-
-            const review = res.body.data;
-
-            if (product) {
-              review.product = undefined;
-              productDispatch({
-                type: REVIEW.CREATED,
-                payload: review
-              });
-            }
-
-            if (store) {
-              review.store = undefined;
-              storeDispatch({
-                type: REVIEW.CREATED,
-                payload: review
-              });
-            }
-
-            if (deliveryFirm) {
-              review.delivery_firm = undefined;
-              deliveryFirmDispatch({
-                type: REVIEW.CREATED,
-                payload: review
-              });
-            }
-
-          } else if (res.status === 400) {
-            
-            response.onError(res.body.data[0].message);
-
-          } else {
-            throw new Error();
-          }
-
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          response.onError('_errors.Something_went_wrong');
-        });
-        
-      }
-
-    }, 
-    [store, product, deliveryFirm, data, fetchStatus, customerToken, response, storeDispatch, productDispatch, deliveryFirmDispatch]
-  );
-
-
-  return onSubmit;
+  return [
+    onSubmit,
+    loading,
+    formSuccess,
+    formError,
+    resetSubmit
+  ];
 }

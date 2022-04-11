@@ -110,11 +110,29 @@ function StoreReviewsList() {
     reviewsNumberOfPages
   ] = useStoreReviewList(customerToken);
 
-  const onReviewUpdate = useReviewUpdate();
+  const [
+    reviewUpdateOnSubmit,
+    reviewUpdateLoading,
+    reviewUpdateFormSuccess,
+    reviewUpdateFormError,
+    reviewUpdateResetSubmit
+  ] = useReviewUpdate();
 
-  const onReviewDelete = useReviewDelete({ store: true });
-
-  const onReviewCreate = useReviewCreate({ store: store.id });
+  const [
+    reviewDeleteOnSubmit,
+    reviewDeleteLoading,
+    reviewDeleteFormSuccess,
+    reviewDeleteFormError,
+    reviewDeleteResetSubmit
+  ] = useReviewDelete({ store: true });
+  
+  const [
+    reviewCreateOnSubmit,
+    reviewCreateLoading,
+    reviewCreateFormSuccess,
+    reviewCreateFormError,
+    reviewCreateResetSubmit
+  ] = useReviewCreate({ store: store.id });
 
   useEffect(
     function() {
@@ -129,12 +147,27 @@ function StoreReviewsList() {
       <div className="container-x">
 
         <ReviewRaterAndSummary
-          onReviewCreate={onReviewCreate} 
-          onReviewUpdate={onReviewUpdate}
-          onReviewDelete={onReviewDelete}
           summary={store.review_summary}
           title="_review.Rate_this_store"
           review={customerToken === null || !store?.reviews?.length ? null : store.reviews[0]}
+
+          reviewDeleteOnSubmit={reviewDeleteOnSubmit}
+          reviewDeleteLoading={reviewDeleteLoading}
+          reviewDeleteFormSuccess={reviewDeleteFormSuccess}
+          reviewDeleteFormError={reviewDeleteFormError}
+          reviewDeleteResetSubmit={reviewDeleteResetSubmit}
+
+          reviewCreateOnSubmit={reviewCreateOnSubmit}
+          reviewCreateLoading={reviewCreateLoading}
+          reviewCreateFormSuccess={reviewCreateFormSuccess}
+          reviewCreateFormError={reviewCreateFormError}
+          reviewCreateResetSubmit={reviewCreateResetSubmit}
+
+          reviewUpdateOnSubmit={reviewUpdateOnSubmit}
+          reviewUpdateLoading={reviewUpdateLoading}
+          reviewUpdateFormSuccess={reviewUpdateFormSuccess}
+          reviewUpdateFormError={reviewUpdateFormError}
+          reviewUpdateResetSubmit={reviewUpdateResetSubmit}
           />
 
       </div>
