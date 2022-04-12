@@ -1,14 +1,11 @@
 
-import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
 import FormButton from './FormButton';
 import FormMessage from './FormMessage';
 
-export default function DeleteForm({ confirmMessage, redirect, onSubmit, dialog, formError, formSuccess }) {
-  
-  const history = useHistory();
+export default function DeleteForm({ confirmMessage, onSubmit, dialog, formError, formSuccess }) {
 
   const [confirmDialog, setConfirmDialog] = useState(null);
 
@@ -32,15 +29,6 @@ export default function DeleteForm({ confirmMessage, redirect, onSubmit, dialog,
       }
     });
   }
-  
-  useEffect(
-    ()=> {
-      if (formSuccess) {
-        history.push(redirect);
-      }
-    }, 
-    [formSuccess, history, redirect]
-  );
 
   return (
     <form method="POST" action="" className="form-1-x" onSubmit={onDeleteSubmit}>
