@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
-import ProductVariantDeleteForm from '../../components/form/ProductVariantDeleteForm';
+import DeleteForm from '../../components/form/DeleteForm';
 import ProductVariantForm from '../../components/form/ProductVariantForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
@@ -98,13 +98,13 @@ export default function ProductVariantUpdate() {
               weightError={weightError}
               availableError={availableError}
               />
-            
-            <ProductVariantDeleteForm 
-              onSubmit={onDeleteSubmit}
+
+            <DeleteForm 
+              confirmMessage="_product._product_variant_delete_confirm"
+              onSubmit={onDeleteSubmit} 
               dialog={deleteLoading}
-              formError={deleteFormError}
               formSuccess={deleteFormSuccess}
-              product={productVariant.product_id}
+              formError={deleteFormError}
               />
           </>
         }

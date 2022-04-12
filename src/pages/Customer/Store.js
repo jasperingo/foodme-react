@@ -485,7 +485,7 @@ export default function Store() {
         store !== null && 
         <Switch>
           <Route path={`${match.url}/discounts`} render={()=> <StoreDiscountsList />} />
-          <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList ratings={store.rating} />} />
+          <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList />} />
           <Route path={`${match.url}/products`} render={()=> <StoreProductsList />} />
           <Route path={match.url} render={()=> <StoreProductCategoriesList />} />
         </Switch>
@@ -494,4 +494,3 @@ export default function Store() {
     </section>
   );
 }
-

@@ -139,7 +139,12 @@ function ProductVariantList() {
           </li>
         )}
         footer={
-          (product.product_variants.length === 0 && <EmptyList icon={productIcon} text="_empty.No_product_variant" />) || null
+          (
+            product.product_variants.length === 0 && 
+            <li key="product-variant-footer" className="list-2-x-col-span"> 
+              <EmptyList icon={productIcon} text="_empty.No_product_variant" /> 
+            </li>
+          ) || null
         }
         />
     </div>

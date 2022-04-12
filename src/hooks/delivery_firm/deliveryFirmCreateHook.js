@@ -1,24 +1,12 @@
-import { useEffect, useState } from "react";
-import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
+import { useMemo, useState } from "react";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
-import { useAppContext } from "../contextHook";
-import { useMessageFetch } from "../message/messageFetchHook";
-import { useSaveDeliveryFirmToken } from "./saveDeliveryFirmTokenHook";
+import { useDeliveryFirmCreateValidation } from "./deliveryFirmValidationHook";
 
 export function useDeliveryFirmCreate() {
 
-  const { 
-    deliveryFirm: { deliveryFirmDispatch } 
-  } = useAppContext();
+  const [loading, setLoading] = useState(false);
 
-  const newMessage = useMessageFetch();
-
-  const saveToken = useSaveDeliveryFirmToken();
-
-  const [data, setData] = useState(null);
-
-  const [dialog, setDialog] = useState(false);
+  const [formSuccess, setFormSuccess] = useState(null);
 
   const [formError, setFormError] = useState(null);
 
@@ -32,70 +20,37 @@ export function useDeliveryFirmCreate() {
 
   const [adminPasswordError, setAdminPasswordError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const validator = useDeliveryFirmCreateValidation();
 
-  function onSubmit(
-    name, 
-    email, 
-    phone, 
-    adminEmail,
-    adminPassword, 
+  const api = useMemo(function() { return new DeliveryFirmRepository(); }, []);
 
-    nameValidity, 
-    emailValidity, 
-    phoneValidity, 
-    adminEmailValidity, 
-    adminPasswordValidity
-  ) {
+  async function onSubmit(name, email, phone, adminEmail, adminPassword, validity) {
 
-    let error = false;
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
 
     setFormError(null);
+    setFormSuccess(null);
+
+    const [error, nameError, emailError, phoneError, adminEmailError, adminPasswordError] = validator(validity);
+
+    setNameError(nameError);
+    setEmailError(emailError);
+    setPhoneError(phoneError);
+    setAdminEmailError(adminEmailError);
+    setAdminPasswordError(adminPasswordError);
     
-    if (!nameValidity.valid) {
-      error = true;
-      setNameError('_errors.This_field_is_required');
-    } else {
-      setNameError('');
-    }
+    if (error) return;
 
-    if (!emailValidity.valid) {
-      error = true;
-      setEmailError('_errors.This_field_is_required');
-    } else {
-      setEmailError('');
-    }
+    setLoading(true);
 
-    if (!phoneValidity.valid) {
-      error = true;
-      setPhoneError('_errors.This_field_is_required');
-    } else {
-      setPhoneError('');
-    }
+    try {
 
-    if (!adminEmailValidity.valid) {
-      error = true;
-      setAdminEmailError('_errors.This_field_is_required');
-    } else {
-      setAdminEmailError('');
-    }
-
-    if (!adminPasswordValidity.valid) {
-
-      error = true;
-      
-      if (adminPasswordValidity.tooShort) 
-        setAdminPasswordError('_errors.Password_must_be_a_minimium_of_5_characters');
-      else 
-        setAdminPasswordError('_errors.This_field_is_required');
-
-    } else {
-      setAdminPasswordError('');
-    }
-    
-    if (!error) {
-      setDialog(true);
-      setData({
+      const res = await api.create({
         name,
         email,
         phone_number: phone,
@@ -103,90 +58,62 @@ export function useDeliveryFirmCreate() {
         administrator_password: adminPassword,
         administrator_password_confirmation: adminPassword
       });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+
+      if (res.status === 201) {
+
+        setFormSuccess(res.body.message);
+
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'name':
+              setNameError(error.message);
+              break;
+
+            case 'email':
+              setEmailError(error.message);
+              break;
+
+            case 'phone_number':
+              setPhoneError(error.message);
+              break;
+
+            case 'administrator_email':
+              setAdminEmailError(error.message);
+              break;
+
+            case 'administrator_password':
+            case 'administrator_password_confirmation':
+              setAdminPasswordError(error.message);
+              break;
+
+            default:
+          }
+        }
+
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(()=> {
-
-    if (fetchStatus === FETCH_STATUSES.LOADING) {
-      
-      const api = new DeliveryFirmRepository();
-
-      api.create(data)
-      .then(res=> {
-
-        if (res.status === 201) {
-
-          setFetchStatus(FETCH_STATUSES.PENDING);
-
-          saveToken(
-            res.body.data.delivery_firm.id, 
-            res.body.data.api_token.token,
-            res.body.data.delivery_firm.administrators[0].id
-          );
-          
-          deliveryFirmDispatch({
-            type: DELIVERY_FIRM.AUTHED, 
-            payload: { 
-              token: res.body.data.api_token.token, 
-              deliveryFirm: res.body.data.delivery_firm, 
-              adminID: res.body.data.delivery_firm.administrators[0].id,
-              fetchStatus: FETCH_STATUSES.DONE 
-            }
-          });
-
-          newMessage(res.body.data.api_token.token, res.body.data.delivery_firm.user.id);
-
-        } else if (res.status === 400) {
-
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          
-          for (let error of res.body.data) {
-
-            switch(error.name) {
-
-              case 'name':
-                setNameError(error.message);
-                break;
-
-              case 'email':
-                setEmailError(error.message);
-                break;
-
-              case 'phone_number':
-                setPhoneError(error.message);
-                break;
-
-              case 'administrator_email':
-                setAdminEmailError(error.message);
-                break;
-
-              case 'administrator_password':
-              case 'administrator_password_confirmation':
-                setAdminPasswordError(error.message);
-                break;
-
-              default:
-            }
-          }
-
-        } else {
-          throw new Error();
-        }
-
-      })
-      .catch(()=> {
-        setFetchStatus(FETCH_STATUSES.PENDING);
-        setFormError('_errors.Something_went_wrong');
-      });
-
-    } else if (dialog !== false) {
-      setDialog(false);
-    }
-
-  }, [data, fetchStatus, dialog, deliveryFirmDispatch, saveToken, newMessage]);
-
-
-  return [onSubmit, dialog, formError, nameError, emailError, phoneError, adminEmailError, adminPasswordError];
+  return [
+    onSubmit, 
+    loading, 
+    formSuccess, 
+    formError, 
+    nameError, 
+    emailError, 
+    phoneError, 
+    adminEmailError, 
+    adminPasswordError
+  ];
 }

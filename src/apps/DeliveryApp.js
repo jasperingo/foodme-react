@@ -38,6 +38,7 @@ import PrivacyPolicy from '../pages/PrivacyPolicy';
 import TermsOfService from '../pages/TermsOfService';
 import Home from '../pages/Delivery/Home';
 import Chats from '../pages/Delivery/Chats';
+import Store from '../pages/Delivery/Store';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -107,6 +108,7 @@ export default function DeliveryApp() {
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword deliveryFirm={true} />} />
           
           <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
+          <Route path="/store/:ID" render={()=> authMiddleware() || <Store />} />
           <Route path="/delivery-route-weight/:ID/update" render={()=> authMiddleware() || <DeliveryWeightUpdate />} />
           <Route path="/delivery-route-weight/create" render={()=> authMiddleware() || <DeliveryWeightCreate />} />
           <Route path="/delivery-route-duration/:ID/update" render={()=> authMiddleware() || <DeliveryDurationUpdate />} />
@@ -128,8 +130,8 @@ export default function DeliveryApp() {
           <Route path="/reviews" render={()=> authMiddleware() || <Reviews />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
-          <Route path="/register" render={()=>  guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
-          <Route path="/login" render={()=>  guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} /> 
+          <Route path="/register" render={()=>  guestMiddleware() || <Register />} /> 
+          <Route path="/login" render={()=>  guestMiddleware() || <LogIn redirectTo={redirectTo} />} /> 
           <Route path="/" render={()=> guestMiddleware() || <Home />} /> 
         </Switch>
       </main>

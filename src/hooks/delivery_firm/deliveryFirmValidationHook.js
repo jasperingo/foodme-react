@@ -40,17 +40,23 @@ export function useDeliveryFirmCreateValidation() {
 
     let error = result[0];
 
-    let passwordError = '';
+    let adminEmailError = '';
+    let adminPasswordError = '';
     
-    if (!validity.passwordValidity.valid) {
+    if (!validity.adminEmailValidity.valid) {
       error = true;
-      
-      if (validity.passwordValidity.tooShort) 
-        passwordError = '_errors.Password_must_be_a_minimium_of_5_characters';
-      else 
-        passwordError = '_errors.This_field_is_required';
+      adminEmailError = '_errors.This_field_is_required';
     }
 
-    return [error, ...result.slice(1), passwordError];
+    if (!validity.adminPasswordValidity.valid) {
+      error = true;
+      
+      if (validity.adminPasswordValidity.tooShort) 
+        adminPasswordError = '_errors.Password_must_be_a_minimium_of_5_characters';
+      else 
+        adminPasswordError = '_errors.This_field_is_required';
+    }
+
+    return [error, ...result.slice(1), adminEmailError, adminPasswordError];
   }
 }

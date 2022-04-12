@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
-import DiscountDeleteForm from '../../components/form/DiscountDeleteForm';
+import DeleteForm from '../../components/form/DeleteForm';
 import DiscountForm from '../../components/form/DiscountForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
@@ -100,12 +100,13 @@ export default function DiscountUpdate() {
               startDateError={startDateError}
               endDateError={endDateError}
               />
-            
-            <DiscountDeleteForm 
-              onSubmit={onDeleteSubmit}
+
+            <DeleteForm 
+              confirmMessage="_discount._discount_delete_confirm"
+              onSubmit={onDeleteSubmit} 
               dialog={deleteLoading}
-              formError={deleteFormError}
               formSuccess={deleteFormSuccess}
+              formError={deleteFormError}
               />
           </>
         }

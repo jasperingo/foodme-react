@@ -119,7 +119,6 @@ export default function DeliveryRouteUpdate() {
             
             <DeleteForm 
               confirmMessage="_delivery._delivery_route_delete_confirm"
-              redirect="/delivery-routes"
               onSubmit={deleteOnSubmit} 
               dialog={deleteLoading}
               formSuccess={deleteFormSuccess}

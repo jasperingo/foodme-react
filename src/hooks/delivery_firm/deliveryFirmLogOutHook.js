@@ -1,6 +1,6 @@
 import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
 import { useAppContext } from "../contextHook";
-import { DELIVERY_FIRM_ADMIN_ID, DELIVERY_FIRM_ID, DELIVERY_FIRM_TOKEN } from "./deliveryFirmConstants";
+import { useDeliveryFirmAuthUnset } from "./deliveryFirmAuthStorageHook";
 
 export function useDeliveryFirmLogOut() {
 
@@ -8,13 +8,10 @@ export function useDeliveryFirmLogOut() {
     deliveryFirm: { deliveryFirmDispatch } 
   } = useAppContext();
 
-  return ()=> {
-    window.localStorage.removeItem(DELIVERY_FIRM_ID);
-    window.localStorage.removeItem(DELIVERY_FIRM_TOKEN);
-    window.localStorage.removeItem(DELIVERY_FIRM_ADMIN_ID);
+  const unauth = useDeliveryFirmAuthUnset();
 
+  return function() {
+    unauth();
     deliveryFirmDispatch({ type: DELIVERY_FIRM.UNAUTHED });
   }
-
 }
-

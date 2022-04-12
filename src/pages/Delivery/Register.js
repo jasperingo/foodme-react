@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { deliveryIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
@@ -12,7 +12,7 @@ import RegistrationAgreementLink from '../../components/form/RegistrationAgreeme
 import { useDeliveryFirmCreate } from '../../hooks/delivery_firm/deliveryFirmCreateHook';
 import { useHeader } from '../../hooks/headerHook';
 
-export default function Register({ guestMiddleware }) {
+export default function Register() {
 
   useHeader({ 
     title: 'Register delivery firm - DailyNeeds',
@@ -32,6 +32,7 @@ export default function Register({ guestMiddleware }) {
   const [
     onSubmit, 
     dialog, 
+    formSuccess,
     formError, 
     nameError, 
     emailError, 
@@ -40,6 +41,18 @@ export default function Register({ guestMiddleware }) {
     adminPasswordError
   ] = useDeliveryFirmCreate();
 
+  useEffect(
+    function() {
+      if (formSuccess !== null) {
+        nameInput.current.value = ''; 
+        emailInput.current.value = '';  
+        phoneInput.current.value = '';  
+        adminEmailInput.current.value = ''; 
+        adminPasswordInput.current.value = ''; 
+      }
+    },
+    [formSuccess]
+  );
 
   function onRegisterSubmit(e) {
     e.preventDefault();
@@ -50,24 +63,26 @@ export default function Register({ guestMiddleware }) {
       adminEmailInput.current.value,
       adminPasswordInput.current.value, 
 
-      nameInput.current.validity, 
-      emailInput.current.validity, 
-      phoneInput.current.validity, 
-      adminEmailInput.current.validity, 
-      adminPasswordInput.current.validity
+      { 
+        nameValidity: nameInput.current.validity, 
+        emailValidity: emailInput.current.validity, 
+        phoneValidity: phoneInput.current.validity,
+        adminEmailValidity: adminEmailInput.current.validity, 
+        adminPasswordValidity: adminPasswordInput.current.validity
+      }
     );
   }
 
-  return guestMiddleware() || (
+  return (
     <section>
 
       <div className="container-x">
 
         <form method="POST" action="" onSubmit={onRegisterSubmit} className="form-2-x" noValidate>
 
-          <AuthFormHeader icon={deliveryIcon} text="_user.Join_us" />
+          <AuthFormHeader icon={deliveryIcon} text="_delivery.Delivery_firm_register_note" />
 
-          <FormMessage error={formError} />
+          <FormMessage error={formError} success={formSuccess} />
 
           <div className="md:flex gap-4 items-start">
 

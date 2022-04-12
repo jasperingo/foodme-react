@@ -11,7 +11,7 @@ import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLi
 import { useDeliveryFirmLogin } from '../../hooks/delivery_firm/deliveryFirmLoginHook';
 import { useHeader } from '../../hooks/headerHook';
 
-export default function LogIn({ guestMiddleware }) {
+export default function LogIn({ redirectTo }) {
 
   useHeader({ 
     title: 'Log in delivery firm - DailyNeeds',
@@ -40,7 +40,7 @@ export default function LogIn({ guestMiddleware }) {
     );
   }
 
-  return guestMiddleware() || (
+  return (
     <section>
 
       <div className="container-x">

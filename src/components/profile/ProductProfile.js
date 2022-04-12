@@ -33,14 +33,14 @@ export default function ProductProfile(
     },
     favoriteCreateOnSubmit,
     favoriteCreateLoading,
-    favoriteCreateFormSuccess,
-    favoriteCreateFormError,
+    favoriteCreateFormSuccess = null,
+    favoriteCreateFormError = null,
     favoriteCreateResetSubmit,
 
     favoriteDeleteOnSubmit,
     favoriteDeleteLoading,
-    favoriteDeleteFormSuccess,
-    favoriteDeleteFormError,
+    favoriteDeleteFormSuccess = null,
+    favoriteDeleteFormError = null, 
     favoriteDeleteResetSubmit
   }
 ) {

@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
-import ProductDeleteForm from '../../components/form/ProductDeleteForm';
+import DeleteForm from '../../components/form/DeleteForm';
 import ProductForm from '../../components/form/ProductForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
@@ -75,7 +75,7 @@ export default function ProductUpdate() {
 
   const [
     onDeleteSubmit, 
-    deleteDialog, 
+    deleteLoading, 
     deleteFormSuccess, 
     deleteFormError
   ] = useProductDelete();
@@ -140,9 +140,11 @@ export default function ProductUpdate() {
               descriptionError={descriptionError}
               />
 
-            <ProductDeleteForm
-              onSubmit={onDeleteSubmit}
-              dialog={deleteDialog}
+            <DeleteForm 
+              confirmMessage="_product._product_delete_confirm"
+              onSubmit={onDeleteSubmit} 
+              dialog={deleteLoading}
+              formSuccess={deleteFormSuccess}
               formError={deleteFormError}
               />
           </>

@@ -1,9 +1,9 @@
 
 import React, { useEffect } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import AddressForm from '../../components/form/AddressForm';
-import AddressDeleteForm from '../../components/form/AddressDeleteForm';
 import { useLocationList } from '../../hooks/address/locationListHook';
 import { useAddressUpdate } from '../../hooks/address/addressUpdateHook';
 import { useAddressFetch } from '../../hooks/address/addressFetchHook';
@@ -11,12 +11,14 @@ import NotFound from '../../components/NotFound';
 import Forbidden from '../../components/Forbidden';
 import { useAddressDelete } from '../../hooks/address/addressDeleteHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useParams } from 'react-router-dom';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import DeleteForm from '../../components/form/DeleteForm';
 
 export default function AddressUpdate() {
 
   const { ID } = useParams();
+
+  const history = useHistory();
 
   const [
     fetchLocations,
@@ -77,6 +79,13 @@ export default function AddressUpdate() {
     [ID, address, addressError, addressID, fetchAddress, unfetchAddress]
   );
 
+  useEffect(
+    function() {
+      if (deleteFormSuccess !== null) history.push('/addresses');
+    }, 
+    [deleteFormSuccess, history]
+  );
+
   function retryLoad() {
     if (!locationsLoaded) fetchLocations();
     if (address === null) fetchAddress(ID);
@@ -105,13 +114,14 @@ export default function AddressUpdate() {
                 stateError={stateError}
                 defaultError={defaultError}
                 />
-                
-              <AddressDeleteForm 
-                onSubmit={deleteOnSubmit}
+
+              <DeleteForm 
+                confirmMessage="_user._address_delete_confirm"
+                onSubmit={deleteOnSubmit} 
                 dialog={deleteLoading}
-                formError={deleteFormError}
                 formSuccess={deleteFormSuccess}
-                />
+                formError={deleteFormError}
+              />
             </div>
           ) 
         }
