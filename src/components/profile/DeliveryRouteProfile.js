@@ -116,16 +116,19 @@ export default function DeliveryRouteProfile(
         details={details}
         />
 
-      <UserDescList 
-        users={[
-          {
-            href: isDelieryFirm ? '/profile' : `/delivery-firm/${delivery_firm.id}`,
-            photo: delivery_firm.user.photo.href,
-            name: delivery_firm.user.name,
-            title: '_delivery.Delivery_firm'
-          }
-        ]} 
-        />
+      {
+        !isDelieryFirm &&
+        <UserDescList 
+          users={[
+            {
+              href: isDelieryFirm ? '/profile' : `/delivery-firm/${delivery_firm.id}`,
+              photo: delivery_firm.user.photo.href,
+              name: delivery_firm.user.name,
+              title: '_delivery.Delivery_firm'
+            }
+          ]} 
+          />
+        }
 
       <div>
         <H4Heading text="_delivery.Delivery_durations" />

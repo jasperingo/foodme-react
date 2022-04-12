@@ -1,6 +1,6 @@
 
-import React from 'react';
-import ReviewList from '../../components/profile/section/ReviewList';
+import React, { useEffect } from 'react';
+import ReviewList from '../../components/list/ReviewList';
 import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
 import { useAppContext } from '../../hooks/contextHook';
 import { useDeliveryFirmReviewList } from '../../hooks/delivery_firm/deliveryFirmReviewListHook';
@@ -23,15 +23,25 @@ export default function Reviews() {
   });
   
   const [
+    fetchDeliveryFirmReviews,
     reviews, 
-    reviewsFetchStatus, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
     reviewsPage, 
-    reviewsNumberOfPages, 
-    refetch
+    reviewsNumberOfPages
   ] = useDeliveryFirmReviewList(deliveryFirmToken);
 
+  useEffect(
+    function() {
+      if (!reviewsLoaded && reviewsError === null) 
+        fetchDeliveryFirmReviews(deliveryFirm.id); 
+    },
+    [deliveryFirm.id, reviewsError, reviewsLoaded, fetchDeliveryFirmReviews]
+  );
+
   return (
-    <section className="flex-grow">
+    <section>
      {
         deliveryFirm.review_summary && 
         <div className="container-x">
@@ -40,12 +50,16 @@ export default function Reviews() {
       }
 
       <ReviewList 
-        reviews={reviews}
-        reviewsFetchStatus={reviewsFetchStatus}
+        single={false}
+        reviews={reviews} 
+        reviewsLoading={reviewsLoading}
+        reviewsLoaded={reviewsLoaded}
+        reviewsError={reviewsError}
         reviewsPage={reviewsPage}
         reviewsNumberOfPages={reviewsNumberOfPages}
-        refetch={refetch}
+        fetchReviews={()=> fetchDeliveryFirmReviews(deliveryFirm.id)}
         />
+
     </section>
   );
 }

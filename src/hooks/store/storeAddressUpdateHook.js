@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { STORE } from "../../context/actions/storeActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 import { useAddressValidation } from "../address/addressValidationHook";
@@ -57,9 +56,8 @@ export function useStoreAddressUpdate() {
       , 
       streetError, 
       stateError, 
-      cityError, 
-      ,
-    ] = validator({ valid: true }, streetValidity, stateValidity, cityValidity, { valid: true});
+      cityError
+    ] = validator({ valid: true }, streetValidity, stateValidity, cityValidity, { valid: true });
     
     setStreetError(streetError);
     setCityError(stateError);
@@ -79,9 +77,9 @@ export function useStoreAddressUpdate() {
         
         storeDispatch({
           type: STORE.FETCHED, 
-          payload: {
-            store: res.body.data, 
-            fetchStatus: FETCH_STATUSES.DONE 
+          payload: { 
+            id: String(store.id),
+            store: res.body.data 
           }
         });
 
@@ -114,7 +112,7 @@ export function useStoreAddressUpdate() {
     } catch {
       setFormError('_errors.Something_went_wrong');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 

@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import AddButton from '../../components/AddButton';
-import RouteList from '../../components/profile/section/RouteList';
+import RouteList from '../../components/list/RouteList';
 import { useAppContext } from '../../hooks/contextHook';
 import { useDeliveryFirmRouteList } from '../../hooks/delivery_firm/deliveryFirmRouteListHook';
 import { useHeader } from '../../hooks/headerHook';
@@ -23,12 +23,22 @@ export default function DeliveryRoutes() {
   });
 
   const [
+    fetchDeliveryFirmRoutes,
     routes, 
-    routesFetchStatus, 
+    routesLoading,
+    routesError,
+    routesLoaded,
     routesPage, 
-    routesNumberOfPages, 
-    refetch
+    routesNumberOfPages,
   ] = useDeliveryFirmRouteList(deliveryFirmToken);
+
+  useEffect(
+    function() {
+      if (!routesLoaded && routesError === null) 
+        fetchDeliveryFirmRoutes(deliveryFirm.id); 
+    },
+    [deliveryFirm.id, routesError, routesLoaded, fetchDeliveryFirmRoutes]
+  );
 
   return (
     <section>
@@ -48,10 +58,12 @@ export default function DeliveryRoutes() {
       
       <RouteList 
         routes={routes}
-        routesFetchStatus={routesFetchStatus}
         routesPage={routesPage}
+        routesError={routesError}
+        routesLoaded={routesLoaded}
+        routesLoading={routesLoading}
         routesNumberOfPages={routesNumberOfPages}
-        refetch={refetch}
+        fetchRoutes={()=> fetchDeliveryFirmRoutes(deliveryFirm.id)}
         />
 
     </section>

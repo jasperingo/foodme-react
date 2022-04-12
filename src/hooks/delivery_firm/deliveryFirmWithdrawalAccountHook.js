@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useWithdrawalAccountValidation } from "../bankHook";
 import { useAppContext } from "../contextHook";
 
@@ -17,9 +16,7 @@ export function useDeliveryFirmWithdrawalAccountUpdate() {
     } 
   } = useAppContext();
 
-  const [data, setData] = useState(null);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
@@ -33,73 +30,11 @@ export function useDeliveryFirmWithdrawalAccountUpdate() {
 
   const [typeError, setTypeError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
   const validator = useWithdrawalAccountValidation();
+
+  const api = useMemo(function() { return new DeliveryFirmRepository(deliveryFirmToken); }, [deliveryFirmToken]);
   
-  
-  const update = useCallback(
-    () => {
-      const api = new DeliveryFirmRepository(deliveryFirmToken);
-      
-      api.updateWithdrawalAccount(deliveryFirm.id, data)
-      .then(res=> {
-
-        if (res.status === 200) {
-
-          setFormSuccess(res.body.message);
-          
-          deliveryFirmDispatch({
-            type: DELIVERY_FIRM.FETCHED, 
-            payload: { 
-              deliveryFirm: res.body.data, 
-              fetchStatus: FETCH_STATUSES.DONE 
-            }
-          });
-
-        } else if (res.status === 400) {
-          
-          for (let error of res.body.data) {
-
-            switch(error.name) {
-
-              case 'bank_code':
-                setBankCodeError(error.message);
-                break;
-
-              case 'account_name':
-                setNameError(error.message);
-                break;
-
-              case 'account_number':
-                setNumberError(error.message);
-                break;
-
-              case 'account_type':
-                setTypeError(error.message);
-                break;
-
-              default:
-            }
-          }
-
-        } else {
-          throw new Error();
-        }
-
-      })
-      .catch(()=> {
-        setFetchStatus(FETCH_STATUSES.PENDING);
-        setFormError('_errors.Something_went_wrong');
-      })
-      .finally(()=> {
-        setFetchStatus(FETCH_STATUSES.PENDING);
-      });
-    }, 
-    [data, deliveryFirm.id, deliveryFirmToken, deliveryFirmDispatch]
-  );
-
-  function onSubmit(
+  async function onSubmit(
     bankCode, 
     accountName, 
     accountNumber, 
@@ -109,6 +44,13 @@ export function useDeliveryFirmWithdrawalAccountUpdate() {
     numberValidity, 
     typeValidity
   ) {
+
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
 
     setFormError(null);
     setFormSuccess(null);
@@ -126,31 +68,64 @@ export function useDeliveryFirmWithdrawalAccountUpdate() {
     setNumberError(numberError);
     setTypeError(typeError);
     
-    if (!window.navigator.onLine) {
-      setFormError('_errors.No_netowrk_connection');
-    } else if (!error) {
-      setDialog(true);
-      setData({
+    if (error) return;
+
+    setLoading(true);
+
+    try {
+
+      const res = await api.updateWithdrawalAccount(deliveryFirm.id, {
         bank_code: bankCode, 
         account_name: accountName, 
         account_number: accountNumber, 
         account_type: accountType,
       });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+     
+      if (res.status === 200) {
+
+        setFormSuccess(res.body.message);
+        
+        deliveryFirmDispatch({
+          type: DELIVERY_FIRM.FETCHED, 
+          payload: { deliveryFirm: res.body.data }
+        });
+
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'bank_code':
+              setBankCodeError(error.message);
+              break;
+
+            case 'account_name':
+              setNameError(error.message);
+              break;
+
+            case 'account_number':
+              setNumberError(error.message);
+              break;
+
+            case 'account_type':
+              setTypeError(error.message);
+              break;
+
+            default:
+          }
+        }
+
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        update();
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    }, 
-    [fetchStatus, dialog, update]
-  );
-
-  return [onSubmit, dialog, formError, formSuccess, bankCodeError, nameError, numberError, typeError];
+  return [onSubmit, loading, formError, formSuccess, bankCodeError, nameError, numberError, typeError];
 }
-

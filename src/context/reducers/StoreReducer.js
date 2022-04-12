@@ -345,7 +345,7 @@ export default function StoreReducer (state, action) {
       return {
         ...state,
         transactionsLoading: false,
-        transactionsFetchStatus: action.payload.error
+        transactionsError: action.payload.error
       };
     
     case TRANSACTION.LIST_FETCHED:

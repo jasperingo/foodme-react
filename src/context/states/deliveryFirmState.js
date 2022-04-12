@@ -37,19 +37,21 @@ const deliveryFirmState = {
 
   orders: [],
   ordersPage: 1,
-  ordersLoading: true,
+  ordersError: null,
+  ordersLoaded: false,
+  ordersLoading: false,
   ordersNumberOfPages: 0,
-  ordersFetchStatus: FETCH_STATUSES.LOADING,
 
   transactions: [],
   transactionsPage: 1,
-  transactionsLoading: true,
+  transactionsError: null,
+  transactionsLoaded: false,
+  transactionsLoading: false,
   transactionsNumberOfPages: 0,
-  transactionsFetchStatus: FETCH_STATUSES.LOADING,
 
   transactionBalance: null,
-  transactionBalanceLoading: true,
-  transactionBalanceFetchStatus: FETCH_STATUSES.LOADING,
+  transactionBalanceError: null,
+  transactionBalanceLoading: false
 
 };
 

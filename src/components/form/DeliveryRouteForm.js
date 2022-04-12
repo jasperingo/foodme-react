@@ -27,7 +27,6 @@ export default function DeliveryRouteForm(
 
   const [state, setState] = useState(deliveryRoute?.state);
 
-
   function onFormSubmit(e) {
     e.preventDefault();
     onSubmit(
@@ -35,9 +34,11 @@ export default function DeliveryRouteForm(
       cityInput.current.value,
       doorInput.current.value,
 
-      stateInput.current.validity,
-      cityInput.current.validity,
-      doorInput.current.validity
+      { 
+        stateValidity: stateInput.current.validity,
+        cityValidity: cityInput.current.validity,
+        doorDeliveryValidity: doorInput.current.validity 
+      }
     );
   }
 

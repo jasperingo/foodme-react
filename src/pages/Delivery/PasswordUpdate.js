@@ -13,7 +13,7 @@ export default function PasswordUpdate() {
 
   const [
     onSubmit,
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     newPasswordError, 
@@ -25,7 +25,7 @@ export default function PasswordUpdate() {
     <section>
       <div className="container-x">
         <PasswordUpdateForm 
-          dialog={dialog}
+          dialog={loading}
           onSubmit={onSubmit}
           formError={formError} 
           formSuccess={formSuccess}

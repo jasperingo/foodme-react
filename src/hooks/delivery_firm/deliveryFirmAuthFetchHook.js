@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 import { useMessageFetch } from "../message/messageFetchHook";
 import { useMessageUnreceivedCountFetch } from "../message/messageUnreceivedCountFetchHook";
-import { DELIVERY_FIRM_ADMIN_ID, DELIVERY_FIRM_ID, DELIVERY_FIRM_TOKEN } from "./deliveryFirmConstants";
-
+import { useDeliveryFirmAuthGet, useDeliveryFirmAuthUnset } from "./deliveryFirmAuthStorageHook";
 
 export function useDeliveryFirmAuthFetch() {
 
@@ -18,64 +17,65 @@ export function useDeliveryFirmAuthFetch() {
 
   const messageCount = useMessageUnreceivedCountFetch();
 
-  const [done, setDone] = useState(FETCH_STATUSES.LOADING);
+  const unsetAuth = useDeliveryFirmAuthUnset();
 
-  const retry = useCallback(() => setDone(FETCH_STATUSES.LOADING), []);
+  const [deliveryFirmId, deliveryFirmToken, deliveryFirmAdminID] = useDeliveryFirmAuthGet();
+
+  const [error, setError] = useState(null);
+
+  const [success, setSuccess] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const api = useMemo(function() { return new DeliveryFirmRepository(deliveryFirmToken); }, [deliveryFirmToken]);
   
-  useEffect(
-    ()=> {
-      const deliveryFirmId = window.localStorage.getItem(DELIVERY_FIRM_ID);
-      const deliveryFirmToken = window.localStorage.getItem(DELIVERY_FIRM_TOKEN);
-      const deliveryFirmAdminID = window.localStorage.getItem(DELIVERY_FIRM_ADMIN_ID);
+  const fetchDeliveryFirm = useCallback(
+    async function() {
 
-      if (done === FETCH_STATUSES.LOADING && deliveryFirmId !== null && deliveryFirmToken !== null && !window.navigator.onLine) {
+      if (loading) return;
+      
+      if (!window.navigator.onLine) {
+        setError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+        return;
+      }
 
-        setDone(FETCH_STATUSES.ERROR);
+      setLoading(true);
 
-      } else if (done === FETCH_STATUSES.LOADING && deliveryFirmId !== null && deliveryFirmToken !== null) {
-        
-        const api = new DeliveryFirmRepository(deliveryFirmToken);
+      try {
 
-        api.get(deliveryFirmId)
-        .then(res=> {
+        const res = await api.get(deliveryFirmId);
+
+        if (res.status === 200) {
           
-          if (res.status === 200) {
-            
-            deliveryFirmDispatch({
-              type: DELIVERY_FIRM.AUTHED, 
-              payload: { 
-                token: deliveryFirmToken, 
-                adminID: deliveryFirmAdminID,
-                deliveryFirm: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
+          deliveryFirmDispatch({
+            type: DELIVERY_FIRM.AUTHED, 
+            payload: { 
+              token: deliveryFirmToken, 
+              adminID: deliveryFirmAdminID,
+              deliveryFirm: res.body.data
+            }
+          });
+          
+          messageCount(deliveryFirmToken);
+          
+          newMessage(deliveryFirmToken, res.body.data.user.id);
 
-            setDone(FETCH_STATUSES.DONE);
+          setSuccess(true);
 
-            messageCount(deliveryFirmToken);
+        } else if (res.status === 401) {
+          unsetAuth();
+        } else {
+          throw new Error();
+        }
 
-            newMessage(deliveryFirmToken, res.body.data.user.id);
-
-          } else if (res.status === 401) {
-            window.localStorage.removeItem(DELIVERY_FIRM_ID);
-            window.localStorage.removeItem(DELIVERY_FIRM_TOKEN);
-            window.localStorage.removeItem(DELIVERY_FIRM_ADMIN_ID);
-            setDone(FETCH_STATUSES.DONE);
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          setDone(FETCH_STATUSES.ERROR);
-        });
-
-      } else if (done === FETCH_STATUSES.LOADING && (deliveryFirmId === null || deliveryFirmToken === null)) {
-        setDone(FETCH_STATUSES.DONE);
+      } catch(error) {
+        setError(NetworkErrorCodes.UNKNOWN_ERROR);
+      } finally {
+        setLoading(false);
       }
     },
-    [done, deliveryFirmDispatch, messageCount, newMessage]
-  )
+    [api, loading, deliveryFirmAdminID, deliveryFirmId, deliveryFirmToken, deliveryFirmDispatch, unsetAuth, messageCount, newMessage]
+  );
   
-  return [done, retry];
+  return [deliveryFirmId, fetchDeliveryFirm, success, error];
 }

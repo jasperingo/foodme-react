@@ -22,7 +22,7 @@ export default function WorkingHoursUpdate() {
 
   const [
     onSubmit, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess
   ] = useDeliveryFirmWorkingHoursUpdate();
@@ -33,7 +33,7 @@ export default function WorkingHoursUpdate() {
         <WorkingHoursForm 
           workingHours={deliveryFirm.user.working_hours} 
           onSubmit={onSubmit} 
-          dialog={dialog}
+          dialog={loading}
           formError={formError}
           formSuccess={formSuccess}
           />

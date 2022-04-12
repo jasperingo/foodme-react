@@ -1,10 +1,11 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
 import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import FormPhotoField from '../../components/form/FormPhotoField';
+import { useDeliveryFirmPhotoUpdate } from '../../hooks/delivery_firm/deliveryFirmPhotoUpdateHook';
 import { useDeliveryFirmUpdate } from '../../hooks/delivery_firm/deliveryFirmUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
 
@@ -17,23 +18,41 @@ export default function Profile() {
   const phoneInput = useRef(null);
 
   const [
-    onSubmit,
-    onPhotoChoose,
-    photoUploaded,
-    deliveryFirm,
-    dialog, 
+    onSubmit,  
+    deliveryFirm, 
+    loading, 
+    success,
+    setSuccess,
     formError, 
     formSuccess, 
-    nameError,  
+    nameError, 
     emailError, 
     phoneError
   ] = useDeliveryFirmUpdate();
+
+  const [
+    photoSubmit,
+    photo,
+    setPhoto,
+    photoLoading,
+    photoUploaded,
+    photoFormError
+  ] = useDeliveryFirmPhotoUpdate();
 
   useHeader({ 
     title: `${deliveryFirm.user.name} - Profile`,
     headerTitle: "_user.Profile"
   });
   
+  useEffect(
+    function() {
+      if (success && photo !== null && !photoUploaded && photoFormError === null)
+        photoSubmit();
+      else if (success) 
+        setSuccess(false);
+    }, 
+    [success, photo, photoUploaded, photoFormError, photoSubmit, setSuccess]
+  );
   
   function updateProfile(e) {
     e.preventDefault();
@@ -42,9 +61,11 @@ export default function Profile() {
       emailInput.current.value, 
       phoneInput.current.value,
 
-      nameInput.current.validity, 
-      emailInput.current.validity, 
-      phoneInput.current.validity
+      { 
+        nameValidity: nameInput.current.validity, 
+        emailValidity: emailInput.current.validity, 
+        phoneValidity: phoneInput.current.validity
+      }
     );
   }
 
@@ -56,15 +77,15 @@ export default function Profile() {
         <form method="POST" action="" className="form-1-x" onSubmit={updateProfile}>
 
           <FormMessage 
-            error={formError} 
             success={formSuccess} 
+            error={formError || photoFormError} 
             /> 
 
           <FormPhotoField 
             alt={deliveryFirm.user.name} 
             src={deliveryFirm.user.photo.href} 
             text="_extra.Edit_photo" 
-            onChoose={onPhotoChoose}
+            onChoose={setPhoto}
             uploaded={photoUploaded}
             />
 
@@ -103,7 +124,7 @@ export default function Profile() {
 
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { (loading || photoLoading) && <LoadingDialog /> }
 
     </section>
   );

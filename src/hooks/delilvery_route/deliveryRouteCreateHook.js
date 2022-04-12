@@ -1,8 +1,8 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import DeliveryRouteRepository from "../../repositories/DeliveryRouteRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useDeliveryRouteValidation } from "./deliveryRouteValidationHook";
 
 export function useDeliveryRouteCreate() {
 
@@ -16,9 +16,7 @@ export function useDeliveryRouteCreate() {
 
   const [id, setId] = useState(0);
 
-  const [data, setData] = useState(null);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
@@ -30,116 +28,78 @@ export function useDeliveryRouteCreate() {
 
   const [doorDeliveryError, setDoorDeliveryError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const validator = useDeliveryRouteValidation();
 
-  function onSubmit(
-    state,
-    city,
-    door_delivery,
+  const api = useMemo(function() { return new DeliveryRouteRepository(deliveryFirmToken); }, [deliveryFirmToken]);
 
-    stateValidity,
-    cityValidity,
-    doorDeliveryValidity,
-  ) {
+  async function onSubmit(state, city, door_delivery, validity) {
     
-    setFormError(null);
-    setFormSuccess(null);
+    if (loading) return;
     
-    let error = false;
-    
-    if (!stateValidity.valid) {
-      error = true;
-      setStateError('_errors.This_field_is_required');
-    } else {
-      setStateError('');
-    }
-
-    if (!cityValidity.valid) {
-      error = true;
-      setCityError('_errors.This_field_is_required');
-    } else {
-      setCityError('');
-    }
-    
-    if (!doorDeliveryValidity.valid) {
-      error = true;
-      setDoorDeliveryError('_errors.This_field_is_required');
-    } else {
-      setDoorDeliveryError('');
-    }
-
     if (!window.navigator.onLine) {
       setFormError('_errors.No_netowrk_connection');
-    } else if (!error) {
-      setDialog(true);
-      setData({ state, city, door_delivery });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      return;
+    }
+
+    setFormError(null);
+    
+    const [error, stateError, cityError, doorDelivevryError] = validator(validity);
+    
+    setStateError(stateError);
+    setCityError(cityError);
+    setDoorDeliveryError(doorDelivevryError);
+    
+    if (error) return;
+
+    setLoading(true);
+
+    try {
+
+      const res = await api.create({ state, city, door_delivery });
+
+      if (res.status === 201) {
+        
+        setFormSuccess(res.body.message);
+        
+        setId(res.body.data.id);
+        
+      } else if (res.status === 400) {
+
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'state':
+              setStateError(error.message);
+              break;
+
+            case 'city':
+              setCityError(error.message);
+              break;
+
+            case 'door_delivery':
+              setDoorDeliveryError(error.message);
+              break;
+
+            default:
+          }
+        }
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
   
-  useEffect(
-    ()=> {
-     
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new DeliveryRouteRepository(deliveryFirmToken);
-
-        api.create(data)
-        .then(res=> {
-
-          if (res.status === 201) {
-            
-            setFormSuccess(res.body.message);
-            
-            setId(res.body.data.id);
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-            
-          } else if (res.status === 400) {
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-            
-            for (let error of res.body.data) {
-
-              switch(error.name) {
-
-                case 'state':
-                  setStateError(error.message);
-                  break;
-
-                case 'city':
-                  setCityError(error.message);
-                  break;
-
-                case 'door_delivery':
-                  setDoorDeliveryError(error.message);
-                  break;
-
-                default:
-              }
-            }
-
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          setFormError('_errors.Something_went_wrong');
-        });
-
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    }, 
-    [fetchStatus, dialog, deliveryFirmToken, data]
-  );
-
   return [
     onSubmit, 
     id, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     stateError, 

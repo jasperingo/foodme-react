@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AdminRepository from "../../repositories/AdminRepository";
 import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdatePasswordValidation } from "../validation/passwordValidationHook";
+import { useUpdatePasswordValidation } from "../passwordValidationHook";
 
 export function useAdminPasswordUpdate() {
 

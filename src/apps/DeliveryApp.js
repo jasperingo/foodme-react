@@ -1,13 +1,11 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { routeIcon, orderIcon, messageIcon, deliveryIcon, walletIcon } from '../assets/icons';
 import Footer from '../components/Footer';
 import Header from '../components/header/Header';
 import { useAppContext } from '../hooks/contextHook';
-import { useURLQuery } from '../hooks/viewHook';
 import { useDeliveryFirmAuthFetch } from '../hooks/delivery_firm/deliveryFirmAuthFetchHook';
-import { FETCH_STATUSES } from '../repositories/Fetch';
 import Splash from '../pages/Splash';
 import LogIn from '../pages/Delivery/LogIn';
 import Register from '../pages/Delivery/Register';
@@ -21,7 +19,7 @@ import PasswordUpdate from '../pages/Delivery/PasswordUpdate';
 import Wallet from '../pages/Delivery/Wallet';
 import Transaction from '../pages/Transaction';
 import Orders from '../pages/Delivery/Orders';
-import Order from '../pages/Delivery/Order';
+import Order from '../pages/Order';
 import DeliveryRoutes from '../pages/Delivery/DeliveryRoutes';
 import DeliveryRoute from '../pages/Delivery/DeliveryRoute';
 import DeliveryRouteCreate from '../pages/Delivery/DeliveryRouteCreate';
@@ -67,17 +65,20 @@ export default function DeliveryApp() {
 
   const location = useLocation();
 
-  const redirectTo = useURLQuery().get('redirect_to');
+  const redirectTo = new URLSearchParams().get('redirect_to')  ?? '/delivery-routes';
 
-  const [authDone, retry] = useDeliveryFirmAuthFetch();
+  const [deliveryFirmId, fetchDeliveryFirm, success, error] = useDeliveryFirmAuthFetch();
 
-  if (authDone !== FETCH_STATUSES.DONE) {
-    return (
-      <Splash 
-        onRetry={retry} 
-        error={authDone === FETCH_STATUSES.ERROR}
-        />
-    );
+  useEffect(
+    function() {
+      if (deliveryFirmId !== null && error === null && !success)
+        fetchDeliveryFirm();
+    },
+    [deliveryFirmId, error, success, fetchDeliveryFirm]
+  );
+
+  if (deliveryFirmId !== null && !success) {
+    return <Splash onRetry={fetchDeliveryFirm} error={error} />;
   }
 
   function authMiddleware() {
@@ -85,7 +86,7 @@ export default function DeliveryApp() {
   }
 
   function guestMiddleware() {
-    return deliveryFirm === null ? null : <Redirect to={redirectTo ?? '/delivery-routes'} />
+    return deliveryFirm === null ? null : <Redirect to={redirectTo} />
   }
 
   return (
@@ -116,7 +117,7 @@ export default function DeliveryApp() {
           <Route path="/delivery-route/create" render={()=> authMiddleware() || <DeliveryRouteCreate />} />
           <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
           <Route path="/delivery-routes" render={()=> authMiddleware() || <DeliveryRoutes />} />
-          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order userToken={deliveryFirmToken} isDeliveryFirm={true} />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={deliveryFirmToken} canCancel={true} />} />
           <Route path="/wallet" render={()=> authMiddleware() || <Wallet />} />
@@ -129,11 +130,10 @@ export default function DeliveryApp() {
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=>  guestMiddleware() || <Register guestMiddleware={guestMiddleware} />} /> 
           <Route path="/login" render={()=>  guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} /> 
-          <Route path="/" render={()=>  guestMiddleware() || <Home />} /> 
+          <Route path="/" render={()=> guestMiddleware() || <Home />} /> 
         </Switch>
       </main>
       <Footer />
     </>
   );
 }
-

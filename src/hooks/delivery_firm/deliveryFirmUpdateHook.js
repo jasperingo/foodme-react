@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
+import { useDeliveryFirmUpdateValidation } from "./deliveryFirmValidationHook";
 
 export function useDeliveryFirmUpdate() {
 
@@ -16,13 +16,9 @@ export function useDeliveryFirmUpdate() {
     } 
   } = useAppContext();
 
-  const [data, setData] = useState(null);
-  
-  const [photo, setPhoto] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const [photoUploaded, setPhotoUploaded] = useState(false);
-
-  const [dialog, setDialog] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
@@ -34,184 +30,95 @@ export function useDeliveryFirmUpdate() {
 
   const [phoneError, setPhoneError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-  
+  const validator = useDeliveryFirmUpdateValidation();
 
-  const uploadPhoto = useCallback(
-    () => {
-      const form = new FormData();
-      form.append('photo', photo);
-      
-      const api = new DeliveryFirmRepository(deliveryFirmToken, null);
+  const api = useMemo(function() { return new DeliveryFirmRepository(deliveryFirmToken); }, [deliveryFirmToken]);
+
+  async function onSubmit(name, email, phone_number, validity) {
+
+    if (loading) return;
     
-      api.updatePhoto(deliveryFirm.id, form)
-
-      .then(res=> {
-        
-        if (res.status === 200) {
-
-          setFormSuccess(res.body.message);
-          
-          deliveryFirmDispatch({
-            type: DELIVERY_FIRM.FETCHED, 
-            payload: { 
-              deliveryFirm: res.body.data, 
-              fetchStatus: FETCH_STATUSES.DONE 
-            }
-          });
-
-          setPhotoUploaded(true);
-
-        } else if (res.status === 400) {
-          
-          setFetchStatus(FETCH_STATUSES.PENDING);
-
-          const error = res.body.data[0];
-          
-          if (error.name === 'photo') setFormError(error.message);
-
-        } else {
-          throw new Error();
-        }
-
-      })
-      .catch(()=> {
-        setFormError('_errors.Something_went_wrong');
-      })
-      .finally(()=> {
-        setFetchStatus(FETCH_STATUSES.PENDING);
-      });
-    }, 
-    [deliveryFirm.id, deliveryFirmToken, deliveryFirmDispatch, photo]
-  );
-  
-  const update = useCallback(
-    () => {
-      const api = new DeliveryFirmRepository(deliveryFirmToken);
-      
-      api.update(deliveryFirm.id, data)
-      .then(res=> {
-
-        if (res.status === 200) {
-
-          setFormSuccess(res.body.message);
-          
-          deliveryFirmDispatch({
-            type: DELIVERY_FIRM.FETCHED, 
-            payload: { 
-              deliveryFirm: res.body.data, 
-              fetchStatus: FETCH_STATUSES.DONE 
-            }
-          });
-
-          if (photo !== null) {
-            uploadPhoto();
-          } else {
-            setFetchStatus(FETCH_STATUSES.PENDING);
-          }
-
-        } else if (res.status === 400) {
-          
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          
-          for (let error of res.body.data) {
-
-            switch(error.name) {
-
-              case 'name':
-                setNameError(error.message);
-                break;
-
-              case 'email':
-                setEmailError(error.message);
-                break;
-
-              case 'phone_number':
-                setPhoneError(error.message);
-                break;
-
-              default:
-            }
-          }
-
-        } else {
-          throw new Error();
-        }
-
-      })
-      .catch(()=> {
-        setFetchStatus(FETCH_STATUSES.PENDING);
-        setFormError('_errors.Something_went_wrong');
-      });
-    }, 
-    [data, photo, deliveryFirm, deliveryFirmToken, deliveryFirmDispatch, uploadPhoto]
-  );
-
-  function onPhotoChoose(photo) {
-    setPhoto(photo);
-    setPhotoUploaded(false);
-  }
-
-  function onSubmit(
-    name, 
-    email, 
-    phone_number,
-
-    nameValidity, 
-    emailValidity, 
-    phoneValidity
-  ) {
-
-    let error = false;
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
 
     setFormError(null);
     setFormSuccess(null);
     
-    if (!nameValidity.valid) {
-      error = true;
-      setNameError('_errors.This_field_is_required');
-    } else {
-      setNameError('');
-    }
-
-    if (!emailValidity.valid) {
-      error = true;
-      setEmailError('_errors.This_field_is_required');
-    } else {
-      setEmailError('');
-    }
-
-    if (!phoneValidity.valid) {
-      error = true;
-      setPhoneError('_errors.This_field_is_required');
-    } else {
-      setPhoneError('');
-    }
+    const [
+      error, 
+      nameError, 
+      emailError, 
+      phoneError, 
+    ] = validator(validity);
     
-    if (!error) {
-      setDialog(true);
-      setData({ name, email, phone_number });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+    setNameError(nameError);
+    setEmailError(emailError);
+    setPhoneError(phoneError);
+    
+    if (error) return;
+
+    setLoading(true);
+
+    try {
+
+      const res = await api.update(deliveryFirm.id, {
+        email,
+        phone_number,
+        name
+      });
+
+      if (res.status === 200) {
+
+        setFormSuccess(res.body.message);
+        
+        deliveryFirmDispatch({
+          type: DELIVERY_FIRM.FETCHED, 
+          payload: { deliveryFirm: res.body.data }
+        });
+
+        setSuccess(true);
+
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'name':
+              setNameError(error.message);
+              break;
+
+            case 'email':
+              setEmailError(error.message);
+              break;
+
+            case 'phone_number':
+              setPhoneError(error.message);
+              break;
+
+            default:
+          }
+        }
+
+      } else {
+        throw new Error();
+      }
+
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        update();
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    }, 
-    [fetchStatus, dialog, update]
-  );
-  
   return [
-    onSubmit, 
-    onPhotoChoose, 
-    photoUploaded, 
+    onSubmit,  
     deliveryFirm, 
-    dialog, 
+    loading, 
+    success,
+    setSuccess,
     formError, 
     formSuccess, 
     nameError, 

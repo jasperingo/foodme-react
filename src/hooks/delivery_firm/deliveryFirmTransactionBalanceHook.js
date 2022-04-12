@@ -1,10 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { getTransactionBalanceFetchStatusAction, TRANSACTION } from "../../context/actions/transactionActions";
+import { useCallback, useMemo } from "react";
+import { TRANSACTION } from "../../context/actions/transactionActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-
 
 export function useDeliveryFirmTransactionBalance(userToken) {
 
@@ -12,73 +12,72 @@ export function useDeliveryFirmTransactionBalance(userToken) {
     deliveryFirm: { 
       deliveryFirmDispatch,
       deliveryFirm: {
-        deliveryFirm,
         transactionBalance,
         transactionBalanceLoading,
-        transactionBalanceFetchStatus
+        transactionBalanceError
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (transactionBalanceFetchStatus !== FETCH_STATUSES.LOADING) 
-        deliveryFirmDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [deliveryFirmDispatch, transactionBalanceFetchStatus]
-  );
+  const api = useMemo(function() { return new DeliveryFirmRepository(userToken); }, [userToken]);
+
+  function refreshDeliveryFirmTransactionBalance() {
+    deliveryFirmDispatch({ type: TRANSACTION.BALANCE_UNFETCHED });
+  }
   
-  useEffect(
-    ()=> {
-      if (transactionBalanceLoading && transactionBalanceFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchDeliveryFirmTransactionBalance = useCallback(
+    async function(ID) {
 
-        deliveryFirmDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (transactionBalanceLoading) return;
+      
+      if (!window.navigator.onLine) {
+        deliveryFirmDispatch({
+          type: TRANSACTION.BALANCE_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
-      } else if (transactionBalanceLoading && transactionBalanceFetchStatus === FETCH_STATUSES.LOADING) {
-        
-        deliveryFirmDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      deliveryFirmDispatch({ type: TRANSACTION.BALANCE_FETCHING });
+      
+      try {
 
-        const api = new DeliveryFirmRepository(userToken);
-        api.getTransactionBalance(deliveryFirm.id)
-        .then(res=> {
+        const res = await api.getTransactionBalance(ID);
           
           if (res.status === 200) {
             
             deliveryFirmDispatch({
               type: TRANSACTION.BALANCE_FETCHED, 
-              payload: {
-                balance: res.body.data.balance, 
-                fetchStatus: FETCH_STATUSES.DONE
-              }
+              payload: { balance: res.body.data.balance }
             });
 
           } else if (res.status === 404) {
-
-            deliveryFirmDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
+            throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
           } else if (res.status === 403) {
-
-            deliveryFirmDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-
+            throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
           } else {
             throw new Error();
           }
-        })
-        .catch(()=> {
-          deliveryFirmDispatch(getTransactionBalanceFetchStatusAction(FETCH_STATUSES.ERROR, false));
-        });
+
+        } catch(error) {
+          deliveryFirmDispatch({
+            type: TRANSACTION.BALANCE_ERROR_CHANGED,
+            payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
+          });
       }
     },
     [
-      deliveryFirm.id,
-      transactionBalanceLoading, 
-      transactionBalanceFetchStatus, 
-      userToken, 
+      api,
+      transactionBalanceLoading,
       deliveryFirmDispatch
     ]
   );
 
-  return [transactionBalance, transactionBalanceFetchStatus, refetch];
+  return [
+    fetchDeliveryFirmTransactionBalance,
+    transactionBalance, 
+    transactionBalanceLoading,
+    transactionBalanceError,
+    refreshDeliveryFirmTransactionBalance
+  ];
 }
-
-

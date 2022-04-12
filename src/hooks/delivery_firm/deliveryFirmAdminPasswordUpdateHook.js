@@ -1,9 +1,8 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import AdminRepository from "../../repositories/AdminRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdatePasswordValidation } from "../validation/passwordValidationHook";
+import { useUpdatePasswordValidation } from "../passwordValidationHook";
 
 export function useDeliveryFirmAdminPasswordUpdate() {
 
@@ -16,9 +15,7 @@ export function useDeliveryFirmAdminPasswordUpdate() {
     } 
   } = useAppContext();
 
-  const [data, setData] = useState(false);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState('');
 
@@ -28,16 +25,23 @@ export function useDeliveryFirmAdminPasswordUpdate() {
 
   const [currentPasswordError, setCurrentPasswordError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const api = useMemo(function() { return new AdminRepository(deliveryFirmToken); }, [deliveryFirmToken]);
 
   const validator = useUpdatePasswordValidation();
 
-  function onSubmit(
+  async function onSubmit(
     currentPassword,
     newPassword,
     currentPasswordValidity,
     newPasswordValidity
   ) {
+
+    if (loading) return;
+
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
 
     setFormError('');
     setFormSuccess('');
@@ -51,68 +55,49 @@ export function useDeliveryFirmAdminPasswordUpdate() {
     setNewPasswordError(newPasswordError);
     setCurrentPasswordError(currentPasswordError);
 
-    if (!error) {
-      setDialog(true);
-      setData({
+    if (error) return;
+
+    setLoading(true);
+
+    try {
+      const res = await api.updateDeliveryFirmPassword(deliveryFirmAdminID, {
         password: currentPassword,
         new_password: newPassword,
         new_password_confirmation: newPassword
       });
-      setFetchStatus(FETCH_STATUSES.LOADING);
-    }
-  }
-  
-  useEffect(
-    ()=> {
-
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-
-        const api = new AdminRepository(deliveryFirmToken);
-
-        api.updateDeliveryFirmPassword(deliveryFirmAdminID, data)
-        .then(res=> {
           
-          if (res.status === 200) {
+      if (res.status === 200) {
 
-            setFormSuccess(res.body.message);
-  
-          } else if (res.status === 400) {
-            
-            for (let error of res.body.data) {
-  
-              switch(error.name) {
-  
-                case 'password':
-                  setCurrentPasswordError(error.message);
-                  break;
-  
-                case 'new_password':
-                  setNewPasswordError(error.message);
-                  break;
-  
-                default:
-              }
-            }
-  
-          } else {
-            throw new Error();
+        setFormSuccess(res.body.message);
+
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'password':
+              setCurrentPasswordError(error.message);
+              break;
+
+            case 'new_password':
+              setNewPasswordError(error.message);
+              break;
+
+            default:
           }
-    
-        })
-        .catch(()=> {
-          setFormError('_errors.Something_went_wrong');
-        })
-        .finally(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-        });
+        }
 
-      } else if (dialog !== false) {
-        setDialog(false);
+      } else {
+        throw new Error();
       }
 
-    }, 
-    [data, deliveryFirmAdminID, deliveryFirmToken, fetchStatus, dialog]
-  );
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  return [onSubmit, dialog, formError, formSuccess, newPasswordError, currentPasswordError];
+  return [onSubmit, loading, formError, formSuccess, newPasswordError, currentPasswordError];
 }

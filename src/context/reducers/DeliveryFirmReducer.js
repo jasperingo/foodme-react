@@ -22,8 +22,7 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
         ...state,
         deliveryFirmToken: payload.token,
         deliveryFirm: payload.deliveryFirm,
-        deliveryFirmAdminID: payload.adminID,
-        deliveryFirmFetchStatus: payload.fetchStatus
+        deliveryFirmAdminID: payload.adminID
       };
     
     case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED:
@@ -141,109 +140,149 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
       };
 
 
-      case REVIEW.LIST_UNFETCHED:
-        return {
-          ...state,
-          reviews: deliveryFirmState.reviews,
-          reviewsPage: deliveryFirmState.reviewsPage,
-          reviewsError: deliveryFirmState.reviewsError,
-          reviewsLoaded: deliveryFirmState.reviewsLoaded,
-          reviewsLoading: deliveryFirmState.reviewsLoading,
-          reviewsNumberOfPages: deliveryFirmState.reviewsNumberOfPages
-        };
-  
-      case REVIEW.LIST_FETCHING:
-        return {
-          ...state,
-          reviewsError: null,
-          reviewsLoading: true
-        };
-  
-      case REVIEW.LIST_ERROR_CHANGED:
-        return {
-          ...state,
-          reviewsLoading: false,
-          reviewsError: payload.error
-        };
-  
-      case REVIEW.LIST_FETCHED:
-        return {
-          ...state,
-          reviewsLoaded: true,
-          reviewsLoading: false,
-          reviewsPage: state.reviewsPage + 1,
-          reviewsNumberOfPages: payload.numberOfPages,
-          reviews: [...state.reviews, ...payload.list],
-        };
-        
-
-    case ORDER.LIST_UNFETCHED:
-    case ORDER.LIST_STATUS_FILTER_CHANGED:
+    case REVIEW.LIST_UNFETCHED:
       return {
         ...state,
-        ordersPage: 1,
-        ordersLoading: true,
-        ordersNumberOfPages: 0,
-        orders: deliveryFirmState.orders,
-        ordersFetchStatus: deliveryFirmState.ordersFetchStatus,
+        reviews: deliveryFirmState.reviews,
+        reviewsPage: deliveryFirmState.reviewsPage,
+        reviewsError: deliveryFirmState.reviewsError,
+        reviewsLoaded: deliveryFirmState.reviewsLoaded,
+        reviewsLoading: deliveryFirmState.reviewsLoading,
+        reviewsNumberOfPages: deliveryFirmState.reviewsNumberOfPages
       };
 
-    case ORDER.LIST_FETCH_STATUS_CHANGED:
+    case REVIEW.LIST_FETCHING:
       return {
         ...state,
-        ordersLoading: payload.loading,
-        ordersFetchStatus: payload.fetchStatus,
+        reviewsError: null,
+        reviewsLoading: true
+      };
+
+    case REVIEW.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        reviewsLoading: false,
+        reviewsError: payload.error
+      };
+
+    case REVIEW.LIST_FETCHED:
+      return {
+        ...state,
+        reviewsLoaded: true,
+        reviewsLoading: false,
+        reviewsPage: state.reviewsPage + 1,
+        reviewsNumberOfPages: payload.numberOfPages,
+        reviews: [...state.reviews, ...payload.list],
+      };
+      
+
+    case ORDER.LIST_UNFETCHED:
+      return {
+        ...state,
+        orders: deliveryFirmState.orders,
+        ordersPage: deliveryFirmState.ordersPage,
+        ordersError: deliveryFirmState.ordersError,
+        ordersLoaded: deliveryFirmState.ordersLoaded,
+        ordersLoading: deliveryFirmState.ordersLoading,
+        ordersNumberOfPages: deliveryFirmState.ordersNumberOfPages
+      };
+    
+    case ORDER.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        ordersLoading: false,
+        ordersError: payload.error
+      };
+    
+    case ORDER.LIST_FETCHING:
+      return {
+        ...state,
+        ordersError: null,
+        ordersLoading: true
       };
       
     case ORDER.LIST_FETCHED:
       return {
         ...state,
+        ordersLoaded: true,
         ordersLoading: false,
-        ordersPage: state.ordersPage+1,
-        ordersFetchStatus: payload.fetchStatus,
+        ordersPage: state.ordersPage + 1,
         ordersNumberOfPages: payload.numberOfPages,
         orders: [...state.orders, ...payload.list],
       };
-  
-    case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
+    
+    
+    case TRANSACTION.LIST_UNFETCHED:
       return {
         ...state,
-        transactionsLoading: payload.loading,
-        transactionsFetchStatus: payload.fetchStatus
+        transactions: deliveryFirmState.transactions,
+        transactionsPage: deliveryFirmState.transactionsPage,
+        transactionsError: deliveryFirmState.transactionsError,
+        transactionsLoaded: deliveryFirmState.transactionsLoaded,
+        transactionsLoading: deliveryFirmState.transactionsLoading,
+        transactionsNumberOfPages: deliveryFirmState.transactionsNumberOfPages
+      };
+
+    case TRANSACTION.LIST_FETCHING:
+      return {
+        ...state,
+        transactionsError: null,
+        transactionsLoading: true
+      };
+
+    case TRANSACTION.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        transactionsLoading: false,
+        transactionsError: payload.error
       };
     
     case TRANSACTION.LIST_FETCHED:
       return {
         ...state,
+        transactionsLoaded: true,
         transactionsLoading: false,
-        transactionsPage: state.transactionsPage+1,
-        transactionsFetchStatus: payload.fetchStatus,
+        transactionsPage: state.transactionsPage + 1,
         transactionsNumberOfPages: payload.numberOfPages,
         transactions: [...state.transactions, ...payload.list],
       };
 
+
     case TRANSACTION.BALANCE_UNFETCHED:
       return {
         ...state,
-        transactionBalanceLoading: true,
         transactionBalance: deliveryFirmState.transactionBalance,
-        transactionBalanceFetchStatus: deliveryFirmState.transactionBalanceFetchStatus
+        transactionBalanceError: deliveryFirmState.transactionBalanceError,
+        transactionBalanceLoading: deliveryFirmState.transactionBalanceLoading,
       };
 
-    case TRANSACTION.BALANCE_FETCH_STATUS_CHANGED:
+    case TRANSACTION.BALANCE_FETCHING:
       return {
         ...state,
-        transactionBalanceLoading: payload.loading,
-        transactionBalanceFetchStatus: payload.fetchStatus
+        transactionBalanceError: null,
+        transactionBalanceLoading: true
       };
+
+      case TRANSACTION.BALANCE_ERROR_CHANGED:
+        return {
+          ...state,
+          transactionBalanceLoading: false,
+          transactionBalanceError: payload.error
+        };
     
     case TRANSACTION.BALANCE_FETCHED:
       return {
         ...state,
         transactionBalanceLoading: false,
-        transactionBalance: payload.balance,
-        transactionBalanceFetchStatus: payload.fetchStatus
+        transactionBalance: payload.balance
       };
+
+    case TRANSACTION.BALANCE_WITHDRAWN:
+      return {
+        ...state,
+        transactionBalance: state.transactionBalance - payload.amount,
+      };
+
 
     case REVIEW.CREATED:
 

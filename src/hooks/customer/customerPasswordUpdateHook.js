@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import CustomerRepository from '../../repositories/CustomerRepository';
 import { useAppContext } from '../contextHook';
+import { useUpdatePasswordValidation } from '../passwordValidationHook';
 
 export function useCustomerPasswordUpdate() {
 
@@ -25,6 +26,8 @@ export function useCustomerPasswordUpdate() {
 
   const [currentPasswordError, setCurrentPasswordError] = useState('');
 
+  const validator = useUpdatePasswordValidation();
+
   const api = useMemo(function() { return new CustomerRepository(customerToken); }, [customerToken]);
 
   async function onSubmit(
@@ -40,31 +43,18 @@ export function useCustomerPasswordUpdate() {
       setFormError('_errors.No_netowrk_connection');
       return;
     }
-    
-    let error = false;
 
     setFormError('');
     setFormSuccess('');
 
-    if (!currentPasswordValidity.valid) {
-      error = true;
-      if (currentPasswordValidity.tooShort) 
-        setCurrentPasswordError('_errors.Password_must_be_a_minimium_of_5_characters');
-      else 
-        setCurrentPasswordError('_errors.This_field_is_required');
-    } else {
-      setCurrentPasswordError('');
-    }
+    const [
+      error, 
+      currentPasswordError, 
+      newPasswordError
+    ] = validator(currentPasswordValidity, newPasswordValidity);
 
-    if (!newPasswordValidity.valid) {
-      error = true;
-      if (newPasswordValidity.tooShort) 
-        setNewPasswordError('_errors.Password_must_be_a_minimium_of_5_characters');
-      else 
-        setNewPasswordError('_errors.This_field_is_required');
-    } else {
-      setNewPasswordError('');
-    }
+    setNewPasswordError(newPasswordError);
+    setCurrentPasswordError(currentPasswordError);
 
     if (error) return;
 
@@ -113,4 +103,3 @@ export function useCustomerPasswordUpdate() {
 
   return [onSubmit, loading, formError, formSuccess, newPasswordError, currentPasswordError];
 }
-

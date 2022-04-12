@@ -75,7 +75,7 @@ export function useStoreAuthFetch() {
       }
     },
     [api, loading, storeAdminID, storeId, storeToken, storeDispatch, unsetAuth, messageCount, newMessage]
-  )
+  );
   
   return [storeId, fetchStore, success, error];
 }

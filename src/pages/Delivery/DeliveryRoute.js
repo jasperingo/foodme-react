@@ -1,16 +1,19 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import DeliveryRouteProfile from '../../components/profile/DeliveryRouteProfile';
 import Reload from '../../components/Reload';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useAppContext } from '../../hooks/contextHook';
 import { useDeliveryRouteFetch } from '../../hooks/delilvery_route/deliveryRouteFetchHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function DeliveryRoute() {
+
+  const { ID } = useParams();
 
   const {
     deliveryFirm: { 
@@ -21,9 +24,12 @@ export default function DeliveryRoute() {
   } = useAppContext();
 
   const [
-    deliveryRoute, 
-    deliveryRouteFetchStatus,
-    refetch
+    fetchDeliveryRoute,
+    deliveryRoute,
+    deliveryRouteLoading,
+    deliveryRouteError,
+    deliveryRouteID,
+    unfetchDeliveryRoute
   ] = useDeliveryRouteFetch(deliveryFirmToken);
 
   useHeader({ 
@@ -31,18 +37,26 @@ export default function DeliveryRoute() {
     headerTitle: '_delivery.Delivery_route'
   });
 
+  useEffect(
+    function() {
+      if ((deliveryRoute !== null || deliveryRouteError !== null) && deliveryRouteID !== ID) 
+        unfetchDeliveryRoute();
+      else if (deliveryRoute === null && deliveryRouteError === null)
+        fetchDeliveryRoute(ID);
+    },
+    [ID, deliveryRoute, deliveryRouteError, deliveryRouteID, fetchDeliveryRoute, unfetchDeliveryRoute]
+  );
+
   return (
     <section>
-      {
-        useRenderOnDataFetched(
-          deliveryRouteFetchStatus,
-          ()=> <DeliveryRouteProfile deliveryRoute={deliveryRoute} isDelieryFirm={true} />,
-          ()=> <div className="container-x"> <Loading /> </div>,
-          ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
-          ()=> <div className="container-x"> <NotFound /> </div>,
-          ()=> <div className="container-x"> <Forbidden /> </div>,
-        )
-      }
+      
+      { deliveryRoute !== null && <DeliveryRouteProfile deliveryRoute={deliveryRoute} isDelieryFirm={true} /> }
+      { deliveryRouteLoading && <Loading /> }
+      { deliveryRouteError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+      { deliveryRouteError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+      { deliveryRouteError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchDeliveryRoute(ID)} /> }
+      { deliveryRouteError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchDeliveryRoute(ID)} /> }
+      
     </section>
   );
 }

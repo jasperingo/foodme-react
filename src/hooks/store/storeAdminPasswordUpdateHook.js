@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import AdminRepository from "../../repositories/AdminRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdatePasswordValidation } from "../validation/passwordValidationHook";
+import { useUpdatePasswordValidation } from "../passwordValidationHook";
 
 export function useStoreAdminPasswordUpdate() {
 

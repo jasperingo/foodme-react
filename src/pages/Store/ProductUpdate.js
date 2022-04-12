@@ -150,15 +150,9 @@ export default function ProductUpdate() {
         
         { (productLoading || productCategoriesLoading) && <Loading /> }
 
-        { 
-          (productError === NetworkErrorCodes.NOT_FOUND || productCategoriesError ===  NetworkErrorCodes.NOT_FOUND) && 
-          <NotFound /> 
-        }
+        { productError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
 
-        { 
-          (productError === NetworkErrorCodes.FORBIDDEN || productCategoriesError === NetworkErrorCodes.FORBIDDEN) && 
-          <Forbidden /> 
-        }
+        { productError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
 
         { 
           (productError === NetworkErrorCodes.UNKNOWN_ERROR || productCategoriesError === NetworkErrorCodes.UNKNOWN_ERROR) && 

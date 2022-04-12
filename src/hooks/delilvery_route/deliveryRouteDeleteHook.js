@@ -1,8 +1,7 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
 import DeliveryRouteRepository from "../../repositories/DeliveryRouteRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
 export function useDeliveryRouteDelete() {
@@ -21,53 +20,47 @@ export function useDeliveryRouteDelete() {
     }
   } = useAppContext();
 
-  const [dialog, setDialog] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
   const [formSuccess, setFormSuccess] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const api = useMemo(function() { return new DeliveryRouteRepository(deliveryFirmToken); }, [deliveryFirmToken]);
 
-  function onSubmit() {
-    setDialog(true);
+  async function onSubmit() {
+    
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+
     setFormError(null);
     setFormSuccess(null);
-    setFetchStatus(FETCH_STATUSES.LOADING);
+
+    setLoading(true);
+
+    try {
+
+      const res = await api.delete(deliveryRoute.id);
+
+      if (res.status === 200) {
+
+        setFormSuccess(res.body.message);
+        deliveryRouteDispatch({ type: DELIVERY_ROUTE.UNFETCHED });
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  useEffect(
-    ()=> {
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new DeliveryRouteRepository(deliveryFirmToken);
-
-        api.delete(deliveryRoute.id)
-        .then(res=> {
-
-          if (res.status === 200) {
-
-            setFormSuccess(res.body.message);
-            deliveryRouteDispatch({ type: DELIVERY_ROUTE.UNFETCHED });
-
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFormError('_errors.Something_went_wrong');
-        })
-        .finally(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-        });
-
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    },
-    [deliveryRoute, deliveryFirmToken, fetchStatus, dialog, deliveryRouteDispatch]
-  )
-
-
-  return [onSubmit, dialog, formSuccess, formError];
+  return [onSubmit, loading, formSuccess, formError];
 }

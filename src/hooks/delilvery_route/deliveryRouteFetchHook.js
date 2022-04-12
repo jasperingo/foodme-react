@@ -1,14 +1,12 @@
 
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { DELIVERY_ROUTE, getDeliveryRouteFetchStatusAction } from "../../context/actions/deliveryRouteActions";
+import { useCallback, useMemo } from "react";
+import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DeliveryRouteRepository from "../../repositories/DeliveryRouteRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
 export function useDeliveryRouteFetch(userToken) {
-
-  const { ID } = useParams();
 
   const { 
     deliveryRoute : { 
@@ -17,65 +15,74 @@ export function useDeliveryRouteFetch(userToken) {
         deliveryRoute,
         deliveryRouteID,
         deliveryRouteLoading,
-        deliveryRouteFetchStatus
+        deliveryRouteError
       } 
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (deliveryRouteFetchStatus !== FETCH_STATUSES.LOADING && deliveryRouteFetchStatus !== FETCH_STATUSES.DONE)
-        deliveryRouteDispatch(getDeliveryRouteFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
-    },
-    [ID, deliveryRouteFetchStatus, deliveryRouteDispatch]
+  const api = useMemo(function() { return new DeliveryRouteRepository(userToken); }, [userToken]);
+
+  const unfetchDeliveryRoute = useCallback(
+    function() { deliveryRouteDispatch({ type: DELIVERY_ROUTE.UNFETCHED }); },
+    [deliveryRouteDispatch]
   );
   
-  useEffect(
-    ()=> {
+  const fetchDeliveryRoute = useCallback(
+    async function(ID) {
 
-      if (deliveryRouteID !== null && deliveryRouteID !== Number(ID)) {
-        
-        deliveryRouteDispatch({ type: DELIVERY_ROUTE.UNFETCHED });
+      if (deliveryRouteLoading) return;
 
-      } else if (deliveryRouteLoading && deliveryRouteFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-
-        deliveryRouteDispatch(getDeliveryRouteFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
-
-      } else if (deliveryRouteLoading && deliveryRouteFetchStatus === FETCH_STATUSES.LOADING) {
-
-        deliveryRouteDispatch(getDeliveryRouteFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
-
-        const api = new DeliveryRouteRepository(userToken);
-        api.get(ID)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            deliveryRouteDispatch({
-              type: DELIVERY_ROUTE.FETCHED, 
-              payload: {
-                deliveryRoute: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else if (res.status === 404) {
-
-            deliveryRouteDispatch(getDeliveryRouteFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
-
-          } else if (res.status === 403) {
-
-            deliveryRouteDispatch(getDeliveryRouteFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
-
-          } else {
-            throw new Error();
+      if (!window.navigator.onLine) {
+        deliveryRouteDispatch({
+          type: DELIVERY_ROUTE.ERROR_CHANGED,
+          payload: { 
+            id: ID,
+            error: NetworkErrorCodes.NO_NETWORK_CONNECTION 
           }
-        })
-        .catch(()=> {
-          deliveryRouteDispatch(getDeliveryRouteFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
+        });
+        return;
+      } 
+
+      deliveryRouteDispatch({ type: DELIVERY_ROUTE.FETCHING });
+
+      try {
+
+        const res = await api.get(ID);
+          
+        if (res.status === 200) {
+          deliveryRouteDispatch({
+            type: DELIVERY_ROUTE.FETCHED, 
+            payload: {
+              id: ID,
+              deliveryRoute: res.body.data
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        deliveryRouteDispatch({
+          type: DELIVERY_ROUTE.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
+          }
         });
       }
-    }
+    },
+    [api, deliveryRouteLoading, deliveryRouteDispatch]
   );
 
-  return [deliveryRoute, deliveryRouteFetchStatus, refetch];
+  return [
+    fetchDeliveryRoute,
+    deliveryRoute,
+    deliveryRouteLoading,
+    deliveryRouteError,
+    deliveryRouteID,
+    unfetchDeliveryRoute
+  ];
 }
-

@@ -38,13 +38,7 @@ export function useCustomerUpdate() {
 
   const api = useMemo(function() { return new CustomerRepository(customerToken); }, [customerToken]);
   
-  async function onSubmit(
-    firstName, 
-    lastName, 
-    email, 
-    phone_number,
-    validity
-  ) {
+  async function onSubmit(firstName, lastName, email, phone_number, validity) {
 
     if (loading) return;
     
@@ -52,6 +46,9 @@ export function useCustomerUpdate() {
       setFormError('_errors.No_netowrk_connection');
       return;
     }
+
+    setFormError(null);
+    setFormSuccess(null);
     
     const [
       error, 

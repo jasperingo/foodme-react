@@ -3,7 +3,6 @@ import { useCallback, useMemo } from "react";
 import { TRANSACTION } from "../../context/actions/transactionActions";
 import NetworkError from "../../errors/NetworkError";
 import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 
@@ -33,7 +32,8 @@ export function useStoreTransactionBalance(userToken) {
       
       if (!window.navigator.onLine) {
         storeDispatch({
-
+          type: TRANSACTION.BALANCE_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
         });
         return;
       }
@@ -48,10 +48,7 @@ export function useStoreTransactionBalance(userToken) {
             
             storeDispatch({
               type: TRANSACTION.BALANCE_FETCHED, 
-              payload: {
-                balance: res.body.data.balance, 
-                fetchStatus: FETCH_STATUSES.DONE
-              }
+              payload: { balance: res.body.data.balance }
             });
 
           } else if (res.status === 404) {

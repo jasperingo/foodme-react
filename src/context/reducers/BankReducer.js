@@ -15,7 +15,7 @@ export default function BankReducer (state, action) {
       return {
         ...state,
         banksLoading: false,
-        banksFetchStatus: action.payload.error
+        banksError: action.payload.error
       };
 
     case BANK.LIST_FETCHED:

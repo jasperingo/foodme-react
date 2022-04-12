@@ -1,37 +1,40 @@
 import { DELIVERY_ROUTE } from "../actions/deliveryRouteActions";
 import deliveryRouteState from "../states/deliveryRouteState";
 
-
 export default function DeliveryRouteReducer (state, { type, payload }) {
   
   switch (type) {  
 
     case DELIVERY_ROUTE.UNFETCHED:
       return {
-        ...deliveryRouteState,
-        deliveryRoutes: state.deliveryRoutes,
-        deliveryRoutesPage: state.deliveryRoutesPage,
-        deliveryRoutesLoading: state.deliveryRoutesLoading,
-        deliveryRoutesNumberOfPages: state.deliveryRoutesNumberOfPages,
-        deliveryRoutesFetchStatus: state.deliveryRoutesFetchStatus
+        ...state,
+        deliveryRoute: deliveryRouteState.deliveryRoute,
+        deliveryRouteID: deliveryRouteState.deliveryRouteID,
+        deliveryRouteLoading: deliveryRouteState.deliveryRouteLoading,
+        deliveryRouteError: deliveryRouteState.deliveryRouteError
       };
 
-    
-    case DELIVERY_ROUTE.FETCH_STATUS_CHANGED:
+    case DELIVERY_ROUTE.FETCHING:
       return {
         ...state,
+        deliveryRouteError: null,
+        deliveryRouteLoading: true
+      };
+
+    case DELIVERY_ROUTE.ERROR_CHANGED:
+      return {
+        ...state,
+        deliveryRouteLoading: false,
         deliveryRouteID: payload.id,
-        deliveryRouteLoading: payload.loading,
-        deliveryRouteFetchStatus: payload.fetchStatus
+        deliveryRouteError: payload.error
       };
 
     case DELIVERY_ROUTE.FETCHED:
       return {
         ...state,
         deliveryRouteLoading: false,
-        deliveryRoute: payload.deliveryRoute,
-        deliveryRouteID: payload.deliveryRoute.id,
-        deliveryRouteFetchStatus: payload.fetchStatus
+        deliveryRouteID: payload.id,
+        deliveryRoute: payload.deliveryRoute
       };
 
 

@@ -1,11 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { getTransactionsListFetchStatusAction, TRANSACTION } from "../../context/actions/transactionActions";
+import { useCallback, useMemo } from "react";
+import { TRANSACTION } from "../../context/actions/transactionActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useDeliveryFirmTransactionList(userToken) {
 
@@ -13,85 +12,80 @@ export function useDeliveryFirmTransactionList(userToken) {
     deliveryFirm: { 
       deliveryFirmDispatch,
       deliveryFirm: {
-        deliveryFirm,
         transactions,
         transactionsPage,
+        transactionsLoaded,
         transactionsLoading,
         transactionsNumberOfPages,
-        transactionsFetchStatus
+        transactionsError
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new DeliveryFirmRepository(userToken); }, [userToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
-        deliveryFirmDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [deliveryFirmDispatch, transactionsFetchStatus]
-  );
-  
-  useEffect(
-    ()=> {
-      if (transactionsLoading && transactionsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  function refreshDeliveryFirmTransactions() {
+    deliveryFirmDispatch({ type: TRANSACTION.LIST_UNFETCHED });
+  }
 
-        deliveryFirmDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+  const fetchDeliveryFirmTransactions = useCallback(
+    async function(ID) {
+      
+      if (transactionsLoading) return;
 
-      } else if (transactionsLoading && transactionsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (!window.navigator.onLine) {
+        deliveryFirmDispatch({
+          type: TRANSACTION.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
+      
+      deliveryFirmDispatch({ type: TRANSACTION.LIST_FETCHING });
+
+      try {
         
-        deliveryFirmDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+        const res = await api.getTransactionsList(ID, transactionsPage);
+        
+        if (res.status === 200) {
+          deliveryFirmDispatch({
+            type: TRANSACTION.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
 
-        const api = new DeliveryFirmRepository(userToken);
-        api.getTransactionsList(deliveryFirm.id, transactionsPage)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            
-            deliveryFirmDispatch({
-              type: TRANSACTION.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  transactionsPage, 
-                  res.body.pagination.number_of_pages, 
-                  transactions.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-
-          } else if (res.status === 404) {
-
-            deliveryFirmDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            deliveryFirmDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          deliveryFirmDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      } catch(error) {
+        deliveryFirmDispatch({
+          type: TRANSACTION.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      deliveryFirm.id, 
-      transactions, 
+      api,
       transactionsPage, 
       transactionsLoading, 
-      transactionsFetchStatus, 
-      userToken, 
       deliveryFirmDispatch, 
-      listStatusUpdater
     ]
   );
 
-  return [transactions, transactionsFetchStatus, transactionsPage, transactionsNumberOfPages, refetch];
+  return [
+    fetchDeliveryFirmTransactions,
+    transactions, 
+    transactionsLoading,
+    transactionsLoaded,
+    transactionsError,
+    transactionsPage, 
+    transactionsNumberOfPages,
+    refreshDeliveryFirmTransactions
+  ];
 }
-
