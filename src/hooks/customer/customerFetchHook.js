@@ -1,13 +1,11 @@
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { CUSTOMER, getCustomerFetchStatusAction } from "../../context/actions/customerActions";
+import { useCallback, useMemo } from "react";
+import { CUSTOMER } from "../../context/actions/customerActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
 export function useCustomerFetch(userToken) {
-
-  const { ID } = useParams();
 
   const { 
     customer: { 
@@ -17,68 +15,79 @@ export function useCustomerFetch(userToken) {
           customer,
           customerID,
           customerLoading,
-          customerFetchStatus
+          customerError
         }
       }
     } 
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (customerFetchStatus !== FETCH_STATUSES.LOADING && customerFetchStatus !== FETCH_STATUSES.DONE)
-        dispatch(getCustomerFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), true));
-    },
-    [ID, customerFetchStatus, dispatch]
+  const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
+
+  const unfetchCustomer = useCallback(
+    function() { dispatch({ type: CUSTOMER.UNFETCHED }); },
+    [dispatch]
   );
   
-  useEffect(
-    ()=> {
+  
+  const fetchCustomer = useCallback(
+    async function(ID) {
 
-      if (customerID !== null && customerID !== Number(ID)) {
+      if (customerLoading) return;
         
-        dispatch({ type: CUSTOMER.UNFETCHED });
-
-      } else if (customerLoading && customerFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-
-        dispatch(getCustomerFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
-
-      } else if (customerLoading && customerFetchStatus === FETCH_STATUSES.LOADING) {
-
-        dispatch(getCustomerFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID), false));
-        
-        const api = new CustomerRepository(userToken);
-
-        api.get(ID)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            
-            dispatch({
-              type: CUSTOMER.FETCHED, 
-              payload: { 
-                customer: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-            
-          } else if (res.status === 404) {
-
-            dispatch(getCustomerFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID), false));
-
-          } else if (res.status === 403) {
-
-            dispatch(getCustomerFetchStatusAction(FETCH_STATUSES.FORBIDDEN, Number(ID), false));
-
-          } else {
-            throw new Error();
+      if (!window.navigator.onLine) {
+        dispatch({
+          type: CUSTOMER.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: NetworkErrorCodes.NO_NETWORK_CONNECTION
           }
-        })
-        .catch(()=> {
-          dispatch(getCustomerFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID), false));
         });
+        return;
       }
-    }
+
+      dispatch({ type: CUSTOMER.FETCHING });
+    
+      try {
+
+        const res = await api.get(ID);
+          
+        if (res.status === 200) {
+          
+          dispatch({
+            type: CUSTOMER.FETCHED, 
+            payload: { 
+              id: ID,
+              customer: res.body.data
+            }
+          });
+          
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        dispatch({
+          type: CUSTOMER.ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
+          }
+        });
+        
+      }
+    },
+    [api, customerLoading, dispatch]
   );
   
-  return [customer, customerFetchStatus, refetch];
+  return [
+    fetchCustomer,
+    customer,
+    customerLoading,
+    customerError,
+    customerID,
+    unfetchCustomer
+  ];
 }

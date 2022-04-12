@@ -43,7 +43,7 @@ export default function CustomerProfile(
         name={customer.user.name}
         links={[
           {
-            href: `/messages/${customer.id}`,
+            href: `/messages/${customer.user.id}`,
             title: '_message.Message',
             icon: messageIcon
           },

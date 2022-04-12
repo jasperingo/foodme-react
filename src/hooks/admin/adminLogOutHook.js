@@ -1,16 +1,16 @@
 import { ADMIN } from "../../context/actions/adminActions";
 import { useAppContext } from "../contextHook";
-import { ADMIN_ID, ADMIN_TOKEN } from "./adminConstants";
+import { useAdminAuthUnset } from "./adminAuthStorageHook";
 
 export function useAdminLogOut() {
   const { 
     admin: { adminDispatch } 
   } = useAppContext();
 
-  return ()=> {
-    window.localStorage.removeItem(ADMIN_ID);
-    window.localStorage.removeItem(ADMIN_TOKEN);
+  const unauth = useAdminAuthUnset();
 
+  return function() {
+    unauth();
     adminDispatch({ type: ADMIN.UNAUTHED });
   }
 }

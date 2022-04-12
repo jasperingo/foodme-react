@@ -7,7 +7,7 @@ import { useMessageFetch } from '../message/messageFetchHook';
 import { useMessageUnreceivedCountFetch } from '../message/messageUnreceivedCountFetchHook';
 import { useCustomerAuthGet, useCustomerAuthUnset } from './customerAuthStorageHook';
 
-export function useAuthCustomerFetch() {
+export function useCustomerAuthFetch() {
 
   const { 
     customer: { dispatch } 
@@ -22,8 +22,6 @@ export function useAuthCustomerFetch() {
   const unsetAuth = useCustomerAuthUnset();
 
   const [error, setError] = useState(null);
-
-  const [success, setSuccess] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -58,8 +56,6 @@ export function useAuthCustomerFetch() {
           messageCount(customerToken);
 
           newMessage(customerToken, res.body.data.user.id);
-
-          setSuccess(true);
           
         } else if (res.status === 401) {
           unsetAuth();
@@ -76,5 +72,5 @@ export function useAuthCustomerFetch() {
     [api, loading, customerId, customerToken, dispatch, unsetAuth, messageCount, newMessage]
   );
   
-  return [customerId, fetchCustomer, success, error];
+  return [customerId, fetchCustomer, error];
 }

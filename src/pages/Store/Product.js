@@ -7,7 +7,6 @@ import { notFoundIcon, productIcon, weightIcon } from '../../assets/icons';
 import AddButton from '../../components/AddButton';
 import EmptyList from '../../components/EmptyList';
 import Forbidden from '../../components/Forbidden';
-import H4Heading from '../../components/H4Heading';
 import ReviewList from '../../components/list/ReviewList';
 import SingleList from '../../components/list/SingleList';
 import Loading from '../../components/Loading';
@@ -60,13 +59,11 @@ function ProductReviewList() {
     },
     [product.id, reviewsLoaded, reviewsError, fetchProductReviews]
   );
-
+  
   return (
     <>
 
-      <div className="mt-2 container-x">
-
-        <H4Heading text="_review.Reviews" />
+      <div className="container-x">
       
         <ReviewSummary summary={product.review_summary} />
 
@@ -193,7 +190,7 @@ export default function Product() {
   return (
     <section>
 
-      { product !== null && <ProductProfile isStore={true} product={product} navLinks={NAV_LINKS} /> }
+      { product !== null && <ProductProfile isStore={true} product={product} /> }
 
       {
         product === null &&

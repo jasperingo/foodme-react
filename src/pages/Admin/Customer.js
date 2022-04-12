@@ -1,14 +1,11 @@
 
 import React, { useEffect } from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import CustomerProfile from '../../components/profile/CustomerProfile';
 import AddressList from '../../components/list/AddressList';
-import OrderList from '../../components/profile/section/OrderList';
-import ProductList from '../../components/profile/section/ProductList';
-import TransactionList from '../../components/profile/section/TransactionList';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
 import { useCustomerAddressList } from '../../hooks/customer/customerAddressListHook';
@@ -17,7 +14,10 @@ import { useCustomerFetch } from '../../hooks/customer/customerFetchHook';
 import { useCustomerOrderList } from '../../hooks/customer/customerOrderListHook';
 import { useCustomerTransactionList } from '../../hooks/customer/customerTransactionListHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import OrderList from '../../components/list/OrderList';
+import ProductList from '../../components/list/ProductList';
+import TransactionList from '../../components/list/TransactionList';
 
 const TAB_LINKS = [
   { title : '_order.Orders', href: '' },
@@ -44,31 +44,29 @@ function CustomerAddressesList() {
   } = useAppContext();
   
   const [
-    fetch, 
+    fetchCustomerAddresses, 
     addresses, 
     addressesLoading, 
     addressesError, 
     addressesLoaded, 
-    retryFetch,
-    refresh
-  ] = useCustomerAddressList(customer.id, adminToken);
+  ] = useCustomerAddressList(adminToken);
 
   useEffect(
     function() {
-      if (!addressesLoaded) fetch();
+      if (!addressesLoaded && addressesError === null) 
+        fetchCustomerAddresses(customer.id);
     }, 
-    [addressesLoaded, fetch]
+    [customer.id, addressesLoaded, addressesError, fetchCustomerAddresses]
   );
 
   return (
     <AddressList 
+      canEdit={false}
       addresses={addresses}
       addressesLoading={addressesLoading}
       addressesError={addressesError}
       addressesLoaded={addressesLoaded}
-      refetch={retryFetch}
-      refresh={refresh}
-      canEdit={false}
+      fetchAddresses={()=> fetchCustomerAddresses(customer.id)}
       />
   );
 }
@@ -91,20 +89,32 @@ function CustomerTransactionsList() {
   } = useAppContext();
   
   const [
+    fetchCustomerTransactions, 
     transactions, 
-    transactionsFetchStatus, 
+    transactionsLoading, 
+    transactionsLoaded, 
+    transactionsError,
     transactionsPage, 
-    transactionsNumberOfPages, 
-    refetch
-  ] = useCustomerTransactionList(customer.id, adminToken);
+    transactionsNumberOfPages
+  ] = useCustomerTransactionList(adminToken);
+
+  useEffect(
+    function() { 
+      if (!transactionsLoaded && transactionsError === null) 
+        fetchCustomerTransactions(customer.id); 
+    },
+    [customer.id, transactionsLoaded, transactionsError, fetchCustomerTransactions]
+  );
 
   return (
     <TransactionList
       transactions={transactions}
-      transactionsFetchStatus={transactionsFetchStatus}
       transactionsPage={transactionsPage}
+      transactionsError={transactionsError}
+      transactionsLoading={transactionsLoading}
+      transactionsLoaded={transactionsLoaded}
       transactionsNumberOfPages={transactionsNumberOfPages}
-      refetch={refetch}
+      fetchTransactions={()=> fetchCustomerTransactions(customer.id)}
       />
   );
 }
@@ -127,20 +137,32 @@ function CustomerFavoritesList() {
   } = useAppContext();
 
   const [
+    fetchCustomerProducts, 
     products, 
-    productsFetchStatus, 
+    productsLoading, 
+    productsLoaded, 
+    productsError,
     productsPage, 
     productsNumberOfPages, 
-    refetch
-  ] = useCustomerFavoriteList(customer.id, adminToken);
+  ] = useCustomerFavoriteList(adminToken);
   
+  useEffect(
+    function() { 
+      if (!productsLoaded && productsError === null) 
+        fetchCustomerProducts(customer.id); 
+    },
+    [customer.id, productsLoaded, productsError, fetchCustomerProducts]
+  );
+
   return (
     <ProductList 
       products={products.map(i=> i.product)}
-      productsFetchStatus={productsFetchStatus}
       productsPage={productsPage}
+      productsError={productsError}
+      productsLoaded={productsLoaded}
+      productsLoading={productsLoading}
       productsNumberOfPages={productsNumberOfPages}
-      refetch={refetch}
+      fetchProducts={()=> fetchCustomerProducts(customer.id)}
       />
   );
 }
@@ -163,25 +185,39 @@ function CustomerOrdersList() {
   } = useAppContext();
 
   const [
+    fetchCustomerOrders, 
     orders, 
-    ordersFetchStatus, 
+    ordersLoading, 
+    ordersLoaded, 
+    ordersError,
     ordersPage, 
     ordersNumberOfPages, 
-    refetch,
-  ] = useCustomerOrderList(customer.id, adminToken);
+  ] = useCustomerOrderList(adminToken);
+
+  useEffect(
+    function() { 
+      if (!ordersLoaded && ordersError === null) 
+        fetchCustomerOrders(customer.id); 
+    },
+    [customer.id, ordersLoaded, ordersError, fetchCustomerOrders]
+  );
 
   return (
     <OrderList 
       orders={orders}
-      ordersFetchStatus={ordersFetchStatus}
       ordersPage={ordersPage}
+      ordersError={ordersError}
+      ordersLoaded={ordersLoaded}
+      ordersLoading={ordersLoading}
       ordersNumberOfPages={ordersNumberOfPages}
-      refetch={refetch}
+      fetchOrders={()=> fetchCustomerOrders(customer.id)}
       />
   );
 }
 
 export default function Customer() {
+
+  const { ID } = useParams();
 
   const match = useRouteMatch();
 
@@ -194,9 +230,12 @@ export default function Customer() {
   } = useAppContext();
 
   const [
-    customer, 
-    customerFetchStatus, 
-    refetch
+    fetchCustomer,
+    customer,
+    customerLoading,
+    customerError,
+    customerID,
+    unfetchCustomer
   ] = useCustomerFetch(adminToken);
 
   useHeader({ 
@@ -204,24 +243,30 @@ export default function Customer() {
     headerTitle: '_user.Customer'
   });
 
+  useEffect(
+    function() {
+      if ((customer !== null || customerError !== null) && customerID !== ID) 
+        unfetchCustomer();
+      else if (customer === null && customerError === null)
+        fetchCustomer(ID);
+    },
+    [ID, customer, customerError, customerID, fetchCustomer, unfetchCustomer]
+  );
+  
   return (
     <section>
 
       <div className="container-x">
-        {
-          useRenderOnDataFetched(
-            customerFetchStatus,
-            ()=> <CustomerProfile customer={customer} navLinks={TAB_LINKS} isAdmin={true} />,
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
-          )
-        }
+        { customer !== null && <CustomerProfile customer={customer} isAdmin={true} navLinks={TAB_LINKS} /> }
+        { customerLoading && <Loading /> }
+        { customerError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+        { customerError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+        { customerError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchCustomer(ID)} /> }
+        { customerError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchCustomer(ID)} /> }
       </div>
       
       {
-        customer && 
+        customer !== null && 
         <Switch>
           <Route path={`${match.url}/addresses`} render={()=> <CustomerAddressesList />} />
           <Route path={`${match.url}/transactions`} render={()=> <CustomerTransactionsList />} />

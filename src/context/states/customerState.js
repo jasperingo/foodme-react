@@ -1,21 +1,21 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const customerState = {
   
   customer: {
     customer: null,
-    customerToken: null,
     customerID: null,
+    customerToken: null,
+    customerError: null,
     customerLoading: false,
-    customerError: null
   },
 
   customers: {
     customers: [],
     customersPage: 1,
-    customersLoading: true,
-    customersNumberOfPages: 0,
-    customersFetchStatus: FETCH_STATUSES.LOADING
+    customersError: null,
+    customersLoaded: false,
+    customersLoading: false,
+    customersNumberOfPages: 0
   },
 
   orders: {
@@ -62,6 +62,4 @@ const customerState = {
   },
 };
 
-
 export default customerState;
-

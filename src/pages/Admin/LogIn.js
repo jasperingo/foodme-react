@@ -1,5 +1,6 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { adminIcon } from '../../assets/icons';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
 import AuthFormHeader from '../../components/AuthFormHeader';
@@ -10,15 +11,24 @@ import { useHeader } from '../../hooks/headerHook';
 import { useAdminLogin } from '../../hooks/admin/adminLoginHook';
 import ForgotPasswordLink from '../../components/form/ForgotPasswordLink';
 
-export default function LogIn({ guestMiddleware }) {
+export default function LogIn({ redirectTo }) {
 
   useHeader({ title: 'Log In - DailyNeeds' });
   
+  const history = useHistory();
+
   const emailInput = useRef(null);
 
   const passwordInput = useRef(null);
 
-  const [onSubmit, dialog, formError] = useAdminLogin();
+  const [onSubmit, loading, success, formError] = useAdminLogin();
+
+  useEffect(
+    function() {
+      if (success && !loading) history.replace(redirectTo);
+    },
+    [success, loading, history, redirectTo]
+  );
 
   function onLoginSubmit(e) {
     e.preventDefault();
@@ -30,7 +40,7 @@ export default function LogIn({ guestMiddleware }) {
     );
   }
   
-  return guestMiddleware() || (
+  return (
     <section>
 
       <div className="container-x">
@@ -66,10 +76,8 @@ export default function LogIn({ guestMiddleware }) {
 
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
 
     </section>
   );
 }
-
-

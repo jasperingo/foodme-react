@@ -3,13 +3,10 @@ import React, { useEffect } from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import EmptyList from '../../components/EmptyList';
-import SingleList from '../../components/list/SingleList';
-import { categoryIcon } from '../../assets/icons';
 import { useStoreFetch } from '../../hooks/store/storeFetchHook';
 import NotFound from '../../components/NotFound';
 import Forbidden from '../../components/Forbidden';
-import { useListFooter, useURLQuery } from '../../hooks/viewHook';
+import { useURLQuery } from '../../hooks/viewHook';
 import { useStoreProductList } from '../../hooks/store/storeProductListHook';
 import { useAppContext } from '../../hooks/contextHook';
 import StoreProfile from '../../components/profile/StoreProfile';
@@ -27,6 +24,7 @@ import { useParams } from 'react-router-dom';
 import ProductList from '../../components/list/ProductList';
 import ReviewList from '../../components/list/ReviewList';
 import DiscountList from '../../components/list/DiscountList';
+import StoreProductCategoryList from '../../components/list/StoreProductCategoryList';
 
 const NAV_LINKS = [
   { title : '_extra.Menu', href: '' },
@@ -317,8 +315,6 @@ function StoreProductCategoriesList() {
   
   const param = new URLSearchParams();
 
-  const listFooter = useListFooter();
-
   const [
     fetchProductCategories, 
     productCategories, 
@@ -341,88 +337,14 @@ function StoreProductCategoriesList() {
   }
 
   return (
-    <div>
-      <div className="container-x">
-        <SingleList
-          data={productCategories.flatMap(i=> i.sub_categories)}
-          className="grid grid-cols-3 gap-4 p-1"
-          renderDataItem={(item)=> (
-            <li key={`category-${item.id}`}>
-              <button className="block shadow" onClick={()=> onFilterChange(item.id)}>
-                <img 
-                  src={item.photo.href} 
-                  alt={item.name} 
-                  width="100" 
-                  height="100" 
-                  className="w-full mb-1 h-20 block mx-auto rounded lg:h-52 lg:w-full lg:mb-1"
-                  />
-                <div className="p-1 truncate overflow-ellipsis">{ item.name }</div>
-              </button>
-            </li>
-          )}
-          footer={listFooter([
-            {
-              canRender: productCategoriesLoading,
-              render() { 
-                return ( 
-                  <li key="category-footer" className="col-span-3"> <Loading /> </li>
-                ); 
-              },
-            }, 
-            {
-              canRender: productCategoriesError === NetworkErrorCodes.UNKNOWN_ERROR,
-              render() { 
-                return (
-                  <li key="category-footer" className="col-span-3">
-                    <Reload action={()=> fetchProductCategories(store.id)} /> 
-                  </li> 
-                );
-              },
-            },
-            {
-              canRender: productCategoriesError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
-              render() { 
-                return (
-                  <li key="category-footer" className="col-span-3">
-                    <Reload message="_errors.No_netowrk_connection" action={()=> fetchProductCategories(store.id)} /> 
-                  </li> 
-                );
-              },
-            },
-            {
-              canRender: productCategoriesError === NetworkErrorCodes.NOT_FOUND,
-              render() { 
-                return (
-                  <li key="category-footer" className="col-span-3">
-                    <NotFound />
-                  </li> 
-                );
-              },
-            },
-            {
-              canRender: productCategoriesError === NetworkErrorCodes.FORBIDDEN,
-              render() { 
-                return (
-                  <li key="category-footer" className="col-span-3">
-                    <Forbidden />
-                  </li> 
-                );
-              },
-            },
-            {
-              canRender: productCategoriesLoaded && productCategories.length === 0,
-              render() { 
-                return (
-                  <li key="category-footer" className="col-span-3">
-                    <EmptyList text="_empty.No_category" icon={categoryIcon} /> 
-                  </li> 
-                );
-              }
-            }
-          ])}
-          />
-      </div>
-    </div>
+    <StoreProductCategoryList
+      onFilterChange={onFilterChange}
+      productCategories={productCategories}
+      productCategoriesLoading={productCategoriesLoading}
+      productCategoriesError={productCategoriesError}
+      productCategoriesLoaded={productCategoriesLoaded}
+      fetchProductCategories={()=> fetchProductCategories(store.id)}
+      />
   );
 }
 
@@ -466,18 +388,18 @@ export default function Store() {
     },
     [ID, store, storeError, storeID, fetchStore, unfetchStore]
   );
-
+  
   return (
     <section>
 
       <div className="container-x">
         
-          { store !== null && <StoreProfile store={store} navLinks={NAV_LINKS} /> }
-          { storeLoading && <Loading /> }
-          { storeError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
-          { storeError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
-          { storeError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchStore(ID)} /> }
-          { storeError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchStore(ID)} /> }
+        { store !== null && <StoreProfile store={store} navLinks={NAV_LINKS} /> }
+        { storeLoading && <Loading /> }
+        { storeError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+        { storeError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+        { storeError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchStore(ID)} /> }
+        { storeError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchStore(ID)} /> }
         
       </div>
 

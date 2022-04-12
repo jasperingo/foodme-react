@@ -1,17 +1,20 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import UserStatusForm from '../../components/form/UserStatusForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useAppContext } from '../../hooks/contextHook';
 import { useCustomerFetch } from '../../hooks/customer/customerFetchHook';
 import { useCustomerStatusUpdate } from '../../hooks/customer/customerStatusUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function CustomerUpdate() {
+
+  const { ID } = useParams();
 
   const { 
     admin: { 
@@ -22,9 +25,12 @@ export default function CustomerUpdate() {
   } = useAppContext();
 
   const [
-    customer, 
-    customerFetchStatus, 
-    refetch
+    fetchCustomer,
+    customer,
+    customerLoading,
+    customerError,
+    customerID,
+    unfetchCustomer
   ] = useCustomerFetch(adminToken);
 
   useHeader({ 
@@ -33,35 +39,43 @@ export default function CustomerUpdate() {
   });
 
   const [
-    onSubmit,
-    dialog, 
-    formError, 
+    onSubmit, 
+    loading, 
     formSuccess, 
-    statusError
-  ] = useCustomerStatusUpdate(customer.id, adminToken);
+    formError
+  ] = useCustomerStatusUpdate(adminToken);
+
+  useEffect(
+    function() {
+      if ((customer !== null || customerError !== null) && customerID !== ID) 
+        unfetchCustomer();
+      else if (customer === null && customerError === null)
+        fetchCustomer(ID);
+    },
+    [ID, customer, customerError, customerID, fetchCustomer, unfetchCustomer]
+  );
   
   return (
     <section>
       <div className="container-x">
-        {
-          useRenderOnDataFetched(
-            customerFetchStatus,
-            ()=> (
-              <UserStatusForm 
-                status={customer.user.status} 
-                onSubmit={onSubmit}
-                dialog={dialog}
-                formError={formError}
-                formSuccess={formSuccess}
-                statusError={statusError}
-                />
-            ),
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
-          )
+
+        { 
+          customer !== null &&  
+          <UserStatusForm 
+            status={customer.user.status} 
+            onSubmit={onSubmit}
+            dialog={loading}
+            formError={formError}
+            formSuccess={formSuccess}
+            /> 
         }
+
+        { customerLoading && <Loading /> }
+        { customerError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+        { customerError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+        { customerError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchCustomer(ID)} /> }
+        { customerError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchCustomer(ID)} /> }
+      
       </div>
     </section>
   );

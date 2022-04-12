@@ -27,10 +27,10 @@ export default function ProfileHeader({ photo, name, links=[], buttons=[] }) {
                 /> 
               :
               <ProfileButton 
-              text={item.text}
-              color={item.color}
-              action={item.action}
-              key={`profile-button-${i}`}
+                text={item.text}
+                color={item.color}
+                action={item.action}
+                key={`profile-button-${i}`}
               />
           ))
         }

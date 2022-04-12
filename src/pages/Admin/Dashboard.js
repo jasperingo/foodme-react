@@ -22,7 +22,6 @@ import { useHeader } from '../../hooks/headerHook';
 import { useMoneyFormat, useRenderListFooter, useRenderOnDataFetched } from '../../hooks/viewHook';
 import { FETCH_STATUSES } from '../../repositories/Fetch';
 
-
 function StatisticsData({ number, text, amount }) {
 
   const { t } = useTranslation();
@@ -257,5 +256,3 @@ export default function Dashboard() {
     </section>
   );
 }
-
-

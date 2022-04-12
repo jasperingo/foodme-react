@@ -76,6 +76,17 @@ export default function StoreReducer (state, action) {
         savedCartsLoaded: storeState.savedCartsLoaded,
         savedCartsLoading: storeState.savedCartsLoading,
         savedCartsNumberOfPages: storeState.savedCartsNumberOfPages,
+
+        transactions: storeState.transactions,
+        transactionsPage: storeState.transactionsPage,
+        transactionsError: storeState.transactionsError,
+        transactionsLoaded: storeState.transactionsLoaded,
+        transactionsLoading: storeState.transactionsLoading,
+        transactionsNumberOfPages: storeState.transactionsNumberOfPages,
+
+        transactionBalance: storeState.transactionBalance,
+        transactionBalanceError: storeState.transactionBalanceError,
+        transactionBalanceLoading: storeState.transactionBalanceLoading,
       };
     
     case STORE.ERROR_CHANGED:
@@ -102,19 +113,37 @@ export default function StoreReducer (state, action) {
       };
 
 
-    case STORE.LIST_FETCH_STATUS_CHANGED:
+    case STORE.LIST_UNFETCHED:
       return {
         ...state,
-        storesLoading: action.payload.loading,
-        storesFetchStatus: action.payload.fetchStatus
+        stores: storeState.stores,
+        storesPage: storeState.storesPage,
+        storesError: storeState.storesError,
+        storesLoaded: storeState.storesLoaded,
+        storesLoading: storeState.storesLoading,
+        storesNumberOfPages: storeState.storesNumberOfPages
+      };
+
+    case STORE.LIST_FETCHING:
+      return {
+        ...state,
+        storesError: null,
+        storesLoading: true,
+      };
+
+    case STORE.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        storesLoading: false,
+        storesError: action.payload.error
       };
     
     case STORE.LIST_FETCHED:
       return {
         ...state,
+        storesLoaded: true,
         storesLoading: false,
-        storesPage: state.storesPage+1,
-        storesFetchStatus: action.payload.fetchStatus,
+        storesPage: state.storesPage + 1,
         storesNumberOfPages: action.payload.numberOfPages,
         stores: [...state.stores, ...action.payload.list],
       };
@@ -364,7 +393,7 @@ export default function StoreReducer (state, action) {
         ...state,
         transactionBalance: storeState.transactionBalance,
         transactionBalanceError: storeState.transactionBalanceError,
-        transactionBalanceLoading: storeState.transactionBalanceLoading,
+        transactionBalanceLoading: storeState.transactionBalanceLoading
       };
 
     case TRANSACTION.BALANCE_FETCHING:

@@ -23,6 +23,7 @@ export default function Chats() {
 
   return (
     <ChatsList 
+      isAdmin={true}
       userId={admin.application.id}
       userToken={adminToken}
       renderMessages={()=> <Messages />} 

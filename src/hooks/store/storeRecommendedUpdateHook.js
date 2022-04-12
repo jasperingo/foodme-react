@@ -1,92 +1,77 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { STORE } from "../../context/actions/storeActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 
-export function useStoreRecommendedUpdate(storeId, adminToken) {
+export function useStoreRecommendedUpdate(adminToken) {
 
   const { 
     store: { 
-      storeDispatch
+      storeDispatch,
+      store: {
+        store
+      }
     } 
   } = useAppContext();
 
-  const [data, setData] = useState(false);
-
-  const [dialog, setDialog] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState('');
 
   const [formSuccess, setFormSuccess] = useState('');
 
-  const [recommendedError, setRecommendedError] = useState('');
+  const api = useMemo(function() { return new StoreRepository(adminToken); }, [adminToken]);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
-
-  function onSubmit(recommended, recommendedValidity) {
+  async function onSubmit(recommended, recommendedValidity) {
   
-    setFormError('');
-    setFormSuccess('');
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+
+    setFormError(null);
+    setFormSuccess(null);
 
     if (!recommendedValidity.valid) {
-      setRecommendedError('_errors.This_field_is_required');
-    } else if (!window.navigator.onLine) {
-      setFormError('_errors.No_netowrk_connection');
-    } else {
-      setDialog(true);
-      setData({ recommended });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      setFormError('_errors.This_field_is_required');
+      return;
     }
-  }
-  
-  useEffect(
-    ()=> {
 
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
+    setLoading(true);
 
-        const api = new StoreRepository(adminToken);
+    try {
 
-        api.updateRecommended(storeId, data)
-        .then(res=> {
+      const res = await api.updateRecommended(store.id, { recommended });
           
-          if (res.status === 200) {
+      if (res.status === 200) {
 
-            setFormSuccess(res.body.message);
+        setFormSuccess(res.body.message);
 
-            storeDispatch({
-              type: STORE.FETCHED, 
-              payload: { 
-                store: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-  
-          } else if (res.status === 400) {
-            
-            setRecommendedError(res.body.data[0].message);
-  
-          } else {
-            throw new Error();
+        storeDispatch({
+          type: STORE.FETCHED, 
+          payload: { 
+            id: String(store.id),
+            store: res.body.data 
           }
-    
-        })
-        .catch(()=> {
-          setFormError('_errors.Something_went_wrong');
-        })
-        .finally(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
         });
 
-      } else if (dialog !== false) {
-        setDialog(false);
+      } else if (res.status === 400) {
+        
+        setFormError(res.body.data[0].message);
+
+      } else {
+        throw new Error();
       }
 
-    }, 
-    [data, storeId, adminToken, fetchStatus, dialog, storeDispatch]
-  );
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
+    }
+  }
 
-  return [onSubmit, dialog, formError, formSuccess, recommendedError];
+  return [onSubmit, loading, formSuccess, formError];
 }
-

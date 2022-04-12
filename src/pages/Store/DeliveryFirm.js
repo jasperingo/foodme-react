@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
@@ -12,7 +12,6 @@ import { useDeliveryFirmReviewList } from '../../hooks/delivery_firm/deliveryFir
 import { useDeliveryFirmFetch } from '../../hooks/delivery_firm/deliveryFirmFetchHook';
 import { useHeader } from '../../hooks/headerHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
-import { useParams } from 'react-router-dom';
 import ReviewList from '../../components/list/ReviewList';
 
 const NAV_LINKS = [

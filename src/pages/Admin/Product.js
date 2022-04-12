@@ -1,19 +1,19 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import ProductProfile from '../../components/profile/ProductProfile';
-import ReviewList from '../../components/profile/section/ReviewList';
 import Reload from '../../components/Reload';
 import { useAppContext } from '../../hooks/contextHook';
 import { useProductFetch } from '../../hooks/product/productFetchHook';
-import {  useRenderOnDataFetched } from '../../hooks/viewHook';
 import H4Heading from '../../components/H4Heading';
 import { useProductReviewList } from '../../hooks/product/productReviewListHook';
 import { useHeader } from '../../hooks/headerHook';
 import ReviewSummary from '../../components/review/ReviewSummary';
-
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
+import ReviewList from '../../components/list/ReviewList';
 
 function ProductReviewList() {
 
@@ -31,12 +31,22 @@ function ProductReviewList() {
   } = useAppContext();
 
   const [
+    fetchProductReviews,
     reviews, 
-    reviewsFetchStatus, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
     reviewsPage, 
-    reviewsNumberOfPages, 
-    refetch
+    reviewsNumberOfPages,
   ] = useProductReviewList(adminToken);
+
+  useEffect(
+    function() { 
+      if (!reviewsLoaded && reviewsError === null) 
+        fetchProductReviews(product.id); 
+    },
+    [product.id, reviewsLoaded, reviewsError, fetchProductReviews]
+  );
   
   return (
     <>
@@ -50,11 +60,14 @@ function ProductReviewList() {
       </div>
 
       <ReviewList 
-        reviews={reviews}
-        reviewsFetchStatus={reviewsFetchStatus}
+        single={false}
+        reviews={reviews} 
+        reviewsLoading={reviewsLoading}
+        reviewsLoaded={reviewsLoaded}
+        reviewsError={reviewsError}
         reviewsPage={reviewsPage}
         reviewsNumberOfPages={reviewsNumberOfPages}
-        refetch={refetch}
+        fetchReviews={()=> fetchProductReviews(product.id)}
         />
 
     </>
@@ -63,6 +76,8 @@ function ProductReviewList() {
 
 
 export default function Product() {
+
+  const { ID } = useParams();
 
   const {
     admin: { 
@@ -73,9 +88,12 @@ export default function Product() {
   } = useAppContext();
 
   const [
-    product, 
-    productFetchStatus, 
-    refetch
+    fetchProduct,
+    product,
+    productLoading,
+    productError,
+    productID,
+    unfetchProduct
   ] = useProductFetch(adminToken);
 
   useHeader({ 
@@ -84,28 +102,37 @@ export default function Product() {
     topNavPaths: ['/cart', '/search']
   });
 
+  useEffect(
+    function() {
+      if ((product !== null || productError !== null) && productID !== ID) 
+        unfetchProduct();
+      else if (product === null && productError === null)
+        fetchProduct(ID);
+    },
+    [ID, product, productError, productID, fetchProduct, unfetchProduct]
+  );
+
   return (
     <section>
+      
+      { product !== null && <ProductProfile isAdmin={true} product={product} /> }
+
       {
-        useRenderOnDataFetched(
-          productFetchStatus,
-          ()=> (
-            <ProductProfile 
-              product={product} 
-              isAdmin={true}
-              />
-          ),
-          ()=> <div className="container-x"> <Loading /> </div>,
-          ()=> <div className="container-x"> <Reload action={refetch} /> </div>,
-          ()=> <div className="container-x"> <NotFound /> </div>,
-          ()=> <div className="container-x"> <Forbidden /> </div>,
-        )
+        product === null &&
+        <div>
+          { productLoading && <Loading /> }
+          { productError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+          { productError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+          { productError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchProduct(ID)} /> }
+          { productError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchProduct(ID)} /> }
+        </div>
       }
 
       { 
-        product && 
+        product !== null && 
         <ProductReviewList />
       }
+
     </section>
   );
 }

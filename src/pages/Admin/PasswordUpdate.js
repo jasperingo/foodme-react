@@ -7,25 +7,24 @@ import { useHeader } from '../../hooks/headerHook';
 export default function PasswordUpdate() {
 
   useHeader({ 
-    title: 'Update - Password',
+    title: 'Update Password - Administrator',
     headerTitle: '_user.Edit_password'
   });
 
   const [
     onSubmit,
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     newPasswordError, 
     currentPasswordError
   ] = useAdminPasswordUpdate();
 
-
   return (
     <section>
       <div className="container-x">
         <PasswordUpdateForm 
-          dialog={dialog}
+          dialog={loading}
           onSubmit={onSubmit}
           formError={formError} 
           formSuccess={formSuccess}

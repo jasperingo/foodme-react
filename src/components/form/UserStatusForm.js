@@ -5,7 +5,7 @@ import FormButton from './FormButton';
 import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 
-export default function UserStatusForm({ status, onSubmit, dialog, formError, formSuccess, statusError }) {
+export default function UserStatusForm({ status, onSubmit, dialog, formError, formSuccess }) {
 
   const statusInput = useRef(null);
 
@@ -24,7 +24,6 @@ export default function UserStatusForm({ status, onSubmit, dialog, formError, fo
 
       <FormSelect 
         ref={ statusInput }
-        error={ statusError }
         ID="status-input" 
         label="_extra.Status" 
         required={true}

@@ -5,7 +5,7 @@ import FormButton from './FormButton';
 import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 
-export default function RecommendForm({ recommended, onSubmit, dialog, formError, formSuccess, recommendedError }) {
+export default function RecommendForm({ recommended, onSubmit, dialog, formError, formSuccess }) {
 
   const recommendedInput = useRef(null);
 
@@ -24,7 +24,6 @@ export default function RecommendForm({ recommended, onSubmit, dialog, formError
 
       <FormSelect 
         ref={ recommendedInput }
-        error={ recommendedError }
         ID="recommended-input" 
         label="_extra.Recommended" 
         required={true}

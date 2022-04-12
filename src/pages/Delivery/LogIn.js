@@ -47,7 +47,7 @@ export default function LogIn({ redirectTo }) {
 
         <form method="POST" action="" onSubmit={onLoginSubmit} className="form-1-x" noValidate>
 
-          <AuthFormHeader icon={deliveryIcon} text="_user.Welcome_back" />
+          <AuthFormHeader icon={deliveryIcon} text="_delivery.Delivery_firm_login_note" />
 
           <FormMessage error={formError} />
 

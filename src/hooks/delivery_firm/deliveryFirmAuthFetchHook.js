@@ -23,8 +23,6 @@ export function useDeliveryFirmAuthFetch() {
 
   const [error, setError] = useState(null);
 
-  const [success, setSuccess] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const api = useMemo(function() { return new DeliveryFirmRepository(deliveryFirmToken); }, [deliveryFirmToken]);
@@ -60,8 +58,6 @@ export function useDeliveryFirmAuthFetch() {
           
           newMessage(deliveryFirmToken, res.body.data.user.id);
 
-          setSuccess(true);
-
         } else if (res.status === 401) {
           unsetAuth();
         } else {
@@ -77,5 +73,5 @@ export function useDeliveryFirmAuthFetch() {
     [api, loading, deliveryFirmAdminID, deliveryFirmId, deliveryFirmToken, deliveryFirmDispatch, unsetAuth, messageCount, newMessage]
   );
   
-  return [deliveryFirmId, fetchDeliveryFirm, success, error];
+  return [deliveryFirmId, fetchDeliveryFirm, error];
 }

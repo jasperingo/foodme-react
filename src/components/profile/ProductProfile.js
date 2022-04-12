@@ -12,6 +12,7 @@ import AlertDialog from "../dialog/AlertDialog";
 import LoadingDialog from "../dialog/LoadingDialog";
 import H4Heading from "../H4Heading";
 import QuantityChooser from "../QuantityChooser";
+import ProfileLink from "./ProfileLink";
 
 export default function ProductProfile(
   { 
@@ -240,11 +241,12 @@ export default function ProductProfile(
               }
 
               { 
-                (isStore || isAdmin) && 
-                <Link to={`/product/${id}/update`} className="flex items-center gap-2">
-                  <Icon path={editIcon} className="w-7 h-7 text-color-primary" />
-                  <span className="sr-only lg:not-sr-only text-color-primary">{ t('_product.Edit_product') }</span>
-                </Link>
+                (isStore || isAdmin) &&
+                <ProfileLink
+                  icon={editIcon}
+                  href={`/product/${id}/update`}
+                  title="_product.Edit_product"
+                  />
               }
             </div>
           </div>

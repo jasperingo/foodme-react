@@ -1,12 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ADMIN } from "../../context/actions/adminActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import AdminRepository from "../../repositories/AdminRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 import { useMessageFetch } from "../message/messageFetchHook";
 import { useMessageUnreceivedCountFetch } from "../message/messageUnreceivedCountFetchHook";
-import { ADMIN_ID, ADMIN_TOKEN } from "./adminConstants";
-
+import { useAdminAuthGet, useAdminAuthUnset } from "./adminAuthStorageHook";
 
 export function useAdminAuthFetch() {
 
@@ -18,61 +17,60 @@ export function useAdminAuthFetch() {
 
   const messageCount = useMessageUnreceivedCountFetch();
 
-  const [done, setDone] = useState(FETCH_STATUSES.LOADING);
+  const [adminId, adminToken] = useAdminAuthGet();
 
-  const retry = useCallback(() => setDone(FETCH_STATUSES.LOADING), []);
+  const unsetAuth = useAdminAuthUnset();
+
+  const [error, setError] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+
+  const api = useMemo(function() { return new AdminRepository(adminToken); }, [adminToken]);
   
-  useEffect(
-    ()=> {
-      const adminId = window.localStorage.getItem(ADMIN_ID);
-      const adminToken = window.localStorage.getItem(ADMIN_TOKEN);
+  const fetchAdmin = useCallback(
+    async function() {
 
-      if (done === FETCH_STATUSES.LOADING && adminId !== null && adminToken !== null && !window.navigator.onLine) {
+      if (loading) return;
 
-        setDone(FETCH_STATUSES.ERROR);
+      if (!window.navigator.onLine) {
+        setError(NetworkErrorCodes.NO_NETWORK_CONNECTION);
+        return;
+      }
 
-      } else if (done === FETCH_STATUSES.LOADING && adminId !== null && adminToken !== null) {
+      setLoading(true);
+
+      try {
         
-        const api = new AdminRepository(adminToken);
+        const res = await api.get(adminId);
 
-        api.get(adminId)
-        .then(res=> {
-          
-          if (res.status === 200) {
+        if (res.status === 200) {
             
-            adminDispatch({
-              type: ADMIN.AUTHED, 
-              payload: { 
-                token: adminToken, 
-                admin: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
+          adminDispatch({
+            type: ADMIN.AUTHED, 
+            payload: { 
+              token: adminToken, 
+              admin: res.body.data
+            }
+          });
 
-            setDone(FETCH_STATUSES.DONE);
+          messageCount(adminToken);
 
-            messageCount(adminToken);
+          newMessage(adminToken, res.body.data.application.id);
 
-            newMessage(adminToken, res.body.data.application.id);
-
-          } else if (res.status === 401) {
-            window.localStorage.removeItem(ADMIN_ID);
-            window.localStorage.removeItem(ADMIN_TOKEN);
-            setDone(FETCH_STATUSES.DONE);
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          setDone(FETCH_STATUSES.ERROR);
-        });
-
-      } else if (done === FETCH_STATUSES.LOADING && (adminId === null || adminToken === null)) {
-        setDone(FETCH_STATUSES.DONE);
+        } else if (res.status === 401) {
+          unsetAuth();
+        } else {
+          throw new Error();
+        }
+        
+      } catch {
+        setError(NetworkErrorCodes.UNKNOWN_ERROR);
+      } finally {
+        setLoading(false);
       }
     },
-    [done, adminDispatch, messageCount, newMessage]
-  )
+    [api, loading, adminId, adminToken, adminDispatch, unsetAuth, messageCount, newMessage]
+  );
   
-  return [done, retry];
+  return [adminId, fetchAdmin, error];
 }

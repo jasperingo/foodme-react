@@ -1,10 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { getStoresListFetchStatusAction, STORE } from "../../context/actions/storeActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { STORE } from "../../context/actions/storeActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
 
 export function useStoreList(userToken) {
 
@@ -14,89 +14,77 @@ export function useStoreList(userToken) {
       store: {
         stores,
         storesPage,
+        storesError,
+        storesLoaded,
         storesLoading,
-        storesNumberOfPages,
-        storesFetchStatus
+        storesNumberOfPages
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new StoreRepository(userToken); }, [userToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (storesFetchStatus !== FETCH_STATUSES.LOADING)
-        storeDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [storesFetchStatus, storeDispatch]
-  );
-
-  const refresh = useCallback(
-    ()=> {
-      storeDispatch({ type: STORE.LIST_UNFETCHED });
-    },
-    [storeDispatch]
-  );
+  function refreshStores() {
+    storeDispatch({ type: STORE.LIST_UNFETCHED }); 
+  }
   
-  useEffect(
-    ()=> {
+  const fetchStores = useCallback(
+    async function() {
 
-      if (storesLoading && storesFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+      if (storesLoading) return;
 
-        storeDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (!window.navigator.onLine) {
+        storeDispatch({
+          type: STORE.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      } 
+      
+      storeDispatch({ type: STORE.LIST_FETCHING });
+      
+      try {
 
-      } else if (storesLoading && storesFetchStatus === FETCH_STATUSES.LOADING) {
-
-        storeDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-
-        const api = new StoreRepository(userToken);
-        api.getList(storesPage)
-        .then(res=> {
+        const res = await api.getList(storesPage);
           
-          if (res.status === 200) {
+        if (res.status === 200) {
 
-            storeDispatch({
-              type: STORE.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  storesPage, 
-                  res.body.pagination.number_of_pages, 
-                  stores.length, 
-                  res.body.data.length
-                ),
-              }
-            });
+          storeDispatch({
+            type: STORE.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
 
-          } else if (res.status === 404) {
-
-            storeDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            storeDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          storeDispatch(getStoresListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        storeDispatch({
+          type: STORE.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      stores, 
+      api,
       storesPage, 
       storesLoading,
-      storesFetchStatus, 
-      userToken, 
       storeDispatch, 
-      listStatusUpdater
     ]
   );
 
-  return [stores, storesFetchStatus, storesPage, storesNumberOfPages, refetch, refresh];
+  return [
+    fetchStores,
+    stores, 
+    storesLoading,
+    storesLoaded,
+    storesError,
+    storesPage, 
+    storesNumberOfPages,
+    refreshStores
+  ];
 }
-

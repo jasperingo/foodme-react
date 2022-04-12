@@ -39,6 +39,7 @@ import TermsOfService from '../pages/TermsOfService';
 import Home from '../pages/Delivery/Home';
 import Chats from '../pages/Delivery/Chats';
 import Store from '../pages/Delivery/Store';
+import Customer from '../pages/Customer';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -66,19 +67,19 @@ export default function DeliveryApp() {
 
   const location = useLocation();
 
-  const redirectTo = new URLSearchParams().get('redirect_to')  ?? '/delivery-routes';
+  const redirectTo = new URLSearchParams(location.search).get('redirect_to')  ?? '/delivery-routes';
 
-  const [deliveryFirmId, fetchDeliveryFirm, success, error] = useDeliveryFirmAuthFetch();
+  const [deliveryFirmId, fetchDeliveryFirm, error] = useDeliveryFirmAuthFetch();
 
   useEffect(
     function() {
-      if (deliveryFirmId !== null && error === null && !success)
+      if (deliveryFirm === null && deliveryFirmId !== null && error === null)
         fetchDeliveryFirm();
     },
-    [deliveryFirmId, error, success, fetchDeliveryFirm]
+    [deliveryFirm, deliveryFirmId, error, fetchDeliveryFirm]
   );
 
-  if (deliveryFirmId !== null && !success) {
+  if (deliveryFirm === null && deliveryFirmId !== null) {
     return <Splash onRetry={fetchDeliveryFirm} error={error} />;
   }
 
@@ -109,6 +110,7 @@ export default function DeliveryApp() {
           
           <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
           <Route path="/store/:ID" render={()=> authMiddleware() || <Store />} />
+          <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer userToken={deliveryFirmToken} />} />
           <Route path="/delivery-route-weight/:ID/update" render={()=> authMiddleware() || <DeliveryWeightUpdate />} />
           <Route path="/delivery-route-weight/create" render={()=> authMiddleware() || <DeliveryWeightCreate />} />
           <Route path="/delivery-route-duration/:ID/update" render={()=> authMiddleware() || <DeliveryDurationUpdate />} />

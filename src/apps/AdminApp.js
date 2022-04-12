@@ -1,11 +1,9 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { adminIcon, dashboardIcon, messageIcon, orderIcon, transactionIcon } from '../assets/icons';
 import { useAppContext } from '../hooks/contextHook';
-import { FETCH_STATUSES } from '../repositories/Fetch';
 import { useAdminAuthFetch } from '../hooks/admin/adminAuthFetchHook';
-import { useURLQuery } from '../hooks/viewHook';
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
 import Splash from '../pages/Splash';
@@ -33,8 +31,8 @@ import CategoryUpdate from '../pages/Admin/CategoryUpdate';
 import SubCategoryAdd from '../pages/Admin/SubCategoryAdd';
 import SubCategoryUpdate from '../pages/Admin/SubCategoryUpdate';
 import Product from '../pages/Admin/Product';
-import Discount from '../pages/Admin/Discount';
-import Order from '../pages/Admin/Order';
+import Discount from '../pages/Discount';
+import Order from '../pages/Order';
 import Transaction from '../pages/Transaction';
 import DeliveryRoute from '../pages/Admin/DeliveryRoute';
 import TermsOfService from '../pages/TermsOfService';
@@ -74,19 +72,22 @@ export default function AdminApp() {
 
   const location = useLocation();
 
-  const redirectTo = useURLQuery().get('redirect_to');
+  const redirectTo = new URLSearchParams(location.search).get('redirect_to')  ?? '/dashboard';
 
-  const [authDone, retry] = useAdminAuthFetch();
+  const [adminId, fetchAdmin, error] = useAdminAuthFetch();
 
-  if (authDone !== FETCH_STATUSES.DONE) {
-    return (
-      <Splash 
-        onRetry={retry} 
-        error={authDone === FETCH_STATUSES.ERROR}
-        />
-    );
+  useEffect(
+    function() {
+      if (admin === null && adminId !== null && error === null)
+        fetchAdmin();
+    },
+    [admin, adminId, error, fetchAdmin]
+  );
+  
+  if (admin === null && adminId !== null) {
+    return <Splash onRetry={fetchAdmin} error={error} />;
   }
-
+  
   function authMiddleware() {
     return admin !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
   }
@@ -113,8 +114,8 @@ export default function AdminApp() {
           <Route path="/promotions" render={()=> authMiddleware() || <Promotions />} />
           <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={adminToken} canProcessAndDecline={true} />} />
-          <Route path="/order/:ID" render={()=> authMiddleware() || <Order />} />
-          <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount />} />
+          <Route path="/order/:ID" render={()=> authMiddleware() || <Order userToken={adminToken} isAdmin={true} />} />
+          <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount userToken={adminToken} />} />
           <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />
           <Route path="/product/:ID" render={()=> authMiddleware() || <Product />} />
           <Route path="/delivery-firm/:ID/update" render={()=> authMiddleware() || <DeliveryFirmUpdate />} />
@@ -141,7 +142,7 @@ export default function AdminApp() {
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword administrator={true} />} />
-          <Route path="/login" render={()=> guestMiddleware() || <LogIn guestMiddleware={guestMiddleware} />} />
+          <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
           <Route path="/" render={()=> guestMiddleware() || <Home />} />
         </Switch>
       </main>

@@ -44,6 +44,7 @@ import Home from '../pages/Store/Home';
 import Chats from '../pages/Store/Chats';
 import Order from '../pages/Order';
 import DeliveryFirm from '../pages/Store/DeliveryFirm';
+import Customer from '../pages/Customer';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -71,19 +72,19 @@ export default function StoreApp() {
 
   const location = useLocation();
 
-  const redirectTo = new URLSearchParams().get('redirect_to')  ?? '/products';
+  const redirectTo = new URLSearchParams(location.search).get('redirect_to')  ?? '/products';
 
-  const [storeId, fetchStore, success, error] = useStoreAuthFetch();
+  const [storeId, fetchStore, error] = useStoreAuthFetch();
 
   useEffect(
     function() {
-      if (storeId !== null && error === null && !success)
+      if (store === null && storeId !== null && error === null)
         fetchStore();
     },
-    [storeId, error, success, fetchStore]
+    [store, storeId, error, fetchStore]
   );
 
-  if (storeId !== null && !success) {
+  if (store === null && storeId !== null) {
     return <Splash onRetry={fetchStore} error={error} />;
   }
 
@@ -115,6 +116,7 @@ export default function StoreApp() {
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
           
           <Route path="/delivery-firm/:ID" render={()=> authMiddleware() || <DeliveryFirm />} />
+          <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer userToken={storeToken} />} />
           <Route path="/product-variant/create" render={()=> authMiddleware() || <ProductVariantCreate />} />
           <Route path="/product-variant/:ID" render={()=> authMiddleware() || <ProductVariantUpdate />} />
           <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />

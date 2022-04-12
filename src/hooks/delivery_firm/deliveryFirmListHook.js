@@ -1,11 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { DELIVERY_FIRM, getDeliveryFirmsListFetchStatusAction } from "../../context/actions/deliveryFirmActions";
+import { useCallback, useMemo } from "react";
+import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useDeliveryFirmList(userToken) {
 
@@ -15,88 +14,78 @@ export function useDeliveryFirmList(userToken) {
       deliveryFirm: {
         deliveryFirms,
         deliveryFirmsPage,
+        deliveryFirmsError,
+        deliveryFirmsLoaded,
         deliveryFirmsLoading,
-        deliveryFirmsNumberOfPages,
-        deliveryFirmsFetchStatus
+        deliveryFirmsNumberOfPages
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new DeliveryFirmRepository(userToken); }, [userToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (deliveryFirmsFetchStatus !== FETCH_STATUSES.LOADING) 
-        deliveryFirmDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [deliveryFirmDispatch, deliveryFirmsFetchStatus]
-  );
-
-  const refresh = useCallback(
-    ()=> {
-      deliveryFirmDispatch({ type: DELIVERY_FIRM.LIST_UNFETCHED });
-    },
-    [deliveryFirmDispatch]
-  );
+  function refreshDeliveryFirms() {
+    deliveryFirmDispatch({ type: DELIVERY_FIRM.LIST_UNFETCHED }); 
+  }
   
-  useEffect(
-    ()=> {
-      if (deliveryFirmsLoading && deliveryFirmsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchDeliveryFirms = useCallback(
+    async function() {
 
-        deliveryFirmDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (deliveryFirmsLoading) return;
 
-      } else if (deliveryFirmsLoading && deliveryFirmsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (!window.navigator.onLine) {
+        deliveryFirmDispatch({
+          type: DELIVERY_FIRM.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      } 
+      
+      deliveryFirmDispatch({ type: DELIVERY_FIRM.LIST_FETCHING });
+      
+      try {
 
-        deliveryFirmDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-        
-        const api = new DeliveryFirmRepository(userToken);
-        api.getList(deliveryFirmsPage)
-        .then(res=> {
+        const res = await api.getList(deliveryFirmsPage);
           
-          if (res.status === 200) {
+        if (res.status === 200) {
 
-            deliveryFirmDispatch({
-              type: DELIVERY_FIRM.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  deliveryFirmsPage, 
-                  res.body.pagination.number_of_pages, 
-                  deliveryFirms.length, 
-                  res.body.data.length
-                ),
-              }
-            });
+          deliveryFirmDispatch({
+            type: DELIVERY_FIRM.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
 
-          } else if (res.status === 404) {
-
-            deliveryFirmDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            deliveryFirmDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-            
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          deliveryFirmDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        deliveryFirmDispatch({
+          type: DELIVERY_FIRM.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
+      
     },
     [
-      deliveryFirms, 
+      api, 
       deliveryFirmsPage, 
       deliveryFirmsLoading, 
-      deliveryFirmsFetchStatus, 
-      userToken, 
-      deliveryFirmDispatch, 
-      listStatusUpdater
+      deliveryFirmDispatch,
     ]
   );
 
-  return [deliveryFirms, deliveryFirmsFetchStatus, deliveryFirmsPage, deliveryFirmsNumberOfPages, refetch, refresh];
+  return [
+    fetchDeliveryFirms,
+    deliveryFirms, 
+    deliveryFirmsLoading,
+    deliveryFirmsLoaded,
+    deliveryFirmsError,
+    deliveryFirmsPage, 
+    deliveryFirmsNumberOfPages,
+    refreshDeliveryFirms
+  ];
 }
-

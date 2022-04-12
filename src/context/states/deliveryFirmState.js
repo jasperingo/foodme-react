@@ -11,9 +11,10 @@ const deliveryFirmState = {
   
   deliveryFirms: [],
   deliveryFirmsPage: 1,
-  deliveryFirmsLoading: true,
+  deliveryFirmsError: null,
+  deliveryFirmsLoaded: false,
+  deliveryFirmsLoading: false,
   deliveryFirmsNumberOfPages: 0,
-  deliveryFirmsFetchStatus: FETCH_STATUSES.LOADING,
 
   routes: [],
   routesPage: 1,

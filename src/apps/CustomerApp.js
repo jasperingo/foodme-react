@@ -48,8 +48,7 @@ import { cartIcon, categoryIcon, homeIcon, messageIcon, searchIcon, userIcon } f
 import { useAppContext } from '../hooks/contextHook';
 import { useCartCounter } from '../hooks/viewHook';
 import { useMessageUnreceivedCounter } from '../hooks/message/messageUnreceivedCounterHook';
-import { useAuthCustomerFetch } from '../hooks/customer/authCustomerFetchHook';
-
+import { useCustomerAuthFetch } from '../hooks/customer/customerAuthFetchHook';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -78,19 +77,19 @@ export default function CustomerApp() {
 
   const location = useLocation();
 
-  const redirectTo = new URLSearchParams().get('redirect_to') ?? '/account';
+  const redirectTo = new URLSearchParams(location.search).get('redirect_to') ?? '/account';
 
-  const [customerId, fetchCustomer, success, error] = useAuthCustomerFetch();
+  const [customerId, fetchCustomer, error] = useCustomerAuthFetch();
 
   useEffect(
     function() {
-      if (customerId !== null && error === null && !success)
+      if (customer === null && customerId !== null && error === null)
         fetchCustomer();
     },
-    [customerId, error, success, fetchCustomer]
+    [customer, customerId, error, fetchCustomer]
   );
 
-  if (customerId !== null && !success) {
+  if (customer === null && customerId !== null) {
     return <Splash onRetry={fetchCustomer} error={error} />;
   }
 

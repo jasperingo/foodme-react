@@ -1,11 +1,10 @@
 
-import { useCallback, useEffect } from "react";
-import { CUSTOMER, getCustomersListFetchStatusAction } from "../../context/actions/customerActions";
+import { useCallback, useMemo } from "react";
+import { CUSTOMER } from "../../context/actions/customerActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useCustomerList(userToken) {
 
@@ -16,89 +15,76 @@ export function useCustomerList(userToken) {
         customers: {
           customers,
           customersPage,
+          customersError,
+          customersLoaded,
           customersLoading,
-          customersNumberOfPages,
-          customersFetchStatus
+          customersNumberOfPages
         }
       } 
     } 
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new CustomerRepository(userToken); }, [userToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (customersFetchStatus !== FETCH_STATUSES.LOADING) 
-        dispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [dispatch, customersFetchStatus]
-  );
+  function refreshCustomers() {
+    dispatch({ type: CUSTOMER.LIST_UNFETCHED }); 
+  }
 
-  const refresh = useCallback(
-    ()=> {
-      dispatch({ type: CUSTOMER.LIST_UNFETCHED });
-    },
-    [dispatch]
-  );
-  
-  useEffect(
-    ()=> {
-      if (customersLoading && customersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchCustomers = useCallback(
+    async function() {
 
-        dispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (customersLoading) return;
 
-      } else if (customersLoading && customersFetchStatus === FETCH_STATUSES.LOADING) {
-
-        dispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-        
-        const api = new CustomerRepository(userToken);
-        api.getList(customersPage)
-        .then(res=> {
+      if (!window.navigator.onLine) {
+        dispatch({
+          type: CUSTOMER.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      } 
+      
+      dispatch({ type: CUSTOMER.LIST_FETCHING });
+      
+      try {
+        const res = await api.getList(customersPage);
           
-          if (res.status === 200) {
-            
-            dispatch({
-              type: CUSTOMER.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  customersPage, 
-                  res.body.pagination.number_of_pages, 
-                  customers.length, 
-                  res.body.data.length
-                ),
-              }
-            });
-
-          } else if (res.status === 404) {
-
-            dispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            dispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-            
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          dispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        if (res.status === 200) {
+          
+          dispatch({
+            type: CUSTOMER.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
+        } else if (res.status === 403) {
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        dispatch({
+          type: CUSTOMER.LIST_ERROR_CHANGED,
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      customers, 
+      api,
       customersPage, 
       customersLoading,
-      customersFetchStatus, 
-      userToken, 
       dispatch, 
-      listStatusUpdater
     ]
   );
 
-  return [customers, customersFetchStatus, customersPage, customersNumberOfPages, refetch, refresh];
+  return [
+    fetchCustomers,
+    customers, 
+    customersLoading,
+    customersLoaded,
+    customersError,
+    customersPage, 
+    customersNumberOfPages,
+    refreshCustomers
+  ];
 }
-

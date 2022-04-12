@@ -23,8 +23,6 @@ export function useStoreAuthFetch() {
 
   const [error, setError] = useState(null);
 
-  const [success, setSuccess] = useState(false);
-
   const [loading, setLoading] = useState(false);
 
   const api = useMemo(function() { return new StoreRepository(storeToken); }, [storeToken]);
@@ -60,8 +58,6 @@ export function useStoreAuthFetch() {
           
           newMessage(storeToken, res.body.data.user.id);
 
-          setSuccess(true);
-
         } else if (res.status === 401) {
           unsetAuth();
         } else {
@@ -77,5 +73,5 @@ export function useStoreAuthFetch() {
     [api, loading, storeAdminID, storeId, storeToken, storeDispatch, unsetAuth, messageCount, newMessage]
   );
   
-  return [storeId, fetchStore, success, error];
+  return [storeId, fetchStore, error];
 }

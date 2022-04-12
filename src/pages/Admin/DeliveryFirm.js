@@ -1,15 +1,17 @@
 
-import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
+import OrderList from '../../components/list/OrderList';
+import ReviewList from '../../components/list/ReviewList';
+import RouteList from '../../components/list/RouteList';
+import TransactionList from '../../components/list/TransactionList';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import DeliveryFirmProfile from '../../components/profile/DeliveryFirmProfile';
-import OrderList from '../../components/profile/section/OrderList';
-import ReviewList from '../../components/profile/section/ReviewList';
-import RouteList from '../../components/profile/section/RouteList';
-import TransactionList from '../../components/profile/section/TransactionList';
 import Reload from '../../components/Reload';
+import ReviewRaterAndSummary from '../../components/review/ReviewRaterAndSummary';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useAppContext } from '../../hooks/contextHook';
 import { useDeliveryFirmFetch } from '../../hooks/delivery_firm/deliveryFirmFetchHook';
 import { useDeliveryFirmOrderList } from '../../hooks/delivery_firm/deliveryFirmOrderListHook';
@@ -17,7 +19,6 @@ import { useDeliveryFirmReviewList } from '../../hooks/delivery_firm/deliveryFir
 import { useDeliveryFirmRouteList } from '../../hooks/delivery_firm/deliveryFirmRouteListHook';
 import { useDeliveryFirmTransactionList } from '../../hooks/delivery_firm/deliveryFirmTransactionListHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 const NAV_LINKS = [
   { title : '_delivery.Routes', href: '' },
@@ -33,24 +34,41 @@ function DeliveryFirmTransactionsList() {
       admin: {
         adminToken
       }
-    }, 
+    },
+    deliveryFirm: { 
+      deliveryFirm: {
+        deliveryFirm,
+      }
+    } 
   } = useAppContext();
   
   const [
+    fetchDeliveryFirmTransactions,
     transactions, 
-    transactionsFetchStatus, 
+    transactionsLoading,
+    transactionsLoaded,
+    transactionsError,
     transactionsPage, 
-    transactionsNumberOfPages, 
-    refetch
+    transactionsNumberOfPages
   ] = useDeliveryFirmTransactionList(adminToken);
+
+  useEffect(
+    function() { 
+      if (!transactionsLoaded && transactionsError === null) 
+        fetchDeliveryFirmTransactions(deliveryFirm.id); 
+    },
+    [deliveryFirm.id, transactionsLoaded, transactionsError, fetchDeliveryFirmTransactions]
+  );
 
   return (
     <TransactionList
       transactions={transactions}
-      transactionsFetchStatus={transactionsFetchStatus}
       transactionsPage={transactionsPage}
+      transactionsError={transactionsError}
+      transactionsLoading={transactionsLoading}
+      transactionsLoaded={transactionsLoaded}
       transactionsNumberOfPages={transactionsNumberOfPages}
-      refetch={refetch}
+      fetchTransactions={()=> fetchDeliveryFirmTransactions(deliveryFirm.id)}
       />
   );
 }
@@ -62,24 +80,41 @@ function DeliveryFirmOrdersList() {
       admin: {
         adminToken
       }
-    }
+    },
+    deliveryFirm: { 
+      deliveryFirm: {
+        deliveryFirm
+      }
+    } 
   } = useAppContext();
 
   const [
+    fetchDeliveryFirmOrders,
     orders, 
-    ordersFetchStatus, 
+    ordersLoaded,
+    ordersLoading,
+    ordersError,
     ordersPage, 
-    ordersNumberOfPages, 
-    refetch,
+    ordersNumberOfPages
   ] = useDeliveryFirmOrderList(adminToken);
+
+  useEffect(
+    function() { 
+      if (!ordersLoaded && ordersError === null) 
+        fetchDeliveryFirmOrders(deliveryFirm.id); 
+    },
+    [deliveryFirm.id, ordersLoaded, ordersError, fetchDeliveryFirmOrders]
+  );
 
   return (
     <OrderList 
       orders={orders}
-      ordersFetchStatus={ordersFetchStatus}
       ordersPage={ordersPage}
+      ordersError={ordersError}
+      ordersLoaded={ordersLoaded}
+      ordersLoading={ordersLoading}
       ordersNumberOfPages={ordersNumberOfPages}
-      refetch={refetch}
+      fetchOrders={()=> fetchDeliveryFirmOrders(deliveryFirm.id)}
       />
   );
 }
@@ -91,58 +126,101 @@ function DeliveryFirmReviewsList() {
       admin: {
         adminToken
       }
-    } 
+    },
+    deliveryFirm: {
+      deliveryFirm: {
+        deliveryFirm
+      }
+    }
   } = useAppContext();
   
   const [
+    fetchDeliveryFirmReviews,
     reviews, 
-    reviewsFetchStatus, 
+    reviewsLoading,
+    reviewsLoaded,
+    reviewsError,
     reviewsPage, 
-    reviewsNumberOfPages, 
-    refetch
+    reviewsNumberOfPages
   ] = useDeliveryFirmReviewList(adminToken);
 
+  useEffect(
+    function() {
+      if (!reviewsLoaded && reviewsError === null) 
+        fetchDeliveryFirmReviews(deliveryFirm.id); 
+    },
+    [deliveryFirm.id, reviewsError, reviewsLoaded, fetchDeliveryFirmReviews]
+  );
+
   return (
-    <ReviewList 
-      reviews={reviews}
-      reviewsFetchStatus={reviewsFetchStatus}
-      reviewsPage={reviewsPage}
-      reviewsNumberOfPages={reviewsNumberOfPages}
-      refetch={refetch}
-      />
+    <>
+      <div className="container-x">
+        <ReviewRaterAndSummary summary={deliveryFirm.review_summary} />
+      </div>
+
+      <ReviewList 
+        single={false}
+        reviews={reviews} 
+        reviewsLoading={reviewsLoading}
+        reviewsLoaded={reviewsLoaded}
+        reviewsError={reviewsError}
+        reviewsPage={reviewsPage}
+        reviewsNumberOfPages={reviewsNumberOfPages}
+        fetchReviews={()=> fetchDeliveryFirmReviews(deliveryFirm.id)}
+        />
+    </>
   );
 }
 
 function DeliveryFirmRoutesList() {
-  
+
   const {
     admin: { 
       admin: {
         adminToken
       }
+    },
+    deliveryFirm: {
+      deliveryFirm: {
+        deliveryFirm
+      }
     } 
   } = useAppContext();
 
   const [
+    fetchDeliveryFirmRoutes,
     routes, 
-    routesFetchStatus, 
+    routesLoading,
+    routesError,
+    routesLoaded,
     routesPage, 
-    routesNumberOfPages, 
-    refetch
+    routesNumberOfPages,
   ] = useDeliveryFirmRouteList(adminToken);
   
+  useEffect(
+    function() {
+      if (!routesLoaded && routesError === null) 
+        fetchDeliveryFirmRoutes(deliveryFirm.id); 
+    },
+    [deliveryFirm.id, routesError, routesLoaded, fetchDeliveryFirmRoutes]
+  );
+
   return (
     <RouteList 
       routes={routes}
-      routesFetchStatus={routesFetchStatus}
       routesPage={routesPage}
+      routesError={routesError}
+      routesLoaded={routesLoaded}
+      routesLoading={routesLoading}
       routesNumberOfPages={routesNumberOfPages}
-      refetch={refetch}
+      fetchRoutes={()=> fetchDeliveryFirmRoutes(deliveryFirm.id)}
       />
   );
 }
 
 export default function DeliveryFirm() {
+
+  const { ID } = useParams();
 
   const match = useRouteMatch();
 
@@ -155,31 +233,41 @@ export default function DeliveryFirm() {
   } = useAppContext();
 
   const [
-    deliveryFirm, 
-    deliveryFirmFetchStatus,
-    refetch
+    fetchDeliveryFirm,
+    deliveryFirm,
+    deliveryFirmLoading,
+    deliveryFirmError,
+    deliveryFirmID,
+    unfetchDeliveryFirm
   ] = useDeliveryFirmFetch(adminToken);
-
 
   useHeader({ 
     title: `${deliveryFirm?.user.name ?? 'Loading...'} - Delivery Firm`,
     headerTitle: '_delivery.Delivery_firm'
   });
 
+  useEffect(
+    function() {
+      if ((deliveryFirm !== null || deliveryFirmError !== null) && deliveryFirmID !== ID) 
+        unfetchDeliveryFirm();
+      else if (deliveryFirm === null && deliveryFirmError === null)
+        fetchDeliveryFirm(ID);
+    },
+    [ID, deliveryFirm, deliveryFirmError, deliveryFirmID, fetchDeliveryFirm, unfetchDeliveryFirm]
+  );
+
   return (
     <section>
 
       <div className="container-x">
-        {
-          useRenderOnDataFetched(
-            deliveryFirmFetchStatus,
-            ()=> <DeliveryFirmProfile deliveryFirm={deliveryFirm} navLinks={NAV_LINKS} isAdmin={true} />,
-            ()=> <Loading />,
-            ()=> <Reload action={refetch} />,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
-          )
-        }
+        
+        { deliveryFirm !== null && <DeliveryFirmProfile deliveryFirm={deliveryFirm} navLinks={NAV_LINKS} isAdmin={true} /> }
+        { deliveryFirmLoading && <Loading /> }
+        { deliveryFirmError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+        { deliveryFirmError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
+        { deliveryFirmError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchDeliveryFirm(ID)} /> }
+        { deliveryFirmError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload message="_errors.No_netowrk_connection" action={()=> fetchDeliveryFirm(ID)} /> }
+        
       </div>
 
       {

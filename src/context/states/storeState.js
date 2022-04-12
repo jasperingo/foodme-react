@@ -1,4 +1,3 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 export const storeState = {
 
@@ -11,9 +10,10 @@ export const storeState = {
 
   stores: [],
   storesPage: 1,
-  storesLoading: true,
+  storesError: null,
+  storesLoaded: false,
+  storesLoading: false,
   storesNumberOfPages: 0,
-  storesFetchStatus: FETCH_STATUSES.LOADING,
   
   productCategories: [],
   productCategoriesError: null,

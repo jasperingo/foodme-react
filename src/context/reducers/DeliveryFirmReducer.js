@@ -25,21 +25,40 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
         deliveryFirmAdminID: payload.adminID
       };
     
-    case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED:
+
+    case DELIVERY_FIRM.LIST_UNFETCHED:
       return {
         ...state,
-        deliveryFirmsLoading: payload.loading,
-        deliveryFirmsFetchStatus: payload.fetchStatus
+        deliveryFirms: deliveryFirmState.deliveryFirms,
+        deliveryFirmsPage: deliveryFirmState.deliveryFirmsPage,
+        deliveryFirmsError: deliveryFirmState.deliveryFirmsError,
+        deliveryFirmsLoaded: deliveryFirmState.deliveryFirmsLoaded,
+        deliveryFirmsLoading: deliveryFirmState.deliveryFirmsLoading,
+        deliveryFirmsNumberOfPages: deliveryFirmState.deliveryFirmsNumberOfPages
+      };
+
+    case DELIVERY_FIRM.LIST_FETCHING:
+      return {
+        ...state,
+        deliveryFirmsError: null,
+        deliveryFirmsLoading: true
+      };
+
+    case DELIVERY_FIRM.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        deliveryFirmsLoading: false,
+        deliveryFirmsError: payload.error
       };
     
     case DELIVERY_FIRM.LIST_FETCHED:
       return {
         ...state,
-          deliveryFirmsLoading: false,
-          deliveryFirmsPage: state.deliveryFirmsPage+1,
-          deliveryFirmsFetchStatus: payload.fetchStatus,
-          deliveryFirmsNumberOfPages: payload.numberOfPages,
-          deliveryFirms: [...state.deliveryFirms, ...payload.list],
+        deliveryFirmsLoaded: true,
+        deliveryFirmsLoading: false,
+        deliveryFirmsPage: state.deliveryFirmsPage + 1,
+        deliveryFirmsNumberOfPages: payload.numberOfPages,
+        deliveryFirms: [...state.deliveryFirms, ...payload.list],
       };
 
 
@@ -58,7 +77,25 @@ export default function DeliveryFirmReducer(state, { type, payload }) {
         routesError: deliveryFirmState.routesError,
         routesLoaded: deliveryFirmState.routesLoaded,
         routesLoading: deliveryFirmState.routesLoading,
-        routesNumberOfPages: deliveryFirmState.routesNumberOfPages
+        routesNumberOfPages: deliveryFirmState.routesNumberOfPages,
+
+        orders: deliveryFirmState.orders,
+        ordersPage: deliveryFirmState.ordersPage,
+        ordersError: deliveryFirmState.ordersError,
+        ordersLoaded: deliveryFirmState.ordersLoaded,
+        ordersLoading: deliveryFirmState.ordersLoading,
+        ordersNumberOfPages: deliveryFirmState.ordersNumberOfPages,
+
+        transactions: deliveryFirmState.transactions,
+        transactionsPage: deliveryFirmState.transactionsPage,
+        transactionsError: deliveryFirmState.transactionsError,
+        transactionsLoaded: deliveryFirmState.transactionsLoaded,
+        transactionsLoading: deliveryFirmState.transactionsLoading,
+        transactionsNumberOfPages: deliveryFirmState.transactionsNumberOfPages,
+
+        transactionBalance: deliveryFirmState.transactionBalance,
+        transactionBalanceError: deliveryFirmState.transactionBalanceError,
+        transactionBalanceLoading: deliveryFirmState.transactionBalanceLoading,
       }
       
     case DELIVERY_FIRM.FETCHING:

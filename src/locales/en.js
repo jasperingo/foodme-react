@@ -353,6 +353,7 @@ export const TRANSLATIONS_EN = {
     Delivery_name: 'Delivery name',
     Delivery_firms: 'Delivery firms',
     Delivery_firm_register_note: 'Register to delivery products on our platform',
+    Delivery_firm_login_note: 'Log in and continue making amazing deliveries',
     Edit_delivery_firm: 'Edit delivery firm',
     Recent_delivery_firms: 'Recent delivery firms',
     Origin_location: 'Origin location',

@@ -23,25 +23,36 @@ export default function CustomerReducer (state, action) {
         }
       };
 
+
     case CUSTOMER.UNFETCHED: 
       return {
-        ...customerState,
-        customers: {
-          customers: state.customers,
-          customersPage: state.customersPage,
-          customersLoading: state.customersLoading,
-          customersNumberOfPages: state.customersNumberOfPages,
-          customersFetchStatus: state.customersFetchStatus
-        }
+        ...state,
+        customer: customerState.customer,
+        orders: customerState.orders,
+        products: customerState.products,
+        savedCarts: customerState.savedCarts,
+        transactions: customerState.transactions,
+        addresses: customerState.addresses
       };
 
-    case CUSTOMER.FETCH_STATUS_CHANGED:
+    case CUSTOMER.FETCHING:
       return {
         ...state,
         customer: {
+          ...state.customer,
+          customerError: null,
+          customerLoading: true
+        }
+      };
+
+    case CUSTOMER.ERROR_CHANGED:
+      return {
+        ...state,
+        customer: {
+          ...state.customer,
+          customerLoading: false,
           customerID: action.payload.id,
-          customerLoading: action.payload.loading,
-          customerFetchStatus: action.payload.fetchStatus
+          customerError: action.payload.error
         }
       };
     
@@ -51,11 +62,11 @@ export default function CustomerReducer (state, action) {
         customer: {
           ...state.customer,
           customerLoading: false, 
-          customer: action.payload.customer,
-          customerID: action.payload.customer.id,
-          customerFetchStatus: action.payload.fetchStatus,
+          customerID: action.payload.id,
+          customer: action.payload.customer
         }
       };
+
 
     case CUSTOMER.LIST_UNFETCHED:
       return {
@@ -63,28 +74,40 @@ export default function CustomerReducer (state, action) {
         customers: customerState.customers
       };
     
-    case CUSTOMER.LIST_FETCH_STATUS_CHANGED:
+    case CUSTOMER.LIST_FETCHING:
       return {
         ...state,
         customers: {
           ...state.customers,
-          customersLoading: action.payload.loading,
-          customersFetchStatus: action.payload.fetchStatus
+          customersError: null,
+          customersLoading: true
         }
       };
-    
+
+    case CUSTOMER.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        customers: {
+          ...state.customers,
+          customersLoading: false,
+          customersError: action.payload.error
+        }
+      };
+      
     case CUSTOMER.LIST_FETCHED:
       return {
         ...state,
         customers: {
+          ...state.customers,
+          customersLoaded: true,
           customersLoading: false,
-          customersPage: state.customers.customersPage+1,
-          customersFetchStatus: action.payload.fetchStatus,
+          customersPage: state.customers.customersPage + 1,
           customersNumberOfPages: action.payload.numberOfPages,
           customers: [...state.customers.customers, ...action.payload.list],
         }
       };
     
+      
     case ORDER.LIST_UNFETCHED:
       return {
         ...state,
