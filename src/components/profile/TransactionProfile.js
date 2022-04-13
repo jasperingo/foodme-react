@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransactionStatus, useTransactionType } from '../../hooks/transaction/transactionViewHook';
-import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
+import { useDateFormatter, useMoneyFormatter} from '../../hooks/viewHook';
 import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeaderText from './ProfileHeaderText';
 import UserDescList from '../UserDescList';
@@ -10,6 +10,7 @@ import User from '../../models/User';
 import Transaction from '../../models/Transaction';
 import LoadingDialog from '../dialog/LoadingDialog';
 import AlertDialog from '../dialog/AlertDialog';
+import H4Heading from '../H4Heading';
 
 export default function TransactionProfile(
   { 
@@ -39,6 +40,10 @@ export default function TransactionProfile(
 
   const [theStatus] = useTransactionStatus(status);
 
+  const moneyFormat = useMoneyFormatter();
+
+  const dateFormat = useDateFormatter();
+
   useEffect(
     function() {
       if (updateStatusFormSuccess !== null || updateStatusFormError !== null) {
@@ -57,6 +62,14 @@ export default function TransactionProfile(
     [updateStatusFormSuccess, updateStatusFormError, resetUpdateStatus]
   );
   
+
+  const negativeButton = {
+    text: '_extra.No',
+    action() {
+      setDialog(null);
+    }
+  }
+
   function onCancelClicked() {
     setDialog({
       body: '_transaction._confirm_cancel_transaction',
@@ -67,17 +80,22 @@ export default function TransactionProfile(
           onUpdateStatusSubmit(Transaction.STATUS_CANCELLED);
         }
       },
-      negativeButton: {
-        text: '_extra.No',
-        action() {
-          setDialog(null);
-        }
-      },
+      negativeButton
     });
   }
 
   function onProcessClicked() {
-    console.log('Process...')
+    setDialog({
+      body: '_transaction._confirm_process_transaction',
+      positiveButton: {
+        text: '_extra.Yes',
+        action() {
+          setDialog(null);
+          onUpdateStatusSubmit(Transaction.STATUS_PROCESSING);
+        }
+      },
+      negativeButton
+    });
   }
 
   function onDeclineClicked() {
@@ -90,12 +108,35 @@ export default function TransactionProfile(
           onUpdateStatusSubmit(Transaction.STATUS_DECLINED);
         }
       },
-      negativeButton: {
-        text: '_extra.No',
+      negativeButton
+    });
+  }
+
+  function onApprovedClicked() {
+    setDialog({
+      body: '_transaction._confirm_approve_transaction',
+      positiveButton: {
+        text: '_extra.Yes',
         action() {
           setDialog(null);
+          onUpdateStatusSubmit(Transaction.STATUS_APPROVED);
         }
       },
+      negativeButton
+    });
+  }
+
+  function onFailedClicked() {
+    setDialog({
+      body: '_transaction._confirm_fail_transaction',
+      positiveButton: {
+        text: '_extra.Yes',
+        action() {
+          setDialog(null);
+          onUpdateStatusSubmit(Transaction.STATUS_FAILED);
+        }
+      },
+      negativeButton
     });
   }
 
@@ -127,7 +168,25 @@ export default function TransactionProfile(
         color: 'btn-color-red',
         action: onDeclineClicked
       }
-    )
+    );
+  }
+
+  if (
+    canProcessAndDecline && status === Transaction.STATUS_PROCESSING && 
+    (type === Transaction.TYPE_WITHDRAWAL || type === Transaction.TYPE_REFUND)
+  ) {
+    btns.push(
+      {
+        text: '_extra.Approved',
+        color: 'btn-color-primary',
+        action: onApprovedClicked
+      },
+      {
+        text: '_extra.Failed',
+        color: 'btn-color-red',
+        action: onFailedClicked
+      }
+    );
   }
 
   const links = [];
@@ -176,7 +235,7 @@ export default function TransactionProfile(
     <div>
 
       <ProfileHeaderText
-        text={useMoneyFormat(amount)}
+        text={moneyFormat(amount)}
         buttons={btns}
         />
 
@@ -192,7 +251,7 @@ export default function TransactionProfile(
           },
           {
             title: '_extra.Date',
-            body: useDateFormat(created_at)
+            body: dateFormat(created_at)
           },
           {
             title: '_extra.Status',
@@ -200,6 +259,34 @@ export default function TransactionProfile(
           }
         ]}
         />
+      
+      {
+        (type === Transaction.TYPE_WITHDRAWAL || type === Transaction.TYPE_REFUND) && 
+        canProcessAndDecline && user.withdrawal_account &&
+        <>
+          <H4Heading text="_transaction.Withdrawal_account" />
+          <ProfileDetailsText
+            details={[
+              {
+                title: '_transaction.Bank_name',
+                body: user.withdrawal_account.bank_name
+              },
+              {
+                title: '_transaction.Account_name',
+                body: user.withdrawal_account.account_name
+              },
+              {
+                title: '_transaction.Account_number',
+                body: user.withdrawal_account.account_number
+              },
+              {
+                title: '_transaction.Account_type',
+                body: user.withdrawal_account.account_type
+              }
+            ]}
+            />
+        </>
+      }
 
       <UserDescList 
         users={links} 

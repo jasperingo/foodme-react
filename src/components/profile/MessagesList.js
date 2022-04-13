@@ -31,16 +31,15 @@ function List({ newMessage, messageReceived, userToken, userId }) {
     messagesError, 
     messagesLoaded, 
     messagesEnded,
-    messagesRetryFetch,
     onSendMessage,
     onMessageSent
   ] = useMessageMessgeList(userToken);
 
   useEffect(
     function() {
-      if (!messagesEnded) messagesFetch(ID);
+      if (!messagesLoaded && messagesError === null) messagesFetch(ID);
     },
-    [ID, messagesEnded, messagesFetch]
+    [ID, messagesLoaded, messagesError, messagesFetch]
   );
 
   useEffect(
@@ -98,7 +97,7 @@ function List({ newMessage, messageReceived, userToken, userId }) {
             render() {
               return (
                 <li key="message-footer"> 
-                  <FetchMoreButton action={messagesFetch} /> 
+                  <FetchMoreButton action={()=> messagesFetch(ID)} /> 
                 </li> 
               );
             }
@@ -108,7 +107,17 @@ function List({ newMessage, messageReceived, userToken, userId }) {
             render() { 
               return (
                 <li key="message-footer"> 
-                  <Reload action={messagesRetryFetch} /> 
+                  <Reload action={()=> messagesFetch(ID)} /> 
+                </li> 
+              );
+            },
+          },
+          {
+            canRender: messagesError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+            render() { 
+              return (
+                <li key="message-footer"> 
+                  <Reload message="_errors.No_netowrk_connection" action={()=> messagesFetch(ID)} /> 
                 </li> 
               );
             },
@@ -136,24 +145,24 @@ export default function MessagesList({ userToken, userId }) {
   const [newMessage, setNewMessage] = useState(null);
 
   const [
-    fetch, 
+    fetchChat, 
     onResponse,
     chat, 
     chatLoading, 
     chatError,
     chatID,
-    unfetch,
+    unfetchChat,
     onChatRead
   ] = useMessageChatFetch(userToken);
 
   useEffect(
     function() {
       if ((chat !== null || chatError !== null) && String(chatID) !== ID) 
-        unfetch();
+        unfetchChat();
       else if (chat === null && chatError === null)
-        fetch(ID);
+        fetchChat(ID);
     },
-    [ID, chat, chatError, chatID, fetch, unfetch]
+    [ID, chat, chatError, chatID, fetchChat, unfetchChat]
   );
 
   useEffect(
@@ -178,7 +187,12 @@ export default function MessagesList({ userToken, userId }) {
 
       {
         chatError === NetworkErrorCodes.UNKNOWN_ERROR &&
-        <Reload action={fetch} />
+        <Reload action={()=> fetchChat(ID)} />
+      }
+
+      {
+        chatError === NetworkErrorCodes.NO_NETWORK_CONNECTION &&
+        <Reload message="_errors.No_netowrk_connection" action={()=> fetchChat(ID)} />
       }
 
       {

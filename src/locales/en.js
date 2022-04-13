@@ -480,6 +480,9 @@ export const TRANSLATIONS_EN = {
 
     _confirm_cancel_transaction: 'Are you sure you want to cancel this transaction?',
     _confirm_decline_transaction: 'Are you sure you want to decline this transaction?',
+    _confirm_process_transaction: 'Are you sure you want to process this transaction?',
+    _confirm_approve_transaction: 'Are you sure you want to approve this transaction?',
+    _confirm_fail_transaction: 'Are you sure you want to fail this transaction?',
     
     Pay_on_delivery: 'Pay on delivery',
     Pay_with_paystack: 'Pay with paystack',

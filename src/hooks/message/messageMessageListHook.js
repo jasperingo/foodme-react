@@ -23,16 +23,6 @@ export function useMessageMessgeList(userToken) {
 
   const api = useMemo(function() { return MessageRepository.getInstance(userToken); }, [userToken]);
 
-  const retryFetch = useCallback(
-    function() { 
-      messageDispatch({ 
-        type: MESSAGE.LIST_ERROR_CHANGED, 
-        payload: { error: null } 
-      }) ;
-    },
-    [messageDispatch]
-  );
-
   const onResponse = useCallback(
     function() {
       return api.onGetMessages(function(response) {
@@ -57,10 +47,10 @@ export function useMessageMessgeList(userToken) {
     [api, messageDispatch]
   );
   
-  const fetch = useCallback(
+  const fetchMessages = useCallback(
     function(ID) {
       
-      if (messagesLoading || messagesError !== null) return;
+      if (messagesLoading) return;
 
       if (!window.navigator.onLine) {
         messageDispatch({
@@ -76,7 +66,7 @@ export function useMessageMessgeList(userToken) {
 
       api.getMessages(ID, messagesPage);
     },
-    [api, messagesPage, messagesLoading, messagesError, messageDispatch]
+    [api, messagesPage, messagesLoading, messageDispatch]
   );
 
   const onSendMessage = useCallback(
@@ -103,14 +93,13 @@ export function useMessageMessgeList(userToken) {
   }
 
   return [
-    fetch, 
+    fetchMessages, 
     onResponse,
     messages, 
     messagesLoading, 
     messagesError, 
     messagesLoaded, 
     messagesEnded,
-    retryFetch,
     onSendMessage,
     onMessageSent
   ];

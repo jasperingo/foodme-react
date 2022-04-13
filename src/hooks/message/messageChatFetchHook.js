@@ -38,7 +38,7 @@ export function useMessageChatFetch(userToken) {
     [chat, chatID, api, messageDispatch]
   );
 
-  const unfetch = useCallback(
+  const unfetchChat = useCallback(
     function() { 
       messageDispatch({ type: MESSAGE.UNFETCHED });
     },
@@ -69,7 +69,7 @@ export function useMessageChatFetch(userToken) {
     [api, messageDispatch]
   );
 
-  const fetch = useCallback(
+  const fetchChat = useCallback(
     function(id) {
       
       if (chatLoading) return;
@@ -92,13 +92,13 @@ export function useMessageChatFetch(userToken) {
   );
 
   return [
-    fetch, 
+    fetchChat, 
     onResponse,
     chat, 
     chatLoading, 
     chatError,
     chatID,
-    unfetch,
+    unfetchChat,
     onChatRead
   ];
 }

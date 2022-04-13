@@ -64,6 +64,17 @@ export default class MessageRepository {
     }).bind(this);
   }
 
+  onGetApplicationSupport(listener) {
+    this.socket.on('application_support', listener);
+    return (function() {
+      this.socket.off('application_support', listener);
+    }).bind(this);
+  }
+
+  getApplicationSupport() {
+    this.socket.emit('application_support');
+  }
+
   getMessages(id, lastDate) {
     this.socket.emit('messages', id, lastDate, Fetch.PAGE_LIMIT_BIG);
   }

@@ -1,17 +1,17 @@
 
 import Icon from '@mdi/react';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
-import { Route } from 'react-router-dom';
-import { Switch } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import { useHistory } from 'react-router-dom';
-import { useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useLocation, useRouteMatch, useHistory } from 'react-router-dom';
 import { backIcon, messageIcon, notificationIcon, supportIcon } from '../../assets/icons';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useMessageChatList } from '../../hooks/message/messageChatListHook';
+import { useMessageContactSupport } from '../../hooks/message/messageContactSupport';
+import { useMessageMemberGet } from '../../hooks/message/messageMemberGetHook';
 import { useNotificationEnable } from '../../hooks/notification/notificationEnableHook';
 import { useListFooter } from '../../hooks/viewHook';
+import AlertDialog from '../dialog/AlertDialog';
+import LoadingDialog from '../dialog/LoadingDialog';
 import DualPaneIntro from '../DualPaneIntro';
 import EmptyList from '../EmptyList';
 import FetchMoreButton from '../FetchMoreButton';
@@ -30,19 +30,31 @@ export default function ChatsList({ isAdmin, userId, userToken, renderMessages }
 
   const location = useLocation();
 
+  const getMember = useMessageMemberGet();
+
   const listFooter = useListFooter();
+
+  const [errorDialog, setErrorDialog] = useState(null);
 
   const [canAskForNotify, askForNotify] = useNotificationEnable();
 
   const [
-    fetch, 
+    fetchSupport, 
+    onSupportResponse,
+    support,
+    supportLoading,
+    supportError,
+    supportDone
+  ] = useMessageContactSupport();
+
+  const [
+    fetchChatList, 
     onResponse,
     chats, 
     chatsLoading, 
     chatsError, 
     chatsLoaded, 
     chatsEnded,
-    retryFetch,
     onChatListOpened
   ] = useMessageChatList(userToken);
 
@@ -55,9 +67,9 @@ export default function ChatsList({ isAdmin, userId, userToken, renderMessages }
 
   useEffect(
     function() {
-      if (!chatsEnded) fetch();
+      if (!chatsLoaded && chatsError === null) fetchChatList();
     },
-    [chatsEnded, fetch]
+    [chatsLoaded, chatsError, fetchChatList]
   );
 
   useEffect(
@@ -67,6 +79,34 @@ export default function ChatsList({ isAdmin, userId, userToken, renderMessages }
     [onResponse]
   );
 
+  useEffect(
+    function() {
+      if (supportLoading)
+        return onSupportResponse();
+      else if (support !== null) {
+        history.push(`/messages/${getMember(support, userId).id}`);
+        supportDone();
+      }
+    },
+    [userId, history, support, supportLoading, onSupportResponse, supportDone, getMember]
+  );
+  
+  useEffect(
+    function() {
+      if (supportError !== null)
+        setErrorDialog({
+          body: supportError,
+          positiveButton: {
+            text: '_extra.Done',
+            action() {
+              setErrorDialog(null);
+            }
+          }
+        });
+    },
+    [supportError]
+  );
+  
   return (
     <section className="messaging-view">
       <div className="lg:flex lg:gap-5">
@@ -88,14 +128,17 @@ export default function ChatsList({ isAdmin, userId, userToken, renderMessages }
               !isAdmin && 
               <li>
                 <button 
-                  onClick={()=> alert('Loading...')}
+                  onClick={fetchSupport}
                   className="flex items-center gap-1 btn-color-primary my-2 rounded p-1"
                   >
                   <Icon path={supportIcon} className="w-4 h-4" />
                   <div>{ t('_extra.Contact_support') }</div>
                 </button>
+                { supportLoading && <LoadingDialog /> }
+                { errorDialog !== null && <AlertDialog /> }
               </li>
             }
+
             {
               canAskForNotify &&
               <li className="text-right">
@@ -138,7 +181,7 @@ export default function ChatsList({ isAdmin, userId, userToken, renderMessages }
                 render() {
                   return (
                     <li key="chat-footer"> 
-                      <FetchMoreButton action={fetch} /> 
+                      <FetchMoreButton action={fetchChatList} /> 
                     </li> 
                   );
                 }
@@ -148,7 +191,17 @@ export default function ChatsList({ isAdmin, userId, userToken, renderMessages }
                 render() { 
                   return (
                     <li key="chat-footer"> 
-                      <Reload action={retryFetch} /> 
+                      <Reload action={fetchChatList} /> 
+                    </li> 
+                  );
+                },
+              },
+              {
+                canRender: chatsError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+                render() { 
+                  return (
+                    <li key="chat-footer"> 
+                      <Reload message="_errors.No_netowrk_connection" action={fetchChatList} /> 
                     </li> 
                   );
                 },

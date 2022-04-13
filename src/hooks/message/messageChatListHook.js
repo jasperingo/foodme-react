@@ -31,16 +31,6 @@ export function useMessageChatList(userToken) {
     },
     [messageDispatch]
   );
-  
-  const retryFetch = useCallback(
-    function() { 
-      messageDispatch({ 
-        type: MESSAGE.CHAT_LIST_ERROR_CHANGED, 
-        payload: { error: null } 
-      }) ;
-    },
-    [messageDispatch]
-  );
 
   const onResponse = useCallback(
     function() {
@@ -66,10 +56,10 @@ export function useMessageChatList(userToken) {
     [api, messageDispatch]
   );
   
-  const fetch = useCallback(
+  const fetchChatList = useCallback(
     function() {
       
-      if (chatsLoading || chatsError !== null) return;
+      if (chatsLoading) return;
 
       if (!window.navigator.onLine) {
         messageDispatch({
@@ -85,18 +75,17 @@ export function useMessageChatList(userToken) {
 
       api.getMessageRecipients(chatsPage);
     },
-    [api, chatsPage, chatsLoading, chatsError, messageDispatch]
+    [api, chatsPage, chatsLoading, messageDispatch]
   );
 
   return [
-    fetch, 
+    fetchChatList, 
     onResponse,
     chats, 
     chatsLoading, 
     chatsError, 
     chatsLoaded, 
     chatsEnded,
-    retryFetch,
     onChatListOpened
   ];
 }

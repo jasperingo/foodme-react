@@ -94,6 +94,7 @@ export default function MessageReducer(state, { type, payload }) {
     case MESSAGE.LIST_FETCHING:
       return {
         ...state,
+        messagesError: null,
         messagesLoading: true
       };
 
