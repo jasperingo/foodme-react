@@ -13,10 +13,3 @@ export const CUSTOMER = {
   LIST_FETCHING: 'CUSTOMERS_FETCHING',
   LIST_ERROR_CHANGED: 'CUSTOMERS_ERROR_CHANGED',
 };
-
-export const getCustomersListFetchStatusAction = (fetchStatus, loading) => ({
-  type: CUSTOMER.LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});

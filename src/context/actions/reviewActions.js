@@ -13,10 +13,3 @@ export const REVIEW = {
   UPDATED: 'REVIEW_UPDATED',
   DELETED: 'REVIEW_DELETED'
 };
-
-export const getReviewsListFetchStatusAction = (fetchStatus, loading) => ({
-  type: REVIEW.LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});

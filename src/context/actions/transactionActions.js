@@ -15,29 +15,4 @@ export const TRANSACTION = {
   LIST_FETCHING: 'TRANSACTIONS_FETCHING',
   LIST_ERROR_CHANGED: 'TRANSACTIONS_ERROR_CHANGED',
   LIST_UNFETCHED: 'TRANSACTIONS_UNFETCHED',
-  LIST_FETCH_STATUS_CHANGED: 'TRANSACTIONS_FETCH_STATUS_CHANGED',
-  LIST_TYPE_FILTER_CHANGED: 'TRANSACTIONS_TYPE_FILTER_CHANGED',
 };
-
-export const getTransactionFetchStatusAction = (fetchStatus, id, loading) => ({
-  type: TRANSACTION.FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, id, loading
-  }
-});
-
-export const getTransactionBalanceFetchStatusAction = (fetchStatus, loading) => ({
-  type: TRANSACTION.BALANCE_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});
-
-export const getTransactionsListFetchStatusAction = (fetchStatus, loading) => ({
-  type: TRANSACTION.LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});
-
-

@@ -13,10 +13,3 @@ export const SAVED_CART = {
   CREATED: 'SAVED_CART_CREATED',
   DELETED: 'SAVED_CART_DELETED'
 };
-
-export const getSavedCartsListFetchStatusAction = (fetchStatus, loading) => ({
-  type: SAVED_CART.LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});

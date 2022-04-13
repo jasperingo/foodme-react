@@ -25,25 +25,3 @@ export const PRODUCT = {
   VARIANT_FETCHING: 'PRODUCT_VARIANT_FETCHING',
   VARIANT_ERROR_CHANGED: 'PRODUCT_VARIANT_ERROR_CHANGED',
 };
-
-export const getProductVariantFetchStatusAction = (fetchStatus, id, loading) => ({
-  type: PRODUCT.VARIANT_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, id, loading
-  }
-});
-
-export const getProductsListFetchStatusAction = (fetchStatus, loading) => ({
-  type: PRODUCT.LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});
-
-export const getRelatedProductsListFetchStatusAction = (fetchStatus, loading) => ({
-  type: PRODUCT.RELATED_LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});
-

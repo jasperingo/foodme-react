@@ -13,17 +13,3 @@ export const DELIVERY_FIRM = {
   LIST_FETCHING: 'DELIVERY_FIRMS_FETCHING',
   LIST_ERROR_CHANGED: 'DELIVERY_FIRMS_ERROR_CHANGED',
 };
-
-export const getDeliveryFirmFetchStatusAction = (fetchStatus, id, loading) => ({
-  type: DELIVERY_FIRM.FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, id, loading
-  }
-});
-
-export const getDeliveryFirmsListFetchStatusAction = (fetchStatus, loading) => ({
-  type: DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, loading
-  }
-});
