@@ -11,7 +11,7 @@ import Reload from '../Reload';
 import ScrollList from './ScrollList';
 
 export default function CustomerList(
-  { customers, customersLoading, customersLoaded, customersError, customersPage, customersNumberOfPages, fetchCustomers, refreshList }
+  { single, customers, customersLoading, customersLoaded, customersError, customersPage, customersNumberOfPages, fetchCustomers, refreshList }
 ) {
 
   const listFooter = useListFooter();
@@ -25,7 +25,7 @@ export default function CustomerList(
         data={customers}
         nextPage={fetchCustomers}
         refreshPage={refreshList}
-        hasMore={loadOnScroll(customersPage, customersNumberOfPages, customersError)}
+        hasMore={!single && loadOnScroll(customersPage, customersNumberOfPages, customersError)}
         className="list-3-x"
         renderDataItem={(item)=> (
           <CustomerItem key={`customer-${item.id}`} customer={item} />
@@ -54,7 +54,7 @@ export default function CustomerList(
           },
 
           { 
-            canRender: customersPage <= customersNumberOfPages,
+            canRender: !single && customersPage <= customersNumberOfPages,
             render() { 
               return <li key="customer-footer" className="list-3-x-col-span"> <FetchMoreButton action={fetchCustomers} /> </li>; 
             }

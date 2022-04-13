@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { PROMOTION } from '../../context/actions/promotionActions';
+import NetworkError from '../../errors/NetworkError';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import PromotionRepository from '../../repositories/PromotionRepository';
 import { useAppContext } from '../contextHook';
@@ -25,14 +26,12 @@ export function usePromotionFetch() {
 
   const api = useMemo(function() { return new PromotionRepository(adminToken); }, [adminToken]);
 
-  const unfetch = useCallback(
-    function() {
-      promotionDispatch({ type: PROMOTION.UNFETCHED });
-    },
+  const unfetchPromotion = useCallback(
+    function() { promotionDispatch({ type: PROMOTION.UNFETCHED }); },
     [promotionDispatch]
   );
-
-  const fetch = useCallback(
+  
+  const fetchPromotion = useCallback(
     async function(ID) {
 
       if (promotionLoading) return;
@@ -57,42 +56,25 @@ export function usePromotionFetch() {
         if (res.status === 200) {
           promotionDispatch({
             type: PROMOTION.FETCHED, 
-            payload: { promotion: res.body.data }
+            payload: { 
+              id: ID,
+              promotion: res.body.data 
+            }
           });
         } else if (res.status === 404) {
-          promotionDispatch({
-            type: PROMOTION.ERROR_CHANGED,
-            payload: {
-              id: ID,
-              error: NetworkErrorCodes.NOT_FOUND
-            }
-          });
-        } else if (res.status === 401) {
-          promotionDispatch({
-            type: PROMOTION.ERROR_CHANGED,
-            payload: {
-              id: ID,
-              error: NetworkErrorCodes.UNAUTHORIZED
-            }
-          });
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
         } else if (res.status === 403) {
-          promotionDispatch({
-            type: PROMOTION.ERROR_CHANGED,
-            payload: {
-              id: ID,
-              error: NetworkErrorCodes.FORBIDDEN
-            }
-          });
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
         } else {
           throw new Error();
         }
         
-      } catch {
+      } catch(error) {
         promotionDispatch({
           type: PROMOTION.ERROR_CHANGED,
           payload: {
             id: ID,
-            error: NetworkErrorCodes.UNKNOWN_ERROR
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
           }
         });
       }
@@ -101,11 +83,11 @@ export function usePromotionFetch() {
   );
 
   return [
-    fetch,
+    fetchPromotion,
     promotion,
     promotionLoading,
     promotionError,
     promotionID,
-    unfetch
+    unfetchPromotion
   ];
 }

@@ -1,11 +1,9 @@
 
-import { useCallback, useEffect } from "react";
-import { CUSTOMER, getCustomersListFetchStatusAction } from "../../context/actions/customerActions";
+import { useCallback, useMemo } from "react";
+import { CUSTOMER } from "../../context/actions/customerActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import CustomerRepository from "../../repositories/CustomerRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useDashboardCustomerList() {
 
@@ -19,73 +17,66 @@ export function useDashboardCustomerList() {
       dashboardDispatch,
       dashboard: {
         customers,
+        customersError,
+        customersLoaded,
         customersLoading,
-        customersFetchStatus
-      }
+      } 
     } 
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new CustomerRepository(adminToken); }, [adminToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (customersFetchStatus !== FETCH_STATUSES.LOADING) 
-        dashboardDispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [dashboardDispatch, customersFetchStatus]
-  );
-  
-  useEffect(
-    ()=> {
-      if (customersLoading && customersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  function refreshCustomers() {
+    dashboardDispatch({ type: CUSTOMER.LIST_UNFETCHED }); 
+  }
 
-        dashboardDispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+  const fetchCustomers = useCallback(
+    async function() {
 
-      } else if (customersLoading && customersFetchStatus === FETCH_STATUSES.LOADING) {
+      if (customersLoading) return;
 
-        dashboardDispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-        
-        const api = new CustomerRepository(adminToken);
-        api.getList(1)
-        .then(res=> {
+      if (!window.navigator.onLine) {
+        dashboardDispatch({
+          type: CUSTOMER.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      } 
+      
+      dashboardDispatch({ type: CUSTOMER.LIST_FETCHING });
+      
+      try {
+        const res = await api.getList(1);
           
-          if (res.status === 200) {
-            
-            dashboardDispatch({
-              type: CUSTOMER.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                fetchStatus: listStatusUpdater(1, 1, 0, res.body.data.length),
-              }
-            });
-
-          } else if (res.status === 404) {
-
-            dashboardDispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            dashboardDispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-            
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          dashboardDispatch(getCustomersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        if (res.status === 200) {
+          
+          dashboardDispatch({
+            type: CUSTOMER.LIST_FETCHED, 
+            payload: { list: res.body.data }
+          });
+        } else {
+          throw new Error();
+        }
+      } catch(error) {
+        dashboardDispatch({
+          type: CUSTOMER.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      customers, 
+      api, 
       customersLoading,
-      customersFetchStatus, 
-      adminToken, 
       dashboardDispatch, 
-      listStatusUpdater
     ]
   );
 
-  return [customers, customersFetchStatus, refetch];
+  return [
+    fetchCustomers,
+    customers, 
+    customersLoading,
+    customersLoaded,
+    customersError,
+    refreshCustomers
+  ];
 }
-

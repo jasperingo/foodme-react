@@ -1,10 +1,8 @@
-import { useCallback, useEffect } from "react";
-import { getTransactionsListFetchStatusAction, TRANSACTION } from "../../context/actions/transactionActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { TRANSACTION } from "../../context/actions/transactionActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import TransactionRepository from "../../repositories/TransactionRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useTransactionList() {
 
@@ -18,101 +16,77 @@ export function useTransactionList() {
       transactionDispatch,
       transaction: {
         transactions,
-        transactionsType,
         transactionsPage,
+        transactionsError,
+        transactionsLoaded,
         transactionsLoading,
-        transactionsNumberOfPages,
-        transactionsFetchStatus
+        transactionsNumberOfPages
       } 
     }, 
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new TransactionRepository(adminToken); }, [adminToken]);
 
-  const onTypeFilterChange = useCallback(
-    function(type) {
-      if (type !== transactionsType)
-        transactionDispatch({ 
-          type: TRANSACTION.LIST_TYPE_FILTER_CHANGED, 
-          payload: { status: type } 
+  function refreshTransactions() {
+    transactionDispatch({ type: TRANSACTION.LIST_UNFETCHED });
+  }
+
+  const fetchTransactions = useCallback(
+    async function(type) {
+
+      if (transactionsLoading) return;
+
+      if (!window.navigator.onLine) {
+        transactionDispatch({
+          type: TRANSACTION.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
         });
-    },
-    [transactionsType, transactionDispatch]
-  );
+        return;
+      }
 
-  const refetch = useCallback(
-    ()=> {
-      if (transactionsFetchStatus !== FETCH_STATUSES.LOADING) 
-        transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [transactionDispatch, transactionsFetchStatus]
-  );
+      transactionDispatch({ type: TRANSACTION.LIST_FETCHING });
 
-  const refresh = useCallback(
-    ()=> {
-      transactionDispatch({ type: TRANSACTION.LIST_UNFETCHED });
-    },
-    [transactionDispatch]
-  );
-
-  useEffect(
-    ()=> {
-      if (transactionsLoading && transactionsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-
-        transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
-
-      } else if (transactionsLoading && transactionsFetchStatus === FETCH_STATUSES.LOADING) {
-
-        transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      try {
         
-        const api = new TransactionRepository(adminToken);
-        api.getList(transactionsPage, transactionsType)
-        .then(res=> {
+        const res = await api.getList(transactionsPage, type);
           
-          if (res.status === 200) {
+        if (res.status === 200) {
 
-            transactionDispatch({
-              type: TRANSACTION.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                numberOfPages: res.body.pagination.number_of_pages,
-                fetchStatus: listStatusUpdater(
-                  transactionsPage, 
-                  res.body.pagination.number_of_pages, 
-                  transactions.length, 
-                  res.body.data.length
-                ),
-              }
-            });
+          transactionDispatch({
+            type: TRANSACTION.LIST_FETCHED, 
+            payload: {
+              list: res.body.data, 
+              numberOfPages: res.body.pagination.number_of_pages
+            }
+          });
 
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          transactionDispatch(getTransactionsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        } else {
+          throw new Error();
+        }
+
+      } catch {
+        transactionDispatch({
+          type: TRANSACTION.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
     [
-      adminToken, 
-      transactions.length, 
+      api,
       transactionsPage, 
       transactionsLoading, 
-      transactionsFetchStatus, 
-      transactionsType,
-      transactionDispatch, 
-      listStatusUpdater
+      transactionDispatch
     ]
   );
 
   return [
-    transactions, 
-    transactionsFetchStatus, 
+    fetchTransactions,
+    transactions,  
+    transactionsLoading,
+    transactionsLoaded,
+    transactionsError,
     transactionsPage, 
-    transactionsNumberOfPages, 
-    refetch, 
-    refresh, 
-    onTypeFilterChange
+    transactionsNumberOfPages,
+    refreshTransactions
   ];
 }

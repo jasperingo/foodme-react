@@ -32,20 +32,8 @@ export function usePromotionCreate() {
   const [durationError, setDurationError] = useState('');
 
   const api = useMemo(function() { return new PromotionRepository(adminToken); }, [adminToken]);
-
-  async function onSubmit(
-    title,
-    link,
-    linkType,
-    amount,
-    duration,
-
-    titleValidity,
-    linkValidity,
-    linkTypeValidity,
-    amountValidity,
-    durationValidity
-  ) {
+  
+  async function onSubmit(title, link, linkType, amount, duration, validity) {
     
     if (loading) return;
     
@@ -63,7 +51,7 @@ export function usePromotionCreate() {
       linkTypeError, 
       amountError, 
       durationError
-    ] = validator(titleValidity, linkValidity, linkTypeValidity, amountValidity, durationValidity);
+    ] = validator(validity);
 
     setTitleError(titleError);
     setLinkError(linkError);

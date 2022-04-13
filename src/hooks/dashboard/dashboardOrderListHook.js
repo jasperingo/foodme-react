@@ -1,10 +1,8 @@
-import { useCallback, useEffect } from "react";
-import { getOrdersListFetchStatusAction, ORDER } from "../../context/actions/orderActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { ORDER } from "../../context/actions/orderActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import OrderRepository from "../../repositories/OrderRepository";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useDashboardOrderList() {
 
@@ -18,58 +16,69 @@ export function useDashboardOrderList() {
       dashboardDispatch,
       dashboard: {
         orders,
+        ordersError,
+        ordersLoaded,
         ordersLoading,
-        ordersFetchStatus
-      }
+      } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new OrderRepository(adminToken); }, [adminToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (ordersFetchStatus !== FETCH_STATUSES.LOADING) 
-        dashboardDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [dashboardDispatch, ordersFetchStatus]
-  );
+  function refreshOrders() {
+    dashboardDispatch({ type: ORDER.LIST_UNFETCHED });
+  }
 
-  useEffect(
-    ()=> {
-      if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchOrders = useCallback(
+    async function() {
 
-        dashboardDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (ordersLoading) return;
 
-      } else if (ordersLoading && ordersFetchStatus === FETCH_STATUSES.LOADING) {
-        
-        dashboardDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      if (!window.navigator.onLine) {
+        dashboardDispatch({
+          type: ORDER.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
-        const api = new OrderRepository(adminToken);
-        api.getList(1)
-        .then(res=> {
+      dashboardDispatch({ type: ORDER.LIST_FETCHING });
+
+      try {
+
+        const res = await api.getList(1);
           
-          if (res.status === 200) {
+        if (res.status === 200) {
 
-            dashboardDispatch({
-              type: ORDER.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                fetchStatus: listStatusUpdater(1, 1, 0, res.body.data.length),
-              }
-            });
+          dashboardDispatch({
+            type: ORDER.LIST_FETCHED, 
+            payload: { list: res.body.data }
+          });
 
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          dashboardDispatch(getOrdersListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        } else {
+          throw new Error();
+        }
+
+      } catch(error) {
+        dashboardDispatch({
+          type: ORDER.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [adminToken, ordersLoading, ordersFetchStatus, dashboardDispatch, listStatusUpdater]
+    [
+      api,
+      ordersLoading, 
+      dashboardDispatch, 
+    ]
   );
 
-
-  return [orders, ordersFetchStatus, refetch];
+  return [
+    fetchOrders,
+    orders, 
+    ordersLoading,
+    ordersLoaded,
+    ordersError,
+    refreshOrders
+  ];
 }

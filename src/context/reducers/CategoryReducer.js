@@ -81,6 +81,39 @@ export default function CategoryReducer (state, action) {
         category: action.payload.category
       };
 
+
+    case CATEGORY.SUB_UNFETCHED:
+      return {
+        ...state,
+        subCategory: categoryState.subCategory,
+        subCategoryID: categoryState.subCategoryID,
+        subCategoryError: categoryState.subCategoryError,
+        subCategoryLoading: categoryState.subCategoryLoading
+      };
+      
+    case CATEGORY.SUB_FETCHING:
+      return {
+        ...state,
+        subCategoryError: null,
+        subCategoryLoading: true
+      };
+
+    case CATEGORY.SUB_ERROR_CHANGED:
+      return {
+        ...state,
+        subCategoryLoading: false,
+        subCategoryID: action.payload.id, 
+        subCategoryError: action.payload.error
+      };
+    
+    case CATEGORY.SUB_FETCHED:
+      return {
+        ...state,
+        subCategoryLoading: false,
+        subCategoryID: action.payload.id,
+        subCategory: action.payload.subCategory
+      };
+
     default:
       return state;
   }

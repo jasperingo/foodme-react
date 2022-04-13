@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { PROMOTION } from '../../context/actions/promotionActions';
+import NetworkError from '../../errors/NetworkError';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import PromotionRepository from '../../repositories/PromotionRepository';
 import { useAppContext } from '../contextHook';
@@ -27,27 +28,19 @@ export function usePromotionList() {
 
   const api = useMemo(function() { return new PromotionRepository(adminToken); }, [adminToken]);
 
-  const retryFetch = useCallback(
-    function() { 
-      promotionDispatch({ 
-        type: PROMOTION.LIST_ERROR_CHANGED, 
-        payload: { error: null } 
-      });
-    },
-    [promotionDispatch]
-  );
+  function refreshPromotions() {
+    promotionDispatch({ type: PROMOTION.LIST_UNFETCHED }); 
+  }
   
-  const fetch = useCallback(
+  const fetchPromotions = useCallback(
     async function() {
       
-      if (promotionsLoading || promotionsError !== null) return;
+      if (promotionsLoading) return;
 
       if (!window.navigator.onLine) {
         promotionDispatch({
           type: PROMOTION.LIST_ERROR_CHANGED,
-          payload: {
-            error: NetworkErrorCodes.NO_NETWORK_CONNECTION
-          }
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
         });
         return;
       }
@@ -66,44 +59,30 @@ export function usePromotionList() {
               numberOfPages: res.body.pagination.number_of_pages,
             }
           });
-        } else if (res.status === 401) {
-          promotionDispatch({
-            type: PROMOTION.LIST_ERROR_CHANGED,
-            payload: {
-              error: NetworkErrorCodes.UNAUTHORIZED
-            }
-          });
         } else if (res.status === 403) {
-          promotionDispatch({
-            type: PROMOTION.LIST_ERROR_CHANGED,
-            payload: {
-              error: NetworkErrorCodes.FORBIDDEN
-            }
-          });
+          throw new NetworkError(NetworkErrorCodes.FORBIDDEN);
         } else {
           throw new Error();
         }
         
-      } catch {
+      } catch(error) {
         promotionDispatch({
           type: PROMOTION.LIST_ERROR_CHANGED,
-          payload: {
-            error: NetworkErrorCodes.UNKNOWN_ERROR
-          }
+          payload: { error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
     },
-    [api, promotionsPage, promotionsLoading, promotionsError, promotionDispatch]
+    [api, promotionsPage, promotionsLoading, promotionDispatch]
   );
 
   return [
-    fetch, 
+    fetchPromotions, 
     promotions, 
     promotionsLoading, 
     promotionsError, 
     promotionsLoaded, 
     promotionsPage,
     promotionsNumberOfPages,
-    retryFetch
+    refreshPromotions
   ];
 }

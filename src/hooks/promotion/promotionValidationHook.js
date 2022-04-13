@@ -1,7 +1,7 @@
 
 export function usePromotionValidation() {
 
-  return function(titleValidity, linkValidity, linkTypeValidity, amountValidity, durationValidity) {
+  return function({ titleValidity, linkValidity, linkTypeValidity, amountValidity, durationValidity }) {
     
     let error = false;
     let titleError = '';

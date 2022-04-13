@@ -1,5 +1,5 @@
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { categoryIcon, editIcon } from '../assets/icons';
@@ -90,21 +90,14 @@ export default function Category({ isAdmin }) {
     headerTitle: '_category.Category'
   });
 
-  const fetch = useCallback(
-    function(ID) {
-      if (!categoryLoading) fetchCategory(ID);
-    },
-    [categoryLoading, fetchCategory]
-  );
-
   useEffect(
     function() {
       if ((category !== null || categoryError !== null) && categoryID !== ID) 
         unfetchCategory();
       else if (category === null && categoryError === null)
-        fetch(ID);
+        fetchCategory(ID);
     },
-    [ID, category, categoryError, categoryID, fetch, unfetchCategory]
+    [ID, category, categoryError, categoryID, fetchCategory, unfetchCategory]
   );
 
   return (
@@ -117,9 +110,9 @@ export default function Category({ isAdmin }) {
 
         { categoryError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
         
-        { categoryError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetch(ID)} /> }
+        { categoryError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchCategory(ID)} /> }
 
-        { categoryError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetch(ID)} /> }
+        { categoryError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchCategory(ID)} /> }
 
       </div>
     </section>

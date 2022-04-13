@@ -1,9 +1,8 @@
-import { useCallback, useEffect } from "react";
-import { getStatisticsFetchStatusAction, STATISTICS } from "../../context/actions/statisticsActions";
+import { useCallback, useMemo } from "react";
+import { STATISTICS } from "../../context/actions/statisticsActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import AdminRepository from "../../repositories/AdminRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-
 
 export function useDashboardStatistics() {
 
@@ -18,55 +17,64 @@ export function useDashboardStatistics() {
       dashboard: {
         statistics,
         statisticsLoading,
-        statisticsFetchStatus
+        statisticsError
       }
     }
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (statisticsFetchStatus !== FETCH_STATUSES.LOADING) 
-        dashboardDispatch(getStatisticsFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [dashboardDispatch, statisticsFetchStatus]
+  const api = useMemo(function() { return new AdminRepository(adminToken); }, [adminToken]);
+
+  const unfetchStatistics = useCallback(
+    function() { dashboardDispatch({ type: STATISTICS.UNFETCHED }); },
+    [dashboardDispatch]
   );
 
-  useEffect(
-    ()=> {
-      if (statisticsLoading && statisticsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchStatistics = useCallback(
+    async function() {
 
-        dashboardDispatch(getStatisticsFetchStatusAction(FETCH_STATUSES.ERROR, false));
-
-      } else if (statisticsLoading && statisticsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (statisticsLoading) return;
         
-        dashboardDispatch(getStatisticsFetchStatusAction(FETCH_STATUSES.LOADING, false));
+      if (!window.navigator.onLine) {
+        dashboardDispatch({
+          type: STATISTICS.ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      }
 
-        const api = new AdminRepository(adminToken);
-        api.getStatistics()
-        .then(res=> {
+      dashboardDispatch({ type: STATISTICS.FETCHING });
+    
+      try {
+
+        const res = await api.getStatistics();
           
-          if (res.status === 200) {
+        if (res.status === 200) {
 
-            dashboardDispatch({
-              type: STATISTICS.FETCHED, 
-              payload: {
-                statistics: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE
-              }
-            });
+          dashboardDispatch({
+            type: STATISTICS.FETCHED, 
+            payload: { statistics: res.body.data, }
+          });
 
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          dashboardDispatch(getStatisticsFetchStatusAction(FETCH_STATUSES.ERROR, false));
+        } else {
+          throw new Error();
+        }
+
+      } catch {
+        dashboardDispatch({
+          type: STATISTICS.ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
+      
     },
-    [adminToken, statisticsLoading, statisticsFetchStatus, dashboardDispatch]
+    [api, statisticsLoading, dashboardDispatch]
   );
 
-
-  return [statistics, statisticsFetchStatus, refetch];
+  return [
+    fetchStatistics,
+    statistics,
+    statisticsLoading,
+    statisticsError,
+    unfetchStatistics
+  ];
 }

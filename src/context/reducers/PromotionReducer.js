@@ -5,6 +5,17 @@ export default function PromotionReducer (state, { payload, type }) {
   
   switch (type) {  
 
+    case PROMOTION.LIST_UNFETCHED:
+      return {
+        ...state,
+        promotions: promotionState.promotions,
+        promotionsPage: promotionState.promotionsPage,
+        promotionsError: promotionState.promotionsError,
+        promotionsLoaded: promotionState.promotionsLoaded,
+        promotionsLoading: promotionState.promotionsLoading,
+        promotionsNumberOfPages: promotionState.promotionsNumberOfPages,
+      };
+
     case PROMOTION.LIST_ERROR_CHANGED:
       return {
         ...state,
@@ -27,6 +38,7 @@ export default function PromotionReducer (state, { payload, type }) {
         promotionsNumberOfPages: payload.numberOfPages,
         promotions: [...state.promotions, ...payload.list]
       };
+
 
     case PROMOTION.UNFETCHED:
       return {
@@ -66,8 +78,8 @@ export default function PromotionReducer (state, { payload, type }) {
       return {
         ...state,
         promotionLoading: false,
+        promotionID: payload.id,
         promotion: payload.promotion,
-        promotionID: payload.promotion.id
       };
 
     default:

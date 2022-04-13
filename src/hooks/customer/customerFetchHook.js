@@ -28,7 +28,6 @@ export function useCustomerFetch(userToken) {
     [dispatch]
   );
   
-  
   const fetchCustomer = useCallback(
     async function(ID) {
 

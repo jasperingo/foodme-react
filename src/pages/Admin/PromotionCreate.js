@@ -69,11 +69,13 @@ export default function PromotionCreate() {
       amountInput.current.value,
       durationInput.current.value,
 
-      titleInput.current.validity,
-      linkInput.current.validity,
-      linkTypeInput.current.validity,
-      amountInput.current.validity,
-      durationInput.current.validity
+      {
+        titleValidity: titleInput.current.validity,
+        linkValidity: linkInput.current.validity,
+        linkTypeValidity: linkTypeInput.current.validity,
+        amountValidity: amountInput.current.validity,
+        durationValidity: durationInput.current.validity
+      }
     );
   }
 

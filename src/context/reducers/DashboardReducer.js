@@ -3,88 +3,167 @@ import { DELIVERY_FIRM } from "../actions/deliveryFirmActions";
 import { ORDER } from "../actions/orderActions";
 import { STATISTICS } from "../actions/statisticsActions";
 import { STORE } from "../actions/storeActions";
+import dashboardState from "../states/dashboardState";
 
 export default function DashboardReducer (state, { type, payload }) {
   
   switch (type) {  
     
-    case STATISTICS.FETCH_STATUS_CHANGED:
+    case STATISTICS.UNFETCHED:
       return {
         ...state,
-        statisticsLoading: payload.loading,
-        statisticsFetchStatus: payload.fetchStatus
+        statistics: dashboardState.statistics,
+        statisticsError: dashboardState.statisticsError,
+        statisticsLoading: dashboardState.statisticsLoading
+      };
+
+    case STATISTICS.FETCHING:
+      return {
+        ...state,
+        statisticsError: null,
+        statisticsLoading: true
+      };
+
+    case STATISTICS.ERROR_CHANGED:
+      return {
+        ...state,
+        statisticsLoading: false,
+        statisticsError: payload.error
       };
     
     case STATISTICS.FETCHED:
       return {
         ...state,
         statisticsLoading: false,
-        statistics: payload.statistics, 
-        statisticsFetchStatus: payload.fetchStatus
+        statistics: payload.statistics
       };
     
     
-    case ORDER.LIST_FETCH_STATUS_CHANGED:
+    case ORDER.LIST_UNFETCHED:
       return {
         ...state,
-        ordersLoading: payload.loading,
-        ordersFetchStatus: payload.fetchStatus,
+        orders: dashboardState.orders,
+        ordersError: dashboardState.ordersError,
+        ordersLoaded: dashboardState.ordersLoaded,
+        ordersLoading: dashboardState.ordersLoading
       };
-      
-    case ORDER.LIST_FETCHED: 
+    
+    case ORDER.LIST_ERROR_CHANGED:
       return {
         ...state,
         ordersLoading: false,
-        orders: payload.list,
-        ordersFetchStatus: payload.fetchStatus,
+        ordersError: payload.error
       };
     
-
-    case CUSTOMER.LIST_FETCH_STATUS_CHANGED:
+    case ORDER.LIST_FETCHING:
       return {
         ...state,
-        customersLoading: payload.loading,
-        customersFetchStatus: payload.fetchStatus
+        ordersError: null,
+        ordersLoading: true
+      };
+      
+    case ORDER.LIST_FETCHED:
+      return {
+        ...state,
+        ordersLoaded: true,
+        ordersLoading: false,
+        orders: payload.list,
+      };
+  
+
+    case CUSTOMER.LIST_UNFETCHED:
+      return {
+        ...state,
+        customers: dashboardState.customers,
+        customersError: dashboardState.customersError,
+        customersLoaded: dashboardState.customersLoaded,
+        customersLoading: dashboardState.customersLoading
       };
     
-    case CUSTOMER.LIST_FETCHED:
+    case CUSTOMER.LIST_FETCHING:
+      return {
+        ...state,
+        customersError: null,
+        customersLoading: true
+      };
+
+    case CUSTOMER.LIST_ERROR_CHANGED:
       return {
         ...state,
         customersLoading: false,
-        customers: payload.list,
-        customersFetchStatus: payload.fetchStatus,
+        customersError: payload.error
       };
-    
-
-    case STORE.LIST_FETCH_STATUS_CHANGED:
+      
+    case CUSTOMER.LIST_FETCHED:
       return {
         ...state,
-        storesLoading: payload.loading,
-        storesFetchStatus: payload.fetchStatus
+        customersLoaded: true,
+        customersLoading: false,
+        customers: payload.list
+      };
+      
+
+    case STORE.LIST_UNFETCHED:
+      return {
+        ...state,
+        stores: dashboardState.stores,
+        storesError: dashboardState.storesError,
+        storesLoaded: dashboardState.storesLoaded,
+        storesLoading: dashboardState.storesLoading
+      };
+
+    case STORE.LIST_FETCHING:
+      return {
+        ...state,
+        storesError: null,
+        storesLoading: true,
+      };
+
+    case STORE.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        storesLoading: false,
+        storesError: payload.error
       };
     
     case STORE.LIST_FETCHED:
       return {
         ...state,
+        storesLoaded: true,
         storesLoading: false,
         stores: payload.list,
-        storesFetchStatus: payload.fetchStatus,
       };
 
 
-    case DELIVERY_FIRM.LIST_FETCH_STATUS_CHANGED:
+    case DELIVERY_FIRM.LIST_UNFETCHED:
       return {
         ...state,
-        deliveryFirmsLoading: payload.loading,
-        deliveryFirmsFetchStatus: payload.fetchStatus
+        deliveryFirms: dashboardState.deliveryFirms,
+        deliveryFirmsError: dashboardState.deliveryFirmsError,
+        deliveryFirmsLoaded: dashboardState.deliveryFirmsLoaded,
+        deliveryFirmsLoading: dashboardState.deliveryFirmsLoading
+      };
+
+    case DELIVERY_FIRM.LIST_FETCHING:
+      return {
+        ...state,
+        deliveryFirmsError: null,
+        deliveryFirmsLoading: true
+      };
+
+    case DELIVERY_FIRM.LIST_ERROR_CHANGED:
+      return {
+        ...state,
+        deliveryFirmsLoading: false,
+        deliveryFirmsError: payload.error
       };
     
     case DELIVERY_FIRM.LIST_FETCHED:
       return {
         ...state,
+        deliveryFirmsLoaded: true,
         deliveryFirmsLoading: false,
         deliveryFirms: payload.list,
-        deliveryFirmsFetchStatus: payload.fetchStatus,
       };
 
 
@@ -92,6 +171,3 @@ export default function DashboardReducer (state, { type, payload }) {
       return state;
   }
 }
-
-
-

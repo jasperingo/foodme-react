@@ -1,9 +1,8 @@
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import SubCategoryRepository from "../../repositories/SubCategoryRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-
+import { useSubCategoryValidation } from "./subCategoryValidationHook";
 
 export function useSubCategoryCreate() {
 
@@ -15,13 +14,9 @@ export function useSubCategoryCreate() {
     }
   } = useAppContext();
 
-  const [data, setData] = useState(null);
+  const [id, setId] = useState(0);
 
-  const [dialog, setDialog] = useState(false);
-
-  const [photo, setPhoto] = useState(null);
-
-  const [photoUploaded, setPhotoUploaded] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
@@ -33,160 +28,80 @@ export function useSubCategoryCreate() {
 
   const [descriptionError, setDescriptionError] = useState('');
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const validator = useSubCategoryValidation();
 
-  function onPhotoChoose(photo) {
-    setPhoto(photo);
-    setPhotoUploaded(false);
-  }
-
-  function onSubmit(
-    name,
-    category,
-    description,
-    nameValidity,
-    categoryValidity,
-    descriptionValidity
-  ) {
+  const api = useMemo(function() { return new SubCategoryRepository(adminToken); }, [adminToken]);
+  
+  async function onSubmit(name, category_id, description, validity) {
     
-    setFormError(null);
-    setFormSuccess(null);
-    
-    let error = false;
-
-    setFormError('');
-
-    setFormSuccess('');
-    
-    if (!nameValidity.valid) {
-      error = true;
-      setNameError('_errors.This_field_is_required');
-    } else {
-      setNameError('');
-    }
-
-    if (!categoryValidity.valid) {
-      error = true;
-      setCategoryError('_errors.This_field_is_required');
-    } else {
-      setCategoryError('');
-    }
-
-    if (!descriptionValidity.valid) {
-      error = true;
-      setDescriptionError('_errors.This_field_is_required');
-    } else {
-      setDescriptionError('');
-    }
+    if (loading) return;
     
     if (!window.navigator.onLine) {
       setFormError('_errors.No_netowrk_connection');
-    } else if (!error) {
-      setDialog(true);
-      setData({ name, category_id: category, description });
-      setFetchStatus(FETCH_STATUSES.LOADING);
+      return;
+    }
+
+    setFormError(null);
+    setFormSuccess(null);
+    
+    const [error, nameError, categoryError, descriptionError] = validator(validity);
+    
+    setNameError(nameError);
+    setCategoryError(categoryError);
+    setDescriptionError(descriptionError);
+    
+    if (error) return;
+
+    setLoading(true);
+
+    try {
+
+      const res = await api.create({ name, description, category_id });
+
+      if (res.status === 201) {
+        
+        setFormSuccess(res.body.message);
+
+        setId(res.body.data.id);
+        
+      } else if (res.status === 400) {
+        
+        for (let error of res.body.data) {
+
+          switch(error.name) {
+
+            case 'name':
+              setNameError(error.message);
+              break;
+
+            case 'category_id':
+              setCategoryError(error.message);
+              break;
+
+            case 'description':
+              setDescriptionError(error.message);
+              break;
+
+            default:
+          }
+        }
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
     }
   }
 
-  useEffect(
-    ()=> {
-     
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        
-        const api = new SubCategoryRepository(adminToken);
-
-        api.create(data)
-        .then(res=> {
-
-          if (res.status === 201) {
-            
-            setFormSuccess(res.body.message);
-            
-            if (photo !== null) {
-
-              const form = new FormData();
-              form.append('photo', photo);
-              
-              const api = new SubCategoryRepository(adminToken, null);
-              
-              api.updatePhoto(res.body.data.id, form)
-
-              .then((res)=> {
-          
-                if (res.status === 200) {
-          
-                  setFormSuccess(res.body.message);
-          
-                  setPhotoUploaded(true);
-          
-                  setFetchStatus(FETCH_STATUSES.PENDING);
-          
-                } else if (res.status === 400) {
-                  
-                  setFetchStatus(FETCH_STATUSES.PENDING);
-          
-                  const error = res.body.data[0];
-                  
-                  if (error.name === 'photo') setFormError(error.message);
-          
-                } else {
-                  throw new Error();
-                }
-              })
-              .catch(()=> {
-                setFetchStatus(FETCH_STATUSES.PENDING);
-                setFormError('_errors.Something_went_wrong');
-              });
-
-            } else {
-              setFetchStatus(FETCH_STATUSES.PENDING);
-            }
-
-          } else if (res.status === 400) {
-
-            setFetchStatus(FETCH_STATUSES.PENDING);
-            
-            for (let error of res.body.data) {
-
-              switch(error.name) {
-
-                case 'name':
-                  setNameError(error.message);
-                  break;
-
-                case 'category_id':
-                  setCategoryError(error.message);
-                  break;
-
-                case 'description':
-                  setDescriptionError(error.message);
-                  break;
-
-                default:
-              }
-            }
-
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-          setFormError('_errors.Something_went_wrong');
-        });
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    }, 
-    [fetchStatus, dialog, adminToken, data, photo]
-  );
-
   return [
-    onSubmit, 
-    onPhotoChoose, 
-    photoUploaded,
-    dialog, 
+    onSubmit,
+    loading, 
+    id, 
+    setId,
     formError, 
     formSuccess, 
     nameError, 
@@ -194,4 +109,3 @@ export function useSubCategoryCreate() {
     descriptionError
   ];
 }
-

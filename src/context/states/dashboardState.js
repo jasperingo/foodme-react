@@ -1,28 +1,30 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const dashboardState = {
 
   statistics: null,
-  statisticsLoading: true,
-  statisticsFetchStatus: FETCH_STATUSES.LOADING,
+  statisticsError: null,
+  statisticsLoading: false,
 
   stores: [],
-  storesLoading: true,
-  storesFetchStatus: FETCH_STATUSES.LOADING,
+  storesError: null,
+  storesLoaded: false,
+  storesLoading: false,
 
   customers: [],
-  customersLoading: true,
-  customersFetchStatus: FETCH_STATUSES.LOADING,
+  customersError: null,
+  customersLoaded: false,
+  customersLoading: false,
 
   orders: [],
-  ordersLoading: true,
-  ordersFetchStatus: FETCH_STATUSES.LOADING,
+  ordersError: null,
+  ordersLoaded: false,
+  ordersLoading: false,
 
   deliveryFirms: [],
-  deliveryFirmsLoading: true,
-  deliveryFirmsFetchStatus: FETCH_STATUSES.LOADING
+  deliveryFirmsError: null,
+  deliveryFirmsLoaded: false,
+  deliveryFirmsLoading: false
 
 };
 
 export default dashboardState;
-

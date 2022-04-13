@@ -1,18 +1,15 @@
+
 import { useState, useMemo } from 'react';
-import { PRODUCT } from '../../context/actions/productActions';
-import ProductRepository from '../../repositories/ProductRepository';
+import SubCategoryRepository from '../../repositories/SubCategoryRepository';
 import { useAppContext } from '../contextHook';
 
-export function useProductPhotoUpdate() {
+export function useSubCategoryPhotoUpdate() {
 
   const { 
-    store: { 
-      store: {
-        storeToken
+    admin: { 
+      admin: {
+        adminToken
       }
-    },
-    product: { 
-      productDispatch
     }
   } = useAppContext();
 
@@ -26,9 +23,9 @@ export function useProductPhotoUpdate() {
   
   const form = useMemo(function() { return new FormData(); }, []);
 
-  const api = useMemo(function() { return new ProductRepository(storeToken, null); }, [storeToken]);
+  const api = useMemo(function() { return new SubCategoryRepository(adminToken, null); }, [adminToken]);
 
-  async function submit(ID, isUpdate) {
+  async function submit(ID) {
 
     if (loading || photo === null) return;
 
@@ -48,15 +45,6 @@ export function useProductPhotoUpdate() {
       if (res.status === 200) {
 
         setPhotoUploaded(true);
-
-        if (isUpdate)
-          productDispatch({
-            type: PRODUCT.FETCHED, 
-            payload: { 
-              id: String(ID),
-              product: res.body.data, 
-            }
-          });
 
       } else if (res.status === 400) {
 

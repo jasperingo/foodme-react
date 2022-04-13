@@ -16,34 +16,9 @@ export const CATEGORY = {
   PRODUCTS_LIST_FETCHED: 'PRODUCT_CATEGORIES_FETCHED',
   PRODUCTS_LIST_FETCHING: 'PRODUCT_CATEGORIES_FETCHING',
   PRODUCTS_LIST_ERROR_CHANGED: 'PRODUCT_CATEGORIES_FETCH_FAILED',
+
+  SUB_UNFETCHED: 'SUB_CATEGORY_UNFETCHED',
+  SUB_FETCHED: 'SUB_CATEGORY_FETCHED',
+  SUB_FETCHING: 'SUB_CATEGORY_FETCHING',
+  SUB_ERROR_CHANGED: 'SUB_CATEGORY_ERROR_CHANGED',
 };
-
-export const getCategoryFetchStatusAction = (fetchStatus, id) => ({
-  type: CATEGORY.FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, id
-  }
-});
-
-export const getSubCategoryFetchStatusAction = (fetchStatus, id) => ({
-  type: CATEGORY.SUB_FETCH_STATUS_CHANGED,
-  payload: {
-    fetchStatus, id
-  }
-});
-
-export const getCategoriesListFetchStatusAction = (payload) => ({
-  type: CATEGORY.LIST_FETCH_STATUS_CHANGED,
-  payload
-});
-
-export const getStoreCategoriesListFetchStatusAction = (payload) => ({
-  type: CATEGORY.STORES_LIST_FETCH_STATUS_CHANGED,
-  payload
-});
-
-export const getProductCategoriesListFetchStatusAction = (payload) => ({
-  type: CATEGORY.PRODUCTS_LIST_FETCH_STATUS_CHANGED,
-  payload
-});
-

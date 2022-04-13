@@ -19,7 +19,6 @@ import PromotionReducer from "../context/reducers/PromotionReducer";
 import SavedCartReducer from "../context/reducers/SavedCartReducer";
 import SearchReducer from "../context/reducers/SearchReducer";
 import StoreReducer from "../context/reducers/StoreReducer";
-import SubCategoryReducer from "../context/reducers/SubCategoryReducer";
 import TransactionReducer from "../context/reducers/TransactionReducer";
 import addressState from "../context/states/addressState";
 import adminState from "../context/states/adminState";
@@ -40,9 +39,7 @@ import promotionState from "../context/states/promotionState";
 import savedCartState from "../context/states/savedCartState";
 import searchState from "../context/states/searchState";
 import storeState from "../context/states/storeState";
-import subCategoryState from "../context/states/subCategoryState";
 import transactionState from "../context/states/transactionState";
-
 
 export function useAppContextValues() {
   
@@ -59,8 +56,6 @@ export function useAppContextValues() {
   const [search, searchDispatch] = useReducer(SearchReducer, searchState);
 
   const [category, categoryDispatch] = useReducer(CategoryReducer, categoryState);
-
-  const [subCategory, subCategoryDispatch] = useReducer(SubCategoryReducer, subCategoryState);
   
   const [bank, bankDispatch] = useReducer(BankReducer, bankState);
 
@@ -109,11 +104,6 @@ export function useAppContextValues() {
     category: {
       category, 
       categoryDispatch
-    },
-
-    subCategory: {
-      subCategory, 
-      subCategoryDispatch
     },
 
     home: {

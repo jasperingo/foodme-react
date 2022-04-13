@@ -1,21 +1,20 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { orderIcon } from '../../assets/icons';
-import EmptyList from '../../components/EmptyList';
-import FetchMoreButton from '../../components/FetchMoreButton';
 import OrderFilter from '../../components/filter/OrderFilter';
-import ScrollList from '../../components/list/ScrollList';
-import OrderItem from '../../components/list_item/OrderItem';
-import Loading from '../../components/Loading';
-import Reload from '../../components/Reload';
+import OrderList from '../../components/list/OrderList';
 import { useHeader } from '../../hooks/headerHook';
 import { useOrderList } from '../../hooks/order/orderListHook';
-import { useHasMoreToFetchViaScroll, useRenderListFooter, useURLQuery } from '../../hooks/viewHook';
+import { useURLQuery } from '../../hooks/viewHook';
 import Order from '../../models/Order';
 
-
 export default function Orders() {
+
+  const param = new URLSearchParams();
+
+  const history = useHistory()
+
+  const [status] = useURLQuery(['status']);
 
   useHeader({
     topNavPaths: ['/messages'],
@@ -23,58 +22,56 @@ export default function Orders() {
   });
 
   const [
+    fetchOrders,
     orders, 
-    ordersFetchStatus, 
+    ordersLoading,
+    ordersLoaded,
+    ordersError,
     ordersPage, 
-    ordersNumberOfPages, 
-    refetch,
-    refresh,
-    onStatusChange
+    ordersNumberOfPages,
+    refreshOrders
   ] = useOrderList();
 
-  const history = useHistory();
-
-  const param = useURLQuery();
+  useEffect(
+    function() { 
+      if (!ordersLoaded && ordersError === null) 
+        fetchOrders(status); 
+    },
+    [status, ordersLoaded, ordersError, fetchOrders]
+  );
 
   function change(value) {
+    
     if (value)
       param.set('status', value);
     else 
       param.delete('status');
-    
+
     history.replace(`/orders?${param.toString()}`);
-    onStatusChange();
+    
+    refreshOrders();
   }
 
   return (
     <section>
       <div className="container-x">
-
         <OrderFilter 
+          status={status} 
           onFilterChange={change} 
-          status={param.get('status')} 
           statuses={Order.getStatuses()} 
           />
-        
-        <ScrollList
-          data={orders}
-          nextPage={refetch}
-          refreshPage={refresh}
-          hasMore={useHasMoreToFetchViaScroll(ordersPage, ordersNumberOfPages, ordersFetchStatus)}
-          className="list-2-x"
-          renderDataItem={(item)=> (
-            <OrderItem key={`order-${item.id}`} order={item} />
-          )}
-          footer={useRenderListFooter(
-            ordersFetchStatus,
-            ()=> <li key="order-footer" className="list-2-x-col-span"> <Loading /> </li>, 
-            ()=> <li key="order-footer" className="list-2-x-col-span"> <Reload action={refetch} /> </li>,
-            ()=> <li key="order-footer" className="list-2-x-col-span"> <EmptyList text="_empty.No_order" icon={orderIcon} /> </li>,
-            ()=> <li key="order-footer" className="list-2-x-col-span"> <FetchMoreButton action={refetch} /> </li>
-          )}
-          />
-
       </div>
+
+      <OrderList 
+        orders={orders}
+        ordersPage={ordersPage}
+        ordersError={ordersError}
+        ordersLoaded={ordersLoaded}
+        ordersLoading={ordersLoading}
+        ordersNumberOfPages={ordersNumberOfPages}
+        fetchOrders={()=> fetchOrders(status)}
+        refreshList={refreshOrders}
+        />
     </section>
   );
 }

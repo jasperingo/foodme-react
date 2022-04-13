@@ -1,23 +1,27 @@
 
-import React from 'react';
-import Forbidden from '../../components/Forbidden';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import SubCategoryForm from '../../components/form/SubCategoryForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
-import { useProductCategoryList } from '../../hooks/category/productCategoryListHook';
-import { useStoreCategoryList } from '../../hooks/category/storeCategoryListHook';
+import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useSubCategoryFetch } from '../../hooks/category/subCategoryFetchHook';
+import { useSubCategoryPhotoUpdate } from '../../hooks/category/subCategoryPhotoUpdateHook';
 import { useSubCategoryUpdate } from '../../hooks/category/subCategoryUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
-import { useRenderOnDataFetched } from '../../hooks/viewHook';
 
 export default function SubCategoryUpdate() {
 
+  const { ID } = useParams();
+
   const [
-    subCategory, 
-    subCategoryFetchStatus, 
-    refetch
+    fetchSubCategory,
+    subCategory,
+    subCategoryLoading,
+    subCategoryError,
+    subCategoryID,
+    unfetchSubCategory
   ] = useSubCategoryFetch();
   
   useHeader({ 
@@ -26,61 +30,75 @@ export default function SubCategoryUpdate() {
   });
 
   const [
-    stores, 
-    storesFetchStatus, 
-    refetchStores
-  ] = useStoreCategoryList();
-
-  const [
-    products, 
-    productsFetchStatus, 
-    refetchProducts
-  ] = useProductCategoryList(true);
-
-  function retryLoad() {
-    refetch();
-    refetchStores();
-    refetchProducts();
-  }
-
-  const [
     onSubmit, 
-    onPhotoChoose,
-    photoUploaded, 
-    dialog, 
+    loading,
+    success, 
+    setSuccess,
     formError, 
     formSuccess, 
-    nameError,
+    nameError, 
     descriptionError
   ] = useSubCategoryUpdate();
 
+  
+  const [
+    submitPhoto,
+    photo,
+    setPhoto,
+    photoLoading,
+    photoUploaded,
+    photoFormError
+  ] = useSubCategoryPhotoUpdate();
+
+  useEffect(
+    function() {
+      if ((subCategory !== null || subCategoryError !== null) && subCategoryID !== ID) 
+        unfetchSubCategory();
+      else if (subCategory === null && subCategoryError === null)
+        fetchSubCategory(ID);
+    },
+    [ID, subCategory, subCategoryError, subCategoryID, fetchSubCategory, unfetchSubCategory]
+  );
+
+  useEffect(
+    function() {
+      if (success && photo !== null && !photoUploaded && photoFormError === null)
+        submitPhoto(ID);
+      else if (success) 
+        setSuccess(false);
+    }, 
+    [ID, success, photo, photoUploaded, photoFormError, submitPhoto, setSuccess]
+  );
+
   return (
-    <section className="flex-grow">
+    <section>
       <div className="container-x">
+
         {
-          useRenderOnDataFetched(
-            [subCategoryFetchStatus, storesFetchStatus, productsFetchStatus],
-            ()=> (
-              <SubCategoryForm 
-                add={false} 
-                categories={stores.concat(products)}
-                subCategory={subCategory} 
-                onSubmit={onSubmit}
-                onPhotoChoose={onPhotoChoose}
-                photoUploaded={photoUploaded}
-                dialog={dialog}
-                formError={formError}
-                formSuccess={formSuccess}
-                nameError={nameError}
-                descriptionError={descriptionError}
-                />
-            ),
-            ()=> <Loading />,
-            ()=> <Reload action={retryLoad} />,
-            ()=> <NotFound />,
-            ()=> <Forbidden />,
-          )
+          subCategory !== null &&
+          <SubCategoryForm 
+            add={false}
+            subCategory={subCategory} 
+            onSubmit={onSubmit}
+            onPhotoChoose={setPhoto}
+            photoUploaded={photoUploaded}
+            dialog={loading || photoLoading}
+            formError={formError || photoFormError}
+            formSuccess={formSuccess}
+            nameError={nameError}
+            descriptionError={descriptionError}
+            />
         }
+
+        { subCategoryLoading && <Loading /> }
+
+        { subCategoryError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
+
+        { subCategoryError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchSubCategory(ID)} /> }
+
+        { subCategoryError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchSubCategory(ID)} /> }
+
+
       </div>
     </section>
   );

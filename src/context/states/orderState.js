@@ -3,9 +3,9 @@ const orderState = {
   
   orders: [],
   ordersPage: 1,
-  ordersStatus: null,
-  ordersLoading: true,
   ordersError: null,
+  ordersLoaded: false,
+  ordersLoading: false,
   ordersNumberOfPages: 0,
   
   order: null,

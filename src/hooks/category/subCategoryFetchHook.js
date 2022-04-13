@@ -1,74 +1,86 @@
 
-import { useCallback, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { CATEGORY, getCategoryFetchStatusAction } from "../../context/actions/categoryActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
+import { useCallback, useMemo } from "react";
+import { CATEGORY } from "../../context/actions/categoryActions";
+import NetworkError from "../../errors/NetworkError";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import SubCategoryRepository from "../../repositories/SubCategoryRepository";
 import { useAppContext } from "../contextHook";
 
-
 export function useSubCategoryFetch() {
 
-  const { ID } = useParams();
-
   const { 
-    subCategory: { 
-      subCategoryDispatch,
-      subCategory: {
+    category: { 
+      categoryDispatch,
+      category: {
         subCategory,
         subCategoryID,
-        subCategoryFetchStatus,
+        subCategoryError,
+        subCategoryLoading,
       } 
     },
   } = useAppContext();
 
-  const refetch = useCallback(
-    ()=> {
-      if (subCategoryFetchStatus !== FETCH_STATUSES.LOADING && subCategoryFetchStatus !== FETCH_STATUSES.DONE)
-        subCategoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.LOADING, Number(ID)));
-    },
-    [ID, subCategoryFetchStatus, subCategoryDispatch]
+  const api = useMemo(function() { return new SubCategoryRepository(); }, []);
+
+  const unfetchSubCategory = useCallback(
+    function() { categoryDispatch({ type: CATEGORY.SUB_UNFETCHED }); },
+    [categoryDispatch]
   );
-  
-  useEffect(
-    ()=> {
 
-      if (subCategoryID !== null && subCategoryID !== Number(ID)) {
+  const fetchSubCategory = useCallback(
+    async function(ID) {
 
-        subCategoryDispatch({ type: CATEGORY.UNFETCHED });
+      if (subCategoryLoading) return;
 
-      } else if (subCategoryFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
-
-        subCategoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
-
-      } else if (subCategoryFetchStatus === FETCH_STATUSES.LOADING) {
-
-        const api = new SubCategoryRepository();
-        api.get(ID)
-        .then(res=> {
-          
-          if (res.status === 200) {
-            subCategoryDispatch({
-              type: CATEGORY.FETCHED, 
-              payload: {
-                subCategory: res.body.data, 
-                fetchStatus: FETCH_STATUSES.DONE 
-              }
-            });
-          } else if (res.status === 404) {
-            subCategoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.NOT_FOUND, Number(ID)));
-          } else {
-            throw new Error();
+      if (!window.navigator.onLine) {
+        categoryDispatch({
+          type: CATEGORY.SUB_ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: NetworkErrorCodes.NO_NETWORK_CONNECTION
           }
-        })
-        .catch(()=> {
-          subCategoryDispatch(getCategoryFetchStatusAction(FETCH_STATUSES.ERROR, Number(ID)));
         });
-        
+        return;
       }
-    }
+
+      categoryDispatch({ type: CATEGORY.SUB_FETCHING });
+
+      try {
+        const res = await api.get(ID);
+            
+        if (res.status === 200) {
+          categoryDispatch({
+            type: CATEGORY.SUB_FETCHED, 
+            payload: {
+              id: ID,
+              subCategory: res.body.data, 
+            }
+          });
+        } else if (res.status === 404) {
+          throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
+        } else {
+          throw new Error();
+        }
+
+      } catch(error) {
+        categoryDispatch({
+          type: CATEGORY.SUB_ERROR_CHANGED,
+          payload: {
+            id: ID,
+            error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
+          }
+        });
+      }
+    },
+    [api, subCategoryLoading, categoryDispatch]
   );
 
-  return [subCategory, subCategoryFetchStatus, refetch];
+  return [
+    fetchSubCategory,
+    subCategory,
+    subCategoryLoading,
+    subCategoryError,
+    subCategoryID,
+    unfetchSubCategory
+  ];
 }
-

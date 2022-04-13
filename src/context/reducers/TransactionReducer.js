@@ -8,37 +8,34 @@ export default function TransactionReducer (state, action) {
     case TRANSACTION.LIST_UNFETCHED:
       return {
         ...state,
-        transactionsPage: 1,
-        transactionsLoading: true,
-        transactionsNumberOfPages: 0,
         transactions: transactionState.transactions,
-        transactionsFetchStatus: transactionState.transactionsFetchStatus,
+        transactionsPage: transactionState.transactionsPage,
+        transactionsError: transactionState.transactionsError,
+        transactionsLoaded: transactionState.transactionsLoaded,
+        transactionsLoading: transactionState.transactionsLoading,
+        transactionsNumberOfPages: transactionState.transactionsNumberOfPages
       };
 
-    case TRANSACTION.LIST_TYPE_FILTER_CHANGED:
+    case TRANSACTION.LIST_FETCHING:
       return {
         ...state,
-        transactionsPage: 1,
-        transactionsLoading: true,
-        transactionsNumberOfPages: 0,
-        transactions: transactionState.transactions,
-        transactionsFetchStatus: transactionState.transactionsFetchStatus,
-        transactionsType: action.payload.status
+        transactionsError: null,
+        transactionsLoading: true
       };
 
-    case TRANSACTION.LIST_FETCH_STATUS_CHANGED:
+    case TRANSACTION.LIST_ERROR_CHANGED:
       return {
         ...state,
-        transactionsLoading: action.payload.loading,
-        transactionsFetchStatus: action.payload.fetchStatus
+        transactionsLoading: false,
+        transactionsError: action.payload.error
       };
     
     case TRANSACTION.LIST_FETCHED:
       return {
         ...state,
+        transactionsLoaded: true,
         transactionsLoading: false,
-        transactionsPage: state.transactionsPage+1,
-        transactionsFetchStatus: action.payload.fetchStatus,
+        transactionsPage: state.transactionsPage + 1,
         transactionsNumberOfPages: action.payload.numberOfPages,
         transactions: [...state.transactions, ...action.payload.list],
       };

@@ -101,11 +101,11 @@ export default function ProductUpdate() {
   useEffect(
     function() {
       if (success && photo !== null && !photoUploaded && photoFormError === null)
-        submitPhoto(product.id, true);
+        submitPhoto(ID, true);
       else if (success) 
         setSuccess(false);
     }, 
-    [product?.id, success, photo, photoUploaded, photoFormError, submitPhoto, setSuccess]
+    [ID, success, photo, photoUploaded, photoFormError, submitPhoto, setSuccess]
   );
 
   useEffect(
@@ -119,7 +119,7 @@ export default function ProductUpdate() {
     if (product === null) fetchProduct(ID);
     if (!productCategoriesLoaded) fetchProductCategories();
   }
- 
+  
   return (
     <section>
       <div className="container-x">
@@ -133,7 +133,7 @@ export default function ProductUpdate() {
               onPhotoChoose={setPhoto}
               photoUploaded={photoUploaded}
               dialog={loading || photoLoading}
-              formError={formError}
+              formError={formError || photoFormError}
               formSuccess={formSuccess}
               titleError={titleError}
               categoryError={categoryError}

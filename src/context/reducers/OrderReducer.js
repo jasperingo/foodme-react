@@ -8,37 +8,34 @@ export default function OrderReducer (state, action) {
     case ORDER.LIST_UNFETCHED:
       return {
         ...state,
-        ordersPage: 1,
-        ordersLoading: true,
-        ordersNumberOfPages: 0,
         orders: orderState.orders,
-        ordersFetchStatus: orderState.ordersFetchStatus,
-      };
-
-    case ORDER.LIST_STATUS_FILTER_CHANGED:
-      return {
-        ...state,
-        ordersPage: 1,
-        ordersLoading: true,
-        ordersNumberOfPages: 0,
-        orders: orderState.orders,
-        ordersFetchStatus: orderState.ordersFetchStatus,
-        orderStatus: action.payload.status
-      };
-
-    case ORDER.LIST_FETCH_STATUS_CHANGED:
-      return {
-        ...state,
-        ordersLoading: action.payload.loading,
-        ordersFetchStatus: action.payload.fetchStatus,
+        ordersPage: orderState.ordersPage,
+        ordersError: orderState.ordersError,
+        ordersLoaded: orderState.ordersLoaded,
+        ordersLoading: orderState.ordersLoading,
+        ordersNumberOfPages: orderState.ordersNumberOfPages
       };
     
-    case ORDER.LIST_FETCHED:
+    case ORDER.LIST_ERROR_CHANGED:
       return {
         ...state,
         ordersLoading: false,
-        ordersPage: state.ordersPage+1,
-        ordersFetchStatus: action.payload.fetchStatus,
+        ordersError: action.payload.error
+      };
+    
+    case ORDER.LIST_FETCHING:
+      return {
+        ...state,
+        ordersError: null,
+        ordersLoading: true
+      };
+      
+    case ORDER.LIST_FETCHED:
+      return {
+        ...state,
+        ordersLoaded: true,
+        ordersLoading: false,
+        ordersPage: state.ordersPage + 1,
         ordersNumberOfPages: action.payload.numberOfPages,
         orders: [...state.orders, ...action.payload.list],
       };
@@ -107,4 +104,3 @@ export default function OrderReducer (state, action) {
       return state;
   }
 }
-

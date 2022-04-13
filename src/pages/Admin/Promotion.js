@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import AlertDialog from '../../components/dialog/AlertDialog';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
+import Forbidden from '../../components/Forbidden';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import ProfileDetailsText from '../../components/profile/ProfileDetailsText';
@@ -27,12 +28,12 @@ export default function Promotion() {
   const [dialog, setDialog] = useState(null);
 
   const [
-    fetch,
+    fetchPromotion,
     promotion,
     promotionLoading,
     promotionError,
     promotionID,
-    unfetch
+    unfetchPromotion
   ] = usePromotionFetch();
 
   const [
@@ -49,12 +50,12 @@ export default function Promotion() {
 
   useEffect(
     function() {
-      if ((promotion !== null || promotionError !== null) && String(promotionID) !== ID) 
-        unfetch();
+      if ((promotion !== null || promotionError !== null) && promotionID !== ID) 
+        unfetchPromotion();
       else if (promotion === null && promotionError === null)
-        fetch(ID);
+        fetchPromotion(ID);
     },
-    [ID, promotion, promotionError, promotionID, fetch, unfetch]
+    [ID, promotion, promotionError, promotionID, fetchPromotion, unfetchPromotion]
   );
 
   useEffect(
@@ -162,8 +163,18 @@ export default function Promotion() {
         }
 
         {
+          promotionError === NetworkErrorCodes.FORBIDDEN &&
+          <Forbidden />
+        }
+
+        {
           promotionError === NetworkErrorCodes.UNKNOWN_ERROR &&
-          <Reload action={fetch} />
+          <Reload action={fetchPromotion} />
+        }
+
+        {
+          promotionError === NetworkErrorCodes.NO_NETWORK_CONNECTION &&
+          <Reload message="_errors.No_netowrk_connection" action={fetchPromotion} />
         }
 
       </div>

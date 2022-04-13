@@ -13,7 +13,7 @@ import Forbidden from '../Forbidden';
 import Reload from '../Reload';
 
 export default function OrderList(
-  { orders, ordersLoading, ordersLoaded, ordersError, ordersPage, ordersNumberOfPages, fetchOrders, refreshList }
+  { single, orders, ordersLoading, ordersLoaded, ordersError, ordersPage, ordersNumberOfPages, fetchOrders, refreshList }
 ) {
 
   const listFooter = useListFooter();
@@ -27,7 +27,7 @@ export default function OrderList(
         data={orders}
         nextPage={fetchOrders}
         refreshPage={refreshList}
-        hasMore={loadOnScroll(ordersPage, ordersNumberOfPages, ordersError)}
+        hasMore={!single && loadOnScroll(ordersPage, ordersNumberOfPages, ordersError)}
         className="list-2-x"
         renderDataItem={(item)=> (
           <OrderItem key={`order-${item.id}`} order={item} />
@@ -56,7 +56,7 @@ export default function OrderList(
           },
 
           { 
-            canRender: ordersPage <= ordersNumberOfPages,
+            canRender: !single && ordersPage <= ordersNumberOfPages,
             render() { 
               return <li key="orders-footer" className="list-2-x-col-span"> <FetchMoreButton action={fetchOrders} /> </li>; 
             }

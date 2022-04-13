@@ -1,10 +1,5 @@
 
-import { FETCH_STATUSES } from "../../repositories/Fetch";
-
 const transactionState = {
-
-  wallet: null,
-  walletFetchStatus: FETCH_STATUSES.LOADING,
 
   transaction: null,
   transactionID: null,
@@ -13,9 +8,9 @@ const transactionState = {
 
   transactions: [],
   transactionsPage: 1,
-  transactionsType: null,
   transactionsError: null,
-  transactionsLoading: true,
+  transactionsLoaded: false,
+  transactionsLoading: false,
   transactionsNumberOfPages: 0
 
 };

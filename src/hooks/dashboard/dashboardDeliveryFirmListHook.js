@@ -1,11 +1,9 @@
 
-import { useCallback, useEffect } from "react";
-import { DELIVERY_FIRM, getDeliveryFirmsListFetchStatusAction } from "../../context/actions/deliveryFirmActions";
+import { useCallback, useMemo } from "react";
+import { DELIVERY_FIRM } from "../../context/actions/deliveryFirmActions";
+import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
 import DeliveryFirmRepository from "../../repositories/DeliveryFirmRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
-import { useUpdateListFetchStatus } from "../viewHook";
-
 
 export function useDashboardDeliveryFirmList() {
 
@@ -19,73 +17,68 @@ export function useDashboardDeliveryFirmList() {
       dashboardDispatch,
       dashboard: {
         deliveryFirms,
-        deliveryFirmsLoading,
-        deliveryFirmsFetchStatus
+        deliveryFirmsError,
+        deliveryFirmsLoaded,
+        deliveryFirmsLoading
       } 
     }
   } = useAppContext();
 
-  const listStatusUpdater = useUpdateListFetchStatus();
+  const api = useMemo(function() { return new DeliveryFirmRepository(adminToken); }, [adminToken]);
 
-  const refetch = useCallback(
-    ()=> {
-      if (deliveryFirmsFetchStatus !== FETCH_STATUSES.LOADING) 
-        dashboardDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.LOADING, true));
-    },
-    [dashboardDispatch, deliveryFirmsFetchStatus]
-  );
+  function refreshDeliveryFirms() {
+    dashboardDispatch({ type: DELIVERY_FIRM.LIST_UNFETCHED }); 
+  }
   
-  useEffect(
-    ()=> {
-      if (deliveryFirmsLoading && deliveryFirmsFetchStatus === FETCH_STATUSES.LOADING && !window.navigator.onLine) {
+  const fetchDeliveryFirms = useCallback(
+    async function() {
 
-        dashboardDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      if (deliveryFirmsLoading) return;
 
-      } else if (deliveryFirmsLoading && deliveryFirmsFetchStatus === FETCH_STATUSES.LOADING) {
+      if (!window.navigator.onLine) {
+        dashboardDispatch({
+          type: DELIVERY_FIRM.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.NO_NETWORK_CONNECTION }
+        });
+        return;
+      } 
+      
+      dashboardDispatch({ type: DELIVERY_FIRM.LIST_FETCHING });
+      
+      try {
 
-        dashboardDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.LOADING, false));
-        
-        const api = new DeliveryFirmRepository(adminToken);
-        api.getList(1)
-        .then(res=> {
+        const res = await api.getList(1);
           
-          if (res.status === 200) {
+        if (res.status === 200) {
+          dashboardDispatch({
+            type: DELIVERY_FIRM.LIST_FETCHED, 
+            payload: { list: res.body.data }
+          });
+        } else {
+          throw new Error();
+        }
 
-            dashboardDispatch({
-              type: DELIVERY_FIRM.LIST_FETCHED, 
-              payload: {
-                list: res.body.data, 
-                fetchStatus: listStatusUpdater(1, 1, 0, res.body.data.length),
-              }
-            });
-
-          } else if (res.status === 404) {
-
-            dashboardDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.NOT_FOUND, false));
-
-          } else if (res.status === 403) {
-
-            dashboardDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.FORBIDDEN, false));
-            
-          } else {
-            throw new Error();
-          }
-        })
-        .catch(()=> {
-          dashboardDispatch(getDeliveryFirmsListFetchStatusAction(FETCH_STATUSES.ERROR, false));
+      } catch(error) {
+        dashboardDispatch({
+          type: DELIVERY_FIRM.LIST_ERROR_CHANGED,
+          payload: { error: NetworkErrorCodes.UNKNOWN_ERROR }
         });
       }
+      
     },
     [
-      deliveryFirms, 
+      api, 
       deliveryFirmsLoading, 
-      deliveryFirmsFetchStatus, 
-      adminToken, 
-      dashboardDispatch, 
-      listStatusUpdater
+      dashboardDispatch,
     ]
   );
 
-  return [deliveryFirms, deliveryFirmsFetchStatus, refetch];
+  return [
+    fetchDeliveryFirms,
+    deliveryFirms, 
+    deliveryFirmsLoading,
+    deliveryFirmsLoaded,
+    deliveryFirmsError,
+    refreshDeliveryFirms
+  ];
 }
-

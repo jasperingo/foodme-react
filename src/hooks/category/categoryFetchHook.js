@@ -31,6 +31,8 @@ export function useCategoryFetch() {
   const fetchCategory = useCallback(
     async function(ID) {
 
+      if (categoryLoading) return;
+
       const theCategory = products.concat(stores).find(c=> c.id === Number(ID));
 
       if (theCategory !== undefined) {
@@ -77,7 +79,6 @@ export function useCategoryFetch() {
         }
 
       } catch(error) {
-
         categoryDispatch({
           type: CATEGORY.ERROR_CHANGED,
           payload: {
@@ -87,7 +88,7 @@ export function useCategoryFetch() {
         });
       }
     },
-    [api, products, stores, categoryDispatch]
+    [api, products, stores, categoryLoading, categoryDispatch]
   );
 
   return [

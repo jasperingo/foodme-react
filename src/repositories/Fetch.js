@@ -13,7 +13,7 @@ export const FETCH_STATUSES = {
 
 export default class Fetch {
 
-  static API_DOMAIN = 'https://shoppa-app-api.herokuapp.com/';
+  static API_DOMAIN = 'http://localhost:3001/'; //'https://shoppa-app-api.herokuapp.com/';
 
   static API_URL = `${Fetch.API_DOMAIN}api/`;
 

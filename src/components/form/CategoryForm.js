@@ -37,18 +37,23 @@ export default function CategoryForm(
         nameInput.current.value,
         typeInput.current.value,
         descriptionInput.current.value,
-  
-        nameInput.current.validity,
-        typeInput.current.validity,
-        descriptionInput.current.validity
+
+        {
+          nameValidity: nameInput.current.validity,
+          typeValidity: typeInput.current.validity,
+          descriptionValidity: descriptionInput.current.validity
+        }        
       );
     } else {
       onSubmit(
         nameInput.current.value,
         descriptionInput.current.value,
   
-        nameInput.current.validity,
-        descriptionInput.current.validity
+        {
+          typeValidity: { valid: true },
+          nameValidity: nameInput.current.validity,
+          descriptionValidity: descriptionInput.current.validity
+        }
       );
     }
   }

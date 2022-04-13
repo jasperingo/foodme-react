@@ -6,6 +6,11 @@ const categoryState = {
   categoryError: null,
   categoryLoading: false,
 
+  subCategory: null,
+  subCategoryID: null,
+  subCategoryError: null,
+  subCategoryLoading: false,
+
   stores: [],
   storesError: null,
   storesLoaded: false,

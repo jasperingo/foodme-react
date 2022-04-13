@@ -4,6 +4,7 @@ import { promotionIcon } from '../../assets/icons';
 import AddButton from '../../components/AddButton';
 import EmptyList from '../../components/EmptyList';
 import FetchMoreButton from '../../components/FetchMoreButton';
+import Forbidden from '../../components/Forbidden';
 import SingleList from '../../components/list/SingleList';
 import PromotionItem from '../../components/list_item/PromotionItem';
 import Loading from '../../components/Loading';
@@ -25,21 +26,22 @@ export default function Promotions() {
   const loadOnScroll = useLoadOnListScroll();
 
   const [
-    fetch, 
+    fetchPromotions, 
     promotions, 
     promotionsLoading, 
     promotionsError, 
     promotionsLoaded, 
     promotionsPage,
     promotionsNumberOfPages,
-    retryFetch
+    refreshPromotions
   ] = usePromotionList();
 
   useEffect(
     function() {
-      if (!promotionsLoaded) fetch();
+      if (!promotionsLoaded && promotionsError === null) 
+        fetchPromotions();
     }, 
-    [promotionsLoaded, fetch]
+    [promotionsLoaded, promotionsError, fetchPromotions]
   );
   
   return (
@@ -50,9 +52,10 @@ export default function Promotions() {
         
         <SingleList
           data={promotions}
-          nextPage={fetch}
-          hasMore={loadOnScroll(promotionsPage, promotionsNumberOfPages, promotionsError)}
           className="list-2-x"
+          nextPage={fetchPromotions}
+          refreshPage={refreshPromotions}
+          hasMore={loadOnScroll(promotionsPage, promotionsNumberOfPages, promotionsError)}
           renderDataItem={(item)=> (
             <PromotionItem key={`promotion-${item.id}`} item={item} />
           )}
@@ -72,7 +75,7 @@ export default function Promotions() {
               render() {
                 return (
                   <li key="promotion-footer" className="list-2-x-col-span"> 
-                    <FetchMoreButton action={fetch} /> 
+                    <FetchMoreButton action={fetchPromotions} /> 
                   </li> 
                 );
               }
@@ -82,10 +85,30 @@ export default function Promotions() {
               render() { 
                 return (
                   <li key="promotion-footer" className="list-2-x-col-span"> 
-                    <Reload action={retryFetch} /> 
+                    <Reload action={fetchPromotions} /> 
                   </li> 
                 );
               },
+            },
+            {
+              canRender: promotionsError === NetworkErrorCodes.NO_NETWORK_CONNECTION,
+              render() { 
+                return (
+                  <li key="promotion-footer" className="list-2-x-col-span"> 
+                    <Reload message="_errors.No_netowrk_connection" action={fetchPromotions} /> 
+                  </li> 
+                );
+              },
+            },
+            {
+              canRender: promotionsError === NetworkErrorCodes.FORBIDDEN,
+              render() {
+                return (
+                  <li key="promotions-footer" className="list-2-x-col-span">
+                    <Forbidden />
+                  </li>
+                );
+              }
             },
             {
               canRender: promotionsLoaded && promotions.length === 0,

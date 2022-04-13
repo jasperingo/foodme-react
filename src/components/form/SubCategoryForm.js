@@ -41,23 +41,28 @@ export default function SubCategoryForm(
         categoryInput.current.value,
         descriptionInput.current.value,
 
-        nameInput.current.validity,
-        categoryInput.current.validity,
-        descriptionInput.current.validity,
+        {
+          nameValidity: nameInput.current.validity,
+          categoryValidity: categoryInput.current.validity,
+          descriptionValidity: descriptionInput.current.validity
+        }
       );
     } else {
       onSubmit(
         nameInput.current.value,
         descriptionInput.current.value,
 
-        nameInput.current.validity,
-        descriptionInput.current.validity,
+        {
+          nameValidity: nameInput.current.validity,
+          categoryValidity: { valid: true },
+          descriptionValidity: descriptionInput.current.validity
+        }
       );
     }
   }
 
   useEffect(
-    ()=> {
+    function() {
       if (formSuccess && add) {
         nameInput.current.value =  '';
         categoryInput.current.value =  '';
