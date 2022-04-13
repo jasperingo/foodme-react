@@ -1,4 +1,3 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const homeState = {
 
@@ -6,9 +5,6 @@ const homeState = {
   promotionsError: null,
   promotionsLoaded: false,
   promotionsLoading: false,
-  
-  categories: [],
-  categoriesFetchStatus: FETCH_STATUSES.LOADING,
   
   stores: [],
   storesError: null,

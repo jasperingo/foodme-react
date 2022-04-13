@@ -1,5 +1,4 @@
 
-
 const headerState = {
 
   path: null,
@@ -11,4 +10,3 @@ const headerState = {
 };
 
 export default headerState;
-

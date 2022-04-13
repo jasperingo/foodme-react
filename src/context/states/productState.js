@@ -1,12 +1,5 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const productState = {
-  
-  products: [],
-  productsPage: 1,
-  productsLoading: true,
-  productsNumberOfPages: 0,
-  productsFetchStatus: FETCH_STATUSES.LOADING,
 
   product: null,
   productID: null,

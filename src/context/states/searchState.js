@@ -1,8 +1,6 @@
 
 const searchState = {
 
-  query: null,
-
   stores: [],
   storesPage: 1,
   storesError: null,
