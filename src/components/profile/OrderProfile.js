@@ -193,24 +193,29 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
     [refundSuccess, refundError]
   );
 
-  const usersLinks = [
-    {
-      href: !isCustomer ? `/customer/${order.customer.id}` : `/profile`,
+  const usersLinks = [];
+
+  if (!isCustomer) {
+    usersLinks.push({
+      href:  `/customer/${order.customer.id}`,
       photo: order.customer.user.photo.href,
       name: `${order.customer.user.name}`,
       title: '_order.Ordered_by'
-    },
-    {
-      href: !isStore ? `/store/${order.store.id}` : '/profile',
+    });
+  }
+
+  if (!isStore) {
+    usersLinks.push({
+      href: `/store/${order.store.id}`,
       photo: order.store.user.photo.href,
       name: order.store.user.name,
       title: '_order.Ordered_from'
-    }
-  ];
+    });
+  }
 
-  if (order.delivery_firm) {
+  if (order.delivery_firm && !isDeliveryFirm) {
     usersLinks.push({
-      href: !isDeliveryFirm ? `/delivery-firm/${order.delivery_firm.id}` : '/profile',
+      href: `/delivery-firm/${order.delivery_firm.id}`,
       photo: order.delivery_firm.user.photo.href,
       name: order.delivery_firm.user.name,
       title: '_order.Delivered_by'

@@ -45,6 +45,7 @@ import Chats from '../pages/Store/Chats';
 import Order from '../pages/Order';
 import DeliveryFirm from '../pages/Store/DeliveryFirm';
 import Customer from '../pages/Customer';
+import NotFoundPage from '../pages/NotFoundPage';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -145,6 +146,7 @@ export default function StoreApp() {
           <Route path="/register" render={()=> guestMiddleware() || <Register />} /> 
           <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
           <Route path="/" render={()=> guestMiddleware() || <Home />} />
+          <Route path="*" exact render={()=> <NotFoundPage />} />
         </Switch>
       </main>
       <Footer />

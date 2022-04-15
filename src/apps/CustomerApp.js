@@ -49,6 +49,8 @@ import { useAppContext } from '../hooks/contextHook';
 import { useCartCounter } from '../hooks/viewHook';
 import { useMessageUnreceivedCounter } from '../hooks/message/messageUnreceivedCounterHook';
 import { useCustomerAuthFetch } from '../hooks/customer/customerAuthFetchHook';
+import NotFoundPage from '../pages/NotFoundPage';
+import EmailVerify from '../pages/EmailVerify';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -113,7 +115,9 @@ export default function CustomerApp() {
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
-          <Route path="/about-us" render={()=> <AboutUs />} /> 
+          <Route path="/about-us" render={()=> <AboutUs />} />
+          <Route path="/about-us" render={()=> <AboutUs />} />
+          <Route path="/email-verification" render={()=> <EmailVerify />} />
           
           <Route path="/cart/done/:ID" render={()=> authMiddleware() || <CartDone />} />
           <Route path="/cart/summary" render={()=> authMiddleware() || <CartSummary />} />
@@ -150,7 +154,8 @@ export default function CustomerApp() {
           <Route path="/store/:ID" render={()=> <Store />} />
           <Route path="/category/:ID" render={()=> <Category isAdmin={false} />} /> 
           <Route path="/categories" render={()=> <Categories />} />
-          <Route path="/" render={()=> <Home />} />
+          <Route path="/" exact render={()=> <Home />} />
+          <Route path="*" render={()=> <NotFoundPage />} />
         </Switch>
       </main>
       <Footer registerHref="/register" loginHref="/login" />

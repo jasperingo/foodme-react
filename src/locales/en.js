@@ -84,6 +84,11 @@ export const TRANSLATIONS_EN = {
     Edit_working_hours: 'Edit working hours',
     Create_your_account: 'Create your account',
 
+    Send_email_verification: 'Send email verification',
+
+    Send_email_verification_confirm: 'Are you sure you want to send an email verification email to this user?',
+
+
   },
 
   _extra: {

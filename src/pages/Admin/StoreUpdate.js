@@ -3,12 +3,14 @@ import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
 import RecommendForm from '../../components/form/RecommendForm';
+import SendEmailVerificationForm from '../../components/form/SendEmailVerificationForm';
 import UserStatusForm from '../../components/form/UserStatusForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import Reload from '../../components/Reload';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useAppContext } from '../../hooks/contextHook';
+import { useEmailVerificationSend } from '../../hooks/email_verification/emailVerificationSendHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreFetch } from '../../hooks/store/storeFetchHook';
 import { useStoreRecommendedUpdate } from '../../hooks/store/storeRecommendedUpdateHook';
@@ -54,6 +56,13 @@ export default function StoreUpdate() {
     recommendedFormError
   ] = useStoreRecommendedUpdate(adminToken);
 
+  const [
+    emailOnSubmit,  
+    eamilLoading, 
+    emailFormSuccess,
+    emailFormError
+  ] = useEmailVerificationSend();
+
   useEffect(
     function() {
       if ((store !== null || storeError !== null) && storeID !== ID) 
@@ -84,6 +93,14 @@ export default function StoreUpdate() {
               dialog={recommendedLoading}
               formError={recommendedFormError}
               formSuccess={recommendedFormSuccess}
+              />
+            
+            <SendEmailVerificationForm 
+              email={store.user.email}
+              onSubmit={emailOnSubmit}
+              loading={eamilLoading}
+              formError={emailFormError}
+              formSuccess={emailFormSuccess}
               />
           </>
         }

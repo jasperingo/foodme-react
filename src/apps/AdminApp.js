@@ -46,6 +46,7 @@ import Home from '../pages/Admin/Home';
 import Promotions from '../pages/Admin/Promotions';
 import Promotion from '../pages/Admin/Promotion';
 import PromotionCreate from '../pages/Admin/PromotionCreate';
+import NotFoundPage from '../pages/NotFoundPage';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -143,7 +144,8 @@ export default function AdminApp() {
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword administrator={true} />} />
           <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
-          <Route path="/" render={()=> guestMiddleware() || <Home />} />
+          <Route path="/" exact render={()=> guestMiddleware() || <Home />} />
+          <Route path="*" render={()=> <NotFoundPage />} />
         </Switch>
       </main>
       <Footer noRegister={true} />

@@ -75,8 +75,8 @@ export function useDeliveryFirmLogin() {
 
         setSuccess(true);
 
-      } else if (res.status === 401) {
-        setFormError('_errors.Credentials_are_incorrect');
+      } else if (res.status === 401 || res.status === 403) {
+        setFormError(res.body.message);
       } else {
         throw new Error();
       }

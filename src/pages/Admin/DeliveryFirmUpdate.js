@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Forbidden from '../../components/Forbidden';
+import SendEmailVerificationForm from '../../components/form/SendEmailVerificationForm';
 import UserStatusForm from '../../components/form/UserStatusForm';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
@@ -10,6 +11,7 @@ import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useAppContext } from '../../hooks/contextHook';
 import { useDeliveryFirmFetch } from '../../hooks/delivery_firm/deliveryFirmFetchHook';
 import { useDeliveryFirmStatusUpdate } from '../../hooks/delivery_firm/deliveryFirmStatusUpdateHook';
+import { useEmailVerificationSend } from '../../hooks/email_verification/emailVerificationSendHook';
 import { useHeader } from '../../hooks/headerHook';
 
 export default function DeliveryFirmUpdate() {
@@ -45,6 +47,13 @@ export default function DeliveryFirmUpdate() {
     formError
   ] = useDeliveryFirmStatusUpdate(adminToken);
 
+  const [
+    emailOnSubmit,  
+    eamilLoading, 
+    emailFormSuccess,
+    emailFormError
+  ] = useEmailVerificationSend();
+
   useEffect(
     function() {
       if ((deliveryFirm !== null || deliveryFirmError !== null) && deliveryFirmID !== ID) 
@@ -60,13 +69,23 @@ export default function DeliveryFirmUpdate() {
       <div className="container-x">
         {
           deliveryFirm !== null && 
-          <UserStatusForm 
-            status={deliveryFirm.user.status} 
-            onSubmit={onSubmit}
-            dialog={dialog}
-            formError={formError}
-            formSuccess={formSuccess}
-            />
+          <>
+            <UserStatusForm 
+              status={deliveryFirm.user.status} 
+              onSubmit={onSubmit}
+              dialog={dialog}
+              formError={formError}
+              formSuccess={formSuccess}
+              />
+
+            <SendEmailVerificationForm 
+              email={deliveryFirm.user.email}
+              onSubmit={emailOnSubmit}
+              loading={eamilLoading}
+              formError={emailFormError}
+              formSuccess={emailFormSuccess}
+              />
+          </>
         }
 
         { deliveryFirmLoading && <Loading /> }

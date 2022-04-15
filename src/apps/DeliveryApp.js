@@ -40,6 +40,7 @@ import Home from '../pages/Delivery/Home';
 import Chats from '../pages/Delivery/Chats';
 import Store from '../pages/Delivery/Store';
 import Customer from '../pages/Customer';
+import NotFoundPage from '../pages/NotFoundPage';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -134,7 +135,8 @@ export default function DeliveryApp() {
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=>  guestMiddleware() || <Register />} /> 
           <Route path="/login" render={()=>  guestMiddleware() || <LogIn redirectTo={redirectTo} />} /> 
-          <Route path="/" render={()=> guestMiddleware() || <Home />} /> 
+          <Route path="/" exact render={()=> guestMiddleware() || <Home />} />
+          <Route path="*" render={()=> <NotFoundPage />} />
         </Switch>
       </main>
       <Footer />

@@ -19,6 +19,3 @@ export default class FavoriteRepository extends Fetch {
   }
 
 }
-
-
-

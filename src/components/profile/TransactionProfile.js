@@ -191,36 +191,39 @@ export default function TransactionProfile(
 
   const links = [];
 
-  switch(user.type) {
+  if (!canCancel) {
+    
+    switch(user.type) {
 
-    case User.TYPE_CUSTOMER: 
-      links.push({
-        href: `/customer/${user.customer.id}`,
-        photo: user.photo.href,
-        name: user.name,
-        title: '_user.Customer'
-      });
-      break;
+      case User.TYPE_CUSTOMER: 
+        links.push({
+          href: `/customer/${user.customer.id}`,
+          photo: user.photo.href,
+          name: user.name,
+          title: '_user.Customer'
+        });
+        break;
 
-    case User.TYPE_STORE: 
-      links.push({
-        href: `/store/${user.store.id}`,
-        photo: user.photo.href,
-        name: user.name,
-        title: '_store.Store'
-      });
-      break;
+      case User.TYPE_STORE: 
+        links.push({
+          href: `/store/${user.store.id}`,
+          photo: user.photo.href,
+          name: user.name,
+          title: '_store.Store'
+        });
+        break;
 
-    case User.TYPE_DELIVERY_FIRM: 
-      links.push({
-        href: `/delievery-firm/${user.delivery_firm.id}`,
-        photo: user.photo.href,
-        name: user.name,
-        title: '_delivery.Delivery_firm'
-      });
-      break;
+      case User.TYPE_DELIVERY_FIRM: 
+        links.push({
+          href: `/delievery-firm/${user.delivery_firm.id}`,
+          photo: user.photo.href,
+          name: user.name,
+          title: '_delivery.Delivery_firm'
+        });
+        break;
 
-    default:
+      default:
+    }
   }
 
   if (order !== null) {

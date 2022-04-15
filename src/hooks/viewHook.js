@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import moment from 'moment';
 import User from '../models/User';
 import WorkingHour from '../models/WorkingHour';
@@ -48,7 +49,7 @@ export function useWorkingHoursDay() {
 }
 
 export function useURLQuery(params) {
-  const search = new URLSearchParams(window.location.search);
+  const search = useMemo(function() { return new URLSearchParams(window.location.search); }, []);
   return params.map(i=> search.get(i));
 }
 

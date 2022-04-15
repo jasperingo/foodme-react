@@ -75,7 +75,7 @@ export function useStoreLogin() {
 
         setSuccess(true);
         
-      } else if (res.status === 401) {
+      } else if (res.status === 401 || res.status === 403) {
         setFormError(res.body.message);
       } else {
         throw new Error();
