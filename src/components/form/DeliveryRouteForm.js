@@ -1,42 +1,36 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import LoadingDialog from '../dialog/LoadingDialog';
 import FormButton from './FormButton';
+import FormField from './FormField';
 import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 
 export default function DeliveryRouteForm(
   {
-    locations,
     deliveryRoute,
     onSubmit,
-    dialog,
+    loading,
     formError,
     formSuccess,
-    stateError, 
-    cityError,
+    nameError,
     doorDeliveryError
   }
 ) {
 
   const doorInput = useRef(null);
 
-  const cityInput = useRef(null);
+  const nameInput = useRef(null);
 
-  const stateInput = useRef(null);
-
-  const [state, setState] = useState(deliveryRoute?.state);
-
+  
   function onFormSubmit(e) {
     e.preventDefault();
     onSubmit(
-      stateInput.current.value,
-      cityInput.current.value,
+      nameInput.current.value,
       doorInput.current.value,
 
       { 
-        stateValidity: stateInput.current.validity,
-        cityValidity: cityInput.current.validity,
+        nameValidity: nameInput.current.validity,
         doorDeliveryValidity: doorInput.current.validity 
       }
     );
@@ -50,31 +44,19 @@ export default function DeliveryRouteForm(
         success={formSuccess} 
         />
 
-      <FormSelect
-        ref={stateInput}
-        error={stateError}
-        ID="address-state-input" 
-        label="_user.State" 
-        value={ deliveryRoute?.state } 
+      <FormField 
+        ref={nameInput}
+        error={nameError}
+        ID="route-name-input" 
+        label="_extra.Name" 
+        value={ deliveryRoute?.name } 
         required={true}
-        options={locations.map(i=> ({ key: i.state, value: i.state}))}
-        onChange={(e)=> setState(e.target.value)}
-        />
-
-      <FormSelect 
-        ref={cityInput}
-        error={cityError}
-        ID="address-city-input" 
-        label="_user.City" 
-        value={ deliveryRoute?.city } 
-        required={true}
-        options={locations.find(i=> i.state === state)?.lgas.map(i=> ({ key: i, value: i}))}
         />
 
       <FormSelect
         ref={doorInput}
         error={doorDeliveryError}
-        ID="address-state-input" 
+        ID="route-door-delivery-input" 
         label="_delivery.Door_delivery" 
         value={ deliveryRoute?.door_delivery } 
         required={true}
@@ -86,7 +68,7 @@ export default function DeliveryRouteForm(
 
       <FormButton text="_extra.Submit" />
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
 
     </form>
   );

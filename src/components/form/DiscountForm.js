@@ -48,9 +48,9 @@ export default function DiscountForm(
     onSubmit(
       titleInput.current.value,
       typeInput.current.value,
-      valueInput.current.value,
-      minAmountInput.current.value,
-      minQtyInput.current.value,
+      Number(valueInput.current.value),
+      Number(minAmountInput.current.value),
+      Number(minQtyInput.current.value),
       startDateInput.current.value,
       endDateInput.current.value,
 

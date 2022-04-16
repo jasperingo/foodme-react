@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { checkIcon, dateIcon, editIcon, emailIcon, messageIcon, phoneIcon } from '../../assets/icons';
-import { useDateFormat } from '../../hooks/viewHook';
+import { useDateFormatter } from '../../hooks/viewHook';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
 import ProfileHeader from './ProfileHeader';
@@ -14,26 +14,30 @@ export default function CustomerProfile(
   }
 ) {
 
+  const dateFormat = useDateFormatter();
+
   const details = [
     {
       icon: phoneIcon,
       data: customer.user.phone_number
     },
     {
-      icon: emailIcon,
-      data: customer.user.email
-    },
-    {
       icon: dateIcon,
-      data: useDateFormat(customer.user.created_at)
+      data: dateFormat(customer.user.created_at)
     }
   ];
 
   if (isAdmin) {
-    details.push({
-      icon: checkIcon,
-      data: customer.user.status
-    });
+    details.push(
+      {
+        icon: emailIcon,
+        data: customer.user.email
+      },
+      {
+        icon: checkIcon,
+        data: customer.user.status
+      }
+    );
   }
   
   return (

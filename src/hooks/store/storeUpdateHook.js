@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { STORE } from "../../context/actions/storeActions";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import StoreRepository from "../../repositories/StoreRepository";
 import { useAppContext } from "../contextHook";
 import { useStoreUpdateValidation } from "./storeValidationHook";
@@ -75,8 +74,8 @@ export function useStoreUpdate() {
         storeDispatch({
           type: STORE.FETCHED, 
           payload: { 
-            store: res.body.data, 
-            fetchStatus: FETCH_STATUSES.DONE 
+            id: String(store.id),
+            store: res.body.data
           }
         });
 

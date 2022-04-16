@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import OrderRepository from '../../repositories/OrderRepository';
 import { useAppContext } from '../contextHook';
 
@@ -27,8 +27,16 @@ export function useOrderCreate() {
   const [success, setSuccess] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const resetCreateOrder = useCallback(
+    function() { 
+      setError(null); 
+      setSuccess(null);
+    },
+    []
+  );
   
-  async function send(paymentMethod) {
+  async function send(paymentMethod, orderNote) {
 
     if (isLoading) return;
 
@@ -36,6 +44,8 @@ export function useOrderCreate() {
       setError('_errors.No_netowrk_connection');
       return;
     }
+
+    resetCreateOrder();
 
     setIsLoading(true);
 
@@ -46,15 +56,15 @@ export function useOrderCreate() {
         ...cart,
         store_id: cartItems[0].product_variant.product.store.id,
         payment_method: paymentMethod,
+        note: orderNote === '' ? undefined : orderNote,
         order_items: cartItems.map(i=> {
           const item = {
             product_variant_id: i.product_variant.id,
             quantity: i.quantity,
           };
 
-          if (i.delivery_duration_id && i.delivery_weight_id) {
+          if (i.delivery_weight_id) {
             item.delivery_weight_id = i.delivery_weight_id;
-            item.delivery_duration_id = i.delivery_duration_id;
           }
 
           if (i.discount_product_id) 
@@ -85,6 +95,5 @@ export function useOrderCreate() {
     }
   }
 
-  return [send, success, isLoading, error, order];
+  return [send, success, isLoading, error, order, resetCreateOrder];
 }
-

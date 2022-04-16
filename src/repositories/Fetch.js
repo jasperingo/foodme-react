@@ -1,16 +1,4 @@
 
-export const FETCH_STATUSES = {
-  PENDING: 'PENDING',
-  LOADING: 'LOADING',
-  EMPTY: 'EMPTY',
-  ERROR: 'ERROR',
-  MORE: 'MORE',
-  NOT_FOUND: 'NOT_FOUND',
-  FORBIDDEN: 'FORBIDDEN',
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  DONE: 'DONE'
-};
-
 export default class Fetch {
 
   static API_DOMAIN = 'https://shoppa-app-api.herokuapp.com/';
@@ -19,9 +7,9 @@ export default class Fetch {
 
   static FILE_CONTENT_TYPE = 'multipart/form-data';
 
-  static PAGE_LIMIT = 2;
+  static PAGE_LIMIT = 10;
 
-  static PAGE_LIMIT_BIG = 5;
+  static PAGE_LIMIT_BIG = 20;
   
   constructor( apiToken = null, contentType = 'application/json' ) {
     this.apiToken = apiToken;
@@ -54,4 +42,3 @@ export default class Fetch {
   }
 
 }
-

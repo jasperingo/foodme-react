@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import DeliveryWeightForm from '../../components/form/DeliveryWeightForm';
 import { useDeliveryRouteWeightCreate } from '../../hooks/delilvery_route/deliveryRouteWeightCreateHook';
@@ -8,11 +8,11 @@ import { useURLQuery } from '../../hooks/viewHook';
 
 export default function DeliveryWeightCreate() {
 
-  const product = useURLQuery().get('delivery_route');
+  const [deliveryRoute] = useURLQuery(['delivery_route']);
 
   const history = useHistory();
 
-  if (!product) {
+  if (!deliveryRoute) {
     history.replace('/delivery-routes');
   }
 
@@ -23,13 +23,21 @@ export default function DeliveryWeightCreate() {
 
   const [
     onSubmit, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     minError, 
     maxError, 
     feeError
-  ] = useDeliveryRouteWeightCreate();
+  ] = useDeliveryRouteWeightCreate(Number(deliveryRoute));
+
+  useEffect(
+    function() {
+      if (formSuccess !== null) 
+        history.replace(`/delivery-route/${deliveryRoute}/weights`);
+    },
+    [deliveryRoute, history, formSuccess]
+  );
 
   return (
     <section>
@@ -37,7 +45,7 @@ export default function DeliveryWeightCreate() {
         <DeliveryWeightForm 
           weight={{}}
           onSubmit={onSubmit}
-          dialog={dialog}
+          loading={loading}
           formError={formError}
           formSuccess={formSuccess}
           minError={minError}

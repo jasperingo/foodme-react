@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ORDER } from '../../context/actions/orderActions';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
 import OrderRepository from '../../repositories/OrderRepository';
 import { useAppContext } from '../contextHook';
 
@@ -53,8 +52,8 @@ export function useOrderStatusUpdate() {
         orderDispatch({
           type: ORDER.FETCHED, 
           payload: {
+            id: orderID,
             order: res.body.data, 
-            fetchStatus: FETCH_STATUSES.DONE 
           }
         });
         

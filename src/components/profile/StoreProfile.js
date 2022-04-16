@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { categoryIcon, checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, recommendedIcon, reviewIcon } from '../../assets/icons';
-import { useDateFormat, useDateFormatter, useWorkingHoursDay } from '../../hooks/viewHook';
+import { useDateFormatter, useWorkingHoursDay } from '../../hooks/viewHook';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
 import ProfileDetailsText from './ProfileDetailsText';
@@ -65,8 +65,6 @@ export default function StoreProfile(
     });
   }
 
-  const date = useDateFormat(created_at);
-
   if (isAdmin) {
     details.push(
       {
@@ -79,7 +77,7 @@ export default function StoreProfile(
       },
       {
         icon: dateIcon,
-        data: date
+        data: dateFormat(created_at)
       }
     );
   }

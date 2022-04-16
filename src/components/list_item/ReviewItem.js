@@ -3,18 +3,20 @@ import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { userIcon } from '../../assets/icons';
-import { useDateFormat } from '../../hooks/viewHook';
+import { useDateFormatter } from '../../hooks/viewHook';
 import ReviewStars from '../review/ReviewStars';
 
 export default function ReviewItem({ canEdit, editReview, deletReview, review: { id, customer, description, rating, created_at } }) {
 
   const { t } = useTranslation();
 
+  const dateFormat = useDateFormatter();
+
   return (
     <div className="py-2 mb-4 md:px-2 md:shadow md:rounded" id={id}>
       <div className="flex flex-wrap gap-2">
         <ReviewStars ratings={rating} />
-        <time dateTime={created_at} className="block text-color-gray">{ useDateFormat(created_at, { date: true }) }</time>
+        <time dateTime={created_at} className="block text-color-gray">{ dateFormat(created_at, { date: true }) }</time>
       </div>
       <div className="mb-2">{ description }</div>
       <div className="flex items-center gap-2 text-sm">

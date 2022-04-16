@@ -3,38 +3,38 @@ import { useCallback, useMemo } from "react";
 import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
 import NetworkError from "../../errors/NetworkError";
 import NetworkErrorCodes from "../../errors/NetworkErrorCodes";
-import DeliveryRouteWeightRepository from "../../repositories/DeliveryRouteWeightRepository";
+import DeliveryRouteLocationRepository from "../../repositories/DeliveryRouteLocationRepository";
 import { useAppContext } from "../contextHook";
 
-export function useDeliveryRouteWeightFetch(userToken) {
+export function useDeliveryRouteLocationFetch(userToken) {
 
   const { 
     deliveryRoute : { 
       deliveryRouteDispatch,
       deliveryRoute: {
-        deliveryWeight,
-        deliveryWeightID,
-        deliveryWeightLoading,
-        deliveryWeightError
+        deliveryLocation,
+        deliveryLocationID,
+        deliveryLocationLoading,
+        deliveryLocationError
       } 
     }
   } = useAppContext();
 
-  const api = useMemo(function() { return new DeliveryRouteWeightRepository(userToken); }, [userToken]);
+  const api = useMemo(function() { return new DeliveryRouteLocationRepository(userToken); }, [userToken]);
 
-  const unfetchDeliveryWeight = useCallback(
-    function() { deliveryRouteDispatch({ type: DELIVERY_ROUTE.WEIGHT_UNFETCHED }); },
+  const unfetchDeliveryLocation = useCallback(
+    function() { deliveryRouteDispatch({ type: DELIVERY_ROUTE.LOCATION_UNFETCHED }); },
     [deliveryRouteDispatch]
   );
-  
-  const fetchDeliveryWeight = useCallback(
+
+  const fetchDeliveryLocation = useCallback(
     async function(ID) {
 
-      if (deliveryWeightLoading) return;
+      if (deliveryLocationLoading) return;
 
       if (!window.navigator.onLine) {
         deliveryRouteDispatch({
-          type: DELIVERY_ROUTE.WEIGHT_ERROR_CHANGED,
+          type: DELIVERY_ROUTE.LOCATION_ERROR_CHANGED,
           payload: { 
             id: ID,
             error: NetworkErrorCodes.NO_NETWORK_CONNECTION 
@@ -43,22 +43,20 @@ export function useDeliveryRouteWeightFetch(userToken) {
         return;
       } 
 
-      deliveryRouteDispatch({ type: DELIVERY_ROUTE.WEIGHT_FETCHING });
+      deliveryRouteDispatch({ type: DELIVERY_ROUTE.LOCATION_FETCHING });
 
       try {
 
         const res = await api.get(ID);
           
         if (res.status === 200) {
-
           deliveryRouteDispatch({
-            type: DELIVERY_ROUTE.WEIGHT_FETCHED, 
+            type: DELIVERY_ROUTE.LOCATION_FETCHED, 
             payload: {
               id: ID,
-              deliveryWeight: res.body.data, 
+              deliveryLocation: res.body.data, 
             }
           });
-
         } else if (res.status === 404) {
           throw new NetworkError(NetworkErrorCodes.NOT_FOUND);
         } else if (res.status === 403) {
@@ -69,7 +67,7 @@ export function useDeliveryRouteWeightFetch(userToken) {
 
       } catch(error) {
         deliveryRouteDispatch({
-          type: DELIVERY_ROUTE.WEIGHT_ERROR_CHANGED,
+          type: DELIVERY_ROUTE.LOCATION_ERROR_CHANGED,
           payload: {
             id: ID,
             error: error instanceof NetworkError ? error.message : NetworkErrorCodes.UNKNOWN_ERROR
@@ -77,15 +75,15 @@ export function useDeliveryRouteWeightFetch(userToken) {
         });
       }
     },
-    [api, deliveryWeightLoading, deliveryRouteDispatch]
+    [api, deliveryLocationLoading, deliveryRouteDispatch]
   );
 
   return [
-    fetchDeliveryWeight,
-    deliveryWeight,
-    deliveryWeightLoading,
-    deliveryWeightError,
-    deliveryWeightID,
-    unfetchDeliveryWeight
+    fetchDeliveryLocation,
+    deliveryLocation,
+    deliveryLocationLoading,
+    deliveryLocationError,
+    deliveryLocationID,
+    unfetchDeliveryLocation
   ];
 }

@@ -6,10 +6,10 @@ const deliveryRouteState = {
   deliveryRouteLoading: false,
   deliveryRouteError: null,
 
-  deliveryDuration: null,
-  deliveryDurationID: null,
-  deliveryDurationLoading: false,
-  deliveryDurationError: null,
+  deliveryLocation: null,
+  deliveryLocationID: null,
+  deliveryLocationLoading: false,
+  deliveryLocationError: null,
 
   deliveryWeight: null,
   deliveryWeightID: null,

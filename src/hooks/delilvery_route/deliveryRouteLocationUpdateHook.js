@@ -1,11 +1,11 @@
 
 import { useMemo, useState } from "react";
 import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
-import DeliveryRouteRepository from "../../repositories/DeliveryRouteRepository";
+import DeliveryRouteLocationRepository from "../../repositories/DeliveryRouteLocationRepository";
 import { useAppContext } from "../contextHook";
-import { useDeliveryRouteValidation } from "./deliveryRouteValidationHook";
+import { useDeliveryRouteLocationValidation } from "./deliveryRouteLocationValidationHook";
 
-export function useDeliveryRouteUpdate() {
+export function useDeliveryRouteLocationUpdate() {
 
   const { 
     deliveryFirm: { 
@@ -16,7 +16,7 @@ export function useDeliveryRouteUpdate() {
     deliveryRoute : { 
       deliveryRouteDispatch,
       deliveryRoute: {
-        deliveryRoute
+        deliveryLocation
       } 
     }
   } = useAppContext();
@@ -31,13 +31,11 @@ export function useDeliveryRouteUpdate() {
 
   const [cityError, setCityError] = useState('');
 
-  const [doorDeliveryError, setDoorDeliveryError] = useState('');
+  const validator = useDeliveryRouteLocationValidation();
 
-  const validator = useDeliveryRouteValidation();
+  const api = useMemo(function() { return new DeliveryRouteLocationRepository(deliveryFirmToken); }, [deliveryFirmToken]);
 
-  const api = useMemo(function() { return new DeliveryRouteRepository(deliveryFirmToken); }, [deliveryFirmToken]);
-
-  async function onSubmit(state, city, door_delivery, validity) {
+  async function onSubmit(state, city, validity) {
     
     if (loading) return;
     
@@ -48,11 +46,10 @@ export function useDeliveryRouteUpdate() {
 
     setFormError(null);
     
-    const [error, stateError, cityError, doorDelivevryError] = validator(validity);
+    const [error, stateError, cityError] = validator(validity);
     
     setStateError(stateError);
     setCityError(cityError);
-    setDoorDeliveryError(doorDelivevryError);
     
     if (error) return;
 
@@ -60,18 +57,15 @@ export function useDeliveryRouteUpdate() {
 
     try {
 
-      const res = await api.update(deliveryRoute.id, { state, city, door_delivery });
+      const res = await api.update(deliveryLocation.id, { state, city });
 
       if (res.status === 200) {
         
         setFormSuccess(res.body.message);
 
         deliveryRouteDispatch({
-          type: DELIVERY_ROUTE.FETCHED, 
-          payload: { 
-            id: String(deliveryRoute.id),
-            deliveryRoute: res.body.data 
-          }
+          type: DELIVERY_ROUTE.LOCATION_UPDATED, 
+          payload: { deliveryLocation: res.body.data }
         });
         
       } else if (res.status === 400) {
@@ -86,10 +80,6 @@ export function useDeliveryRouteUpdate() {
 
             case 'city':
               setCityError(error.message);
-              break;
-
-            case 'door_delivery':
-              setDoorDeliveryError(error.message);
               break;
 
             default:
@@ -113,7 +103,6 @@ export function useDeliveryRouteUpdate() {
     formError, 
     formSuccess, 
     stateError, 
-    cityError, 
-    doorDeliveryError
+    cityError
   ];
 }

@@ -190,32 +190,31 @@ export default function Product() {
   return (
     <section>
 
-      { product !== null && <ProductProfile isStore={true} product={product} /> }
+      { 
+        product !== null && 
+        <>
+          <ProductProfile isStore={true} product={product} /> 
+
+          <div className="container-x">
+            <Tab keyPrefix="product-tab" items={NAV_LINKS} />
+          </div>
+
+          <Switch>
+            <Route path={`${match.url}/reviews`} render={()=> <ProductReviewList />} />
+            <Route path={match.url} render={()=> <ProductVariantList />} />
+          </Switch>
+        </>
+      }
 
       {
         product === null &&
-        <div>
+        <div className="container-x">
           { productLoading && <Loading /> }
           { productError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
           { productError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
           { productError === NetworkErrorCodes.UNKNOWN_ERROR && <Reload action={()=> fetchProduct(ID)} /> }
           { productError === NetworkErrorCodes.NO_NETWORK_CONNECTION && <Reload message="_errors.No_netowrk_connection" action={()=> fetchProduct(ID)} /> }
         </div>
-      }
-
-      { 
-        product !== null && 
-        <div className="container-x">
-          <Tab keyPrefix="product-tab" items={NAV_LINKS} />
-        </div>
-      }
-
-      {
-        product !== null && 
-        <Switch>
-          <Route path={`${match.url}/reviews`} render={()=> <ProductReviewList />} />
-          <Route path={match.url} render={()=> <ProductVariantList />} />
-        </Switch>
       }
 
     </section>

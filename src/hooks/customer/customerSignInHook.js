@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
 import { CUSTOMER } from '../../context/actions/customerActions';
 import CustomerRepository from '../../repositories/CustomerRepository';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
 import { useAppContext } from '../contextHook';
 import { useMessageFetch } from '../message/messageFetchHook';
 import { useMessageUnreceivedCountFetch } from '../message/messageUnreceivedCountFetchHook';
@@ -61,8 +60,7 @@ export function useCustomerSignIn() {
           type: CUSTOMER.AUTHED, 
           payload: { 
             customer: res.body.data.customer, 
-            token: res.body.data.api_token.token, 
-            fetchStatus: FETCH_STATUSES.DONE 
+            token: res.body.data.api_token.token
           }
         });
 

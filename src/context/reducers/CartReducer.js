@@ -67,11 +67,10 @@ export default function CartReducer (state, { type, payload }) {
           ...state.cart,
           delivery_method: payload
         },
-        cartItems: [...state.cartItems.map(i=> {
-          delete i.delivery_duration_id;
+        cartItems: state.cartItems.map(i=> {
           delete i.delivery_weight_id;
           return i;
-        })]
+        })
       };
 
     case CART.DELIVERY_ADDRESS_CHOOSEN:
@@ -92,11 +91,10 @@ export default function CartReducer (state, { type, payload }) {
           delivery_firm_id: payload.delivery_firm_id,
           delivery_route_id: payload.delivery_route_id,
         },
-        cartItems: [...state.cartItems.map(i=> ({
+        cartItems: state.cartItems.map(i=> ({
           ...i,
-          delivery_duration_id: payload.delivery_duration_id,
           delivery_weight_id: payload.delivery_weights.find(x=> x.product_variant_id === i.product_variant.id).delivery_weight_id
-        }))]
+        }))
       };
 
     case CART.DISCOUNT_CHOOSEN:
@@ -106,7 +104,7 @@ export default function CartReducer (state, { type, payload }) {
           ...state.cart,
           discount_total: payload.reduce((p, c)=> p + c.discount_amount, 0),
         },
-        cartItems: [...state.cartItems.map(i=> {
+        cartItems: state.cartItems.map(i=> {
           const val = payload.find(x=> x.product_id === i.product_variant.product.id);
           if (val !== undefined) {
             return { ...i, discount_product_id: val.discount_product_id };
@@ -114,11 +112,10 @@ export default function CartReducer (state, { type, payload }) {
             delete i.discount_product_id;
             return i;
           }
-        })]
+        })
       };
 
     default:
       return state;
   }
 }
-

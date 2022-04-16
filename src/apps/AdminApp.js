@@ -34,7 +34,7 @@ import Product from '../pages/Admin/Product';
 import Discount from '../pages/Discount';
 import Order from '../pages/Order';
 import Transaction from '../pages/Transaction';
-import DeliveryRoute from '../pages/Admin/DeliveryRoute';
+import DeliveryRoute from '../pages/DeliveryRoute';
 import TermsOfService from '../pages/TermsOfService';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import ContactUs from '../pages/ContactUs';
@@ -113,9 +113,9 @@ export default function AdminApp() {
           <Route path="/promotion/create" render={()=> authMiddleware() || <PromotionCreate />} />
           <Route path="/promotion/:ID" render={()=> authMiddleware() || <Promotion />} />
           <Route path="/promotions" render={()=> authMiddleware() || <Promotions />} />
-          <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
           <Route path="/transaction/:ID" render={()=> authMiddleware() || <Transaction userToken={adminToken} canProcessAndDecline={true} />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order userToken={adminToken} isAdmin={true} />} />
+          <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute userToken={adminToken} isDelieryFirm={false} />} />
           <Route path="/discount/:ID" render={()=> authMiddleware() || <Discount userToken={adminToken} />} />
           <Route path="/product/:ID/update" render={()=> authMiddleware() || <ProductUpdate />} />
           <Route path="/product/:ID" render={()=> authMiddleware() || <Product />} />

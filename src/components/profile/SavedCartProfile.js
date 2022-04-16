@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { CART } from '../../context/actions/cartActions';
 import { useAppContext } from '../../hooks/contextHook';
 import { useSavedCartItemsToCartItems } from '../../hooks/saved_cart/savedCartItemsToCartItemsHook';
-import { useCopyText, useDateFormat } from '../../hooks/viewHook';
+import { useCopyText, useDateFormatter } from '../../hooks/viewHook';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
 import H4Heading from '../H4Heading';
@@ -31,6 +31,8 @@ export default function SavedCartProfile(
   const { t } = useTranslation();
 
   const copy = useCopyText();
+
+  const dateFormat = useDateFormatter();
 
   const [alertDialog, setAlertDialog] = useState(null);
 
@@ -168,7 +170,7 @@ export default function SavedCartProfile(
             details={[
               {
                 title: '_cart.Saved_on',
-                body: useDateFormat(created_at)
+                body: dateFormat(created_at)
               },
               {
                 title: '_extra.Title',

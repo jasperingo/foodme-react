@@ -379,7 +379,7 @@ export const TRANSLATIONS_EN = {
     Delivery_route: 'Delivery route',
     Delivery_routes: 'Delivery routes',
     Delivery_weights: 'Delivery weights',
-    Delivery_durations: 'Delivery durations',
+    Delivery_locations: 'Delivery locations',
 
     Delivery_firm_status: 'Delivery firm status',
 
@@ -389,11 +389,11 @@ export const TRANSLATIONS_EN = {
     Edit_delivery_link_route: 'Edit delivery link route',
     Add_delivery_weight: 'Add delivery weight',
     Edit_delivery_weight: 'Edit delivery weight',
-    Add_delivery_duration: 'Add delivery duration',
-    Edit_delivery_duration: 'Edit delivery duration',
+    Add_delivery_location: 'Add delivery location',
+    Edit_delivery_location: 'Edit delivery location',
 
     _delivery_route_delete_confirm: 'Are you sure you want to delete this delivery route?',
-    _delivery_duration_delete_confirm: 'Are you sure you want to delete this delivery duration?',
+    _delivery_location_delete_confirm: 'Are you sure you want to delete this delivery location?',
     _delivery_weight_delete_confirm: 'Are you sure you want to delete this delivery weight?',
 
     Weight_fee: 'Weight fee',
@@ -548,7 +548,7 @@ export const TRANSLATIONS_EN = {
     No_product_category: 'No product category',
     No_route: 'No route',
     No_delivery_weight: 'No delivery weight',
-    No_delivery_duration: 'No delivery duration',
+    No_delivery_location: 'No delivery location',
     No_message: 'No message',
     No_favorite: 'No favorite',
     List_is_empty: 'List is empty',

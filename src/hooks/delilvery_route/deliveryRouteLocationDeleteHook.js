@@ -1,12 +1,12 @@
 
 import { useMemo, useState } from "react";
 import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
-import DeliveryRouteWeightRepository from "../../repositories/DeliveryRouteWeightRepository";
+import DeliveryRouteLocationRepository from "../../repositories/DeliveryRouteLocationRepository";
 import { useAppContext } from "../contextHook";
 
-export function useDeliveryRouteWeightDelete() {
+export function useDeliveryRouteLocationDelete() {
 
-  const { 
+  const {
     deliveryFirm: { 
       deliveryFirm: {
         deliveryFirmToken
@@ -15,7 +15,7 @@ export function useDeliveryRouteWeightDelete() {
     deliveryRoute : { 
       deliveryRouteDispatch,
       deliveryRoute: {
-        deliveryWeight
+        deliveryLocation
       } 
     }
   } = useAppContext();
@@ -26,7 +26,7 @@ export function useDeliveryRouteWeightDelete() {
 
   const [formSuccess, setFormSuccess] = useState(null);
 
-  const api = useMemo(function() { return new DeliveryRouteWeightRepository(deliveryFirmToken); }, [deliveryFirmToken]);
+  const api = useMemo(function() { return new DeliveryRouteLocationRepository(deliveryFirmToken); }, [deliveryFirmToken]);
 
   async function onSubmit() {
 
@@ -44,15 +44,15 @@ export function useDeliveryRouteWeightDelete() {
 
     try {
       
-      const res = await api.delete(deliveryWeight.id);
+      const res = await api.delete(deliveryLocation.id);
 
       if (res.status === 200) {
 
         setFormSuccess(res.body.message);
 
         deliveryRouteDispatch({ 
-          type: DELIVERY_ROUTE.WEIGHT_DELETED,
-          payload: { id: deliveryWeight.id }
+          type: DELIVERY_ROUTE.LOCATION_DELETED,
+          payload: { id: deliveryLocation.id }
         });
         
       } else if (res.status === 400) {
@@ -70,10 +70,5 @@ export function useDeliveryRouteWeightDelete() {
     }
   }
 
-  return [
-    onSubmit, 
-    loading, 
-    formSuccess,
-    formError
-  ];
+  return [onSubmit, loading, formSuccess, formError];
 }

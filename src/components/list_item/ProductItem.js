@@ -4,7 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { storeIcon } from '../../assets/icons';
-import { useMoneyFormat } from '../../hooks/viewHook';
+import { useMoneyFormatter } from '../../hooks/viewHook';
 
 export default function ProductItem(
   { 
@@ -21,7 +21,7 @@ export default function ProductItem(
 
   const { t } = useTranslation();
 
-  const priceView = useMoneyFormat(variant?.price || 0);
+  const moneyFormat = useMoneyFormatter();
 
   return (
     <Link 
@@ -39,7 +39,7 @@ export default function ProductItem(
         <div className="mb-1">{ title }</div>
         {
           variant?.price ?
-          <div className="font-bold mb-1">{ priceView }</div> :
+          <div className="font-bold mb-1">{ moneyFormat(variant.price) }</div> :
           <div className="italic mb-1 text-red-500">{ t('_extra.No_price') }</div>
         }
         <div className="flex gap-1 items-start text-color-primary text-sm py-1 w-full">

@@ -1,21 +1,15 @@
 
 export function useDeliveryRouteValidation() {
 
-  return function({ stateValidity, cityValidity, doorDeliveryValidity }) {
+  return function({ nameValidity, doorDeliveryValidity }) {
 
     let error = false;
-    let stateError = '';
-    let cityError = '';
+    let nameError = '';
     let doorDeliveryError = '';
     
-    if (!stateValidity.valid) {
+    if (!nameValidity.valid) {
       error = true;
-      stateError = '_errors.This_field_is_required';
-    }
-
-    if (!cityValidity.valid) {
-      error = true;
-      cityError = '_errors.This_field_is_required';
+      nameError = '_errors.This_field_is_required';
     }
     
     if (!doorDeliveryValidity.valid) {
@@ -23,6 +17,6 @@ export function useDeliveryRouteValidation() {
       doorDeliveryError = '_errors.This_field_is_required';
     }
 
-    return [error, stateError, cityError, doorDeliveryError];
+    return [error, nameError, doorDeliveryError];
   }
 }

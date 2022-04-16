@@ -1,10 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import AlertDialog from '../../components/dialog/AlertDialog';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
+import FormTextArea from '../../components/form/FormTextArea';
 import CartItem from '../../components/list_item/CartItem';
 import PayWithPaystack from '../../components/PayWithPaystack';
 import { useAppContext } from '../../hooks/contextHook';
@@ -59,7 +60,8 @@ export default function CartSummary() {
     orderSuccess,
     orderIsLoading, 
     orderError, 
-    order
+    order,
+    resetCreateOrder
   ] = useOrderCreate();
 
   const [
@@ -69,6 +71,8 @@ export default function CartSummary() {
     transactionSuccess,
     transactionError
   ] = useOrderPaymentTransactionFetch(customerToken);
+
+  const orderNoteInput = useRef(null);
 
   const [dialog, setDialog] = useState(null);
 
@@ -80,18 +84,19 @@ export default function CartSummary() {
         transactionSend(order);
       else if (orderSuccess && order.payment_method === Order.PAYMENT_METHOD_CASHLESS && transactionError)
         history.push(`/cart/done/${order.id}`);
-      else if (orderError) 
+      else if (orderError && dialog === null) 
         setDialog({
           body: orderError,
           negativeButton: {
             text: '_extra.Done',
             action() {
               setDialog(null);
+              resetCreateOrder();
             }
           },
         });
     },
-    [history, orderSuccess, orderError, order, transactionSuccess, transactionError, transactionSend]
+    [history, orderSuccess, orderError, order, dialog, resetCreateOrder, transactionSuccess, transactionError, transactionSend]
   );
 
   if (cartItems.length === 0) {
@@ -113,7 +118,7 @@ export default function CartSummary() {
         text: '_extra.Yes',
         action() {
           setDialog(null);
-          orderSend(paymentMethod);
+          orderSend(paymentMethod, orderNoteInput.current.value);
         }
       },
       negativeButton: {
@@ -141,7 +146,7 @@ export default function CartSummary() {
           }
         </ul>
 
-        <dl className="mb-2">
+        <dl className="mb-4">
           <SummaryItem text={t('_extra.Sub_total')} value={total} />
           {
             cart.delivery_total !== undefined && 
@@ -151,6 +156,8 @@ export default function CartSummary() {
           <SummaryItem text={t('_extra.Total')} value={discountTotal > totalPlusDeliveryTotal ? 0 : totalPlusDeliveryTotal - discountTotal} />
         </dl>
 
+        <FormTextArea ref={orderNoteInput} ID="order-note-input" label="_order.Order_note" />
+        
         <ul>
           <li>
             <button 

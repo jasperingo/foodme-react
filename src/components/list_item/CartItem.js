@@ -5,8 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { deleteIcon } from '../../assets/icons';
 import { CART } from '../../context/actions/cartActions';
 import { useAppContext } from '../../hooks/contextHook';
-import { useMoneyFormat } from '../../hooks/viewHook';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
+import { useMoneyFormatter } from '../../hooks/viewHook';
 import AlertDialog from '../dialog/AlertDialog';
 import QuantityChooser from '../QuantityChooser';
 
@@ -14,12 +13,11 @@ export default function CartItem({ notEditable, cartItem: { quantity, product_va
 
   const { t } = useTranslation();
 
+  const moneyFormat = useMoneyFormatter();
+
   const { 
     cart: {
-      cartDispatch,
-      cart: {
-        cartItems
-      }
+      cartDispatch
     }
   } = useAppContext();
 
@@ -47,10 +45,7 @@ export default function CartItem({ notEditable, cartItem: { quantity, product_va
         action() {
           cartDispatch({
             type: CART.ITEM_REMOVED,
-            payload: {
-              item: { product_variant },
-              fetchStatus: cartItems.length === 1 ? FETCH_STATUSES.EMPTY: FETCH_STATUSES.DONE
-            }
+            payload: { item: { product_variant } }
           });
           setDialog(null);
         }
@@ -76,7 +71,7 @@ export default function CartItem({ notEditable, cartItem: { quantity, product_va
           <div className="flex-grow">
             <div className="mb-1">{ product_variant.product.title }</div>
             <div className="mb-1 text-color-primary">{ t('_extra.Variation') }: { product_variant.name }</div>
-            <div className="font-bold mb-1">{ useMoneyFormat(product_variant.price * quantity) }</div>
+            <div className="font-bold mb-1">{ moneyFormat(product_variant.price * quantity) }</div>
             {
               notEditable && 
               <div className="mb-1">QTY: { quantity }</div>

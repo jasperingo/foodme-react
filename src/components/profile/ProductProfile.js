@@ -7,7 +7,6 @@ import { categoryIcon, editIcon, favoritedIcon, favoriteIcon, notFoundIcon, reco
 import { CART } from "../../context/actions/cartActions";
 import { useAppContext } from "../../hooks/contextHook";
 import { useMoneyFormatter } from "../../hooks/viewHook";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import AlertDialog from "../dialog/AlertDialog";
 import LoadingDialog from "../dialog/LoadingDialog";
 import H4Heading from "../H4Heading";
@@ -136,10 +135,7 @@ export default function ProductProfile(
           action() {
             cartDispatch({
               type: CART.ITEMS_REPLACED,
-              payload: {
-                list: [item],
-                fetchStatus: FETCH_STATUSES.DONE
-              }
+              payload: { list: [item] }
             });
             setDialog(null);
           }
@@ -156,10 +152,7 @@ export default function ProductProfile(
 
       cartDispatch({
         type: CART.ITEM_ADDED,
-        payload: {
-          item,
-          fetchStatus: FETCH_STATUSES.DONE
-        }
+        payload: { item }
       });
 
       setDialog({

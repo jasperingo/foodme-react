@@ -1,20 +1,25 @@
 
 import { useMemo, useState } from "react";
+import { DELIVERY_ROUTE } from "../../context/actions/deliveryRouteActions";
 import DeliveryRouteRepository from "../../repositories/DeliveryRouteRepository";
 import { useAppContext } from "../contextHook";
 import { useDeliveryRouteValidation } from "./deliveryRouteValidationHook";
 
-export function useDeliveryRouteCreate() {
+export function useDeliveryRouteUpdate() {
 
   const { 
     deliveryFirm: { 
       deliveryFirm: {
         deliveryFirmToken
       }
+    },
+    deliveryRoute : { 
+      deliveryRouteDispatch,
+      deliveryRoute: {
+        deliveryRoute
+      } 
     }
   } = useAppContext();
-
-  const [id, setId] = useState(0);
 
   const [loading, setLoading] = useState(false);
 
@@ -41,7 +46,7 @@ export function useDeliveryRouteCreate() {
 
     setFormError(null);
     
-    const [error,  nameError, doorDelivevryError] = validator(validity);
+    const [error, nameError, doorDelivevryError] = validator(validity);
     
     setNameError(nameError);
     setDoorDeliveryError(doorDelivevryError);
@@ -52,16 +57,22 @@ export function useDeliveryRouteCreate() {
 
     try {
 
-      const res = await api.create({ name, door_delivery });
+      const res = await api.update(deliveryRoute.id, { name, door_delivery });
 
-      if (res.status === 201) {
+      if (res.status === 200) {
         
         setFormSuccess(res.body.message);
-        
-        setId(res.body.data.id);
+
+        deliveryRouteDispatch({
+          type: DELIVERY_ROUTE.FETCHED, 
+          payload: { 
+            id: String(deliveryRoute.id),
+            deliveryRoute: res.body.data 
+          }
+        });
         
       } else if (res.status === 400) {
-
+        
         for (let error of res.body.data) {
 
           switch(error.name) {
@@ -88,14 +99,13 @@ export function useDeliveryRouteCreate() {
       setLoading(false);
     }
   }
-  
+
   return [
     onSubmit, 
-    id, 
     loading, 
     formError, 
-    formSuccess, 
-    nameError,
+    formSuccess,
+    nameError, 
     doorDeliveryError
   ];
 }

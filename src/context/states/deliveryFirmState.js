@@ -1,4 +1,3 @@
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 
 const deliveryFirmState = {
   
@@ -22,12 +21,6 @@ const deliveryFirmState = {
   routesLoaded: false,
   routesLoading: false,
   routesNumberOfPages: 0,
-  
-  deliveryBaseRoutes: [],
-  deliveryBaseRoutesPage: 1,
-  deliveryBaseRoutesLoading: true,
-  deliveryBaseRoutesNumberOfPages: 0,
-  deliveryBaseRoutesFetchStatus: FETCH_STATUSES.LOADING,
 
   reviews: [],
   reviewsPage: 1,

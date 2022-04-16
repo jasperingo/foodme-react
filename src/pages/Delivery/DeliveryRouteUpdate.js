@@ -5,10 +5,9 @@ import DeliveryRouteForm from '../../components/form/DeliveryRouteForm';
 import DeleteForm from '../../components/form/DeleteForm';
 import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
-import { useLocationList } from '../../hooks/address/locationListHook';
 import { useAppContext } from '../../hooks/contextHook';
 import { useDeliveryRouteFetch } from '../../hooks/delilvery_route/deliveryRouteFetchHook';
-import { useDeliveryRouteUpdate } from '../../hooks/delilvery_route/deliveryRoutetUpdateHook';
+import { useDeliveryRouteUpdate } from '../../hooks/delilvery_route/deliveryRouteUpdateHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useDeliveryRouteDelete } from '../../hooks/delilvery_route/deliveryRouteDeleteHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
@@ -38,16 +37,8 @@ export default function DeliveryRouteUpdate() {
     unfetchDeliveryRoute
   ] = useDeliveryRouteFetch(deliveryFirmToken);
 
-  const [
-    fetchLocations,
-    locations,
-    locationsLoading,
-    locationsError,
-    locationsLoaded
-  ] = useLocationList();
-
   useHeader({ 
-    title: `${(deliveryRoute?.state || deliveryRoute?.origin_route?.state) ?? 'Loading...'} - Delivery Route`,
+    title: `${deliveryRoute?.name ?? 'Loading...'} - Delivery Route`,
     headerTitle: '_delivery.Edit_delivery_route'
   });
 
@@ -56,8 +47,7 @@ export default function DeliveryRouteUpdate() {
     loading, 
     formError, 
     formSuccess, 
-    stateError, 
-    cityError, 
+    nameError,
     doorDeliveryError,
   ] = useDeliveryRouteUpdate();
 
@@ -79,14 +69,6 @@ export default function DeliveryRouteUpdate() {
   );
 
   useEffect(
-    function() { 
-      if (!locationsLoaded && locationsError === null) 
-        fetchLocations(); 
-    },
-    [locationsLoaded, locationsError, fetchLocations]
-  );
-
-  useEffect(
     function() {
       if (deleteFormSuccess !== null) history.push('/delivery-routes');
     }, 
@@ -94,8 +76,7 @@ export default function DeliveryRouteUpdate() {
   );
   
   function retryLoad() {
-    if (!locationsLoaded) fetchLocations();
-    if (deliveryRoute === null) fetchDeliveryRoute(ID);
+    fetchDeliveryRoute(ID);
   }
 
   return (
@@ -103,17 +84,15 @@ export default function DeliveryRouteUpdate() {
       <div className="container-x">
         
         {
-          (locationsLoaded && deliveryRoute !== null) && 
+          deliveryRoute !== null && 
           <>
             <DeliveryRouteForm 
               deliveryRoute={deliveryRoute}
-              locations={locations}
               onSubmit={onSubmit}
-              dialog={loading}
+              loading={loading}
               formError={formError}
               formSuccess={formSuccess}
-              stateError={stateError} 
-              cityError={cityError}
+              nameError={nameError}
               doorDeliveryError={doorDeliveryError}
               />
             
@@ -127,19 +106,19 @@ export default function DeliveryRouteUpdate() {
           </>
         }
         
-        { (locationsLoading || deliveryRouteLoading) && <Loading /> }
+        { deliveryRouteLoading && <Loading /> }
 
         { deliveryRouteError === NetworkErrorCodes.NOT_FOUND && <NotFound /> }
 
         { deliveryRouteError === NetworkErrorCodes.FORBIDDEN && <Forbidden /> }
         
         { 
-          (locationsError === NetworkErrorCodes.UNKNOWN_ERROR || deliveryRouteError === NetworkErrorCodes.UNKNOWN_ERROR) && 
+          deliveryRouteError === NetworkErrorCodes.UNKNOWN_ERROR && 
           <Reload action={retryLoad} /> 
         }
 
         { 
-          (locationsError === NetworkErrorCodes.NO_NETWORK_CONNECTION || deliveryRouteError === NetworkErrorCodes.NO_NETWORK_CONNECTION) && 
+          deliveryRouteError === NetworkErrorCodes.NO_NETWORK_CONNECTION && 
           <Reload message="_errors.No_netowrk_connection" action={retryLoad} /> 
         }
 

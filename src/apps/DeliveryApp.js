@@ -21,13 +21,11 @@ import Transaction from '../pages/Transaction';
 import Orders from '../pages/Delivery/Orders';
 import Order from '../pages/Order';
 import DeliveryRoutes from '../pages/Delivery/DeliveryRoutes';
-import DeliveryRoute from '../pages/Delivery/DeliveryRoute';
+import DeliveryRoute from '../pages/DeliveryRoute';
 import DeliveryRouteCreate from '../pages/Delivery/DeliveryRouteCreate';
 import DeliveryRouteUpdate from '../pages/Delivery/DeliveryRouteUpdate';
-import DeliveryLinkRouteCreate from '../pages/Delivery/DeliveryLinkRouteCreate';
-import DeliveryLinkRouteUpdate from '../pages/Delivery/DeliveryLinkRouteUpdate';
-import DeliveryDurationCreate from '../pages/Delivery/DeliveryDurationCreate';
-import DeliveryDurationUpdate from '../pages/Delivery/DeliveryDurationUpdate';
+import DeliveryDurationCreate from '../pages/Delivery/DeliveryLocationCreate';
+import DeliveryDurationUpdate from '../pages/Delivery/DeliveryLocationUpdate';
 import DeliveryWeightCreate from '../pages/Delivery/DeliveryWeightCreate';
 import DeliveryWeightUpdate from '../pages/Delivery/DeliveryWeightUpdate';
 import ForgotBusinessPassword from '../pages/ForgotBusinessPassword';
@@ -114,13 +112,11 @@ export default function DeliveryApp() {
           <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer userToken={deliveryFirmToken} />} />
           <Route path="/delivery-route-weight/:ID/update" render={()=> authMiddleware() || <DeliveryWeightUpdate />} />
           <Route path="/delivery-route-weight/create" render={()=> authMiddleware() || <DeliveryWeightCreate />} />
-          <Route path="/delivery-route-duration/:ID/update" render={()=> authMiddleware() || <DeliveryDurationUpdate />} />
-          <Route path="/delivery-route-duration/create" render={()=> authMiddleware() || <DeliveryDurationCreate />} />
-          <Route path="/delivery-route/link/:ID/update" render={()=> authMiddleware() || <DeliveryLinkRouteUpdate />} />
+          <Route path="/delivery-route-location/:ID/update" render={()=> authMiddleware() || <DeliveryDurationUpdate />} />
+          <Route path="/delivery-route-location/create" render={()=> authMiddleware() || <DeliveryDurationCreate />} />
           <Route path="/delivery-route/:ID/update" render={()=> authMiddleware() || <DeliveryRouteUpdate />} />
-          <Route path="/delivery-route/link/create" render={()=> authMiddleware() || <DeliveryLinkRouteCreate />} />
           <Route path="/delivery-route/create" render={()=> authMiddleware() || <DeliveryRouteCreate />} />
-          <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute />} />
+          <Route path="/delivery-route/:ID" render={()=> authMiddleware() || <DeliveryRoute userToken={deliveryFirmToken} isDelieryFirm={true} />} />
           <Route path="/delivery-routes" render={()=> authMiddleware() || <DeliveryRoutes />} />
           <Route path="/order/:ID" render={()=> authMiddleware() || <Order userToken={deliveryFirmToken} isDeliveryFirm={true} />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />

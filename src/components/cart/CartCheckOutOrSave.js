@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../hooks/contextHook';
 import { useSavedCartCreate } from '../../hooks/saved_cart/savedCartCreateHook';
-import { useMoneyFormat } from '../../hooks/viewHook';
+import { useMoneyFormatter } from '../../hooks/viewHook';
 import AlertDialog from '../dialog/AlertDialog';
 import LoadingDialog from '../dialog/LoadingDialog';
 import CartSavedDialog from './CartSavedDialog';
@@ -17,6 +17,8 @@ export default function CartCheckOutOrSave({ userToken, saveOnly }) {
   const history = useHistory();
 
   const location = useLocation();
+
+  const moneyFormat = useMoneyFormatter();
 
   const {
     cart: {
@@ -88,7 +90,7 @@ export default function CartCheckOutOrSave({ userToken, saveOnly }) {
         <span className="text-sm flex-grow">{ t('_extra.Total') }: </span>
         <span className="font-bold text-lg">
           { 
-            useMoneyFormat(
+            moneyFormat(
               cartItems.reduce((sum, i)=> sum + (i.product_variant.price * i.quantity), 0)
             ) 
           }

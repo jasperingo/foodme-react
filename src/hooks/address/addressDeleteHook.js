@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { ADDRESS } from "../../context/actions/addressActions";
 import AddressRepository from "../../repositories/AddressRepository";
-import { FETCH_STATUSES } from "../../repositories/Fetch";
 import { useAppContext } from "../contextHook";
 
 export function useAddressDelete() {
@@ -22,53 +21,46 @@ export function useAddressDelete() {
     },
   } = useAppContext();
 
-  const [dialog, setDialog] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formError, setFormError] = useState(null);
 
   const [formSuccess, setFormSuccess] = useState(null);
 
-  const [fetchStatus, setFetchStatus] = useState(FETCH_STATUSES.PENDING);
+  const api = useMemo(function() { return new AddressRepository(customerToken); }, [customerToken]);
 
-  function onSubmit() {
-    setDialog(true);
+  async function onSubmit() {
+    if (loading) return;
+    
+    if (!window.navigator.onLine) {
+      setFormError('_errors.No_netowrk_connection');
+      return;
+    }
+
     setFormError(null);
     setFormSuccess(null);
-    setFetchStatus(FETCH_STATUSES.LOADING);
+
+    setLoading(true);
+
+    try {
+
+      const res = await api.delete(address.id);
+
+      if (res.status === 200) {
+
+        setFormSuccess(res.body.message);
+        addressDispatch({ type: ADDRESS.UNFETCHED });
+
+      } else {
+        throw new Error();
+      }
+      
+    } catch {
+      setFormError('_errors.Something_went_wrong');
+    } finally {
+      setLoading(false);
+    }
   }
 
-  useEffect(
-    ()=> {
-      if (fetchStatus === FETCH_STATUSES.LOADING) {
-        const api = new AddressRepository(customerToken);
-
-        api.delete(address.id)
-        .then(res=> {
-
-          if (res.status === 200) {
-            setFormSuccess(res.body.message);
-            addressDispatch({ type: ADDRESS.UNFETCHED });
-          } else if (res.status === 400) {
-            setFormError(res.body.data[0].message);
-          } else {
-            throw new Error();
-          }
-          
-        })
-        .catch(()=> {
-          setFormError('_errors.Something_went_wrong');
-        })
-        .finally(()=> {
-          setFetchStatus(FETCH_STATUSES.PENDING);
-        });
-
-      } else if (dialog !== false) {
-        setDialog(false);
-      }
-    },
-    [address, customerToken, fetchStatus, dialog, addressDispatch]
-  )
-
-
-  return [onSubmit, dialog, formSuccess, formError];
+  return [onSubmit, loading, formSuccess, formError];
 }

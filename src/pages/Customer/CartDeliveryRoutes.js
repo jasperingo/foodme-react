@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { Redirect, useHistory } from 'react-router-dom';
 import EmptyList from '../../components/EmptyList';
 import SingleList from '../../components/list/SingleList';
@@ -8,38 +9,23 @@ import Loading from '../../components/Loading';
 import Reload from '../../components/Reload';
 import { CART } from '../../context/actions/cartActions';
 import { useAppContext } from '../../hooks/contextHook';
-import { useDeliveryRouteDurationUnit } from '../../hooks/delilvery_route/deliveryRouteViewHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useOrderRouteSuggest } from '../../hooks/order/orderRouteSuggestHook';
-import { useMoneyFormat } from '../../hooks/viewHook';
-
-function RouteDuration({ onSelect, weightFee, duration: { id, minimium, maximium, fee, unit } }) {
-
-  const { t } = useTranslation();
-
-  const unitText = useDeliveryRouteDurationUnit();
-
-  const total = weightFee + fee;
-
-  return (
-    <li className="mb-3">
-      <div className="flex flex-wrap gap-2 items-center">
-        <div>{ minimium } - { maximium } { t(unitText(unit)) }</div>
-        <div className="bg-color-gray text-sm px-2 rounded">{ useMoneyFormat(total) }</div>
-        <button onClick={()=> onSelect(id, total)} className="btn-color-primary px-2 rounded">{ t('_extra.Select') }</button>
-      </div>
-    </li>
-  );
-}
+import { useMoneyFormatter } from '../../hooks/viewHook';
 
 function DeliveryFirmAndPricesItem({ onSelect, delivery }) {
 
-  function onDurationSelected(duration, deliveryTotal) {
+  const { t } = useTranslation();
+
+  const moneyFormat = useMoneyFormatter();
+  
+  const weightFee = delivery.route_weights.reduce((pv, cv)=> pv + cv.fee, 0);
+
+  function onSelected() {
     onSelect({ 
-      delivery_total: deliveryTotal,
+      delivery_total: weightFee,
       delivery_firm_id: delivery.delivery_firm.id,
       delivery_route_id: delivery.id,
-      delivery_duration_id:duration,
       delivery_weights: delivery.route_weights.map(i=> ({ 
         delivery_weight_id: i.id, 
         product_variant_id: i.product_variant_id 
@@ -47,22 +33,15 @@ function DeliveryFirmAndPricesItem({ onSelect, delivery }) {
     });
   }
 
-  const weightFee = delivery.route_weights.reduce((pv, cv)=> pv + cv.fee, 0);
-  
   return (
     <li className="mb-5">
-      <div className="md:p-2 md:shadow md:rounded">
-        <div className="flex gap-2 items-center mb-1">
-          <img src={delivery.delivery_firm.user.photo.href} alt="no" width="100" height="100" className="w-12 h-12 rounded" />
-          <div className="flex-grow">{ delivery.delivery_firm.user.name }</div>
+      <div className="flex gap-2 items-center md:p-2 md:shadow md:rounded">
+        <img src={delivery.delivery_firm.user.photo.href} alt="no" width="100" height="100" className="w-20 h-20 rounded" />
+        <div className="flex-grow">
+          <Link to={`/delivery-firm/${delivery.delivery_firm.id}`} className="font-bold truncate mb-1">{ delivery.delivery_firm.user.name }</Link>
+          <div className="text-color-primary mb-1">{ moneyFormat(weightFee) }</div>
+          <button onClick={onSelected} className="btn-color-primary px-2 rounded">{ t('_extra.Select') }</button>
         </div>
-        <ul>
-          {
-            delivery.route_durations.map(i=> (
-              <RouteDuration key={`duration-${i.id}`} duration={i} weightFee={weightFee} onSelect={onDurationSelected} />
-            ))
-          }
-        </ul>
       </div>
     </li>
   );

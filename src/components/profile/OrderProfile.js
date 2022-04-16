@@ -6,7 +6,7 @@ import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeaderText from './ProfileHeaderText';
 import UserDescList from '../UserDescList';
 import { useOrderStatus } from '../../hooks/order/orderViewHook';
-import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
+import { useDateFormatter, useMoneyFormatter } from '../../hooks/viewHook';
 import OrderItemItem from '../list_item/OrderItemItem';
 import Order from '../../models/Order';
 import AlertDialog from '../dialog/AlertDialog';
@@ -21,6 +21,10 @@ import { useRefundTransactionCreate } from '../../hooks/transaction/refundTransa
 export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFirm, userToken }) {
   
   const { t } = useTranslation();
+
+  const dateFormat = useDateFormatter(); 
+  
+  const moneyFormat = useMoneyFormatter();
 
   const [theStatus] = useOrderStatus(order.status);
 
@@ -225,7 +229,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   const buttons = [];
 
   if (
-    (isCustomer || isStore || isDeliveryFirm) && 
+    (isStore || isDeliveryFirm) && 
     order.status !== Order.STATUS_CANCELLED &&
     order.status !== Order.STATUS_DECLINED &&
     order.payment_status !== Order.PAYMENT_STATUS_APPROVED
@@ -334,7 +338,7 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
   const details = [
     {
       title: '_order.Placed_on',
-      body: useDateFormat(order.created_at)
+      body: dateFormat(order.created_at)
     },
     {
       title: '_extra.Status',
@@ -342,19 +346,19 @@ export default function OrderProfile({ order, isCustomer, isStore, isDeliveryFir
     },
     {
       title: '_extra.Sub_total',
-      body: useMoneyFormat(order.sub_total)
+      body: moneyFormat(order.sub_total)
     },
     {
       title: '_extra.Delivery_total',
-      body: useMoneyFormat(order.delivery_total)
+      body: moneyFormat(order.delivery_total)
     },
     {
       title: '_extra.Discount_total',
-      body: useMoneyFormat(order.discount_total)
+      body: moneyFormat(order.discount_total)
     },
     {
       title: '_extra.Total',
-      body: useMoneyFormat(order.total)
+      body: moneyFormat(order.total)
     },
     {
       title: '_delivery.Delivery_method',

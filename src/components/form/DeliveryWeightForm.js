@@ -9,7 +9,7 @@ export default function DeliveryWeightForm(
   {
     weight,
     onSubmit, 
-    dialog, 
+    loading, 
     formError, 
     formSuccess, 
     minError, 
@@ -27,13 +27,15 @@ export default function DeliveryWeightForm(
   function onFormSubmit(e) {
     e.preventDefault();
     onSubmit(
-      minInput.current.value,
-      maxInput.current.value,
+      Number(minInput.current.value),
+      Number(maxInput.current.value),
       feeInput.current.value,
 
-      minInput.current.validity,
-      maxInput.current.validity,
-      feeInput.current.validity
+      {
+        minValidity: minInput.current.validity,
+        maxValidity: maxInput.current.validity,
+        feeValidity: feeInput.current.validity
+      }
     );
   }
 
@@ -79,7 +81,7 @@ export default function DeliveryWeightForm(
 
       <FormButton text="_extra.Submit" />
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
 
     </form>
   );

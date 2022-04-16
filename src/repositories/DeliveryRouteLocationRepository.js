@@ -1,11 +1,11 @@
 
 import Fetch from "./Fetch";
 
-export default class DeliveryRouteDurationRepository extends Fetch {
+export default class DeliveryRouteLocationRepository extends Fetch {
 
   create(formData) {
     return this.apiFetch(
-      'delivery-route-duration/create',
+      'delivery-route-location/create',
       'POST',
       JSON.stringify(formData)
     );
@@ -13,7 +13,7 @@ export default class DeliveryRouteDurationRepository extends Fetch {
 
   update(id, formData) {
     return this.apiFetch(
-      `delivery-route-duration/${id}/update`,
+      `delivery-route-location/${id}/update`,
       'PUT',
       JSON.stringify(formData)
     );
@@ -21,14 +21,14 @@ export default class DeliveryRouteDurationRepository extends Fetch {
 
   delete(id) {
     return this.apiFetch(
-      `delivery-route-duration/${id}/delete`,
+      `delivery-route-location/${id}/delete`,
       'DELETE'
     );
   }
 
   get(id) {
     return this.apiFetch(
-      `delivery-route-duration/${id}`,
+      `delivery-route-location/${id}`,
       'GET'
     );
   }

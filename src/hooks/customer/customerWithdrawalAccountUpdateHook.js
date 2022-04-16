@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { CUSTOMER } from '../../context/actions/customerActions';
 import CustomerRepository from '../../repositories/CustomerRepository';
-import { FETCH_STATUSES } from '../../repositories/Fetch';
 import { useWithdrawalAccountValidation } from '../bankHook';
 import { useAppContext } from '../contextHook';
 
@@ -91,8 +90,8 @@ export function useCustomerWithdrawalAccountUpdate() {
         dispatch({
           type: CUSTOMER.FETCHED, 
           payload: { 
+            id: String(customer.id),
             customer: res.body.data, 
-            fetchStatus: FETCH_STATUSES.DONE 
           }
         });
 

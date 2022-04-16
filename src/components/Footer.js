@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+const dev = process.env.NODE_ENV === 'development';
 
 function FooterLink({ text, href }) {
 
@@ -33,10 +34,19 @@ export default function Footer({ noRegister }) {
         <ul className="flex flex-wrap gap-2 justify-around">
           { !noRegister && <FooterLink text="_user.Register" href="/register" /> }
           <FooterLink text="_user.Log_in" href="login" />
-          <FooterAnchor text="_store.Become_a_store_partner" href="/?app=1" />
-          <FooterAnchor text="_delivery.Become_a_courier_partner" href="/?app=2" />
-          <FooterAnchor text="_user.Admin" href="/?app=3" />
-          <FooterAnchor text="_user.Customer" href="/?app=0" />
+
+          <FooterAnchor text="_store.Become_a_store_partner" href={dev ? '/?app=1' : 'https://store.dailyneeds.com.ng'} />
+
+          <FooterAnchor text="_delivery.Become_a_courier_partner" href={dev ? '/?app=2' : 'https://delivery.dailyneeds.com.ng'} />
+
+          {
+            dev &&
+            <>
+              <FooterAnchor text="_user.Admin" href="/?app=3" />
+              <FooterAnchor text="_user.Customer" href="/?app=0" />
+            </>
+          }
+
           <FooterLink text="_extra.About_us" href="/about-us" />
           <FooterLink text="_extra.Contact_us" href="/contact-us" />
           <FooterLink text="_extra.Privacy_policy" href="/privacy-policy" />
@@ -46,5 +56,3 @@ export default function Footer({ noRegister }) {
     </footer>
   );
 }
-
-

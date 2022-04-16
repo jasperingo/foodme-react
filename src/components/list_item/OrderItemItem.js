@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useOrderItemDeliveredAtUpdate } from '../../hooks/order/orderItemDeliveredAtUpdateHook';
 import { useOrderItemProcessedAt } from '../../hooks/order/orderItemProcessedAtUpdateHook';
 import { useOrderItemTransportedAtUpdate } from '../../hooks/order/orderItemTransportedAtUpdateHook';
-import { useDateFormat, useMoneyFormat } from '../../hooks/viewHook';
+import { useDateFormatter, useMoneyFormatter } from '../../hooks/viewHook';
 import Order from '../../models/Order';
 import AlertDialog from '../dialog/AlertDialog';
 import Dialog from '../dialog/Dialog';
@@ -14,12 +14,12 @@ function TrackDialogItem({ date, text }) {
 
   const { t } = useTranslation();
 
-  const amount = useDateFormat(date);
+  const dateFomat = useDateFormatter();
 
   return (
     <li className="flex mb-2 gap-2 border rounded p-2"> 
       <span className="text-color-primary">{ t(text) }:</span> 
-      <time dateTime={date}>{ date ? amount : t('_extra.Pending') }</time> 
+      <time dateTime={date}>{ date ? dateFomat(date) : t('_extra.Pending') }</time> 
     </li>
   );
 }
@@ -72,6 +72,8 @@ export default function OrderItemItem(
 ) {
 
   const { t } = useTranslation();
+
+  const moneyFormat = useMoneyFormatter();
 
   const [dialog, setDialog] = useState(false);
 
@@ -191,7 +193,7 @@ export default function OrderItemItem(
           <div className="flex-grow pl-2">
             <div className="mb-1">{ title }</div>
             <div className="mb-1 text-color-gray">{ t('_extra.Variation') }: { name }</div>
-            <div className="text-color-primary font-bold mb-1">{ useMoneyFormat(amount) }</div>
+            <div className="text-color-primary font-bold mb-1">{ moneyFormat(amount) }</div>
             <div className="mb-2">QTY: { quantity }</div>
             <div className="flex gap-2">
               <button onClick={()=> setTrackDialog(true)} className="btn-color-primary px-2 rounded">

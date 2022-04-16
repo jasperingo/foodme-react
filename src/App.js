@@ -6,26 +6,43 @@ import StoreApp from './apps/StoreApp';
 import DeliveryApp from './apps/DeliveryApp';
 import AdminApp from './apps/AdminApp';
 
-function App() {
+const dev = process.env.NODE_ENV === 'development';
+
+export default function App() {
 
   i18n.changeLanguage('en');
 
-  const appType = (new URLSearchParams(window.location.search)).get('app');
+  if (dev) {
 
-  if (appType !== null) {
-    localStorage.setItem('dn-app', parseInt(appType));
+    const appType = (new URLSearchParams(window.location.search)).get('app');
+
+    if (appType !== null) {
+      localStorage.setItem('dn-app', parseInt(appType));
+    }
+    
+    if (parseInt(localStorage.getItem('dn-app')) === 1)
+      return <StoreApp />;
+    
+    if (parseInt(localStorage.getItem('dn-app')) === 2)
+      return <DeliveryApp />;
+    
+    if (parseInt(localStorage.getItem('dn-app')) === 3)
+      return <AdminApp />;
+  
+  } else {
+
+    const [subDomain] = window.location.hostname.split('.');
+
+    if (subDomain === 'store') 
+      return <StoreApp />;
+
+    if (subDomain === 'delivery')
+      return <DeliveryApp />;
+    
+    if (subDomain === 'admin')
+      return <AdminApp />;
+  
   }
-  
-  if (parseInt(localStorage.getItem('dn-app')) === 1)
-    return <StoreApp />
-  
-  if (parseInt(localStorage.getItem('dn-app')) === 2)
-    return <DeliveryApp />
-  
-  if (parseInt(localStorage.getItem('dn-app')) === 3)
-    return <AdminApp />
 
   return <CustomerApp />;
 }
-
-export default App;

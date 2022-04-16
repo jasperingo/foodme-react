@@ -30,6 +30,7 @@ export default function DeliveryRoutes() {
     routesLoaded,
     routesPage, 
     routesNumberOfPages,
+    refreshDeliveryFirmRoutes
   ] = useDeliveryFirmRouteList(deliveryFirmToken);
 
   useEffect(
@@ -45,15 +46,8 @@ export default function DeliveryRoutes() {
       
       <div className="container-x">
 
-        <ul className="flex gap-2">
-          <li className="flex-grow">
-            <AddButton text="_delivery.Add_delivery_route" href="/delivery-route/create" />
-          </li>
-          <li className="flex-grow">
-            <AddButton text="_delivery.Add_delivery_link_route" href="/delivery-route/link/create" />
-          </li>
-        </ul>
-
+        <AddButton text="_delivery.Add_delivery_route" href="/delivery-route/create" />
+         
       </div>
       
       <RouteList 
@@ -64,6 +58,7 @@ export default function DeliveryRoutes() {
         routesLoading={routesLoading}
         routesNumberOfPages={routesNumberOfPages}
         fetchRoutes={()=> fetchDeliveryFirmRoutes(deliveryFirm.id)}
+        refreshList={refreshDeliveryFirmRoutes}
         />
 
     </section>

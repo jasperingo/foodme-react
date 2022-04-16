@@ -35,10 +35,10 @@ export default function ProductVariantForm(
     e.preventDefault();
     onSubmit(
       nameInput.current.value,
-      priceInput.current.value,
-      quantityInput.current.value,
-      weightInput.current.value,
-      availableInput.current.value,
+      Number(priceInput.current.value),
+      Number(quantityInput.current.value),
+      Number(weightInput.current.value),
+      Boolean(availableInput.current.value),
 
       { 
         nameValidity: nameInput.current.validity, 

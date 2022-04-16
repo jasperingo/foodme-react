@@ -38,33 +38,40 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
       };
 
 
-    case DELIVERY_ROUTE.DURATION_UNFETCHED:
+    case DELIVERY_ROUTE.LOCATION_UNFETCHED:
       return {
         ...state,
-        deliveryDuration: deliveryRouteState.deliveryDuration,
-        deliveryDurationID: deliveryRouteState.deliveryDurationID,
-        deliveryDurationLoading: deliveryRouteState.deliveryDurationLoading,
-        deliveryDurationFetchStatus: deliveryRouteState.deliveryDurationFetchStatus
+        deliveryLocation: deliveryRouteState.deliveryLocation,
+        deliveryLocationID: deliveryRouteState.deliveryLocationID,
+        deliveryLocationError: deliveryRouteState.deliveryLocationError,
+        deliveryLocationLoading: deliveryRouteState.deliveryLocationLoading,
       };
 
-    case DELIVERY_ROUTE.DURATION_FETCH_STATUS_CHANGED:
+    case DELIVERY_ROUTE.LOCATION_FETCHING:
       return {
         ...state,
-        deliveryDurationID: payload.id,
-        deliveryDurationLoading: payload.loading,
-        deliveryDurationFetchStatus: payload.fetchStatus
+        deliveryLocationError: null,
+        deliveryLocationLoading: true,
       };
 
-    case DELIVERY_ROUTE.DURATION_FETCHED:
+    case DELIVERY_ROUTE.LOCATION_ERROR_CHANGED:
       return {
         ...state,
-        deliveryDurationLoading: false,
-        deliveryDuration: payload.deliveryDuration,
-        deliveryDurationID: String(payload.deliveryDuration.id),
-        deliveryDurationFetchStatus: payload.fetchStatus
+        deliveryLocationLoading: false,
+        deliveryLocationID: payload.id,
+        deliveryLocationError: payload.error
       };
 
-    case DELIVERY_ROUTE.DURATION_CREATED: 
+    case DELIVERY_ROUTE.LOCATION_FETCHED:
+      return {
+        ...state,
+        deliveryLocationLoading: false,
+        deliveryLocationID: payload.id,
+        deliveryLocation: payload.deliveryLocation,
+      };
+      
+
+    case DELIVERY_ROUTE.LOCATION_CREATED: 
       if (!state.deliveryRoute) {
         return state;
       } else {
@@ -72,12 +79,12 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
           ...state,
           deliveryRoute: {
             ...state.deliveryRoute,
-            delivery_route_durations: [...state.deliveryRoute.delivery_route_durations, payload]
+            delivery_route_locations: [payload.deliveryLocation, ...state.deliveryRoute.delivery_route_locations]
           }
         };
       }
     
-    case DELIVERY_ROUTE.DURATION_UPDATED:
+    case DELIVERY_ROUTE.LOCATION_UPDATED:
       if (!state.deliveryRoute) {
         return state;
       } else {
@@ -85,14 +92,12 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
           ...state,
           deliveryRoute: { 
             ...state.deliveryRoute, 
-            delivery_route_durations: [...state.deliveryRoute.delivery_route_durations.map(i=> 
-              (i.id === payload.id) ? payload : i
-            )] 
+            delivery_route_locations: state.deliveryRoute.delivery_route_locations.map(i=> (i.id === payload.deliveryLocation.id) ? payload.deliveryLocation : i)
           } 
         };
       }
 
-    case DELIVERY_ROUTE.DURATION_DELETED:
+    case DELIVERY_ROUTE.LOCATION_DELETED:
       if (!state.deliveryRoute) {
         return state;
       } else {
@@ -100,7 +105,7 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
           ...state,
           deliveryRoute: { 
             ...state.deliveryRoute, 
-            delivery_route_durations: [...state.deliveryRoute.delivery_route_durations.filter(i=> i.id !== payload)] 
+            delivery_route_locations: state.deliveryRoute.delivery_route_locations.filter(i=> i.id !== payload.id)
           } 
         };
       }
@@ -111,26 +116,33 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
         ...state,
         deliveryWeight: deliveryRouteState.deliveryWeight,
         deliveryWeightID: deliveryRouteState.deliveryWeightID,
+        deliveryWeightError: deliveryRouteState.deliveryWeightError,
         deliveryWeightLoading: deliveryRouteState.deliveryWeightLoading,
-        deliveryWeightFetchStatus: deliveryRouteState.deliveryWeightFetchStatus
       };
 
-    case DELIVERY_ROUTE.WEIGHT_FETCH_STATUS_CHANGED:
+    case DELIVERY_ROUTE.WEIGHT_FETCHING:
+      return {
+        ...state,
+        deliveryWeightError: null,
+        deliveryWeightLoading: true,
+      };
+
+    case DELIVERY_ROUTE.WEIGHT_ERROR_CHANGED:
       return {
         ...state,
         deliveryWeightID: payload.id,
-        deliveryWeightLoading: payload.loading,
-        deliveryWeightFetchStatus: payload.fetchStatus
+        deliveryWeightLoading: false,
+        deliveryWeightError: payload.error
       };
 
     case DELIVERY_ROUTE.WEIGHT_FETCHED:
       return {
         ...state,
         deliveryWeightLoading: false,
-        deliveryWeight: payload.deliveryWeight,
-        deliveryWeightID: String(payload.deliveryWeight.id),
-        deliveryWeightFetchStatus: payload.fetchStatus
+        deliveryWeightID: payload.id,
+        deliveryWeight: payload.deliveryWeight
       };
+
 
     case DELIVERY_ROUTE.WEIGHT_CREATED: 
       if (!state.deliveryRoute) {
@@ -140,7 +152,7 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
           ...state,
           deliveryRoute: {
             ...state.deliveryRoute,
-            delivery_route_weights: [...state.deliveryRoute.delivery_route_weights, payload]
+            delivery_route_weights: [payload.deliveryWeight, ...state.deliveryRoute.delivery_route_weights]
           }
         };
       }
@@ -153,9 +165,7 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
           ...state,
           deliveryRoute: { 
             ...state.deliveryRoute, 
-            delivery_route_weights: [...state.deliveryRoute.delivery_route_weights.map(i=> 
-              (i.id === payload.id) ? payload : i
-            )] 
+            delivery_route_weights: state.deliveryRoute.delivery_route_weights.map(i=> (i.id === payload.deliveryWeight.id) ? payload.deliveryWeight : i)
           } 
         };
       }
@@ -168,7 +178,7 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
           ...state,
           deliveryRoute: { 
             ...state.deliveryRoute, 
-            delivery_route_weights: [...state.deliveryRoute.delivery_route_weights.filter(i=> i.id !== payload)] 
+            delivery_route_weights: state.deliveryRoute.delivery_route_weights.filter(i=> i.id !== payload.id)
           } 
         };
       }
@@ -177,4 +187,3 @@ export default function DeliveryRouteReducer (state, { type, payload }) {
       return state;
   }
 }
-

@@ -1,7 +1,7 @@
 
 export function useDeliveryRouteWeightValidation() {
 
-  return (minimium, maximium, minValidity, maxValidity, feeValidity, unitValidity)=> {
+  return ({ minimium, maximium, minValidity, maxValidity, feeValidity })=> {
 
     let error = false;
     let minError = '';
