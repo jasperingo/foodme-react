@@ -53,7 +53,8 @@ import {
   mdiMapMarkerRadius,
   mdiLink,
   mdiBell,
-  mdiHeadset
+  mdiHeadset,
+  mdiShare,
 
 } from '@mdi/js';
 
@@ -68,6 +69,7 @@ export const locationIcon = mdiMapMarker;
 export const visibilityIcon = mdiEye;
 export const visibilityOffIcon = mdiEyeOff;
 export const discountIcon = mdiTag;
+export const shareIcon = mdiShare;
 export const editIcon = mdiPen;
 export const timeIcon = mdiClock;
 export const dateIcon = mdiCalendar;

@@ -1,12 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon } from '../../assets/icons';
-import { useDateFormatter, useWorkingHoursDay } from '../../hooks/viewHook';
 import Tab from '../Tab';
 import ProfileDetails from './ProfileDetails';
-import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeader from './ProfileHeader';
+import { useCopyText, useDateFormatter, useShare, useWorkingHourActive } from '../../hooks/viewHook';
+import { checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, reviewIcon, shareIcon, timeIcon } from '../../assets/icons';
+import AlertDialog from '../dialog/AlertDialog';
 
 export default function DeliveryFirmProfile(
   { 
@@ -32,11 +32,15 @@ export default function DeliveryFirmProfile(
 
   const { t } = useTranslation();
 
-  const workingDayText = useWorkingHoursDay();
-
   const dateFormat = useDateFormatter();
 
-  const workingHourFormatOpts = { time: true, addDate: true };
+  const copyText = useCopyText();
+
+  const activeWorkingHour = useWorkingHourActive();
+
+  const [shareUrl, canShareUrl, urlToShare] = useShare();
+
+  const [dialog, setDialog] = useState(null);
 
   const details = [
     {
@@ -76,7 +80,33 @@ export default function DeliveryFirmProfile(
     );
   }
 
+  details.push({
+    icon: timeIcon,
+    data: t(activeWorkingHour(working_hours)),
+  });
+
   const links = [
+    {
+      icon: shareIcon,
+      text: '_extra.Share',
+      color: 'btn-color-primary p-2',
+      action: function() {
+        if (canShareUrl) {
+          shareUrl(`delivery-firm/${id}`);
+        } else {
+          copyText(`${urlToShare}delivery-firm/${id}`);
+          setDialog({
+            body: '_delivery._delivery_firm_url_copied',
+            positiveButton: {
+              text: '_extra.Done',
+              action() {
+                setDialog(null);
+              }
+            },
+          });
+        }
+      }
+    },
     {
       href: `/messages/${uid}`,
       title: '_message.Message',
@@ -101,26 +131,11 @@ export default function DeliveryFirmProfile(
         links={links} 
         />
 
-      <ProfileDetails 
-        details={details}
-        />
-        
-      {
-        working_hours.length !== 0 &&
-        <div>
-          <h4 className="font-bold">{ t('_user.Working_hours') }</h4>
-          <ProfileDetailsText
-            details={
-              working_hours.map(i=> ({
-                title: workingDayText(i.day),
-                body: `${dateFormat(i.opening, workingHourFormatOpts)} - ${dateFormat(i.closing, workingHourFormatOpts)}`
-              }))
-              }
-            />
-        </div>
-      }
+      <ProfileDetails details={details} />
 
       <Tab keyPrefix="delivery-firm-tab" items={navLinks} />
+      
+      { dialog && <AlertDialog dialog={dialog} /> }
 
     </div>
   );

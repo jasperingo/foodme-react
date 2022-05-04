@@ -6,6 +6,7 @@ import OrderList from '../../components/list/OrderList';
 import ReviewList from '../../components/list/ReviewList';
 import RouteList from '../../components/list/RouteList';
 import TransactionList from '../../components/list/TransactionList';
+import WorkingHoursList from '../../components/list/WorkingHoursList';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import DeliveryFirmProfile from '../../components/profile/DeliveryFirmProfile';
@@ -22,6 +23,7 @@ import { useHeader } from '../../hooks/headerHook';
 
 const NAV_LINKS = [
   { title : '_delivery.Routes', href: '' },
+  { title : '_user.Working_hours', href: '/working-hours' },
   { title : '_extra.Reviews', href: '/reviews' },
   { title : '_order.Orders', href: '/orders' },
   { title : '_transaction.Transactions', href: '/transactions' }
@@ -172,6 +174,18 @@ function DeliveryFirmReviewsList() {
   );
 }
 
+function DeliveryFirmWokingHoursList() {
+  const {
+    deliveryFirm: {
+      deliveryFirm: {
+        deliveryFirm
+      }
+    }
+  } = useAppContext();
+
+  return <WorkingHoursList workingHours={deliveryFirm.user.working_hours} />;
+}
+
 function DeliveryFirmRoutesList() {
 
   const {
@@ -276,6 +290,7 @@ export default function DeliveryFirm() {
           <Route path={`${match.url}/transactions`} render={()=> <DeliveryFirmTransactionsList />} />
           <Route path={`${match.url}/orders`} render={()=> <DeliveryFirmOrdersList />} />
           <Route path={`${match.url}/reviews`} render={()=> <DeliveryFirmReviewsList />} /> 
+          <Route path={`${match.url}/working-hours`} render={()=> <DeliveryFirmWokingHoursList />} />
           <Route path={match.url} render={()=> <DeliveryFirmRoutesList />} />
         </Switch>
       }

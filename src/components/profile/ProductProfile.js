@@ -3,10 +3,10 @@ import Icon from "@mdi/react";
 import { useState, useEffect  } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useHistory, Link } from "react-router-dom";
-import { categoryIcon, editIcon, favoritedIcon, favoriteIcon, notFoundIcon, recommendedIcon, weightIcon } from "../../assets/icons";
+import { categoryIcon, editIcon, favoritedIcon, favoriteIcon, notFoundIcon, recommendedIcon, shareIcon, weightIcon } from "../../assets/icons";
 import { CART } from "../../context/actions/cartActions";
 import { useAppContext } from "../../hooks/contextHook";
-import { useMoneyFormatter } from "../../hooks/viewHook";
+import { useCopyText, useMoneyFormatter, useShare } from "../../hooks/viewHook";
 import AlertDialog from "../dialog/AlertDialog";
 import LoadingDialog from "../dialog/LoadingDialog";
 import H4Heading from "../H4Heading";
@@ -18,9 +18,9 @@ export default function ProductProfile(
     isCustomer, 
     isStore,
     isAdmin,
-    onUnfavoriteSubmit,
     customerToken,
     product: {
+      href,
       id,
       photo,
       title,
@@ -44,7 +44,7 @@ export default function ProductProfile(
     favoriteDeleteResetSubmit
   }
 ) {
-
+  
   const { t } = useTranslation();
 
   const history = useHistory();
@@ -65,6 +65,10 @@ export default function ProductProfile(
   const [quantity, setQuantity] = useState(1);
 
   const [variant, setVariant] = useState(product_variants[0]);
+
+  const [shareUrl, canShareUrl, urlToShare] = useShare();
+
+  const copyText = useCopyText();
 
   const moneyFormat = useMoneyFormatter();
 
@@ -194,6 +198,23 @@ export default function ProductProfile(
     });
   }
 
+  function shareProduct() {
+    if (canShareUrl) {
+      shareUrl(`product/${id}`);
+    } else {
+      copyText(`${urlToShare}product/${id}`);
+      setDialog({
+        body: '_product._product_url_copied',
+        positiveButton: {
+          text: '_extra.Done',
+          action() {
+            setDialog(null);
+          }
+        },
+      });
+    }
+  }
+
   return (
     <div className="md:container mx-auto">
       <div className="sm:mt-4 lg:flex lg:items-start lg:gap-2">
@@ -215,8 +236,12 @@ export default function ProductProfile(
           { (favoriteCreateLoading || favoriteDeleteLoading) && <LoadingDialog /> }
 
           <div className="flex mb-2">
-            <h3 className="text-xl flex-grow">{ title }</h3>
-            <div>
+            <h3 className="text-xl flex-grow md:text-2xl">{ title }</h3>
+            <div className="flex gap-2">
+              <button onClick={shareProduct}>
+                <span className="sr-only">{ t('_extra.Share') }</span>
+                <Icon path={shareIcon} className="w-7 h-7 text-color-primary" />
+              </button>
               {
                 isCustomer && (customerToken === null || !favorites?.length) && 
                 <button onClick={favoriteProduct}>
@@ -244,10 +269,10 @@ export default function ProductProfile(
             </div>
           </div>
           
-          <div className="flex gap-1 items-center text-color-gray text-sm mb-3">
+          <Link to={`/category/${sub_category.category.id}`} className="flex gap-1 items-center text-color-gray text-sm mb-3">
             <Icon path={categoryIcon} className="w-5 h-5" />
             <span>{ sub_category.name }, { sub_category.category.name }</span>
-          </div>
+          </Link>
 
           {
             recommended && 

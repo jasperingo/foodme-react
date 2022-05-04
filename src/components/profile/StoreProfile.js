@@ -1,12 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { categoryIcon, checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, recommendedIcon, reviewIcon } from '../../assets/icons';
-import { useDateFormatter, useWorkingHoursDay } from '../../hooks/viewHook';
 import Tab from '../Tab';
+import AlertDialog from '../dialog/AlertDialog';
 import ProfileDetails from './ProfileDetails';
-import ProfileDetailsText from './ProfileDetailsText';
 import ProfileHeader from './ProfileHeader';
+import { useCopyText, useDateFormatter, useShare, useUserStatusText, useWorkingHourActive } from '../../hooks/viewHook';
+import { checkIcon, dateIcon, editIcon, emailIcon, locationIcon, messageIcon, phoneIcon, recommendedIcon, reviewIcon, shareIcon, timeIcon } from '../../assets/icons';
 
 export default function StoreProfile(
   { 
@@ -34,17 +34,20 @@ export default function StoreProfile(
 
   const { t } = useTranslation();
 
-  const workingDayText = useWorkingHoursDay();
+  const userStatus = useUserStatusText();
 
   const dateFormat = useDateFormatter();
 
-  const workingHourFormatOpts = { time: true, addDate: true };
+  const copyText = useCopyText();
+
+  const activeWorkingHour = useWorkingHourActive();
+
+  const [shareUrl, canShareUrl, urlToShare] = useShare();
+
+  const [dialog, setDialog] = useState(null);
+
 
   const details = [
-    {
-      icon: categoryIcon,
-      data: `${sub_category.name}, ${sub_category.category.name}`
-    },
     {
       icon: phoneIcon,
       data: phone_number
@@ -73,7 +76,7 @@ export default function StoreProfile(
       },
       {
         icon: checkIcon,
-        data: status
+        data: t(userStatus(status)),
       },
       {
         icon: dateIcon,
@@ -89,7 +92,33 @@ export default function StoreProfile(
     });
   }
 
+  details.push({
+    icon: timeIcon,
+    data: t(activeWorkingHour(working_hours)),
+  });
+
   const links = [
+    {
+      icon: shareIcon,
+      text: '_extra.Share',
+      color: 'btn-color-primary p-2',
+      action: function() {
+        if (canShareUrl) {
+          shareUrl(`store/${id}`);
+        } else {
+          copyText(`${urlToShare}store/${id}`);
+          setDialog({
+            body: '_store._store_url_copied',
+            positiveButton: {
+              text: '_extra.Done',
+              action() {
+                setDialog(null);
+              }
+            },
+          });
+        }
+      }
+    },
     {
       href: `/messages/${uid}`,
       title: '_message.Message',
@@ -112,28 +141,17 @@ export default function StoreProfile(
         photo={photo.href}
         name={name} 
         links={links} 
+        category={{
+          id: sub_category.category.id,
+          name: `${sub_category.name}, ${sub_category.category.name}`,
+        }}
         />
 
-      <ProfileDetails 
-        details={details}
-        />
-        
-      {
-        working_hours.length !== 0 &&
-        <div>
-          <h4 className="font-bold">{ t('_user.Working_hours') }</h4>
-          <ProfileDetailsText
-            details={
-              working_hours.map(i=> ({
-                title: workingDayText(i.day),
-                body: `${dateFormat(i.opening, workingHourFormatOpts)} - ${dateFormat(i.closing, workingHourFormatOpts)}`
-              }))
-              }
-            />
-        </div>
-      }
+      <ProfileDetails details={details} />
 
       <Tab keyPrefix="store-tab" items={navLinks} />
+
+      { dialog && <AlertDialog dialog={dialog} /> }
 
     </div>
   );

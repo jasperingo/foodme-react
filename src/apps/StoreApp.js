@@ -103,7 +103,7 @@ export default function StoreApp() {
         navLinks={HEADER_NAV_LINKS}
         topNavLinks={HEADER_TOP_NAV_LINKS}
         />
-      <main className="pb-52">
+      <main className="pb-64 md:pb-52">
         <Switch>
           
           <Route path="/terms-of-service" render={()=> <TermsOfService />} /> 

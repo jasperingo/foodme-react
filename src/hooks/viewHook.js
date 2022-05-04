@@ -7,6 +7,12 @@ import { useAppContext } from './contextHook';
 export function useUserStatus(status) {
   switch(status) {
 
+    case User.STATUS_PENDING:
+      return '_extra.Pending';
+
+    case User.STATUS_EMAIL_PENDING:
+      return '_extra.Email_pending';
+
     case User.STATUS_ACTIVE:
       return '_extra.Active';
 
@@ -18,6 +24,31 @@ export function useUserStatus(status) {
 
     default:
       return status;
+  }
+}
+
+export function useUserStatusText() {
+  return function(status) {
+    switch(status) {
+  
+      case User.STATUS_PENDING:
+        return '_extra.Pending';
+  
+      case User.STATUS_EMAIL_PENDING:
+        return '_extra.Email_pending';
+  
+      case User.STATUS_ACTIVE:
+        return '_extra.Active';
+  
+      case User.STATUS_ACTIVATING:
+        return '_extra.Activating';
+  
+      case User.STATUS_DEACTIVATED:
+        return '_extra.Deactivating';
+  
+      default:
+        return status;
+    }
   }
 }
 
@@ -44,6 +75,35 @@ export function useWorkingHoursDay() {
         return day;
     }
   }
+}
+
+export function useWorkingHourActive() {
+  return function(workingHours) {
+    const now = new Date();
+    const dayNow = WorkingHour.getDays()[now.getDay()];
+    const workingHour = workingHours?.find(hour => hour.day === dayNow);
+    const opening = new Date(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${workingHour?.opening}`);
+    const closing = new Date(`${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${workingHour?.closing}`);
+
+    if (workingHour && now.getTime() >= opening.getTime() && now.getTime() < closing.getTime()) {
+      return '_extra.Open';
+    } else {
+      return '_extra.Closed';
+    }
+  }
+}
+
+export function useShare() {
+  const url = 'https://dailyneeds.com.ng/';
+  function urlShare(path) {
+    navigator.share({ url: `${url}${path}` });
+  }
+
+  return [
+    urlShare,
+    navigator.share !== undefined,
+    url,
+  ];
 }
 
 export function useURLQuery(params) {
@@ -87,9 +147,9 @@ export function useDateFormatter() {
   }
 }
 
-export function useCategoryColor(index) {
-  const catColors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
-  return catColors[index%catColors.length];
+export function useDifferentTextColor(index) {
+  const colors = ['text-blue-500', 'text-purple-500', 'text-red-500', 'text-green-500'];
+  return colors[index%colors.length];
 }
 
 export function useCartCounter() {
@@ -104,7 +164,7 @@ export function useCartCounter() {
 }
 
 export function useCopyText() {
-  return (text)=> {
+  return function(text) {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
     } else {

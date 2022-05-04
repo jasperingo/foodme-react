@@ -18,7 +18,6 @@ export const TRANSLATIONS_EN = {
 
   Send: 'Send',
   Message: 'Message',
-  Working_hours: 'Working hours',
 
 
   _user: {
@@ -116,6 +115,7 @@ export const TRANSLATIONS_EN = {
     No_price: 'No price',
     Reviews: 'Reviews',
     Edit: 'Edit',
+    Share: 'Share',
     Add: 'Add',
     Update: 'Update',
     Delete: 'Delete',
@@ -195,8 +195,11 @@ export const TRANSLATIONS_EN = {
     Friday: 'Friday',
     Saturday: 'Saturday',
 
+    Open: 'Open',
+    Closed: 'Closed',
     Opening: 'Opening',
     Closing: 'Closing',
+    Not_open: 'Not open',
     Pick_day_of_the_week: 'Pick day of the week',
 
     Minimium: 'Minimium',
@@ -213,6 +216,8 @@ export const TRANSLATIONS_EN = {
     Transported: 'Transported',
     Delivered: 'Delivered',
     Pending: 'Pending',
+
+    Email_pending: 'Email pending',
 
   },
 
@@ -257,6 +262,10 @@ export const TRANSLATIONS_EN = {
     
     Store_status: 'Store status',
     Recommended_stores: 'Recommended stores',
+    
+    _store_url_copied: 'This store url has been copied, you can now share it.',
+
+    _contact_pharmacy_to_order: 'Contact pharmacy to place an order.',
   },
 
   _discount: {
@@ -304,7 +313,7 @@ export const TRANSLATIONS_EN = {
     Add_product_to_favorites: 'Add product to favorites',
     Remove_product_from_favorites: 'Remove product from favorites',
     _remove_product_from_favorites_confirm_message: 'Are you sure you want to unfavorite this product?',
-    Product_has_been_added_to_cart: 'Product has been added to cart',
+    Product_has_been_added_to_cart: 'Product has been added to cart ✅',
     Decrease_quantity: 'Decrease quantity',
     Increase_quantity: 'Increase quantity',
     Product_variant: 'Product variant',
@@ -316,6 +325,8 @@ export const TRANSLATIONS_EN = {
 
     Recommended_product: 'Recommended product',
     Recommended_products: 'Recommended products',
+
+    _product_url_copied: 'This product url has been copied, you can now share it.',
   },
 
   _cart: {
@@ -400,6 +411,7 @@ export const TRANSLATIONS_EN = {
 
     Add_your_delivery_locations: 'Add your delivery locations',
 
+    _delivery_firm_url_copied: 'This delivery firm url has been copied, you can now share it.',
   },
 
   _order: {

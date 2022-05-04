@@ -87,7 +87,7 @@ function ProductWithDiscount({ item, selectedDiscount, onSelect, onDeselect }) {
               <li key={`product-variant-${product_variant.id}`}>
                 <div className="mb-1 flex gap-2 items-center py-1">
                   <span className="text-color-primary font-bold">{ product_variant.name } </span>
-                  <span className="text-xs bg-color-gray py-1 px-2 rounded-full">QTY:{ quantity }</span>
+                  <span className="text-xs bg-color-gray py-1 px-2 rounded-full">QTY: { quantity }</span>
                   <span className="text-xs bg-color-gray py-1 px-2 rounded-full">{ moneyFormat(product_variant.price * quantity) }</span>
                 </div>
               </li>

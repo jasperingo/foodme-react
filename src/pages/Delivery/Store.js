@@ -14,10 +14,24 @@ import { useHeader } from '../../hooks/headerHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import { useParams } from 'react-router-dom';
 import ReviewList from '../../components/list/ReviewList';
+import WorkingHoursList from '../../components/list/WorkingHoursList';
 
 const NAV_LINKS = [
-  { title : '_extra.Reviews', href: '' }
+  { title : '_extra.Reviews', href: '' },
+  { title : '_user.Working_hours', href: '/working-hours' },
 ];
+
+function StoreWokingHoursList() {
+  const {
+    store: { 
+      store: {
+        store
+      } 
+    }
+  } = useAppContext();
+
+  return <WorkingHoursList workingHours={store.user.working_hours} />;
+}
 
 function StoreReviewsList() {
 
@@ -135,6 +149,7 @@ export default function Store() {
       {
         store !== null && 
         <Switch>
+          <Route path={`${match.url}/working-hours`} render={()=> <StoreWokingHoursList />} />
           <Route path={match.url} render={()=> <StoreReviewsList />} />
         </Switch>
       }

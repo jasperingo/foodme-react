@@ -24,12 +24,11 @@ export default function CategoryList(
       <SingleList
         data={categories}
         className={ grid ? 'grid gap-4 grid-cols-3 md:grid-cols-4' : 'category-list'}
-        renderDataItem={(item, i)=> (
+        renderDataItem={(item)=> (
           <CategoryItem 
-            key={`category-${item.id}`} 
-            index={i}
-            category={item} 
             grid={grid}
+            category={item} 
+            key={`category-${item.id}`}
             />
         )}
         footer={listFooter([

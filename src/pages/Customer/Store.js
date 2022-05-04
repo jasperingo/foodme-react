@@ -25,13 +25,32 @@ import ProductList from '../../components/list/ProductList';
 import ReviewList from '../../components/list/ReviewList';
 import DiscountList from '../../components/list/DiscountList';
 import StoreProductCategoryList from '../../components/list/StoreProductCategoryList';
+import WorkingHoursList from '../../components/list/WorkingHoursList';
+import { Link } from 'react-router-dom';
+import Icon from '@mdi/react';
+import { messageIcon } from '../../assets/icons';
+import { useTranslation } from 'react-i18next';
 
 const NAV_LINKS = [
   { title : '_extra.Menu', href: '' },
   { title : '_product.Products', href: '/products' },
+  { title : '_user.Working_hours', href: '/working-hours' },
   { title : '_extra.Reviews', href: '/reviews' },
   { title : '_discount.Discounts', href: '/discounts' }
 ];
+
+function ContactPharmacy({ store }) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="container-x text-center">
+      <Link to={`/messages/${store.user.id}`} className="inline-block text-center">
+        <Icon path={messageIcon} className="block mx-auto h-40 w-40 text-color-primary" />
+        <span className="font-bold">{t('_store._contact_pharmacy_to_order')}</span>
+      </Link>
+    </div>
+  )
+}
 
 function StoreDiscountsList() {
 
@@ -184,6 +203,18 @@ function StoreReviewsList() {
   );
 }
 
+function StoreWokingHoursList() {
+  const {
+    store: { 
+      store: {
+        store
+      } 
+    }
+  } = useAppContext();
+
+  return <WorkingHoursList workingHours={store.user.working_hours} />;
+}
+
 function StoreProductsList() {
 
   const {
@@ -230,18 +261,18 @@ function StoreProductsList() {
 
   useEffect(
     function() {
-      if (!productCategoriesLoaded && productCategoriesError === null) 
+      if (store.sub_category.category.id !== 2 && !productCategoriesLoaded && productCategoriesError === null) 
         fetchProductCategories(store.id);
     },
-    [store.id, productCategoriesLoaded, productCategoriesError, fetchProductCategories]
+    [store, productCategoriesLoaded, productCategoriesError, fetchProductCategories]
   );
 
   useEffect(
     function() {
-      if (productCategoriesLoaded && !productsLoaded && productsError === null) 
+      if (store.sub_category.category.id !== 2 && productCategoriesLoaded && !productsLoaded && productsError === null) 
         fetchStoreProducts(store.id, subCategory); 
     },
-    [store.id, productCategoriesLoaded, productsError, productsLoaded, subCategory, fetchStoreProducts]
+    [store, productCategoriesLoaded, productsError, productsLoaded, subCategory, fetchStoreProducts]
   );
   
   function onFilterChange(value) {
@@ -253,6 +284,10 @@ function StoreProductsList() {
     history.replace(`${match.url}?${param.toString()}`);
 
     refreshStoreProducts();
+  }
+
+  if (store.sub_category.category.id === 2) {
+    return <ContactPharmacy store={store} />;
   }
 
   return (
@@ -325,15 +360,19 @@ function StoreProductCategoriesList() {
 
   useEffect(
     function() {
-      if (!productCategoriesLoaded && productCategoriesError === null) 
+      if (store.sub_category.category.id !== 2 && !productCategoriesLoaded && productCategoriesError === null) 
         fetchProductCategories(store.id);
     },
-    [store.id, productCategoriesLoaded, productCategoriesError, fetchProductCategories]
+    [store, productCategoriesLoaded, productCategoriesError, fetchProductCategories]
   );
 
   function onFilterChange(value) {
     param.set('sub_category', value);
     history.push(`${match.url}/products?${param.toString()}`);
+  }
+
+  if (store.sub_category.category.id === 2) {
+    return <ContactPharmacy store={store} />;
   }
 
   return (
@@ -408,6 +447,7 @@ export default function Store() {
         <Switch>
           <Route path={`${match.url}/discounts`} render={()=> <StoreDiscountsList />} />
           <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList />} />
+          <Route path={`${match.url}/working-hours`} render={()=> <StoreWokingHoursList />} />
           <Route path={`${match.url}/products`} render={()=> <StoreProductsList />} />
           <Route path={match.url} render={()=> <StoreProductCategoriesList />} />
         </Switch>

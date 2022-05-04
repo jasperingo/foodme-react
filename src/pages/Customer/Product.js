@@ -57,13 +57,12 @@ function ProductRelatedList() {
     [product.id, relatedLoaded, relatedError, fetchRelatedProducts]
   );
 
+  if (relatedLoaded && related.length === 0) return null;
+
   return (
     <div className="container-x py-4">
 
-      {
-        relatedLoaded && related.length > 0 && 
-        <H4Heading text="_product.Related_products" />
-      }
+      <H4Heading text="_product.Related_products" />
 
       <ProductList
         products={related}

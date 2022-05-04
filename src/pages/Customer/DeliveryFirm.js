@@ -16,10 +16,25 @@ import { useReviewDelete } from '../../hooks/review/reviewDeleteHook';
 import { useReviewUpdate } from '../../hooks/review/reviewUpdateHook';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import ReviewList from '../../components/list/ReviewList';
+import WorkingHoursList from '../../components/list/WorkingHoursList';
 
 const NAV_LINKS = [
-  { title : '_extra.Reviews', href: '' }
+  { title : '_extra.Reviews', href: '' },
+  { title : '_user.Working_hours', href: '/working-hours' },
 ];
+
+function DeliveryFirmWokingHoursList() {
+  const {
+    deliveryFirm: {
+      deliveryFirm: {
+        deliveryFirm
+      }
+    }
+  } = useAppContext();
+
+  return <WorkingHoursList workingHours={deliveryFirm.user.working_hours} />;
+}
+
 
 function DeliveryFirmReviewsList() {
 
@@ -182,6 +197,7 @@ export default function DeliveryFirm() {
       {
         deliveryFirm !== null && 
         <Switch>
+          <Route path={`${match.url}/working-hours`} render={()=> <DeliveryFirmWokingHoursList />} />
           <Route path={match.url} render={()=> <DeliveryFirmReviewsList />} />
         </Switch>
       }

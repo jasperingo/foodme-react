@@ -4,13 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Icon from '@mdi/react';
 import AlertDialog from './dialog/AlertDialog';
-import { useCategoryColor, useUserStatus } from '../hooks/viewHook';
+import { useDifferentTextColor, useUserStatus } from '../hooks/viewHook';
 
 function MenuItem({ icon, text, href, index }) {
 
   const { t } = useTranslation();
 
-  const iconColor = useCategoryColor(index);
+  const iconColor = useDifferentTextColor(index);
 
   return (
     <li>

@@ -4,17 +4,14 @@ import { Link } from 'react-router-dom';
 import { PRODUCT } from '../../context/actions/productActions';
 import { STORE } from '../../context/actions/storeActions';
 import { useAppContext } from '../../hooks/contextHook';
-import { useCategoryColor } from '../../hooks/viewHook';
 
-export default function CategoryItem({ canEdit, category, index, sub, path, grid }) {
+export default function CategoryItem({ canEdit, category, sub, path, grid }) {
 
   const { 
     search: {
       searchDispatch 
     }
   } = useAppContext();
-
-  const iconColor = useCategoryColor(index);
 
   const fullPath = sub ? `/search/${path}?${path}_sub_category=${category.id}` : `/category/${category.id}`;
 
@@ -40,7 +37,7 @@ export default function CategoryItem({ canEdit, category, index, sub, path, grid
           height="100" 
           className={`${grid ? 'w-full mb-1' : 'w-20'} h-20 block mx-auto rounded lg:h-52 lg:w-full lg:mb-1`}
           />
-        <div className={`flex-grow truncate overflow-ellipsis ${iconColor}`}>{ category.name }</div>
+        <div className="flex-grow truncate overflow-ellipsis">{ category.name }</div>
       </Link>
     </li>
   );

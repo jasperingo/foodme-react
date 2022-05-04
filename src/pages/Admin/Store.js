@@ -9,6 +9,7 @@ import ProductList from '../../components/list/ProductList';
 import ReviewList from '../../components/list/ReviewList';
 import StoreProductCategoryList from '../../components/list/StoreProductCategoryList';
 import TransactionList from '../../components/list/TransactionList';
+import WorkingHoursList from '../../components/list/WorkingHoursList';
 import Loading from '../../components/Loading';
 import NotFound from '../../components/NotFound';
 import StoreProfile from '../../components/profile/StoreProfile';
@@ -29,6 +30,7 @@ import { useURLQuery } from '../../hooks/viewHook';
 const NAV_LINKS = [
   { title : '_extra.Menu', href: '' },
   { title : '_product.Products', href: '/products' },
+  { title : '_user.Working_hours', href: '/working-hours' },
   { title : '_extra.Reviews', href: '/reviews' },
   { title : '_discount.Discounts', href: '/discounts' },
   { title : '_order.Orders', href: '/orders' },
@@ -229,6 +231,18 @@ function StoreReviewsList() {
         />
     </>
   );
+}
+
+function StoreWokingHoursList() {
+  const {
+    store: { 
+      store: {
+        store
+      } 
+    }
+  } = useAppContext();
+
+  return <WorkingHoursList workingHours={store.user.working_hours} />;
 }
 
 function StoreProductsList() {
@@ -450,6 +464,7 @@ export default function Store() {
           <Route path={`${match.url}/orders`} render={()=> <StoreOrdersList />} />
           <Route path={`${match.url}/discounts`} render={()=> <StoreDiscountsList />} />
           <Route path={`${match.url}/reviews`} render={()=> <StoreReviewsList />} />
+          <Route path={`${match.url}/working-hours`} render={()=> <StoreWokingHoursList />} />
           <Route path={`${match.url}/products`} render={()=> <StoreProductsList />} />
           <Route path={match.url} render={()=> <StoreProductCategoriesList />} />
         </Switch>
