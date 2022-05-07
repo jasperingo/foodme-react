@@ -4,6 +4,13 @@ import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import PromotionRepository from '../../repositories/PromotionRepository';
 import { useAppContext } from '../contextHook';
 
+const base = {
+  photo: { href: '/photos/about-resturant.jpg' },
+  title: 'Welcome to DailyNeeds',
+  link: '/contact-us',
+  link_type: 'our website',
+}
+
 export function useHomePromotionList() {
 
   const { 
@@ -42,6 +49,7 @@ export function useHomePromotionList() {
         const res = await api.getRandomList();
 
         if (res.status === 200) {
+          res.body.data.unshift(base);
           homeDispatch({
             type: PROMOTION.LIST_FETCHED, 
             payload: { list: res.body.data }

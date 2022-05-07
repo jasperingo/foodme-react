@@ -79,7 +79,7 @@ export default function CarouselX({ items }) {
                 href={item.link} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="bg-white py-2 px-4 rounded text-black"
+                className="bg-white py-2 px-4 rounded text-black hover:bg-color-gray-h"
                 >
                 { t('_extra.Contact_us_on') } { item.link_type } 
               </a>
