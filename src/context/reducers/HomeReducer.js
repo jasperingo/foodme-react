@@ -1,4 +1,3 @@
-import { CATEGORY } from "../actions/categoryActions";
 import { PRODUCT } from "../actions/productActions";
 import { PROMOTION } from "../actions/promotionActions";
 import { STORE } from "../actions/storeActions";
@@ -17,6 +16,7 @@ export default function HomeReducer (state, action) {
     case PROMOTION.LIST_FETCHING:
       return {
         ...state,
+        promotionsError: null,
         promotionsLoading: true
       };
     
@@ -27,19 +27,7 @@ export default function HomeReducer (state, action) {
         promotionsLoading: false,
         promotions: action.payload.list
       };
-    
-    case CATEGORY.LIST_FETCH_STATUS_CHANGED:
-      return {
-        ...state,
-        categoriesFetchStatus: action.payload
-      };
-    
-    case CATEGORY.LIST_FETCHED:
-      return {
-        ...state,
-        categories: action.payload.list, 
-        categoriesFetchStatus: action.payload.fetchStatus,
-      };
+
 
     case STORE.LIST_ERROR_CHANGED:
       return {
@@ -51,6 +39,7 @@ export default function HomeReducer (state, action) {
     case STORE.LIST_FETCHING:
       return {
         ...state,
+        storesError: null,
         storesLoading: true
       };
     
@@ -62,6 +51,7 @@ export default function HomeReducer (state, action) {
         stores: action.payload.list
       };
 
+
     case PRODUCT.LIST_ERROR_CHANGED:
       return {
         ...state,
@@ -72,6 +62,7 @@ export default function HomeReducer (state, action) {
     case PRODUCT.LIST_FETCHING:
         return {
           ...state,
+          productsError: null,
           productsLoading: true
         };
     
