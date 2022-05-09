@@ -51,7 +51,7 @@ export default function StoreList(
           { 
             canRender: storesLoaded && stores.length === 0, 
             render() { 
-              return <li key="store-footer" className="list-x-col-span"> <EmptyList text="_empty.No_product" icon={storeIcon} /> </li>;
+              return <li key="store-footer" className="list-x-col-span"> <EmptyList text="_empty.No_store" icon={storeIcon} /> </li>;
             }
           },
 
