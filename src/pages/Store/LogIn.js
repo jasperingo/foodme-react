@@ -9,10 +9,11 @@ import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLink';
+import { useAuthRedirectURL } from '../../hooks/authHook';
 import { useHeader } from '../../hooks/headerHook';
 import { useStoreLogin } from '../../hooks/store/storeLoginHook';
 
-export default function LogIn({ redirectTo }) {
+export default function LogIn() {
 
   useHeader({ 
     title: `Log in store - DailyNeeds`,
@@ -20,6 +21,8 @@ export default function LogIn({ redirectTo }) {
   });
 
   const history = useHistory();
+  
+  const redirectTo = useAuthRedirectURL('/products');
 
   const nameInput = useRef(null);
 

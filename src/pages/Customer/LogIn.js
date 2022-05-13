@@ -7,11 +7,12 @@ import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLink';
+import { useAuthRedirectURL } from '../../hooks/authHook';
 // import SocialLoginList from '../../components/SocialLoginList';
 import { useCustomerSignIn } from '../../hooks/customer/customerSignInHook';
 import { useHeader } from '../../hooks/headerHook';
 
-export default function LogIn({ redirectTo }) {
+export default function LogIn() {
 
   useHeader({ 
     title: 'Log In - DailyNeeds',
@@ -19,6 +20,8 @@ export default function LogIn({ redirectTo }) {
   });
 
   const history = useHistory();
+
+  const redirectTo = useAuthRedirectURL('/account');
 
   const emailInput = useRef(null);
 

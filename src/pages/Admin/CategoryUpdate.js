@@ -38,6 +38,7 @@ export default function CategoryUpdate() {
     formSuccess, 
     nameError, 
     typeError, 
+    hideProductsError,
     descriptionError
   ] = useCategoryUpdate();
 
@@ -86,6 +87,7 @@ export default function CategoryUpdate() {
             formSuccess={formSuccess}
             nameError={nameError}
             typeError={typeError} 
+            hideProductsError={hideProductsError}
             descriptionError={descriptionError}
             />
         }

@@ -39,17 +39,17 @@ const NAV_LINKS = [
   { title : '_discount.Discounts', href: '/discounts' }
 ];
 
-function ContactPharmacy({ store }) {
+function ContactStoreToOrder({ store }) {
   const { t } = useTranslation();
 
   return (
-    <div className="container-x text-center">
+    <div className="container-x text-center my-4">
       <Link to={`/messages/${store.user.id}`} className="inline-block text-center">
         <Icon path={messageIcon} className="block mx-auto h-40 w-40 text-color-primary" />
-        <span className="font-bold">{t('_store._contact_pharmacy_to_order')}</span>
+        <span className="font-bold">{t('_store._contact_store_to_order')}</span>
       </Link>
     </div>
-  )
+  );
 }
 
 function StoreDiscountsList() {
@@ -261,7 +261,7 @@ function StoreProductsList() {
 
   useEffect(
     function() {
-      if (store.sub_category.category.id !== 2 && !productCategoriesLoaded && productCategoriesError === null) 
+      if (!store.sub_category.category.hide_products && !productCategoriesLoaded && productCategoriesError === null) 
         fetchProductCategories(store.id);
     },
     [store, productCategoriesLoaded, productCategoriesError, fetchProductCategories]
@@ -269,7 +269,7 @@ function StoreProductsList() {
 
   useEffect(
     function() {
-      if (store.sub_category.category.id !== 2 && productCategoriesLoaded && !productsLoaded && productsError === null) 
+      if (!store.sub_category.category.hide_products && productCategoriesLoaded && !productsLoaded && productsError === null) 
         fetchStoreProducts(store.id, subCategory); 
     },
     [store, productCategoriesLoaded, productsError, productsLoaded, subCategory, fetchStoreProducts]
@@ -286,8 +286,8 @@ function StoreProductsList() {
     refreshStoreProducts();
   }
 
-  if (store.sub_category.category.id === 2) {
-    return <ContactPharmacy store={store} />;
+  if (store.sub_category.category.hide_products) {
+    return <ContactStoreToOrder store={store} />;
   }
 
   return (
@@ -360,7 +360,7 @@ function StoreProductCategoriesList() {
 
   useEffect(
     function() {
-      if (store.sub_category.category.id !== 2 && !productCategoriesLoaded && productCategoriesError === null) 
+      if (!store.sub_category.category.hide_products && !productCategoriesLoaded && productCategoriesError === null) 
         fetchProductCategories(store.id);
     },
     [store, productCategoriesLoaded, productCategoriesError, fetchProductCategories]
@@ -371,8 +371,8 @@ function StoreProductCategoriesList() {
     history.push(`${match.url}/products?${param.toString()}`);
   }
 
-  if (store.sub_category.category.id === 2) {
-    return <ContactPharmacy store={store} />;
+  if (store.sub_category.category.hide_products) {
+    return <ContactStoreToOrder store={store} />;
   }
 
   return (

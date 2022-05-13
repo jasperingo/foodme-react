@@ -7,6 +7,9 @@ import FormMessage from './FormMessage';
 import FormSelect from './FormSelect';
 import FormTextArea from './FormTextArea';
 import FormPhotoField from './FormPhotoField';
+import Category from '../../models/Category';
+import { useCategoryTypeText } from '../../hooks/category/categoryViewHook';
+import { useTranslation } from 'react-i18next';
 
 export default function CategoryForm(
   {
@@ -20,6 +23,7 @@ export default function CategoryForm(
     formSuccess, 
     nameError, 
     typeError, 
+    hideProductsError,
     descriptionError
   }
 ) {
@@ -27,8 +31,14 @@ export default function CategoryForm(
   const nameInput = useRef(null);
 
   const typeInput = useRef(null);
+
+  const hideProductsInput = useRef(null);
   
   const descriptionInput = useRef(null);
+
+  const { t } = useTranslation();
+
+  const typeText = useCategoryTypeText();
 
   function onFormSubmit(e) {
     e.preventDefault();
@@ -36,22 +46,26 @@ export default function CategoryForm(
       onSubmit(
         nameInput.current.value,
         typeInput.current.value,
+        hideProductsInput.current.value,
         descriptionInput.current.value,
 
         {
           nameValidity: nameInput.current.validity,
           typeValidity: typeInput.current.validity,
+          hideProductsValidity: hideProductsInput.current.validity,
           descriptionValidity: descriptionInput.current.validity
         }        
       );
     } else {
       onSubmit(
         nameInput.current.value,
+        hideProductsInput.current.value,
         descriptionInput.current.value,
   
         {
           typeValidity: { valid: true },
           nameValidity: nameInput.current.validity,
+          hideProductsValidity: hideProductsInput.current.validity,
           descriptionValidity: descriptionInput.current.validity
         }
       );
@@ -91,12 +105,24 @@ export default function CategoryForm(
           label="_extra.Type" 
           required={true}
           value={category.type}
-          options={[
-            { key: 'store', value: 'Store' },
-            { key: 'product', value: 'Product' }
-          ]}
+          options={Category.getTypes().map(type => ({
+            key: type, value: t(typeText(type))
+          }))}
           />
       }
+
+      <FormSelect 
+        ref={ hideProductsInput }
+        error={ hideProductsError }
+        ID="hide-products-input" 
+        label="_product.Hide_products" 
+        required={true}
+        value={category.hide_products}
+        options={[
+          { key: true, value: t('_extra.Yes') },
+          { key: false, value: t('_extra.No') },
+        ]}
+        />
 
       <FormTextArea 
         ref={ descriptionInput }

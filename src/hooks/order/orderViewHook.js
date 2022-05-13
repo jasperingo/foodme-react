@@ -36,7 +36,7 @@ export function useOrderStatus(status) {
 
 export function useOrderStatusText() {
   
-  return (status)=> {
+  return function(status) {
 
     switch(status) {
 

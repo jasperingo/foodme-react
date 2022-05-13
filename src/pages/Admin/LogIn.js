@@ -10,12 +10,15 @@ import FormMessage from '../../components/form/FormMessage';
 import { useHeader } from '../../hooks/headerHook';
 import { useAdminLogin } from '../../hooks/admin/adminLoginHook';
 import ForgotPasswordLink from '../../components/form/ForgotPasswordLink';
+import { useAuthRedirectURL } from '../../hooks/authHook';
 
-export default function LogIn({ redirectTo }) {
+export default function LogIn() {
 
   useHeader({ title: 'Log In - DailyNeeds' });
   
   const history = useHistory();
+
+  const redirectTo = useAuthRedirectURL('/dashboard');
 
   const emailInput = useRef(null);
 

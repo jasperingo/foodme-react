@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Switch, Route, Redirect, useLocation } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import Header from '../components/header/Header';
 import Footer from '../components/Footer';
 import AboutUs from '../pages/AboutUs';
@@ -52,6 +52,7 @@ import { useCustomerAuthFetch } from '../hooks/customer/customerAuthFetchHook';
 import NotFoundPage from '../pages/NotFoundPage';
 import EmailVerify from '../pages/EmailVerify';
 import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
+import { useAuthMiddleware, useGuestMiddleware } from '../hooks/authHook';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -78,9 +79,9 @@ export default function CustomerApp() {
     } 
   } = useAppContext();
 
-  const location = useLocation();
+  const authMiddleware = useAuthMiddleware(customer);
 
-  const redirectTo = new URLSearchParams(location.search).get('redirect_to') ?? '/account';
+  const guestMiddleware = useGuestMiddleware(customer, '/account');
 
   const [customerId, fetchCustomer, error] = useCustomerAuthFetch();
 
@@ -94,14 +95,6 @@ export default function CustomerApp() {
 
   if (customer === null && customerId !== null) {
     return <Splash onRetry={fetchCustomer} error={error} />;
-  }
-
-  function authMiddleware() {
-    return customer !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
-  }
-
-  function guestMiddleware() {
-    return customer === null ? null : <Redirect to={redirectTo} />
   }
   
   return (
@@ -142,8 +135,8 @@ export default function CustomerApp() {
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
-          <Route path="/register" render={()=> guestMiddleware() || <Register redirectTo={redirectTo} />} /> 
-          <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
+          <Route path="/register" render={()=> guestMiddleware() || <Register />} /> 
+          <Route path="/login" render={()=> guestMiddleware() || <LogIn />} />
           <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword customer={true} />} />

@@ -4,9 +4,15 @@ import FormMessage from '../components/form/FormMessage';
 import Loading from '../components/Loading';
 import SuccessBox from '../components/SuccessBox';
 import { useEmailVerificationVerify } from '../hooks/email_verification/emailVerificationVerifyHook';
+import { useHeader } from '../hooks/headerHook';
 import { useURLQuery } from '../hooks/viewHook';
 
 export default function EmailVerify() {
+
+  useHeader({
+    title: `Verify Email - Dailyneeds`,
+    headerTitle: '_user.Verify_email'
+  });
 
   const [token] = useURLQuery(['token']);
 

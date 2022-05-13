@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { adminIcon, dashboardIcon, messageIcon, orderIcon, transactionIcon } from '../assets/icons';
 import { useAppContext } from '../hooks/contextHook';
 import { useAdminAuthFetch } from '../hooks/admin/adminAuthFetchHook';
@@ -48,6 +48,7 @@ import Promotion from '../pages/Admin/Promotion';
 import PromotionCreate from '../pages/Admin/PromotionCreate';
 import NotFoundPage from '../pages/NotFoundPage';
 import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
+import { useAuthMiddleware, useGuestMiddleware } from '../hooks/authHook';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -72,9 +73,9 @@ export default function AdminApp() {
     } 
   } = useAppContext();
 
-  const location = useLocation();
+  const authMiddleware = useAuthMiddleware(admin);
 
-  const redirectTo = new URLSearchParams(location.search).get('redirect_to')  ?? '/dashboard';
+  const guestMiddleware = useGuestMiddleware(admin, '/dashboard');
 
   const [adminId, fetchAdmin, error] = useAdminAuthFetch();
 
@@ -88,14 +89,6 @@ export default function AdminApp() {
   
   if (admin === null && adminId !== null) {
     return <Splash onRetry={fetchAdmin} error={error} />;
-  }
-  
-  function authMiddleware() {
-    return admin !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
-  }
-
-  function guestMiddleware() {
-    return admin === null ? null : <Redirect to={redirectTo ?? '/dashboard'} />
   }
 
   return (
@@ -145,7 +138,7 @@ export default function AdminApp() {
           <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword administrator={true} />} />
-          <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
+          <Route path="/login" render={()=> guestMiddleware() || <LogIn />} />
           <Route path="/" exact render={()=> guestMiddleware() || <Home />} />
           <Route path="*" render={()=> <NotFoundPage />} />
         </Switch>

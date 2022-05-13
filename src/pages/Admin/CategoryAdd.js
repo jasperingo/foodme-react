@@ -22,6 +22,7 @@ export default function CategoryAdd() {
     formError,  
     nameError, 
     typeError, 
+    hideProductsError,
     descriptionError
   ] = useCategoryCreate();
 
@@ -57,6 +58,7 @@ export default function CategoryAdd() {
           formError={formError || photoFormError}
           nameError={nameError}
           typeError={typeError} 
+          hideProductsError={hideProductsError}
           descriptionError={descriptionError}
           />
       </div>

@@ -19,7 +19,6 @@ export const TRANSLATIONS_EN = {
   Send: 'Send',
   Message: 'Message',
 
-
   _user: {
     Join_us: 'Join us',
     Welcome_back: 'Welcome back',
@@ -89,6 +88,7 @@ export const TRANSLATIONS_EN = {
 
     _email_verification_success: 'Your email has been verified successfully, you can now log into your account.',
 
+    Verify_email: 'Verify email',
   },
 
   _extra: {
@@ -266,7 +266,7 @@ export const TRANSLATIONS_EN = {
     
     _store_url_copied: 'This store url has been copied, you can now share it.',
 
-    _contact_pharmacy_to_order: 'Contact pharmacy to place an order.',
+    _contact_store_to_order: 'Contact store to place an order.',
   },
 
   _discount: {
@@ -323,7 +323,9 @@ export const TRANSLATIONS_EN = {
     Edit_product_variant: 'Edit product variant',
     _product_delete_confirm: 'Are you sure you want to delete this product?',
     _product_variant_delete_confirm: 'Are you sure you want to delete this product variant?',
-
+    
+    Hide_products: 'Hide products',
+  
     Recommended_product: 'Recommended product',
     Recommended_products: 'Recommended products',
 

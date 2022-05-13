@@ -23,13 +23,15 @@ export function useCategoryCreate() {
 
   const [typeError, setTypeError] = useState('');
 
+  const [hideProductsError, setHideProductsError] = useState('');
+
   const [descriptionError, setDescriptionError] = useState('');
 
   const validator = useCategoryValidation();
 
   const api = useMemo(function() { return new CategoryRepository(adminToken); }, [adminToken]);
 
-  async function onSubmit(name, type, description, validity) {
+  async function onSubmit(name, type, hide_products, description, validity) {
     
     if (loading) return;
     
@@ -40,10 +42,17 @@ export function useCategoryCreate() {
 
     setFormError(null);
     
-    const [error, nameError, typeError, descriptionError] = validator(validity);
+    const [
+      error, 
+      nameError, 
+      typeError, 
+      hideProductsError, 
+      descriptionError
+    ] = validator(validity);
     
     setNameError(nameError);
     setTypeError(typeError);
+    setHideProductsError(hideProductsError);
     setDescriptionError(descriptionError);
     
     if (error) return;
@@ -52,7 +61,7 @@ export function useCategoryCreate() {
 
     try {
 
-      const res = await api.create({ name, type, description });
+      const res = await api.create({ name, type, hide_products, description });
 
       if (res.status === 201) {
         
@@ -70,6 +79,10 @@ export function useCategoryCreate() {
 
             case 'type':
               setTypeError(error.message);
+              break;
+
+            case 'hide_products':
+              setHideProductsError(error.message);
               break;
 
             case 'description':
@@ -98,6 +111,7 @@ export function useCategoryCreate() {
     formError, 
     nameError, 
     typeError, 
+    hideProductsError,
     descriptionError
   ];
 }

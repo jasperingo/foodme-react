@@ -1,12 +1,9 @@
 
 import Icon from '@mdi/react';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { nextIcon, prevIcon } from '../assets/icons';
 
 export default function CarouselX({ items }) {
-
-  const { t } = useTranslation();
   
   const INTERVAL = 5000;
 
@@ -80,8 +77,8 @@ export default function CarouselX({ items }) {
                 target="_blank" 
                 rel="noreferrer" 
                 className="bg-white py-2 px-4 rounded text-black hover:bg-color-gray-h"
-                >
-                { t('_extra.Contact_us_on') } { item.link_type } 
+              >
+                { item.link_type } 
               </a>
             </div>
 

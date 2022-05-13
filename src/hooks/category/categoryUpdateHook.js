@@ -30,6 +30,8 @@ export function useCategoryUpdate() {
   const [formSuccess, setFormSuccess] = useState(null);
 
   const [nameError, setNameError] = useState('');
+  
+  const [hideProductsError, setHideProductsError] = useState('');
 
   const [descriptionError, setDescriptionError] = useState('');
 
@@ -37,7 +39,7 @@ export function useCategoryUpdate() {
 
   const api = useMemo(function() { return new CategoryRepository(adminToken); }, [adminToken]);
 
-  async function onSubmit(name, description, validity) {
+  async function onSubmit(name, hide_products, description, validity) {
     
     if (loading) return;
     
@@ -48,9 +50,10 @@ export function useCategoryUpdate() {
 
     setFormError(null);
     
-    const [error, nameError, , descriptionError] = validator(validity);
+    const [error, nameError, , hideProductsError, descriptionError] = validator(validity);
     
     setNameError(nameError);
+    setHideProductsError(hideProductsError)
     setDescriptionError(descriptionError);
     
     if (error) return;
@@ -59,7 +62,7 @@ export function useCategoryUpdate() {
 
     try {
 
-      const res = await api.update(category.id, { name, description });
+      const res = await api.update(category.id, { name, hide_products, description });
 
       if (res.status === 200) {
         
@@ -112,6 +115,7 @@ export function useCategoryUpdate() {
     formError, 
     formSuccess, 
     nameError, 
+    hideProductsError,
     descriptionError
   ];
 }

@@ -1,5 +1,6 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { deliveryIcon } from '../../assets/icons';
 import AuthFormHeader from '../../components/AuthFormHeader';
 import LoadingDialog from '../../components/dialog/LoadingDialog';
@@ -8,15 +9,20 @@ import FormButton from '../../components/form/FormButton';
 import FormField from '../../components/form/FormField';
 import FormMessage from '../../components/form/FormMessage';
 import RegisterIfNoAccountLink from '../../components/form/RegisterIfNoAccountLink';
+import { useAuthRedirectURL } from '../../hooks/authHook';
 import { useDeliveryFirmLogin } from '../../hooks/delivery_firm/deliveryFirmLoginHook';
 import { useHeader } from '../../hooks/headerHook';
 
-export default function LogIn({ redirectTo }) {
+export default function LogIn() {
 
   useHeader({ 
     title: 'Log in delivery firm - DailyNeeds',
     headerTitle: '_user.Log_in',
   });
+
+  const history = useHistory();
+
+  const redirectTo = useAuthRedirectURL('/delivery-routes');
 
   const nameInput = useRef(null);
 
@@ -24,8 +30,14 @@ export default function LogIn({ redirectTo }) {
 
   const passwordInput = useRef(null);
 
-  const [onSubmit, dialog, formError] = useDeliveryFirmLogin();
+  const [onSubmit, loading, success, formError] = useDeliveryFirmLogin();
 
+  useEffect(
+    function() {
+      if (success && !loading) history.replace(redirectTo);
+    },
+    [success, loading, history, redirectTo]
+  );
   
   function onLoginSubmit(e) {
     e.preventDefault();
@@ -85,7 +97,7 @@ export default function LogIn({ redirectTo }) {
 
       </div>
 
-      { dialog && <LoadingDialog /> }
+      { loading && <LoadingDialog /> }
       
     </section>
   );

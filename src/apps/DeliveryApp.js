@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { routeIcon, orderIcon, messageIcon, deliveryIcon, walletIcon } from '../assets/icons';
 import Footer from '../components/Footer';
 import Header from '../components/header/Header';
@@ -40,6 +40,7 @@ import Store from '../pages/Delivery/Store';
 import Customer from '../pages/Customer';
 import NotFoundPage from '../pages/NotFoundPage';
 import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
+import { useAuthMiddleware, useGuestMiddleware } from '../hooks/authHook';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -65,9 +66,9 @@ export default function DeliveryApp() {
     } 
   } = useAppContext();
 
-  const location = useLocation();
+  const authMiddleware = useAuthMiddleware(deliveryFirm);
 
-  const redirectTo = new URLSearchParams(location.search).get('redirect_to')  ?? '/delivery-routes';
+  const guestMiddleware = useGuestMiddleware(deliveryFirm, '/delivery-routes');
 
   const [deliveryFirmId, fetchDeliveryFirm, error] = useDeliveryFirmAuthFetch();
 
@@ -81,14 +82,6 @@ export default function DeliveryApp() {
 
   if (deliveryFirm === null && deliveryFirmId !== null) {
     return <Splash onRetry={fetchDeliveryFirm} error={error} />;
-  }
-
-  function authMiddleware() {
-    return deliveryFirm !== null ? null : <Redirect to={`/login?redirect_to=${encodeURIComponent(location.pathname)}`} />
-  }
-
-  function guestMiddleware() {
-    return deliveryFirm === null ? null : <Redirect to={redirectTo} />
   }
 
   return (
@@ -132,7 +125,7 @@ export default function DeliveryApp() {
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=>  guestMiddleware() || <Register />} /> 
-          <Route path="/login" render={()=>  guestMiddleware() || <LogIn redirectTo={redirectTo} />} /> 
+          <Route path="/login" render={()=>  guestMiddleware() || <LogIn />} /> 
           <Route path="/" exact render={()=> guestMiddleware() || <Home />} />
           <Route path="*" render={()=> <NotFoundPage />} />
         </Switch>
