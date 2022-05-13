@@ -51,6 +51,7 @@ import { useMessageUnreceivedCounter } from '../hooks/message/messageUnreceivedC
 import { useCustomerAuthFetch } from '../hooks/customer/customerAuthFetchHook';
 import NotFoundPage from '../pages/NotFoundPage';
 import EmailVerify from '../pages/EmailVerify';
+import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
 
 const HEADER_NAV_LINKS = [
   { title : '_extra.Home', icon: homeIcon, href: '/' },
@@ -143,6 +144,7 @@ export default function CustomerApp() {
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register redirectTo={redirectTo} />} /> 
           <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
+          <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword customer={true} />} />
           <Route path="/cart" render={()=> <Cart />} />

@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import FormMessage from '../components/form/FormMessage';
 import Loading from '../components/Loading';
+import SuccessBox from '../components/SuccessBox';
 import { useEmailVerificationVerify } from '../hooks/email_verification/emailVerificationVerifyHook';
 import { useURLQuery } from '../hooks/viewHook';
 
@@ -30,7 +31,17 @@ export default function EmailVerify() {
 
         { loading && <Loading /> }
 
-        <FormMessage error={error} success={success} />
+        <FormMessage error={error} />
+
+        {
+          success !== null && 
+          <SuccessBox 
+            href="/login"
+            linkText="_user.Log_in"
+            message="_user._email_verification_success"
+            />
+
+        }
 
       </div>
     </section>

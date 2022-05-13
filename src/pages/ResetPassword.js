@@ -1,5 +1,6 @@
 
 import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import LoadingDialog from '../components/dialog/LoadingDialog';
 import FormButton from '../components/form/FormButton';
 import FormField from '../components/form/FormField';
@@ -16,6 +17,8 @@ export default function ResetPassword() {
     headerTitle: '_user.Reset_password'
   });
 
+  const history = useHistory();
+
   const passwordInput = useRef(null);
 
   const [token] = useURLQuery(['token']);
@@ -25,10 +28,10 @@ export default function ResetPassword() {
   useEffect(
     function() {
       if (formSuccess !== null) {
-        passwordInput.current.value = '';
+        history.replace('reset-password-success');
       }
     },
-    [formSuccess]
+    [formSuccess, history]
   );
   
   function onFormSubmit(e) {
@@ -43,10 +46,7 @@ export default function ResetPassword() {
 
         <form method="POST" action="" onSubmit={onFormSubmit} className="form-1-x" noValidate>
 
-          <FormMessage 
-            error={formError} 
-            success={formSuccess} 
-            /> 
+          <FormMessage error={formError} /> 
 
           <FormTopTip text="_user._reset_password_instruction" />
 

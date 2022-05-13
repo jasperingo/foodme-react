@@ -46,6 +46,7 @@ import Order from '../pages/Order';
 import DeliveryFirm from '../pages/Store/DeliveryFirm';
 import Customer from '../pages/Customer';
 import NotFoundPage from '../pages/NotFoundPage';
+import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -111,6 +112,7 @@ export default function StoreApp() {
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
           
+          <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword store={true} />} />
 

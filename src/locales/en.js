@@ -87,6 +87,7 @@ export const TRANSLATIONS_EN = {
 
     Send_email_verification_confirm: 'Are you sure you want to send an email verification email to this user?',
 
+    _email_verification_success: 'Your email has been verified successfully, you can now log into your account.',
 
   },
 

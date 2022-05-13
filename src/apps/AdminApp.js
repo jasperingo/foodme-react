@@ -47,6 +47,7 @@ import Promotions from '../pages/Admin/Promotions';
 import Promotion from '../pages/Admin/Promotion';
 import PromotionCreate from '../pages/Admin/PromotionCreate';
 import NotFoundPage from '../pages/NotFoundPage';
+import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -141,6 +142,7 @@ export default function AdminApp() {
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> 
+          <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword administrator={true} />} />
           <Route path="/login" render={()=> guestMiddleware() || <LogIn redirectTo={redirectTo} />} />
@@ -152,5 +154,3 @@ export default function AdminApp() {
     </>
   );
 }
-
-
