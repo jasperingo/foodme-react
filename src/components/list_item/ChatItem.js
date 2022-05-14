@@ -8,7 +8,7 @@ import { useMessageMemberGet } from '../../hooks/message/messageMemberGetHook';
 import { useDateFormatter } from '../../hooks/viewHook';
 import Message from '../../models/Message';
 
-export default function MessagesItem({ userId, chat }) {
+export default function ChatItem({ userId, chat }) {
 
   const { t } = useTranslation();
 

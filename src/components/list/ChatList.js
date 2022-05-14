@@ -15,12 +15,12 @@ import LoadingDialog from '../dialog/LoadingDialog';
 import DualPaneIntro from '../DualPaneIntro';
 import EmptyList from '../EmptyList';
 import FetchMoreButton from '../FetchMoreButton';
-import ScrollList from '../list/ScrollList';
-import MessagesItem from '../list_item/MessagesItem';
+import ScrollList from './ScrollList';
+import ChatItem from '../list_item/ChatItem';
 import Loading from '../Loading';
 import Reload from '../Reload';
 
-export default function ChatsList({ isAdmin, userId, userToken, renderMessages }) {
+export default function ChatList({ isAdmin, userId, userToken, renderMessages }) {
 
   const { t } = useTranslation();
 
@@ -159,7 +159,7 @@ export default function ChatsList({ isAdmin, userId, userToken, renderMessages }
             hasMore={!chatsEnded}
             className={`py-4 ${location.pathname !== '/messages' && 'hidden'} lg:block lg:w-80`}
             renderDataItem={(item)=> (
-              <MessagesItem 
+              <ChatItem 
                 key={`chat-${item.id}`}
                 userId={userId}
                 chat={item} 

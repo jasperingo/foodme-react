@@ -1,6 +1,6 @@
 
 import React from 'react';
-import MessagesList from '../../components/profile/MessagesList';
+import MessageProfile from '../../components/profile/MessageProfile';
 import { useAppContext } from '../../hooks/contextHook';
 
 export default function Messages() {
@@ -15,7 +15,7 @@ export default function Messages() {
   } = useAppContext();
 
   return (
-    <MessagesList 
+    <MessageProfile 
       userId={store.user.id}
       userToken={storeToken}
       />

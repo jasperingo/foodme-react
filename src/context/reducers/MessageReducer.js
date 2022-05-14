@@ -21,6 +21,7 @@ export default function MessageReducer(state, { type, payload }) {
     case MESSAGE.CHAT_LIST_FETCHING:
       return {
         ...state,
+        chatsError: null,
         chatsLoading: true
       };
 

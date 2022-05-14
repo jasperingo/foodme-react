@@ -1,6 +1,6 @@
 
 import React from 'react';
-import ChatsList from '../../components/profile/ChatsList';
+import ChatList from '../../components/list/ChatList';
 import { useAppContext } from '../../hooks/contextHook';
 import { useHeader } from '../../hooks/headerHook';
 import Messages from './Messages';
@@ -22,7 +22,7 @@ export default function Chats() {
   });
 
   return (
-    <ChatsList 
+    <ChatList 
       userId={deliveryFirm.user.id}
       userToken={deliveryFirmToken}
       renderMessages={()=> <Messages />} 

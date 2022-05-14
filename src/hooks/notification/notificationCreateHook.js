@@ -1,6 +1,12 @@
 import { useCallback } from 'react';
 import { useAppContext } from '../contextHook';
 
+const audio = new Audio('/message-tone.mp3');
+
+function playSound() {
+  audio.play();
+}
+
 export function useNotificationCreate() {
 
   const { 
@@ -12,6 +18,10 @@ export function useNotificationCreate() {
   } = useAppContext();
 
   return useCallback(function(chat, member) {
+
+    if (member.id !== Number(chatID)) {
+      playSound();
+    }
 
     if (
         'Notification' in window && Notification.permission === 'granted' && 

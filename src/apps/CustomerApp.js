@@ -18,7 +18,7 @@ import Categories from '../pages/Categories';
 import Search from '../pages/Customer/Search';
 import Store from '../pages/Customer/Store';
 import Product from '../pages/Customer/Product';
-import Messages from '../pages/Customer/Messages';
+import Chats from '../pages/Customer/Chats';
 import ForgotPassword from '../pages/ForgotPassword';
 import ResetPassword from '../pages/ResetPassword';
 import Profile from '../pages/Customer/Profile';
@@ -133,7 +133,7 @@ export default function CustomerApp() {
           <Route path="/settings/withdrawal-account" render={()=> authMiddleware() || <WithdrawalAccountUpdate />} />
           <Route path="/settings/password" render={()=> authMiddleware() || <PasswordUpdate />} />
           <Route path="/profile" render={()=> authMiddleware() || <Profile />} />
-          <Route path="/messages" render={()=> authMiddleware() || <Messages />} />
+          <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
           <Route path="/account" render={()=> authMiddleware() || <AccountMenu />} />
           <Route path="/register" render={()=> guestMiddleware() || <Register />} /> 
           <Route path="/login" render={()=> guestMiddleware() || <LogIn />} />

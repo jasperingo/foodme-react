@@ -171,7 +171,6 @@ export default function Home() {
     }
   } = useAppContext();
 
-
   return (
     <section>
 
