@@ -6,7 +6,7 @@ import StoreApp from './apps/StoreApp';
 import DeliveryApp from './apps/DeliveryApp';
 import AdminApp from './apps/AdminApp';
 
-const dev = process.env.NODE_ENV === 'development';
+const dev = true; //process.env.NODE_ENV === 'development';
 
 export default function App() {
 

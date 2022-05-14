@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-const dev = process.env.NODE_ENV === 'development';
+const dev = true; //process.env.NODE_ENV === 'development';
 
 function FooterLink({ text, href }) {
 
