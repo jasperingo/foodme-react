@@ -21,7 +21,7 @@ export default function PromotionCreate() {
 
   const linkInput = useRef(null);
   
-  const linkTypeInput = useRef(null);
+  const callToActionInput = useRef(null);
 
   const amountInput = useRef(null);
 
@@ -36,7 +36,7 @@ export default function PromotionCreate() {
     formError,
     titleError, 
     linkError, 
-    linkTypeError,
+    callToActionError,
     amountError,
     durationError
   ] = usePromotionCreate();
@@ -65,14 +65,14 @@ export default function PromotionCreate() {
     onSubmit(
       titleInput.current.value,
       linkInput.current.value,
-      linkTypeInput.current.value,
+      callToActionInput.current.value,
       amountInput.current.value,
       durationInput.current.value,
 
       {
         titleValidity: titleInput.current.validity,
         linkValidity: linkInput.current.validity,
-        linkTypeValidity: linkTypeInput.current.validity,
+        callToActionValidity: callToActionInput.current.validity,
         amountValidity: amountInput.current.validity,
         durationValidity: durationInput.current.validity
       }
@@ -111,10 +111,10 @@ export default function PromotionCreate() {
             />
 
           <FormField 
-            ref={ linkTypeInput }
-            error={ linkTypeError }
-            ID="link-type-input" 
-            label="_extra.Link_type" 
+            ref={ callToActionInput }
+            error={ callToActionError }
+            ID="call-to-action-input" 
+            label="_extra.Call_to_action" 
             required={true}
             />
 

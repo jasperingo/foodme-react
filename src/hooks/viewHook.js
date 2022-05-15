@@ -3,6 +3,7 @@ import moment from 'moment';
 import User from '../models/User';
 import WorkingHour from '../models/WorkingHour';
 import { useAppContext } from './contextHook';
+import { useLocation } from 'react-router-dom';
 
 export function useUserStatus(status) {
   switch(status) {
@@ -107,7 +108,8 @@ export function useShare() {
 }
 
 export function useURLQuery(params) {
-  const search = useMemo(function() { return new URLSearchParams(window.location.search); }, []);
+  const location = useLocation();
+  const search = useMemo(function() { return new URLSearchParams(location.search); }, [location.search]);
   return params.map(i=> search.get(i));
 }
 

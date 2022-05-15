@@ -18,7 +18,7 @@ export default function PromotionItem({ item }) {
           />
         <div>
           <div className="font-bold mb-1">{ item.title }</div>
-          <div>{ item.link_type }</div>
+          <div>{ item.call_to_action }</div>
         </div>
       </Link>
     </li>

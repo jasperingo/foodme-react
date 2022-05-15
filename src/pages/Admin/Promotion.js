@@ -128,8 +128,8 @@ export default function Promotion() {
                   body: promotion.link
                 },
                 {
-                  title: '_extra.Link_type',
-                  body: promotion.link_type
+                  title: '_extra.Call_to_action',
+                  body: promotion.call_to_action
                 },
                 {
                   title: '_extra.Amount',

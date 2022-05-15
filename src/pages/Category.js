@@ -27,6 +27,21 @@ function Profile({ category, isAdmin }) {
       icon: editIcon
     });
   }
+
+
+  const details = [
+    {
+      icon: categoryIcon,
+      data: t('_category.sub_category__Count', { count: category.sub_categories.length })
+    }
+  ];
+
+  if (category.description) {
+    details.push({
+      icon: editIcon,
+      data: category.description
+    });
+  }
   
   return (
     <>
@@ -36,23 +51,17 @@ function Profile({ category, isAdmin }) {
         links={topLinks}
         />
       
-      <ProfileDetails
-        details={[
-          {
-            icon: categoryIcon,
-            data: t('_category.sub_category__Count', { count: category.sub_categories.length })
-          },
-          {
-            icon: editIcon,
-            data: category.description
-          }
-        ]}
-        />
+      <ProfileDetails details={details} />
 
       <div>
         {
-          isAdmin && <AddButton text="_category.Add_sub_category" href={`/sub-category/add?category_id=${category.id}`} />
+          isAdmin && 
+          <AddButton 
+            text="_category.Add_sub_category" 
+            href={`/sub-category/add?category_id=${category.id}`} 
+          />
         }
+        
         <ul className="category-list">
           {
             category.sub_categories.map((item, i)=> (

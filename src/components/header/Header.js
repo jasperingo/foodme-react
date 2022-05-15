@@ -58,9 +58,9 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
                 .map((item, i) => (
                   <NavItem
                     key={i}
-                    title={t(item.title)}  
                     icon={item.icon} 
                     href={item.href} 
+                    title={t(item.title)}  
                     useCounter={item.useCounter}
                     />
                 ))
@@ -73,11 +73,11 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
                 .map((item, i)=> (
                   <NavItem 
                     key={i}
+                    top={true}
                     href={item.href} 
                     icon={item.icon} 
-                    useCounter={item.useCounter} 
                     title={ t(item.title) } 
-                    top={true}
+                    useCounter={item.useCounter} 
                     show={topNavPaths.includes(item.href)}
                     />
                 ))
@@ -97,5 +97,3 @@ export default function Header({ navLinks, topNavLinks, searchable = false }) {
     </header>
   );
 }
-
-

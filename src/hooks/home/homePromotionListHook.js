@@ -8,7 +8,7 @@ const base = {
   photo: { href: '/photos/about-resturant.jpg' },
   title: 'Welcome to DailyNeeds',
   link: '/contact-us',
-  link_type: 'Contact us on our website',
+  call_to_action: 'Contact us on our website',
 }
 
 export function useHomePromotionList() {

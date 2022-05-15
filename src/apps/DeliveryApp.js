@@ -41,6 +41,7 @@ import Customer from '../pages/Customer';
 import NotFoundPage from '../pages/NotFoundPage';
 import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
 import { useAuthMiddleware, useGuestMiddleware } from '../hooks/authHook';
+import EmailVerify from '../pages/EmailVerify';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -101,7 +102,8 @@ export default function DeliveryApp() {
           <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword deliveryFirm={true} />} />
-          
+          <Route path="/email-verification" render={()=> <EmailVerify />} />
+
           <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
           <Route path="/store/:ID" render={()=> authMiddleware() || <Store />} />
           <Route path="/customer/:ID" render={()=> authMiddleware() || <Customer userToken={deliveryFirmToken} />} />

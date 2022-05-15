@@ -1,6 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import H4Heading from '../../components/H4Heading';
 import CustomerList from '../../components/list/CustomerList';
 import DeliveryFirmList from '../../components/list/DeliveryFirmList';
@@ -17,7 +18,7 @@ import { useDashboardStoreList } from '../../hooks/dashboard/dashboardStoreListH
 import { useHeader } from '../../hooks/headerHook';
 import { useMoneyFormatter } from '../../hooks/viewHook';
 
-function StatisticsData({ number, text, amount }) {
+function StatisticsData({ number, text, amount, href }) {
 
   const { t } = useTranslation();
 
@@ -25,11 +26,13 @@ function StatisticsData({ number, text, amount }) {
 
   return (
     <li className="flex-grow w-1/3 md:w-1/4">
-      <div className="shadow p-3 rounded">
-        { number && <div className="font-bold">{ number }</div> }
-        { amount && <div className="font-bold">{ moneyFormat(amount) }</div> }
+      <Link to={href ?? ''} className="block shadow p-3 rounded">
+        <div className="font-bold">
+          { number } 
+          { amount !== undefined && moneyFormat(amount) }
+        </div>
         <div className="text-sm">{ t(text) }</div>
-      </div>
+      </Link>
     </li>
   );
 }
@@ -62,13 +65,13 @@ function Statistics() {
         { 
           statistics !== null &&
           <>
-            <StatisticsData number={statistics.number_of_customers} text="_user.Customers" />
-            <StatisticsData number={statistics.number_of_stores} text="_store.Stores" />
-            <StatisticsData number={statistics.number_of_delivery_firms} text="_delivery.Delivery_firms" />
-            <StatisticsData number={statistics.number_of_categories} text="_category.Categories" />
+            <StatisticsData number={statistics.number_of_customers} text="_user.Customers" href="/customers" />
+            <StatisticsData number={statistics.number_of_stores} text="_store.Stores" href="/stores" />
+            <StatisticsData number={statistics.number_of_delivery_firms} text="_delivery.Delivery_firms" href="/delivery-firms" />
+            <StatisticsData number={statistics.number_of_categories} text="_category.Categories" href="/categories" />
             <StatisticsData number={statistics.number_of_products} text="_product.Products" />
-            <StatisticsData number={statistics.number_of_orders} text="_order.Orders" />
-            <StatisticsData amount={statistics.total_earnings} text="_transaction.Earnings" />
+            <StatisticsData number={statistics.number_of_orders} text="_order.Orders" href="/orders" />
+            <StatisticsData amount={statistics.total_earnings} text="_transaction.Earnings" href="/transactions" />
           </>
         }
 

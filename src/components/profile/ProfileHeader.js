@@ -9,7 +9,7 @@ export default function ProfileHeader({ photo, name, category, links=[], buttons
   const actions = links.concat(buttons);
 
   return (
-    <div className="flex items-center my-4 gap-2">
+    <div className="flex items-center flex-wrap my-4 gap-4">
       <img 
         src={ photo } 
         alt={ name } 

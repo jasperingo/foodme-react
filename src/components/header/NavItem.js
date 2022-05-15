@@ -3,7 +3,6 @@ import Icon from '@mdi/react';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-
 function CartCounter({ useCounter }) {
   return (
     <span className="-ml-2 -mt-1 text-xs absolute bg-red-500 text-white px-1 rounded-full">

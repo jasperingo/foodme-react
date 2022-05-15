@@ -1,12 +1,12 @@
 
 export function usePromotionValidation() {
 
-  return function({ titleValidity, linkValidity, linkTypeValidity, amountValidity, durationValidity }) {
+  return function({ titleValidity, linkValidity, callToActionValidity, amountValidity, durationValidity }) {
     
     let error = false;
     let titleError = '';
     let linkError = '';
-    let linkTypeError = '';
+    let callToActionError = '';
     let amountError = '';
     let durationError = '';
     
@@ -23,9 +23,9 @@ export function usePromotionValidation() {
         linkError = '_errors.This_field_is_invalid';
     }
 
-    if (!linkTypeValidity.valid) {
+    if (!callToActionValidity.valid) {
       error = true;
-      linkTypeError = '_errors.This_field_is_required';
+      callToActionError = '_errors.This_field_is_required';
     }
 
     if (!amountValidity.valid) {
@@ -38,6 +38,6 @@ export function usePromotionValidation() {
       durationError = '_errors.This_field_is_required';
     }
 
-    return [error, titleError, linkError, linkTypeError, amountError, durationError];
+    return [error, titleError, linkError, callToActionError, amountError, durationError];
   }
 }

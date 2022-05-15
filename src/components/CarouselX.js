@@ -78,7 +78,7 @@ export default function CarouselX({ items }) {
                 rel="noreferrer" 
                 className="bg-white py-2 px-4 rounded text-black hover:bg-color-gray-h"
               >
-                { item.link_type } 
+                { item.call_to_action } 
               </a>
             </div>
 

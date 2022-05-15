@@ -48,6 +48,7 @@ import Customer from '../pages/Customer';
 import NotFoundPage from '../pages/NotFoundPage';
 import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
 import { useAuthMiddleware, useGuestMiddleware } from '../hooks/authHook';
+import EmailVerify from '../pages/EmailVerify';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -108,6 +109,7 @@ export default function StoreApp() {
           <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
           <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword store={true} />} />
+          <Route path="/email-verification" render={()=> <EmailVerify />} />
 
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
           

@@ -54,7 +54,13 @@ export function useEmailVerificationVerify() {
         
       } else if (res.status === 400) {
         
-        setError(res.body.data[0].message);
+        const err = res.body.data[0];
+
+        if (err.name === 'token') {
+          setError('_errors.This_token_is_invalid');
+        } else {
+          setError(err.message);
+        }
           
       } else {
         throw new Error();

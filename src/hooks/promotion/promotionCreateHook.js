@@ -25,7 +25,7 @@ export function usePromotionCreate() {
 
   const [linkError, setLinkError] = useState('');
 
-  const [linkTypeError, setLinkTypeError] = useState('');
+  const [callToActionError, setCallToActionError] = useState('');
 
   const [amountError, setAmountError] = useState('');
 
@@ -33,7 +33,7 @@ export function usePromotionCreate() {
 
   const api = useMemo(function() { return new PromotionRepository(adminToken); }, [adminToken]);
   
-  async function onSubmit(title, link, linkType, amount, duration, validity) {
+  async function onSubmit(title, link, callToAction, amount, duration, validity) {
     
     if (loading) return;
     
@@ -48,14 +48,14 @@ export function usePromotionCreate() {
       error, 
       titleError, 
       linkError, 
-      linkTypeError, 
+      callToActionError, 
       amountError, 
       durationError
     ] = validator(validity);
 
     setTitleError(titleError);
     setLinkError(linkError);
-    setLinkTypeError(linkTypeError);
+    setCallToActionError(callToActionError);
     setAmountError(amountError);
     setDurationError(durationError);
 
@@ -70,7 +70,7 @@ export function usePromotionCreate() {
         link,
         amount,
         duration,
-        link_type: linkType,
+        call_to_action: callToAction,
       });
 
       if (res.status === 201) {
@@ -91,8 +91,8 @@ export function usePromotionCreate() {
               setLinkError(error.message);
               break;
 
-            case 'link_type':
-              setLinkTypeError(error.message);
+            case 'call_to_action':
+              setCallToActionError(error.message);
               break;
 
             case 'amount':
@@ -127,7 +127,7 @@ export function usePromotionCreate() {
     formError,
     titleError, 
     linkError, 
-    linkTypeError,
+    callToActionError,
     amountError,
     durationError
   ];
