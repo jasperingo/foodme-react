@@ -5,26 +5,24 @@ import WorkingHour from '../models/WorkingHour';
 import { useAppContext } from './contextHook';
 import { useLocation } from 'react-router-dom';
 
-export function useUserStatus(status) {
-  switch(status) {
+export function useUserDomain() {
 
-    case User.STATUS_PENDING:
-      return '_extra.Pending';
+  return function(type) {
 
-    case User.STATUS_EMAIL_PENDING:
-      return '_extra.Email_pending';
-
-    case User.STATUS_ACTIVE:
-      return '_extra.Active';
-
-    case User.STATUS_ACTIVATING:
-      return '_extra.Activating';
-
-    case User.STATUS_DEACTIVATED:
-      return '_extra.Deactivating';
-
-    default:
-      return status;
+    switch(type) {
+  
+      case User.TYPE_STORE:
+        return 'https://store.dailyneeds.com.ng/';
+  
+      case User.TYPE_DELIVERY_FIRM:
+        return 'https://delivery.dailyneeds.com.ng/';
+  
+      case User.TYPE_APPLICATION:
+        return 'https://admin.dailyneeds.com.ng/';
+  
+      default:
+        return 'https://www.dailyneeds.com.ng/';
+    }
   }
 }
 

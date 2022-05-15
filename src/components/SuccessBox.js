@@ -1,7 +1,6 @@
 import Icon from '@mdi/react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { checkIcon } from '../assets/icons';
 
 export default function SuccessBox({ href, linkText, message }) {
@@ -18,7 +17,7 @@ export default function SuccessBox({ href, linkText, message }) {
       
       <div className="text-center font-bold mb-8">
         <div className="mb-4">{ t(message) }</div>
-        <Link to={href} className="btn-color-primary p-2 rounded">{ t(linkText) }</Link>
+        <a href={href} className="inline-block btn-color-primary p-2 rounded">{ t(linkText) }</a>
       </div>
 
     </div>

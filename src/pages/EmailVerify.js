@@ -5,7 +5,7 @@ import Loading from '../components/Loading';
 import SuccessBox from '../components/SuccessBox';
 import { useEmailVerificationVerify } from '../hooks/email_verification/emailVerificationVerifyHook';
 import { useHeader } from '../hooks/headerHook';
-import { useURLQuery } from '../hooks/viewHook';
+import { useURLQuery, useUserDomain } from '../hooks/viewHook';
 
 export default function EmailVerify() {
 
@@ -14,7 +14,9 @@ export default function EmailVerify() {
     headerTitle: '_user.Verify_email'
   });
 
-  const [token] = useURLQuery(['token']);
+  const [token, userType] = useURLQuery(['token', 'user_type']);
+
+  const userDomain = useUserDomain();
 
   const [
     onSubmit,  
@@ -42,8 +44,8 @@ export default function EmailVerify() {
         {
           success !== null && 
           <SuccessBox 
-            href="/login"
             linkText="_user.Log_in"
+            href={`${userDomain(userType)}login`}
             message="_user._email_verification_success"
             />
 

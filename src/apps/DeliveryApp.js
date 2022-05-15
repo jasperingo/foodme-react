@@ -29,7 +29,6 @@ import DeliveryDurationUpdate from '../pages/Delivery/DeliveryLocationUpdate';
 import DeliveryWeightCreate from '../pages/Delivery/DeliveryWeightCreate';
 import DeliveryWeightUpdate from '../pages/Delivery/DeliveryWeightUpdate';
 import ForgotBusinessPassword from '../pages/ForgotBusinessPassword';
-import ResetPassword from '../pages/ResetPassword';
 import AboutUs from '../pages/AboutUs';
 import ContactUs from '../pages/ContactUs';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
@@ -39,9 +38,7 @@ import Chats from '../pages/Delivery/Chats';
 import Store from '../pages/Delivery/Store';
 import Customer from '../pages/Customer';
 import NotFoundPage from '../pages/NotFoundPage';
-import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
 import { useAuthMiddleware, useGuestMiddleware } from '../hooks/authHook';
-import EmailVerify from '../pages/EmailVerify';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -98,11 +95,7 @@ export default function DeliveryApp() {
           <Route path="/privacy-policy" render={()=> authMiddleware() || <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> authMiddleware() || <ContactUs />} />
           <Route path="/about-us" render={()=> authMiddleware() || <AboutUs />} />
-
-          <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword deliveryFirm={true} />} />
-          <Route path="/email-verification" render={()=> <EmailVerify />} />
 
           <Route path="/messages" render={()=> authMiddleware() || <Chats />} />
           <Route path="/store/:ID" render={()=> authMiddleware() || <Store />} />

@@ -13,7 +13,6 @@ import ContactUs from '../pages/ContactUs';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import TermsOfService from '../pages/TermsOfService';
 import ForgotBusinessPassword from '../pages/ForgotBusinessPassword';
-import ResetPassword from '../pages/ResetPassword';
 import LogIn from '../pages/Store/LogIn';
 import Register from '../pages/Store/Register';
 import AccountMenu from '../pages/Store/AccountMenu';
@@ -46,9 +45,7 @@ import Order from '../pages/Order';
 import DeliveryFirm from '../pages/Store/DeliveryFirm';
 import Customer from '../pages/Customer';
 import NotFoundPage from '../pages/NotFoundPage';
-import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
 import { useAuthMiddleware, useGuestMiddleware } from '../hooks/authHook';
-import EmailVerify from '../pages/EmailVerify';
 
 const HEADER_NAV_LINKS = [
   { href: '/', exclude: true },
@@ -105,11 +102,7 @@ export default function StoreApp() {
           <Route path="/privacy-policy" render={()=> <PrivacyPolicy />} /> 
           <Route path="/contact-us" render={()=> <ContactUs />} />
           <Route path="/about-us" render={()=> <AboutUs />} /> 
-          
-          <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} />
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotBusinessPassword store={true} />} />
-          <Route path="/email-verification" render={()=> <EmailVerify />} />
 
           <Route path="/cart" render={()=> authMiddleware() || <Cart />} />
           

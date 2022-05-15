@@ -2,31 +2,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useUserDomain } from '../hooks/viewHook';
+import User from '../models/User';
 
 const dev = true; //process.env.NODE_ENV === 'development';
 
-function FooterLink({ text, href }) {
+function FooterLink({ text, href, reload = false }) {
 
   const { t } = useTranslation();
 
   return (
     <li className="mb-3">
-      <Link to={href} className="hover:underline">{ t(text) }</Link>
-    </li>
-  );
-}
-
-function FooterAnchor({ text, href }) {
-  const { t } = useTranslation();
-
-  return (
-    <li className="mb-3">
-      <a href={href} className="hover:underline">{ t(text) }</a>
+      { 
+        reload 
+        ? <a href={href} className="hover:underline">{ t(text) }</a>
+        : <Link to={href} className="hover:underline">{ t(text) }</Link>
+      }
     </li>
   );
 }
 
 export default function Footer({ noRegister }) {
+
+  const userDomain = useUserDomain();
 
   return (
     <footer className={`py-4 bg-color text-blue-500 text-center text-sm absolute bottom-0 left-0 w-full pb-16 lg:block`}>
@@ -38,15 +36,23 @@ export default function Footer({ noRegister }) {
           </div>
 
           <div>
-            <FooterAnchor text="_store.Become_a_store_partner" href={dev ? '/?app=1' : 'https://store.dailyneeds.com.ng'} />
-            <FooterAnchor text="_delivery.Become_a_courier_partner" href={dev ? '/?app=2' : 'https://delivery.dailyneeds.com.ng'} />
+            <FooterLink 
+              reload={true}
+              text="_store.Become_a_store_partner" 
+              href={dev ? '/?app=1' : userDomain(User.TYPE_STORE)} 
+              />
+            <FooterLink 
+              reload={true} 
+              text="_delivery.Become_a_courier_partner" 
+              href={dev ? '/?app=2' : userDomain(User.TYPE_DELIVERY_FIRM)} 
+              />
           </div>
 
           {
             dev &&
             <div>
-              <FooterAnchor text="_user.Admin" href="/?app=3" />
-              <FooterAnchor text="_user.Customer" href="/?app=0" />
+              <FooterLink text="_user.Admin" href="/?app=3" reload={true} />
+              <FooterLink text="_user.Customer" href="/?app=0" reload={true} />
             </div>
           }
 

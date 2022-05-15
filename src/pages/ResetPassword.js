@@ -21,17 +21,17 @@ export default function ResetPassword() {
 
   const passwordInput = useRef(null);
 
-  const [token] = useURLQuery(['token']);
+  const [token, userType] = useURLQuery(['token', 'user_type']);
 
   const [onSubmit, dialog, formError, formSuccess] = usePasswordResetUpdate();
 
   useEffect(
     function() {
       if (formSuccess !== null) {
-        history.replace('reset-password-success');
+        history.replace(`reset-password-success?user_type=${userType}`);
       }
     },
-    [formSuccess, history]
+    [formSuccess, history, userType]
   );
   
   function onFormSubmit(e) {

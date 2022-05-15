@@ -39,7 +39,6 @@ import TermsOfService from '../pages/TermsOfService';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import ContactUs from '../pages/ContactUs';
 import AboutUs from '../pages/AboutUs';
-import ResetPassword from '../pages/ResetPassword';
 import ForgotPassword from '../pages/ForgotPassword';
 import ProductUpdate from '../pages/Admin/ProductUpdate';
 import Home from '../pages/Admin/Home';
@@ -47,7 +46,6 @@ import Promotions from '../pages/Admin/Promotions';
 import Promotion from '../pages/Admin/Promotion';
 import PromotionCreate from '../pages/Admin/PromotionCreate';
 import NotFoundPage from '../pages/NotFoundPage';
-import ResetPasswordSuccess from '../pages/ResetPasswordSuccess';
 import { useAuthMiddleware, useGuestMiddleware } from '../hooks/authHook';
 
 const HEADER_NAV_LINKS = [
@@ -135,8 +133,6 @@ export default function AdminApp() {
           <Route path="/transactions" render={()=> authMiddleware() || <Transactions />} />
           <Route path="/orders" render={()=> authMiddleware() || <Orders />} />
           <Route path="/dashboard" render={()=> authMiddleware() || <Dashboard />} /> 
-          <Route path="/reset-password-success" render={()=> guestMiddleware() || <ResetPasswordSuccess />} /> 
-          <Route path="/reset-password" render={()=> guestMiddleware() || <ResetPassword />} /> 
           <Route path="/forgot-password" render={()=> guestMiddleware() || <ForgotPassword administrator={true} />} />
           <Route path="/login" render={()=> guestMiddleware() || <LogIn />} />
           <Route path="/" exact render={()=> guestMiddleware() || <Home />} />

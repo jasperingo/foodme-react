@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Icon from '@mdi/react';
 import AlertDialog from './dialog/AlertDialog';
-import { useDifferentTextColor, useUserStatus } from '../hooks/viewHook';
+import { useDifferentTextColor, useUserStatusText } from '../hooks/viewHook';
 
 function MenuItem({ icon, text, href, index }) {
 
@@ -74,7 +74,7 @@ function AccountMenuTop({ photo, name, status, toActivate = [] }) {
 
   const { t } = useTranslation();
 
-  status = useUserStatus(status);
+  const userStatus = useUserStatusText();
 
   return (
     <div className="py-2">
@@ -88,7 +88,7 @@ function AccountMenuTop({ photo, name, status, toActivate = [] }) {
       <div className="text-center font-bold text-lg">{ name }</div>
       {
         status && 
-        <div className="text-center text-sm bg-color-gray rounded w-min mx-auto px-2 mt-1">{ t(status) }</div>
+        <div className="text-center text-sm bg-color-gray rounded w-min mx-auto px-2 mt-1">{ t(userStatus(status)) }</div>
       }
 
       {
