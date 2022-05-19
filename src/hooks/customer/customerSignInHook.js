@@ -77,7 +77,7 @@ export function useCustomerSignIn() {
       }
 
     } catch (error) {
-      setFormError('_error.Something_went_wrong');
+      setFormError('_errors.Something_went_wrong');
     } finally {
       setLoading(false);
     }
