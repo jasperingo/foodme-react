@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { reviewIcon } from '../../assets/icons';
 import ScrollList from './ScrollList';

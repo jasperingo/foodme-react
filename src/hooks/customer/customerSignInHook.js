@@ -2,8 +2,6 @@ import { useState, useMemo } from 'react';
 import { CUSTOMER } from '../../context/actions/customerActions';
 import CustomerRepository from '../../repositories/CustomerRepository';
 import { useAppContext } from '../contextHook';
-import { useMessageFetch } from '../message/messageFetchHook';
-import { useMessageUnreceivedCountFetch } from '../message/messageUnreceivedCountFetchHook';
 import { useCustomerAuthSet } from './customerAuthStorageHook';
 
 export function useCustomerSignIn() {
@@ -11,10 +9,6 @@ export function useCustomerSignIn() {
   const { 
     customer: { dispatch } 
   } = useAppContext();
-
-  const messageCount = useMessageUnreceivedCountFetch();
-  
-  const newMessage = useMessageFetch();
 
   const setAuthToken = useCustomerAuthSet();
 
@@ -63,10 +57,6 @@ export function useCustomerSignIn() {
             token: res.body.data.api_token.token
           }
         });
-
-        messageCount(res.body.data.api_token.token);
-
-        newMessage(res.body.data.api_token.token, res.body.data.customer.user.id);
 
         setSuccess(true);
         

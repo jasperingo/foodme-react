@@ -1,6 +1,5 @@
-
 export const TRANSLATIONS_EN = {
-  app_name: 'DailyNeeds',
+  app_name: 'Shoppa',
   Resturant: 'Resturant',
   Resturants: 'Resturants',
   Application: 'Application',

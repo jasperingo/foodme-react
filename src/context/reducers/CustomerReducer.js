@@ -3,7 +3,6 @@ import { ADDRESS } from "../actions/addressActions";
 import { CUSTOMER } from "../actions/customerActions";
 import { ORDER } from "../actions/orderActions";
 import { PRODUCT } from "../actions/productActions";
-import { SAVED_CART } from "../actions/savedCartActions";
 import { TRANSACTION } from "../actions/transactionActions";
 import customerState from "../states/customerState";
 
@@ -184,46 +183,6 @@ export default function CustomerReducer (state, action) {
           productsPage: state.products.productsPage + 1,
           productsNumberOfPages: action.payload.numberOfPages,
           products: [...state.products.products, ...action.payload.list],
-        }
-      };
-
-    
-    case SAVED_CART.LIST_UNFETCHED:
-      return {
-        ...state,
-        savedCarts: customerState.savedCarts
-      };
-    
-    case SAVED_CART.LIST_FETCHING:
-      return {
-        ...state,
-        savedCarts: {
-          ...state.savedCarts,
-          savedCartsError: null,
-          savedCartsLoading: true
-        }
-      };
-
-    case SAVED_CART.LIST_ERROR_CHANGED:
-      return {
-        ...state,
-        savedCarts: {
-          ...state.savedCarts,
-          savedCartsLoading: false,
-          savedCartsError: action.payload.error
-        }
-      };
-    
-    case SAVED_CART.LIST_FETCHED:
-      return {
-        ...state,
-        savedCarts: {
-          ...state.savedCarts,
-          savedCartsLoaded: true,
-          savedCartsLoading: false,
-          savedCartsPage: state.savedCarts.savedCartsPage + 1,
-          savedCartsNumberOfPages: action.payload.numberOfPages,
-          savedCarts: [...state.savedCarts.savedCarts, ...action.payload.list],
         }
       };
 

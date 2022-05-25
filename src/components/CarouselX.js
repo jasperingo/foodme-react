@@ -1,4 +1,3 @@
-
 import Icon from '@mdi/react';
 import React, { useEffect, useState } from 'react';
 import { nextIcon, prevIcon } from '../assets/icons';
@@ -70,18 +69,8 @@ export default function CarouselX({ items }) {
               alt={item.title}
             />
 
-            <div className="absolute z-10 bottom-0 text-center w-full p-4 text-white">
-              <p className="font-bold text-3xl my-4">{ item.title }</p>
-              <a 
-                href={item.link} 
-                target="_blank" 
-                rel="noreferrer" 
-                className="bg-white py-2 px-4 rounded text-black hover:bg-color-gray-h"
-              >
-                { item.call_to_action } 
-              </a>
-            </div>
-
+            <p className="absolute z-10 bottom-0 text-center w-full p-4 text-white font-bold text-3xl my-4">{ item.title }</p>
+            
           </div>
         ))
       }

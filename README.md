@@ -1,4 +1,3 @@
-# Foodme Application
+# Shoppa React
 
-This project is a SPA built with React-DOM.
-
+An e-commerce food application built with React.js

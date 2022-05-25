@@ -3,8 +3,6 @@ import { CUSTOMER } from '../../context/actions/customerActions';
 import NetworkErrorCodes from '../../errors/NetworkErrorCodes';
 import CustomerRepository from '../../repositories/CustomerRepository';
 import { useAppContext } from '../contextHook';
-import { useMessageFetch } from '../message/messageFetchHook';
-import { useMessageUnreceivedCountFetch } from '../message/messageUnreceivedCountFetchHook';
 import { useCustomerAuthGet, useCustomerAuthUnset } from './customerAuthStorageHook';
 
 export function useCustomerAuthFetch() {
@@ -12,10 +10,6 @@ export function useCustomerAuthFetch() {
   const { 
     customer: { dispatch } 
   } = useAppContext();
-
-  const newMessage = useMessageFetch();
-
-  const messageCount = useMessageUnreceivedCountFetch();
 
   const [customerId, customerToken] = useCustomerAuthGet();
 
@@ -52,10 +46,6 @@ export function useCustomerAuthFetch() {
               customer: res.body.data
             }
           });
-
-          messageCount(customerToken);
-
-          newMessage(customerToken, res.body.data.user.id);
           
         } else if (res.status === 401) {
           unsetAuth();
@@ -69,7 +59,7 @@ export function useCustomerAuthFetch() {
         setLoading(false);
       }
     },
-    [api, loading, customerId, customerToken, dispatch, unsetAuth, messageCount, newMessage]
+    [api, loading, customerId, customerToken, dispatch, unsetAuth]
   );
   
   return [customerId, fetchCustomer, error];
