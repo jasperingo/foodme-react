@@ -13,10 +13,14 @@ import CategoryList from '../components/list/CategoryList';
 
 const BANNERS = [
   {
+    id: 1,
     photo: { href: '/photos/about-resturant.jpg' },
-    title: 'Welcome to DailyNeeds',
-    link: '/contact-us',
-    call_to_action: 'Contact us on our website',
+    title: 'Order tasty meals anytime',
+  },
+  {
+    id: 2,
+    photo: { href: '/photos/about-delivery.jpg' },
+    title: 'Instant delivery of orders',
   }
 ];
 

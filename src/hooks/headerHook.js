@@ -3,7 +3,6 @@ import { useLocation } from "react-router-dom";
 import { HEADER } from "../context/actions/headerActions";
 import { useAppContext } from "./contextHook";
 
-
 export function useHeader(data) {
 
   const {
@@ -24,7 +23,7 @@ export function useHeader(data) {
     ()=> {
       if (path !== pathname || (data.title !== undefined && data.title !== title)) {
 
-        titleTag.innerHTML = data.title ?? 'DailyNeeds - All you need to buy';
+        titleTag.innerHTML = data.title ?? 'Shoppa - Buy tasty meals anytime';
 
         headerDispatch({
           type: HEADER.CHANGED,

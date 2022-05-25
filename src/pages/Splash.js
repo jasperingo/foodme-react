@@ -15,7 +15,7 @@ export default function Splash({ error, onRetry }) {
         height="100"
         alt="Application logo"
         className="block w-32 h-32" 
-        src="/photos/app_logo.png"
+        src="/photos/logo512.png"
         />
       <div className="splash-title text-4xl font-bold text-yellow-500">{ t('app_name') }</div>
       { error ? <Reload action={onRetry} /> : <Loading /> }
