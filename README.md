@@ -1,3 +1,3 @@
 # Shoppa React
 
-An e-commerce food application built with React.js
+An e-commerce restaurant application built with React.js
